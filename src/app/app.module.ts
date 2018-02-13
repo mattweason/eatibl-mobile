@@ -5,10 +5,14 @@ import { MyApp } from './app.component';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
-import { AboutPage } from '../pages/about/about';
-import { ContactPage } from '../pages/contact/contact';
+import { SearchPage } from '../pages/search/search';
+import { AccountPage } from '../pages/account/account';
+import { BookingsPage } from '../pages/bookings/bookings';
 import { HomePage } from '../pages/home/home';
+import { RestaurantPage } from '../pages/restaurant/restaurant';
 import { TabsPage } from '../pages/tabs/tabs';
+
+import { RestaurantComponent } from "../components/restaurant/restaurant"
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -17,10 +21,13 @@ import { ApiServiceProvider } from '../providers/api-service/api-service';
 @NgModule({
   declarations: [
     MyApp,
-    AboutPage,
-    ContactPage,
+    SearchPage,
+    AccountPage,
+    BookingsPage,
+    RestaurantPage,
     HomePage,
-    TabsPage
+    TabsPage,
+    RestaurantComponent
   ],
   imports: [
     BrowserModule,
@@ -31,10 +38,13 @@ import { ApiServiceProvider } from '../providers/api-service/api-service';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    AboutPage,
-    ContactPage,
+    SearchPage,
+    AccountPage,
+    BookingsPage,
+    RestaurantPage,
     HomePage,
-    TabsPage
+    TabsPage,
+    RestaurantComponent
   ],
   providers: [
     StatusBar,

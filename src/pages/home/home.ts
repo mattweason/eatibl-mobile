@@ -9,8 +9,10 @@ import { ApiServiceProvider } from "../../providers/api-service/api-service";
 export class HomePage {
 
   restaurantList = [];
+  bookings = [];
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider) {
     this.API.makeCall('restaurant/all').subscribe(data => this.restaurantList = data);
+    console.log(this.restaurantList);
   }
 }

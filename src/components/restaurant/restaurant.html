@@ -1,0 +1,30 @@
+<!-- Generated template for the RestaurantComponent component -->
+<ion-card (tap)="navigateTo($event, restaurant._id)">
+  <img src="assets/imgs/placeholder-food.jpg">
+  <ion-card-content no-padding>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-9 align-self-center>
+          <h2>{{restaurant.name}}</h2>
+          <p class="tags">Mediterranean, Greek</p>
+        </ion-col>
+        <ion-col col-3 nowrap class="align-center">
+          <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
+          <div class="price">
+            <p [ngClass]="restaurant.price >= 1 ? 'active' : ''">$</p>
+            <p [ngClass]="restaurant.price >= 2 ? 'active' : ''">$</p>
+            <p [ngClass]="restaurant.price >= 3 ? 'active' : ''">$</p>
+            <p [ngClass]="restaurant.price == 4 ? 'active' : ''">$</p>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-scroll scrollX="true">
+          </ion-scroll>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

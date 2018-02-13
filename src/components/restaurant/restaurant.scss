@@ -1,0 +1,23 @@
+restaurant {
+  .align-center{
+    text-align: center;
+  }
+  img{
+    max-height: 200px;
+  }
+  .tags{
+    color: lighten(color($colors, dark), 50%);
+  }
+  .rating{
+    font-size: 18px;
+    color: color($colors, primary);
+  }
+  .price{
+    p{
+      display: inline-block;
+      &.active{
+        color: color($colors, danger);
+      }
+    }
+  }
+}

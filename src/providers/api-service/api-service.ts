@@ -22,7 +22,7 @@ export class ApiServiceProvider {
     return this.http.get(this.url+ url)
       .map(this.extractData)
       .do(this.logResponse)
-      .catch(this.catchError)
+      // .catch(this.catchError)
   }
 
   private catchError(error: Response | any) {
