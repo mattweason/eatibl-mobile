@@ -3,12 +3,12 @@
   <img src="assets/imgs/placeholder-food.jpg">
   <ion-card-content no-padding>
     <ion-grid>
-      <ion-row>
-        <ion-col col-9 align-self-center>
+      <ion-row class="border-bottom">
+        <ion-col col-9 align-self-stretch class="first-row border-right">
           <h2>{{restaurant.name}}</h2>
           <p class="tags">Mediterranean, Greek</p>
         </ion-col>
-        <ion-col col-3 nowrap class="align-center">
+        <ion-col col-3 nowrap align-self-stretch class="align-center first-row">
           <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
           <div class="price">
             <p [ngClass]="restaurant.price >= 1 ? 'active' : ''">$</p>

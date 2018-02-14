@@ -14,16 +14,18 @@
 
 <ion-content>
 
-  <ion-card (tap)="navigateTo($event, restaurant._id)">
+  <ion-card>
     <img src="assets/imgs/placeholder-food.jpg">
     <ion-card-content no-padding>
       <ion-grid>
-        <ion-row>
-          <ion-col col-9 align-self-center>
+        <ion-row class="border-bottom">
+          <ion-col col-9 align-self-stretch class="first-row border-right">
             <h2>{{restaurant?.name}}</h2>
             <p class="tags">Mediterranean, Greek</p>
+            <p *ngIf="open?.open" class="open"><span>Open Now</span> {{functions.formatTime(businessHours[open.index][2], true)}} - {{functions.formatTime(businessHours[open.index][3], true)}}</p>
+            <p *ngIf="!open?.open" class="closed"><span>Closed</span></p>
           </ion-col>
-          <ion-col col-3 nowrap class="align-center">
+          <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
             <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
             <div class="price">
               <p [ngClass]="restaurant?.price >= 1 ? 'active' : ''">$</p>
@@ -33,13 +35,107 @@
             </div>
           </ion-col>
         </ion-row>
-        <ion-row>
+        <ion-row class="border-bottom">
           <ion-col>
-            <ion-scroll scrollX="true">
-            </ion-scroll>
+              <ion-item class="border-bottom">
+                <ion-label fixed><ion-icon name="calendar"></ion-icon></ion-label>
+                <ion-datetime placeholder="Today" [(ngModel)]="selectedDate"></ion-datetime>
+              </ion-item>
+              <ion-item>
+                <ion-label fixed><ion-icon name="people"></ion-icon></ion-label>
+                <ion-select [(ngModel)]="people">
+                  <ion-option value="1">1 person</ion-option>
+                  <ion-option value="2">2 people</ion-option>
+                  <ion-option value="3">3 people</ion-option>
+                  <ion-option value="4">4 people</ion-option>
+                  <ion-option value="5">5 people</ion-option>
+                  <ion-option value="6">6 people</ion-option>
+                </ion-select>
+              </ion-item>
           </ion-col>
         </ion-row>
+        <ion-row class="border-bottom">
+          <ion-col class="no-padding-col">
+            <ion-slides *ngIf="timeslots.length" slidesPerView="4">
+              <ion-slide *ngFor="let timeslot of timeslots">
+                <div class="timeslot">
+                  <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatTime(timeslot.time, true)}}</p>
+                  <button ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot)">-{{timeslot?.discount}}%</button>
+                </div>
+              </ion-slide>
+            </ion-slides>
+            <div *ngIf="!timeslots.length" class="no-timeslots">
+              <p>Closed</p>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row class="border-bottom">
+          <button ion-button block color="secondary" [disabled]="!activeTimeslot">Book Now</button>
+        </ion-row>
       </ion-grid>
+      <div class="details">
+        <ion-segment [(ngModel)]="type">
+          <ion-segment-button value="about">
+            About
+          </ion-segment-button>
+          <ion-segment-button value="menu">
+            Menu
+          </ion-segment-button>
+          <ion-segment-button value="map">
+            Map
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+      <div [ngSwitch]="type">
+        <ion-grid *ngSwitchCase="'about'">
+          <ion-row>
+            <ion-col>
+              <p>{{restaurant?.description}}</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-3>
+              <p class="header">Address:</p>
+            </ion-col>
+            <ion-col col-9>
+              <p>{{restaurant?.address}}</p>
+              <p>{{restaurant?.city}}, {{restaurant?.state}}</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-3>
+              <p class="header">Hours:</p>
+            </ion-col>
+            <ion-col col-2>
+              <p class="day" *ngFor="let day of businessHours">{{day[1]}}:</p>
+            </ion-col>
+            <ion-col col-7>
+              <p class="hours" *ngFor="let day of businessHours;">
+                <span *ngIf="day[2] != day[3]">{{functions.formatTime(day[2], true)}} - {{functions.formatTime(day[3], true)}}</span>
+                <span *ngIf="day[2] == day[3]">Closed</span>
+              </p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <ion-grid *ngSwitchCase="'menu'">
+          <ion-row *ngFor="let item of restaurant.recommendedItems">
+            <ion-col col-8>
+              <p>{{item.item}}</p>
+            </ion-col>
+            <ion-col col-2>
+              <p class="strikethrough">{{item.price | currency}}</p>
+            </ion-col>
+            <ion-col col-2>
+              <p>{{(item.price * (1 - activeTimeslot?.discount / 100)) | currency}}</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <ion-grid *ngSwitchCase="'map'">
+
+        </ion-grid>
+      </div>
     </ion-card-content>
   </ion-card>
 

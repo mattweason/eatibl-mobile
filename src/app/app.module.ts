@@ -4,6 +4,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
+import { DatePicker } from '@ionic-native/date-picker';
 
 import { SearchPage } from '../pages/search/search';
 import { AccountPage } from '../pages/account/account';
@@ -17,6 +18,7 @@ import { RestaurantComponent } from "../components/restaurant/restaurant"
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { ApiServiceProvider } from '../providers/api-service/api-service';
+import { FunctionsProvider } from '../providers/functions/functions';
 
 @NgModule({
   declarations: [
@@ -48,9 +50,11 @@ import { ApiServiceProvider } from '../providers/api-service/api-service';
   ],
   providers: [
     StatusBar,
+    DatePicker,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    ApiServiceProvider
+    ApiServiceProvider,
+    FunctionsProvider
   ]
 })
 export class AppModule {}

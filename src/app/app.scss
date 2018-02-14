@@ -14,3 +14,125 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+//Restaurant Component and Page
+restaurant, page-restaurant {
+  .border-bottom{
+    border-bottom: 1px solid #ccc;
+  }
+  .border-right{
+    border-right: 1px solid #ccc;
+  }
+  .align-center{
+    text-align: center;
+  }
+  .open{
+    span{
+      color: color($colors, tertiary);
+    }
+    font-size: 1.2rem;
+  }
+  .closed{
+    color: color($colors, primary);
+    font-size: 1.2rem;
+  }
+  img{
+    max-height: 200px;
+  }
+  .tags{
+    color: lighten(color($colors, dark), 50%);
+    font-size: 1.2rem;
+  }
+  .rating{
+    font-size: 18px;
+    color: color($colors, primary);
+  }
+  .price{
+    p{
+      display: inline-block;
+      &.active{
+        color: color($colors, danger);
+      }
+    }
+  }
+  .details{
+    padding: 5px;
+  }
+  .header{
+    font-weight: 700;
+  }
+  .strikethrough{
+    text-decoration: line-through;
+    color: lighten(color($colors, dark), 20%);
+  }
+  .no-timeslots{
+    height: 80px;
+    p{
+      line-height: 80px;
+      color: color($colors, primary);
+      font-size: 1.6rem;
+      text-align: center;
+    }
+  }
+  ion-slides{
+    border-right: 1px solid lighten(#ccc, 10%);
+    border-left: 1px solid lighten(#ccc, 10%);
+    ion-slide{
+      .timeslot{
+        height: 80px;
+        border-right: 1px solid lighten(#ccc, 10%);
+        p{
+          height: 25%;
+          color: lighten(color($colors, dark), 20%);
+          &.active{
+            color: color($colors, primary);
+            font-weight: 700;
+          }
+        }
+        button{
+          width: 100%;
+          margin: 0;
+          height: 73%;
+          font-size: 2rem;
+          &.active{
+            background-color: darken(color($colors, primary), 20%);
+          }
+        }
+      }
+      &:last-of-type{
+        .timeslot{
+          border-right: none;
+        }
+      }
+    }
+  }
+  ion-label[fixed]{
+    min-width: 10% !important;
+    max-width: 10% !important;
+    ion-icon{
+      color: color($colors, dark);
+    }
+  }
+  ion-grid{
+    padding: 0 0 5px 0 !important;
+    ion-row{
+      padding-right: 5px;
+      padding-left: 5px;
+    }
+    .first-row{
+      padding-top: 5px;
+    }
+  }
+}
+
+//General Use Classes
+.vertical-align-col{
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.no-padding-col{
+  padding: 0 !important;
+}

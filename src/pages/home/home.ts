@@ -13,6 +13,5 @@ export class HomePage {
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider) {
     this.API.makeCall('restaurant/all').subscribe(data => this.restaurantList = data);
-    console.log(this.restaurantList);
   }
 }
