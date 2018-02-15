@@ -87,3 +87,31 @@ $colors: (
 
 @import "roboto";
 @import "noto-sans";
+
+@font-face {
+  font-family: 'Quicksand';
+  font-style: light;
+  font-weight: 300;
+  src: url('../assets/fonts/quicksand/Quicksand-Light.ttf');
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  font-style: regular;
+  font-weight: 400;
+  src: url('../assets/fonts/quicksand/Quicksand-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  font-style: medium;
+  font-weight: 500;
+  src: url('../assets/fonts/quicksand/Quicksand-Medium.ttf');
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  font-style: bold;
+  font-weight: 700;
+  src: url('../assets/fonts/quicksand/Quicksand-Bold.ttf');
+}

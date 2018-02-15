@@ -11,12 +11,16 @@ page-confirm-booking {
   .title{
     color: lighten(color($colors, dark), 50%);
   }
+  .day, .month, .time, .discount, .seats, .date{
+    font-family: "Quicksand";
+    font-weight: 500;
+  }
   .day, .month, .time, .discount, .seats{
     color: color($colors, primary);
   }
   .day, .month, .time{
-    font-size: 18px;
-    line-height: 18px;
+    font-size: 16px;
+    line-height: 16px;
   }
   .date, .discount, .seats{
     font-size: 36px;
