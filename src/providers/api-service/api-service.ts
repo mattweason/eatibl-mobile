@@ -31,7 +31,7 @@ export class ApiServiceProvider {
   }
 
   private logResponse(res: Response) {
-    console.log(res);
+    // console.log(res);
   }
 
   private extractData(res: Response){

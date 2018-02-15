@@ -1,0 +1,25 @@
+page-confirm-booking {
+  h2{
+    font-weight: 700 !important;
+    text-align: center;
+    margin: 0;
+  }
+  p{
+    text-align: center;
+    margin: 0 !important;
+  }
+  .title{
+    color: lighten(color($colors, dark), 50%);
+  }
+  .day, .month, .time, .discount, .seats{
+    color: color($colors, primary);
+  }
+  .day, .month, .time{
+    font-size: 18px;
+    line-height: 18px;
+  }
+  .date, .discount, .seats{
+    font-size: 36px;
+    line-height: 36px;
+  }
+}

@@ -6,6 +6,8 @@ import { FunctionsProvider } from '../../providers/functions/functions';
 import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
 import * as _ from 'underscore'
 
+import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking';
+
 /**
  * Generated class for the RestaurantPage page.
  *
@@ -29,7 +31,7 @@ export class RestaurantPage {
   restaurantId: String;
   timeslotId: String;
   type: String;
-  selectedDate: any;
+  selectedDate = new Date(Date.now());
 
   map: GoogleMap;
 
@@ -143,7 +145,6 @@ export class RestaurantPage {
 
   //Activate a booking
   selectBooking(timeslot){
-    console.log(timeslot)
     this.activeTimeslot = timeslot;
   }
 
@@ -156,5 +157,14 @@ export class RestaurantPage {
           this.businessHours[a][3] = data[i]['close'];
         }
     this.buildTodayDate();
+  }
+
+  //Navigate to confirm booking page
+  bookNow(event, restaurant, timeslot, date){
+    this.navCtrl.push(ConfirmBookingPage, {
+      restaurant: restaurant,
+      timeslot: timeslot,
+      date: date
+    });
   }
 }

@@ -101,13 +101,6 @@ restaurant, page-restaurant {
       }
     }
   }
-  ion-label[fixed]{
-    min-width: 10% !important;
-    max-width: 10% !important;
-    ion-icon{
-      color: color($colors, dark);
-    }
-  }
   ion-grid{
     padding: 0 0 5px 0 !important;
     ion-row{
@@ -129,6 +122,26 @@ restaurant, page-restaurant {
       height: 28px;
       stroke: color($colors, primary);
       fill: #fff;
+    }
+  }
+}
+
+//Sign Up Prompt
+#signUpPrompt {
+  ion-card-content{
+    ion-icon{
+      margin: 6px 0;
+      color: lighten(color($colors, dark), 30%);
+      font-size: 80px;
+    }
+    h2{
+      margin: 12px 0 !important;
+      font-weight: 700 !important;
+      text-align: center;
+    }
+    p{
+      margin-bottom: 12px !important;
+      text-align: center;
     }
   }
 }
@@ -155,3 +168,17 @@ restaurant, page-restaurant {
 }
 
 //General Directive Styling
+ion-grid{
+  padding: 0 !important;
+  ion-row{
+    padding: 0 5px !important;
+  }
+}
+
+ion-label[fixed]{
+  min-width: 10% !important;
+  max-width: 10% !important;
+  ion-icon{
+    color: lighten(color($colors, dark), 20%);
+  }
+}

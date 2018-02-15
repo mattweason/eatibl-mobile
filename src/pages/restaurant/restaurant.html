@@ -23,7 +23,7 @@
             <h2>{{restaurant?.name}}</h2>
             <p class="tags">Mediterranean, Greek</p>
             <p *ngIf="open?.open" class="open"><span>Open Now</span> {{functions.formatTime(businessHours[open.index][2], true)}} - {{functions.formatTime(businessHours[open.index][3], true)}}</p>
-            <p *ngIf="!open?.open" class="closed"><span>Closed</span></p>
+            <p *ngIf="!open?.open" class="closed"><span>Closed Now</span></p>
           </ion-col>
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
             <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
@@ -65,12 +65,12 @@
               </ion-slide>
             </ion-slides>
             <div *ngIf="!timeslots.length" class="no-timeslots">
-              <p>Closed</p>
+              <p>Closed Now</p>
             </div>
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">
-          <button ion-button block color="secondary" [disabled]="!activeTimeslot">Book Now</button>
+          <button ion-button block color="secondary" [disabled]="!activeTimeslot" (click)="bookNow($event, restaurant, activeTimeslot, selectedDate)">Book Now</button>
         </ion-row>
       </ion-grid>
       <div class="details">

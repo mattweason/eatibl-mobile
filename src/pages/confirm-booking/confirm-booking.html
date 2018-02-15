@@ -1,0 +1,72 @@
+<!--
+  Generated template for the ConfirmBookingPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>Confirm Booking</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <ion-card>
+    <ion-card-content no-padding>
+      <ion-grid>
+        <ion-row class="border-bottom">
+          <ion-col align-self-center>
+            <h2>{{restaurant.name}}</h2>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col col-4>
+            <p class="title">Date</p>
+          </ion-col>
+          <ion-col col-4>
+            <p class="title">Discount</p>
+          </ion-col>
+          <ion-col col-4>
+            <p class="title">Seats</p>
+          </ion-col>
+        </ion-row>
+        <ion-row class="border-bottom">
+          <ion-col align-self-center col-4>
+            <p class="day">{{dateObject.day}}</p>
+            <p class="date">{{dateObject.date}}</p>
+            <p class="month">{{dateObject.month}}</p>
+          </ion-col>
+          <ion-col align-self-center col-4>
+            <p class="time">{{functions.formatTime(timeslot.time, true)}}</p>
+            <p class="discount">-{{timeslot.discount}}%</p>
+          </ion-col>
+          <ion-col align-self-center col-4>
+            <p class="seats">{{timeslot.quantity}}</p>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item class="border-bottom">
+              <ion-label fixed><ion-icon name="person"></ion-icon></ion-label>
+              <ion-input placeholder="Full Name" [(ngModel)]="user.name"></ion-input>
+            </ion-item>
+            <ion-item class="border-bottom">
+              <ion-label fixed><ion-icon name="call"></ion-icon></ion-label>
+              <ion-input placeholder="Phone Number" [(ngModel)]="user.phone"></ion-input>
+            </ion-item>
+            <ion-item class="border-bottom">
+              <ion-label fixed><ion-icon name="mail"></ion-icon></ion-label>
+              <ion-input placeholder="Email" [(ngModel)]="user.email"></ion-input>
+            </ion-item>
+            <button ion-button block color="secondary">Confirm</button>
+            <button ion-button block clear color="danger" (click)="cancel()">Cancel</button>
+            <p>By clicking confirm you agree to eatibl's terms and conditions and privacy policy.</p>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

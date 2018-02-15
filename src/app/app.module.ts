@@ -4,6 +4,8 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
+import { StatusBar } from '@ionic-native/status-bar';
+import { SplashScreen } from '@ionic-native/splash-screen';
 
 //Plugins
 import { GoogleMaps } from '@ionic-native/google-maps';
@@ -15,12 +17,13 @@ import { AccountPage } from '../pages/account/account';
 import { BookingsPage } from '../pages/bookings/bookings';
 import { HomePage } from '../pages/home/home';
 import { RestaurantPage } from '../pages/restaurant/restaurant';
+import { ConfirmBookingPage } from '../pages/confirm-booking/confirm-booking';
 import { TabsPage } from '../pages/tabs/tabs';
 
+//Components
 import { RestaurantComponent } from "../components/restaurant/restaurant"
 
-import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
+//Services
 import { ApiServiceProvider } from '../providers/api-service/api-service';
 import { FunctionsProvider } from '../providers/functions/functions';
 
@@ -31,6 +34,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
     AccountPage,
     BookingsPage,
     RestaurantPage,
+    ConfirmBookingPage,
     HomePage,
     TabsPage,
     RestaurantComponent
@@ -48,6 +52,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
     AccountPage,
     BookingsPage,
     RestaurantPage,
+    ConfirmBookingPage,
     HomePage,
     TabsPage,
     RestaurantComponent
