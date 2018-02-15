@@ -20,15 +20,6 @@ restaurant, page-restaurant {
   h2{
     font-weight: 700 !important;
   }
-  .border-bottom{
-    border-bottom: 1px solid #ccc;
-  }
-  .border-right{
-    border-right: 1px solid #ccc;
-  }
-  .align-center{
-    text-align: center;
-  }
   .open{
     span{
       color: color($colors, tertiary);
@@ -152,6 +143,15 @@ restaurant, page-restaurant {
 
 .no-padding-col{
   padding: 0 !important;
+}
+.border-bottom{
+  border-bottom: 1px solid #ccc;
+}
+.border-right{
+  border-right: 1px solid #ccc;
+}
+.align-center{
+  text-align: center;
 }
 
 //General Directive Styling
