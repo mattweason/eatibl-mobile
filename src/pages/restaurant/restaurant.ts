@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
 import * as _ from 'underscore'
 
 /**
@@ -25,23 +26,68 @@ export class RestaurantPage {
   people: Number = 2;
   businessHours = [['Monday','Mon','',''],['Tuesday','Tue','',''],['Wednesday','Wed','',''],['Thursday','Thu','',''],['Friday','Fri','',''],['Saturday','Sat','',''],['Sunday','Sun','','']];
   open: any;
-  id: String;
+  restaurantId: String;
+  timeslotId: String;
   type: String;
   selectedDate: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider, private datePicker: DatePicker, private functions: FunctionsProvider) {
-    this.id = navParams.get('id');
+  map: GoogleMap;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider, private datePicker: DatePicker, private functions: FunctionsProvider, private googleMaps: GoogleMaps) {
+    this.restaurantId = navParams.get('restaurantId');
+    this.timeslotId = navParams.get('timeslotId');
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad RestaurantPage');
+    this.loadMap();
     this.type = "about";
   }
 
   ngOnInit(){
-    this.API.makeCall('restaurant/' + this.id).subscribe(data => this.restaurant = data);
-    this.API.makeCall('discount/' + this.id + '/week').subscribe(data => this.processTimeslots(data));
-    this.API.makeCall('hours/' + this.id).subscribe(data => this.processBusinessHours(data));
+    this.API.makeCall('restaurant/' + this.restaurantId).subscribe(data => this.restaurant = data);
+    this.API.makeCall('discount/' + this.restaurantId + '/week').subscribe(data => this.processTimeslots(data));
+    this.API.makeCall('hours/' + this.restaurantId).subscribe(data => this.processBusinessHours(data));
+  }
+
+  loadMap() {
+
+    let mapOptions: GoogleMapOptions = {
+      camera: {
+        target: {
+          lat: 43.0741904,
+          lng: -89.3809802
+        },
+        zoom: 18,
+        tilt: 30
+      }
+    };
+
+    this.map = new GoogleMap('map', mapOptions);
+
+    // Wait the MAP_READY before using any methods.
+    this.map.one(GoogleMapsEvent.MAP_READY)
+      .then(() => {
+        console.log('Map is ready!');
+
+        // Now you can use all methods safely.
+        this.map.addMarker({
+          title: 'Ionic',
+          icon: 'blue',
+          animation: 'DROP',
+          position: {
+            lat: 43.0741904,
+            lng: -89.3809802
+          }
+        })
+          .then(marker => {
+            marker.on(GoogleMapsEvent.MARKER_CLICK)
+              .subscribe(() => {
+                alert('clicked');
+              });
+          });
+
+      });
   }
 
   //To establish open now or closed in view
@@ -53,15 +99,19 @@ export class RestaurantPage {
     var day = date.getDay();
 
     //Get current time to compare to open close hours for day
-    var hour = date.getHours() >= 6 ? date.getHours() : date.getHours + 24;
+    var hour = date.getHours() >= 6 ? date.getHours() : +date.getHours + 24;
     var minute = (date.getMinutes() / 60);
     var time = hour + minute;
     var index = _.findIndex(this.businessHours, function(businessDay){
       return businessDay[0] == days[day];
     });
 
+    //Converting open and close hours from string to numbers
+    var open: Number = +this.businessHours[index][2];
+    var close: Number = +this.businessHours[index][3];
+
     //Compare current time to open close hours
-    var isOpen = this.businessHours[index][2] <= time && this.businessHours[index][3] >= time;
+    var isOpen = open <= time && close >= time;
 
     this.open = {
       open: isOpen,
@@ -79,10 +129,21 @@ export class RestaurantPage {
     this.timeslots = _.filter(data, function(timeslot){
       return timeslot.day == day;
     });
+
+    //Activate timeslot on load if one exists
+    if(this.timeslotId != ''){
+      var timeslotId = this.timeslotId; //Avoid this scoping issues in filter
+
+      var timeslot = _.filter(this.timeslots, function(timeslot){
+        return timeslot._id == timeslotId;
+      });
+      this.selectBooking(timeslot[0]);
+    }
   }
 
   //Activate a booking
   selectBooking(timeslot){
+    console.log(timeslot)
     this.activeTimeslot = timeslot;
   }
 

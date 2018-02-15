@@ -17,6 +17,9 @@
 
 //Restaurant Component and Page
 restaurant, page-restaurant {
+  h2{
+    font-weight: 700 !important;
+  }
   .border-bottom{
     border-bottom: 1px solid #ccc;
   }
@@ -82,6 +85,7 @@ restaurant, page-restaurant {
         height: 80px;
         border-right: 1px solid lighten(#ccc, 10%);
         p{
+          margin: 0;
           height: 25%;
           color: lighten(color($colors, dark), 20%);
           &.active{
@@ -92,7 +96,7 @@ restaurant, page-restaurant {
         button{
           width: 100%;
           margin: 0;
-          height: 73%;
+          height: 75%;
           font-size: 2rem;
           &.active{
             background-color: darken(color($colors, primary), 20%);
@@ -123,6 +127,19 @@ restaurant, page-restaurant {
       padding-top: 5px;
     }
   }
+  .loading{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    ion-spinner * {
+      width: 28px;
+      height: 28px;
+      stroke: color($colors, primary);
+      fill: #fff;
+    }
+  }
 }
 
 //General Use Classes
@@ -136,3 +153,5 @@ restaurant, page-restaurant {
 .no-padding-col{
   padding: 0 !important;
 }
+
+//General Directive Styling

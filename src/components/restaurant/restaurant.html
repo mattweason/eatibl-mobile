@@ -1,14 +1,16 @@
 <!-- Generated template for the RestaurantComponent component -->
-<ion-card (tap)="navigateTo($event, restaurant._id)">
-  <img src="assets/imgs/placeholder-food.jpg">
+<ion-card *ngIf="isLoaded">
+  <img src="assets/imgs/placeholder-food.jpg" (tap)="navigateTo($event, restaurant._id, '')">
   <ion-card-content no-padding>
     <ion-grid>
-      <ion-row class="border-bottom">
+      <ion-row class="border-bottom" (tap)="navigateTo($event, restaurant._id, '')">
         <ion-col col-9 align-self-stretch class="first-row border-right">
           <h2>{{restaurant.name}}</h2>
           <p class="tags">Mediterranean, Greek</p>
+          <p *ngIf="open?.open" class="open"><span>Open Now</span> {{functions.formatTime(businessHours[open.index][2], true)}} - {{functions.formatTime(businessHours[open.index][3], true)}}</p>
+          <p *ngIf="!open?.open" class="closed"><span>Closed</span></p>
         </ion-col>
-        <ion-col col-3 nowrap align-self-stretch class="align-center first-row">
+        <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
           <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
           <div class="price">
             <p [ngClass]="restaurant.price >= 1 ? 'active' : ''">$</p>
@@ -18,13 +20,24 @@
           </div>
         </ion-col>
       </ion-row>
-
-      <ion-row>
-        <ion-col>
-          <ion-scroll scrollX="true">
-          </ion-scroll>
+      <ion-row class="border-bottom" *ngIf="open?.open">
+        <ion-col class="no-padding-col">
+          <ion-slides *ngIf="timeslots.length" slidesPerView="4">
+            <ion-slide *ngFor="let timeslot of timeslots">
+              <div class="timeslot">
+                <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatTime(timeslot.time, true)}}</p>
+                <button ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}"(tap)="navigateTo($event, restaurant._id, timeslot._id)">-{{timeslot?.discount}}%</button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+          <div *ngIf="!timeslots.length" class="no-timeslots">
+            <p>Closed</p>
+          </div>
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-card-content>
 </ion-card>
+<div class="loading" *ngIf="!isLoaded">
+  <ion-spinner></ion-spinner>
+</div>
