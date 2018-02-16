@@ -50,7 +50,7 @@ export class ConfirmBookingPage {
     var dateOrigin = new Date(this.date);
     console.log(dateOrigin)
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var months = ['Jan.','Feb.','Mar.','Apr.','May','Jun.','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'];
     var day = days[dateOrigin.getDay()];
     var date = dateOrigin.getDate();
     var month = months[dateOrigin.getMonth()];
@@ -62,6 +62,7 @@ export class ConfirmBookingPage {
     this.dateObject.day = day;
     console.log(this.dateObject)
   }
+
 
   cancel(){
     this.navCtrl.pop();

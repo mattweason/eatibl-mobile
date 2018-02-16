@@ -182,3 +182,8 @@ ion-label[fixed]{
     color: lighten(color($colors, dark), 20%);
   }
 }
+
+//General Styling
+h2, p, button, span, ion-select, ion-datetime, ion-input {
+  font-family: "Quicksand";
+}
