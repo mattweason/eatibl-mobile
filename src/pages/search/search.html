@@ -7,12 +7,17 @@
 <ion-header>
 
   <ion-navbar color="primary">
-    <ion-title>Search</ion-title>
+    <ion-searchbar></ion-searchbar>
+    <button ion-button icon-only clear class="options-button">
+      <ion-icon name="options"></ion-icon>
+    </button>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
-
+<ion-content>
+  <ion-list>
+    <restaurant *ngFor = "let restaurant of restaurantList" [restaurant]="restaurant"></restaurant>
+  </ion-list>
 </ion-content>

@@ -1,3 +1,13 @@
 page-search {
-
+  .options-button{
+    ion-icon{
+      color: #fff;
+    }
+  }
+  ion-navbar{
+    .toolbar-content{
+      display: flex;
+      align-items: center;
+    }
+  }
 }
