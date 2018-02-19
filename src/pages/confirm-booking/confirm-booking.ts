@@ -24,11 +24,7 @@ export class ConfirmBookingPage {
     phone: '',
     email: ''
   };
-  dateObject = {
-    month: '',
-    date: Number,
-    day: ''
-  };
+  dateObject = {} as any;
   date: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private functions: FunctionsProvider) {
@@ -54,9 +50,6 @@ export class ConfirmBookingPage {
     var day = days[dateOrigin.getDay()];
     var date = dateOrigin.getDate();
     var month = months[dateOrigin.getMonth()];
-    console.log(day)
-    console.log(date)
-    console.log(month)
     this.dateObject.month = month;
     this.dateObject.date = date;
     this.dateObject.day = day;
