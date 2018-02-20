@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import * as moment from 'moment';
 
 /*
   Generated class for the FunctionsProvider provider.
@@ -15,7 +16,7 @@ export class FunctionsProvider {
   }
 
   //Format a raw time to clocktime. Full is true if we want minutes
-  formatTime(value, full){
+  formatClockTime(value, full){
     var clockTime;
     var hour = Math.floor(value);
     var minutes = full ? (value - hour) == 0.5 ? ':30' : ':00' : '';
@@ -34,4 +35,15 @@ export class FunctionsProvider {
     return clockTime;
   }
 
+  //Format a regular time number into our database time format (6-30)
+  formatTime(date){
+    //Caching values from moment
+    var hourNumber = parseInt(moment(date).format('H'));
+    var minuteNumber = parseInt(moment(date).format('m'));
+
+    var hour = hourNumber >= 6 ? hourNumber : hourNumber + 24;
+    var minute = (minuteNumber / 60);
+
+    return hour + minute;
+  }
 }

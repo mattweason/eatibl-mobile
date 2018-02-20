@@ -31,7 +31,8 @@ export class RestaurantPage {
   restaurantId: String;
   timeslotId: String;
   type: String;
-  selectedDate = new Date(Date.now());
+  today = new Date(Date.now());
+  selectedDate = this.today;
 
   map: GoogleMap;
 

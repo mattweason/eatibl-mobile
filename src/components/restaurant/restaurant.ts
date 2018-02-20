@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChange } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as _ from 'underscore'
+import * as moment from 'moment'
 import { FunctionsProvider } from '../../providers/functions/functions';
 
 import { RestaurantPage } from '../../pages/restaurant/restaurant';
@@ -16,12 +17,21 @@ import { RestaurantPage } from '../../pages/restaurant/restaurant';
   selector: 'restaurant',
   templateUrl: 'restaurant.html'
 })
-export class RestaurantComponent {
+export class RestaurantComponent implements OnChanges {
 
-  @Input() restaurant: any;
+  @Input() restaurant = {} as any;
+  @Input() date: string;
+
+  ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+    console.log('changed')
+    this.processBusinessHours();
+    this.processTimeslots();
+  }
 
   timeslots: any;
-  businessHours = [['Monday','Mon','',''],['Tuesday','Tue','',''],['Wednesday','Wed','',''],['Thursday','Thu','',''],['Friday','Fri','',''],['Saturday','Sat','',''],['Sunday','Sun','','']];
+  timeslotsData = {} as any;
+  businessHours = [];
+  businessHoursData = {} as any;
   open: any;
   isLoaded: boolean = false;
 
@@ -29,9 +39,16 @@ export class RestaurantComponent {
   }
 
   ngOnInit(){
-    this.API.makeCall('discount/' + this.restaurant._id + '/week').subscribe(data => this.processTimeslots(data));
-    this.API.makeCall('hours/' + this.restaurant._id).subscribe(data => this.processBusinessHours(data));
+    this.API.makeCall('discount/' + this.restaurant._id + '/week').subscribe(data => {
+      this.timeslotsData = data;
+      this.processTimeslots()
+    });
+    this.API.makeCall('hours/' + this.restaurant._id).subscribe(data => {
+      this.businessHoursData = data;
+      this.processBusinessHours()
+    });
   }
+
 
   navigateTo(event, restaurantId, timeslotId){
     this.navCtrl.push(RestaurantPage, {
@@ -41,57 +58,37 @@ export class RestaurantComponent {
   }
 
   //To establish open now or closed in view
-  buildTodayDate(){
-    var date = new Date(Date.now());
-
-    //For finding index of businessHours today
-    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var day = date.getDay();
-
+  isOpen(){
     //Get current time to compare to open close hours for day
-    var hour = date.getHours() >= 6 ? date.getHours() : +date.getHours + 24;
-    var minute = (date.getMinutes() / 60);
-    var time = hour + minute;
-    var index = _.findIndex(this.businessHours, function(businessDay){
-      return businessDay[0] == days[day];
-    });
+    var time = this.functions.formatTime(this.date);
 
-    //Converting open and close hours from string to numbers
-    var open: Number = +this.businessHours[index][2];
-    var close: Number = +this.businessHours[index][3];
-
-    //Compare current time to open close hours
-    var isOpen = open <= time && close >= time;
-
-    this.open = {
-      open: isOpen,
-      index: index
-    }
+    //Compare current time to open close hours and set to this.open
+    this.open = this.businessHours[0] <= time && this.businessHours[1] >= time;
   }
 
   //Filter timeslots for the currently selected date
-  processTimeslots(data){
-    //Process date used to filter timeslots
-    var date = new Date(Date.now());
-    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var day = days[date.getDay()];
+  processTimeslots(){
+    var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
+    var date = this.date;
 
-    this.timeslots = _.filter(data, function(timeslot){
-      return timeslot.day == day;
+    //Filter timeslots by date and time
+    this.timeslots = _.filter(this.timeslotsData, function(timeslot){
+      if(moment(date).isSame(moment(), 'day'))
+        return (timeslot.day == moment().format('dddd').toString() && timeslot.time > hour);
+      else
+        return (timeslot.day == moment().format('dddd').toString());
     });
 
     this.isLoaded = true;
   }
 
   //Add open and close hours to businessHours array for ngFor loop in view
-  processBusinessHours(data){
-    console.log(data)
-    for (var i = 0; i < data.length; i++)
-      for(var a = 0; a < this.businessHours.length; a++)
-        if(this.businessHours[a][0] == data[i]['day']){
-          this.businessHours[a][2] = data[i]['open'];
-          this.businessHours[a][3] = data[i]['close'];
-        }
-    this.buildTodayDate();
+  processBusinessHours(){
+    for (var i = 0; i < this.businessHoursData.length; i++)
+      if(this.businessHoursData[i]['day'] == moment(this.date).format('dddd').toString()){
+        this.businessHours[0] = this.businessHoursData[i]['open'];
+        this.businessHours[1] = this.businessHoursData[i]['close'];
+      }
+    this.isOpen();
   }
 }

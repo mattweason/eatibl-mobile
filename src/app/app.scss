@@ -183,7 +183,19 @@ ion-label[fixed]{
   }
 }
 
+ion-navbar.align-toolbar{
+  .toolbar-content{
+    display: flex;
+    align-items: center;
+    .options-button{
+      ion-icon, ion-datetime{
+        color: #fff;
+      }
+    }
+  }
+}
+
 //General Styling
-h2, p, button, span, ion-select, ion-datetime, ion-input {
+h2, p, button, span, ion-select, ion-datetime, ion-input, ion-title {
   font-family: "Quicksand";
 }

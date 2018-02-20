@@ -1,11 +1,17 @@
 <ion-header>
-  <ion-navbar color="primary">
+  <ion-navbar color="primary" class="align-toolbar">
     <ion-title>Nearby</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-right (click)="picker.open()" class="options-button">
+        <ion-datetime #picker displayFormat="MMM DD" pickerFormat="MMM DD" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionChange)="changeDate()"></ion-datetime>
+        <ion-icon name="calendar"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <restaurant *ngFor = "let restaurant of restaurantList" [restaurant]="restaurant"></restaurant>
+    <restaurant *ngFor = "let restaurant of restaurantList" [restaurant]="restaurant" [date]="date"></restaurant>
   </ion-list>
 </ion-content>

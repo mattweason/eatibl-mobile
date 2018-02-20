@@ -22,7 +22,7 @@
           <ion-col col-9 align-self-stretch class="first-row border-right">
             <h2>{{restaurant?.name}}</h2>
             <p class="tags">Mediterranean, Greek</p>
-            <p *ngIf="open?.open" class="open"><span>Open Now</span> {{functions.formatTime(businessHours[open.index][2], true)}} - {{functions.formatTime(businessHours[open.index][3], true)}}</p>
+            <p *ngIf="open?.open" class="open"><span>Open Now</span> {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</p>
             <p *ngIf="!open?.open" class="closed"><span>Closed Now</span></p>
           </ion-col>
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
@@ -39,7 +39,7 @@
           <ion-col>
               <ion-item class="border-bottom">
                 <ion-label fixed><ion-icon name="calendar"></ion-icon></ion-label>
-                <ion-datetime placeholder="Today" [(ngModel)]="selectedDate"></ion-datetime>
+                <ion-datetime placeholder="Today" todayText="Today" [(ngModel)]="selectedDate"></ion-datetime>
               </ion-item>
               <ion-item>
                 <ion-label fixed><ion-icon name="people"></ion-icon></ion-label>
@@ -59,7 +59,7 @@
             <ion-slides *ngIf="timeslots.length" slidesPerView="4">
               <ion-slide *ngFor="let timeslot of timeslots">
                 <div class="timeslot">
-                  <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatTime(timeslot.time, true)}}</p>
+                  <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>
                   <button ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot)">-{{timeslot?.discount}}%</button>
                 </div>
               </ion-slide>
@@ -111,7 +111,7 @@
             </ion-col>
             <ion-col col-7>
               <p class="hours" *ngFor="let day of businessHours;">
-                <span *ngIf="day[2] != day[3]">{{functions.formatTime(day[2], true)}} - {{functions.formatTime(day[3], true)}}</span>
+                <span *ngIf="day[2] != day[3]">{{functions.formatClockTime(day[2], true)}} - {{functions.formatClockTime(day[3], true)}}</span>
                 <span *ngIf="day[2] == day[3]">Closed</span>
               </p>
             </ion-col>

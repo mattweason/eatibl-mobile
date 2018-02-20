@@ -44,7 +44,6 @@ export class ConfirmBookingPage {
 
   buildDateObject(){
     var dateOrigin = new Date(this.date);
-    console.log(dateOrigin)
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     var months = ['Jan.','Feb.','Mar.','Apr.','May','Jun.','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'];
     var day = days[dateOrigin.getDay()];
