@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, OnChanges, SimpleChange } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { Component, Input, OnInit, OnChanges, SimpleChange, ViewChild } from '@angular/core';
+import { NavController, Slides } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as _ from 'underscore'
 import * as moment from 'moment'
@@ -18,14 +18,19 @@ import { RestaurantPage } from '../../pages/restaurant/restaurant';
   templateUrl: 'restaurant.html'
 })
 export class RestaurantComponent implements OnChanges {
+  private slides: Slides;
+  @ViewChild('slides') set content(content: Slides) {
+    this.slides = content;
+  }
 
   @Input() restaurant = {} as any;
   @Input() date: string;
+  @Input() time: string;
 
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    console.log('changed')
     this.processBusinessHours();
     this.processTimeslots();
+    this.setSlide();
   }
 
   timeslots: any;
@@ -34,6 +39,7 @@ export class RestaurantComponent implements OnChanges {
   businessHoursData = {} as any;
   open: any;
   isLoaded: boolean = false;
+  isInitial: boolean = true;
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, private functions: FunctionsProvider) {
   }
@@ -48,7 +54,6 @@ export class RestaurantComponent implements OnChanges {
       this.processBusinessHours()
     });
   }
-
 
   navigateTo(event, restaurantId, timeslotId){
     this.navCtrl.push(RestaurantPage, {
@@ -90,5 +95,16 @@ export class RestaurantComponent implements OnChanges {
         this.businessHours[1] = this.businessHoursData[i]['close'];
       }
     this.isOpen();
+  }
+
+  //When time changes or date changes, set slide to selected time
+  setSlide(){
+    if(this.slides){
+      var time = this.time;
+      var index = _.findIndex(this.timeslots, function(timeslot){
+        return timeslot.time == (moment(time).get('hour') + (moment(time).get('minute') / 60))
+      });
+      this.slides.slideTo(index - 1)
+    }
   }
 }

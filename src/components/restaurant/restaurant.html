@@ -22,7 +22,7 @@
       </ion-row>
       <ion-row *ngIf="open">
         <ion-col class="no-padding-col">
-          <ion-slides *ngIf="timeslots.length" slidesPerView="4">
+          <ion-slides #slides *ngIf="timeslots.length" slidesPerView="4">
             <ion-slide *ngFor="let timeslot of timeslots">
               <div class="timeslot">
                 <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>

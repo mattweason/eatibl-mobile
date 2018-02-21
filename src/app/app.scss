@@ -175,6 +175,31 @@ ion-grid{
   }
 }
 
+.dateToolbar{
+  .datetime-sm{
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    ion-datetime{
+      font-size: 14px;
+      padding: 10px 8px 10px 16px;
+    }
+    &.no-icon{
+      padding-left: 0;
+    }
+    .item-inner{
+      border-bottom: none !important;
+    }
+    ion-label[fixed]{
+      margin-right: 0 !important;
+      min-width: 15% !important;
+      max-width: 15% !important;
+    }
+  }
+  .button-ios{
+    margin: 0;
+  }
+}
+
 ion-label[fixed]{
   min-width: 10% !important;
   max-width: 10% !important;
