@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
-import * as _ from 'underscore'
+import * as _ from 'underscore';
+import moment from 'moment';
 
 import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking';
 
@@ -20,37 +21,52 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
   selector: 'page-restaurant',
   templateUrl: 'restaurant.html',
 })
-export class RestaurantPage {
+export class RestaurantPage implements OnInit {
+  private slides: Slides;
+  @ViewChild('slides') set content(content: Slides) {
+    this.slides = content;
+    this.setSlide();
+  }
 
+  timeslots: any;
+  timeslotsData = {} as any;
+  businessHours = [['Monday','Mon','',''],['Tuesday','Tue','',''],['Wednesday','Wed','',''],['Thursday','Thu','',''],['Friday','Fri','',''],['Saturday','Sat','',''],['Sunday','Sun','','']];
+  businessHoursData = {} as any;
   restaurant: any;
-  timeslots = [];
   activeTimeslot: any;
   people: Number = 2;
-  businessHours = [['Monday','Mon','',''],['Tuesday','Tue','',''],['Wednesday','Wed','',''],['Thursday','Thu','',''],['Friday','Fri','',''],['Saturday','Sat','',''],['Sunday','Sun','','']];
   open: any;
   restaurantId: String;
   timeslotId: String;
   type: String;
   today = new Date(Date.now());
   selectedDate = this.today;
+  date: any;
+  isLoaded: boolean = false;
 
   map: GoogleMap;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider, private datePicker: DatePicker, private functions: FunctionsProvider, private googleMaps: GoogleMaps) {
     this.restaurantId = navParams.get('restaurantId');
     this.timeslotId = navParams.get('timeslotId');
+    this.date = navParams.get('date');
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad RestaurantPage');
     this.loadMap();
     this.type = "about";
   }
 
   ngOnInit(){
     this.API.makeCall('restaurant/' + this.restaurantId).subscribe(data => this.restaurant = data);
-    this.API.makeCall('discount/' + this.restaurantId + '/week').subscribe(data => this.processTimeslots(data));
-    this.API.makeCall('hours/' + this.restaurantId).subscribe(data => this.processBusinessHours(data));
+    this.API.makeCall('discount/' + this.restaurantId + '/week').subscribe(data => {
+      this.timeslotsData = data;
+      this.processTimeslots();
+    });
+    this.API.makeCall('hours/' + this.restaurantId).subscribe(data => {
+      this.businessHoursData = data;
+      this.processBusinessHours();
+    });
   }
 
   loadMap() {
@@ -94,8 +110,8 @@ export class RestaurantPage {
   }
 
   //To establish open now or closed in view
-  buildTodayDate(){
-    var date = new Date(Date.now());
+  isOpen(){
+    var date = new Date(this.date);
 
     //For finding index of businessHours today
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -113,8 +129,9 @@ export class RestaurantPage {
     var open: Number = +this.businessHours[index][2];
     var close: Number = +this.businessHours[index][3];
 
-    //Compare current time to open close hours
+    //Compare current time to open close hours and set to this.open
     var isOpen = open <= time && close >= time;
+
 
     this.open = {
       open: isOpen,
@@ -123,15 +140,19 @@ export class RestaurantPage {
   }
 
   //Filter timeslots for the currently selected date
-  processTimeslots(data){
-    //Process date used to filter timeslots
-    var date = this.selectedDate || new Date(Date.now());
-    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var day = days[date.getDay()];
+  processTimeslots(){
+    var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
+    var date = this.date;
 
-    this.timeslots = _.filter(data, function(timeslot){
-      return timeslot.day == day;
+    //Filter timeslots by date and time
+    this.timeslots = _.filter(this.timeslotsData, function(timeslot){
+      if(moment(date).isSame(moment(), 'day'))
+        return (timeslot.day == moment().format('dddd').toString() && timeslot.time > hour);
+      else
+        return (timeslot.day == moment().format('dddd').toString());
     });
+
+    this.isLoaded = true;
 
     //Activate timeslot on load if one exists
     if(this.timeslotId != ''){
@@ -150,14 +171,28 @@ export class RestaurantPage {
   }
 
   //Add open and close hours to businessHours array for ngFor loop in view
-  processBusinessHours(data){
-    for (var i = 0; i < data.length; i++)
+  processBusinessHours(){
+    for (var i = 0; i < this.businessHoursData.length; i++)
       for(var a = 0; a < this.businessHours.length; a++)
-        if(this.businessHours[a][0] == data[i]['day']){
-          this.businessHours[a][2] = data[i]['open'];
-          this.businessHours[a][3] = data[i]['close'];
+        if(this.businessHours[a][0] == this.businessHoursData[i]['day']){
+          this.businessHours[a][2] = this.businessHoursData[i]['open'];
+          this.businessHours[a][3] = this.businessHoursData[i]['close'];
         }
-    this.buildTodayDate();
+    this.isOpen();
+  }
+
+  //When time changes or date changes, set slide to selected time
+  setSlide(){
+    var activeTimeslot = this.activeTimeslot;
+    if(activeTimeslot != '' && this.slides){
+      var index = _.findIndex(this.timeslots, function(timeslot){
+        return timeslot._id == activeTimeslot._id;
+      });
+      console.log(index)
+      setTimeout(() => {
+        this.slides.slideTo(index - 1)
+      }, 500);
+    }
   }
 
   //Navigate to confirm booking page

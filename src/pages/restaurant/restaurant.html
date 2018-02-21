@@ -14,7 +14,7 @@
 
 <ion-content>
 
-  <ion-card>
+  <ion-card *ngIf="isLoaded">
     <img src="assets/imgs/placeholder-food.jpg">
     <ion-card-content no-padding>
       <ion-grid>
@@ -39,7 +39,7 @@
           <ion-col>
               <ion-item class="border-bottom">
                 <ion-label fixed><ion-icon name="calendar"></ion-icon></ion-label>
-                <ion-datetime placeholder="Today" todayText="Today" [(ngModel)]="selectedDate"></ion-datetime>
+                <ion-datetime placeholder="Today" todayText="Today" [(ngModel)]="date"></ion-datetime>
               </ion-item>
               <ion-item>
                 <ion-label fixed><ion-icon name="people"></ion-icon></ion-label>
@@ -56,7 +56,7 @@
         </ion-row>
         <ion-row class="border-bottom">
           <ion-col class="no-padding-col">
-            <ion-slides *ngIf="timeslots.length" slidesPerView="4">
+            <ion-slides #slides *ngIf="timeslots.length" slidesPerView="4" initialSlide="initialSlide">
               <ion-slide *ngFor="let timeslot of timeslots">
                 <div class="timeslot">
                   <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>

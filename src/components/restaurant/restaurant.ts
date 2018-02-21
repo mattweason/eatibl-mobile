@@ -55,10 +55,11 @@ export class RestaurantComponent implements OnChanges {
     });
   }
 
-  navigateTo(event, restaurantId, timeslotId){
+  navigateTo(event, restaurantId, timeslotId, date){
     this.navCtrl.push(RestaurantPage, {
       restaurantId: restaurantId,
-      timeslotId: timeslotId
+      timeslotId: timeslotId,
+      date: date
     });
   }
 
