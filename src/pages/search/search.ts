@@ -16,7 +16,7 @@ import { ApiServiceProvider } from "../../providers/api-service/api-service";
 })
 export class SearchPage {
 
-  restaurantList = [];
+  restaurantList: any;
   bookings = [];
 
 

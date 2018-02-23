@@ -10,7 +10,7 @@ import * as moment from 'moment'
 export class HomePage {
   @ViewChild(Content) content: Content;
 
-  restaurantList = [];
+  restaurantList: any;
   bookings = [];
   date: string;
   today: string;
