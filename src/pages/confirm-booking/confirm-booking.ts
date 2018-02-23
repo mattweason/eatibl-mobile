@@ -10,7 +10,6 @@ import { FunctionsProvider } from '../../providers/functions/functions';
  * Ionic pages and navigation.
  */
 
-@IonicPage()
 @Component({
   selector: 'page-confirm-booking',
   templateUrl: 'confirm-booking.html',

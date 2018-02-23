@@ -1,6 +1,10 @@
 # Specifies intentionally untracked files to ignore when using Git
 # http://git-scm.com/docs/gitignore
 
+# Envrionment Variables
+**/environment.*
+!**/environment.model.ts
+
 *~
 *.sw[mnpcod]
 *.log

@@ -16,7 +16,6 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
  * Ionic pages and navigation.
  */
 
-@IonicPage()
 @Component({
   selector: 'page-restaurant',
   templateUrl: 'restaurant.html',
