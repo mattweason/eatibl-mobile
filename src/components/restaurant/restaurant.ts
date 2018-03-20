@@ -85,6 +85,8 @@ export class RestaurantComponent implements OnChanges {
         return (timeslot.day == moment().format('dddd').toString());
     });
 
+    this.timeslots = _.sortBy(this.timeslots, 'time');
+
     this.isLoaded = true;
   }
 

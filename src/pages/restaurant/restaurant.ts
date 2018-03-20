@@ -25,7 +25,8 @@ export class RestaurantPage implements OnInit {
   private slides: Slides;
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
-    this.setSlide();
+    if(this.timeslotId != '' && this.slides)
+      this.setSlide();
   }
 
   timeslots: any;
@@ -152,6 +153,8 @@ export class RestaurantPage implements OnInit {
         return (timeslot.day == moment().format('dddd').toString());
     });
 
+    this.timeslots = _.sortBy(this.timeslots, 'time');
+
     this.isLoaded = true;
 
     //Activate timeslot on load if one exists
@@ -183,16 +186,14 @@ export class RestaurantPage implements OnInit {
 
   //When time changes or date changes, set slide to selected time
   setSlide(){
-    var activeTimeslot = this.activeTimeslot;
-    if(activeTimeslot != '' && this.slides){
-      var index = _.findIndex(this.timeslots, function(timeslot){
-        return timeslot._id == activeTimeslot._id;
-      });
-      console.log(index)
-      setTimeout(() => {
-        this.slides.slideTo(index - 1)
-      }, 500);
-    }
+  var activeTimeslot = this.activeTimeslot;
+    var index = _.findIndex(this.timeslots, function(timeslot){
+      return timeslot._id == activeTimeslot._id;
+    });
+    console.log(index)
+    setTimeout(() => {
+      this.slides.slideTo(index - 1)
+    }, 500);
   }
 
   //Navigate to confirm booking page
