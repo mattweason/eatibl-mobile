@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
 import { Observable } from 'rxjs/Observable';
+import { ENV } from '@app/env';
 
 /*
  Generated class for the ApiServiceProvider provider.
@@ -14,7 +15,7 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class ApiServiceProvider {
 
-  private url: string = "http://localhost:3000/api/";
+  private url: string = ENV.API;
 
   constructor(private http: HttpClient) {}
 

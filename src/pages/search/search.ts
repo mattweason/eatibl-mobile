@@ -9,7 +9,6 @@ import { ApiServiceProvider } from "../../providers/api-service/api-service";
  * Ionic pages and navigation.
  */
 
-@IonicPage()
 @Component({
   selector: 'page-search',
   templateUrl: 'search.html',
