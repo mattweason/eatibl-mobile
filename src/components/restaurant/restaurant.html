@@ -1,5 +1,5 @@
 <!-- Generated template for the RestaurantComponent component -->
-<ion-card *ngIf="isLoaded" [ngClass]="{'display': isVisible == true}">
+<ion-card *ngIf="isLoaded" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
   <img src="assets/imgs/placeholder-food.jpg" (tap)="navigateTo($event, restaurant._id, '', date)">
   <ion-card-content no-padding>
     <ion-grid>

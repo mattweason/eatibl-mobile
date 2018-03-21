@@ -28,6 +28,7 @@ export class RestaurantComponent implements OnChanges {
       this.isLoaded = true;
       setTimeout(() => {
         this.isVisible = true;
+        console.log(this.isVisible)
       }, 0);
     }, 0);
     this.cdRef.detectChanges();
