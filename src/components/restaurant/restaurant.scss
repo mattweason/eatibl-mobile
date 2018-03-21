@@ -1,1 +1,8 @@
-
+ion-card{
+  opacity: 0;
+  transition: 0.5s ease opacity;
+  &.display{
+    opacity: 1;
+    transition: 0.5s ease opacity;
+  }
+}

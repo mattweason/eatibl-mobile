@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChange, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChange, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { NavController, Slides } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as _ from 'underscore'
@@ -18,9 +18,19 @@ import { RestaurantPage } from '../../pages/restaurant/restaurant';
   templateUrl: 'restaurant.html'
 })
 export class RestaurantComponent implements OnChanges {
+  private isVisible = false;
   private slides: Slides;
+
+  //Need slides to load before setting this.slides so we can set the current slide based on the active timeslot
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
+    setTimeout(() => {
+      this.isLoaded = true;
+      setTimeout(() => {
+        this.isVisible = true;
+      }, 0);
+    }, 0);
+    this.cdRef.detectChanges();
   }
 
   @Input() restaurant = {} as any;
@@ -41,7 +51,7 @@ export class RestaurantComponent implements OnChanges {
   isLoaded: boolean = false;
   isInitial: boolean = true;
 
-  constructor(public navCtrl: NavController, private API: ApiServiceProvider, private functions: FunctionsProvider) {
+  constructor(public navCtrl: NavController, private API: ApiServiceProvider, private functions: FunctionsProvider, private cdRef:ChangeDetectorRef) {
   }
 
   ngOnInit(){
@@ -87,7 +97,6 @@ export class RestaurantComponent implements OnChanges {
 
     this.timeslots = _.sortBy(this.timeslots, 'time');
 
-    this.isLoaded = true;
   }
 
   //Add open and close hours to businessHours array for ngFor loop in view
