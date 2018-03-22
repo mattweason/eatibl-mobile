@@ -28,6 +28,7 @@
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
             <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
             <div class="price">
+
               <p [ngClass]="restaurant?.price >= 1 ? 'active' : ''">$</p>
               <p [ngClass]="restaurant?.price >= 2 ? 'active' : ''">$</p>
               <p [ngClass]="restaurant?.price >= 3 ? 'active' : ''">$</p>
@@ -59,8 +60,8 @@
             <ion-slides #slides *ngIf="timeslots.length" slidesPerView="4" initialSlide="initialSlide">
               <ion-slide *ngFor="let timeslot of timeslots">
                 <div class="timeslot">
-                  <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>
-                  <button ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot)">-{{timeslot?.discount}}%</button>
+                  <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id && activeTimeslot?.quantity >= people}">{{functions.formatClockTime(timeslot.time, true)}}</p>
+                  <button ion-button color="primary" [disabled]="timeslot?.quantity < people" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot)">-{{timeslot?.discount}}%</button>
                 </div>
               </ion-slide>
             </ion-slides>
@@ -70,7 +71,7 @@
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">
-          <button ion-button block color="secondary" [disabled]="!activeTimeslot" (click)="bookNow($event, restaurant, activeTimeslot, selectedDate)">Book Now</button>
+          <button ion-button block color="secondary" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, selectedDate)">Book Now</button>
         </ion-row>
       </ion-grid>
       <div class="details">

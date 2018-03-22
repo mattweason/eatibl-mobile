@@ -92,6 +92,12 @@ restaurant, page-restaurant {
           &.active{
             background-color: darken(color($colors, primary), 20%);
           }
+          &:disabled{
+            background-color: darken(color($colors, light), 10%);
+            color: lighten(color($colors, dark), 40%);
+            opacity: 1;
+
+          }
         }
       }
       &:last-of-type{
