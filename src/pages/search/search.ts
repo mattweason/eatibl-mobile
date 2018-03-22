@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import * as moment from 'moment'
 
 /**
  * Generated class for the SearchPage page.
@@ -13,13 +14,18 @@ import { ApiServiceProvider } from "../../providers/api-service/api-service";
   selector: 'page-search',
   templateUrl: 'search.html',
 })
-export class SearchPage {
+export class SearchPage implements OnInit {
 
   restaurantList: any;
   bookings = [];
+  date: string;
+  today: string;
+  maxDate: string;
+  time: any;
 
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider) {
+    this.setNow();
   }
 
   ionViewDidLoad() {
@@ -28,5 +34,11 @@ export class SearchPage {
 
   ngOnInit(){
     this.API.makeCall('restaurant/all').subscribe(data => this.restaurantList = data);
+  }
+
+  setNow(){
+    this.date = this.today = moment().format();
+    this.time = moment().add(30 - moment().minute() % 30, 'm').format();
+    this.maxDate = moment().add(30, 'day').format();
   }
 }

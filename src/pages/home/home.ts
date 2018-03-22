@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { NavController, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as moment from 'moment'
@@ -20,8 +20,11 @@ export class HomePage {
 
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider) {
-    this.API.makeCall('restaurant/all').subscribe(data => this.restaurantList = data);
     this.setNow();
+  }
+
+  ngOnInit(){
+    this.API.makeCall('restaurant/all').subscribe(data => this.restaurantList = data);
   }
 
   toggleToolbar(){
