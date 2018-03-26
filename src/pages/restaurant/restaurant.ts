@@ -39,8 +39,6 @@ export class RestaurantPage implements OnInit {
   restaurantId: String;
   timeslotId: String;
   type: String;
-  today = new Date(Date.now());
-  selectedDate = this.today;
   date: any;
   isLoaded: boolean = false;
 
@@ -196,10 +194,11 @@ export class RestaurantPage implements OnInit {
   }
 
   //Navigate to confirm booking page
-  bookNow(event, restaurant, timeslot, date){
+  bookNow(event, restaurant, timeslot, people, date){
     this.navCtrl.push(ConfirmBookingPage, {
       restaurant: restaurant,
       timeslot: timeslot,
+      people: people,
       date: date
     });
   }

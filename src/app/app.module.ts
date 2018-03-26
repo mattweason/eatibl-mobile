@@ -17,6 +17,7 @@ import { BookingsPage } from '../pages/bookings/bookings';
 import { HomePage } from '../pages/home/home';
 import { RestaurantPage } from '../pages/restaurant/restaurant';
 import { ConfirmBookingPage } from '../pages/confirm-booking/confirm-booking';
+import { BookingConfirmedPage } from '../pages/booking-confirmed/booking-confirmed';
 import { TabsPage } from '../pages/tabs/tabs';
 
 //Components
@@ -34,6 +35,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
     BookingsPage,
     RestaurantPage,
     ConfirmBookingPage,
+    BookingConfirmedPage,
     HomePage,
     TabsPage,
     RestaurantComponent
@@ -51,6 +53,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
     BookingsPage,
     RestaurantPage,
     ConfirmBookingPage,
+    BookingConfirmedPage,
     HomePage,
     TabsPage,
     RestaurantComponent

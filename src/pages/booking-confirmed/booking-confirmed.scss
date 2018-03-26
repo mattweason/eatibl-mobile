@@ -1,0 +1,35 @@
+page-booking-confirmed {
+  h2{
+    color: color($colors, primary);
+    font-weight: 700 !important;
+    text-align: center;
+    margin: 0;
+  }
+  p{
+    margin: 0 !important;
+  }
+  .center-align{
+    text-align: center;
+  }
+  .day, .month, .time, .date{
+    text-align: center;
+    font-weight: 500;
+  }
+  .day, .time{
+    color: color($colors, primary);
+  }
+  .day, .month, .time{
+    font-size: 16px;
+    line-height: 16px;
+  }
+  .date, .discount{
+    font-size: 32px;
+    line-height: 32px;
+  }
+  .restaurant{
+    font-size: 16px;
+  }
+  .field-title, .address{
+    color: lighten(color($colors, dark), 60%);
+  }
+}

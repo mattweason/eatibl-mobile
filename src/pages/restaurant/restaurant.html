@@ -71,7 +71,7 @@
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">
-          <button ion-button block color="secondary" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, selectedDate)">Book Now</button>
+          <button ion-button block color="secondary" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, people, date)">Book Now</button>
         </ion-row>
       </ion-grid>
       <div class="details">

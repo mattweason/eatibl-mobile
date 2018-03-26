@@ -26,6 +26,13 @@ export class ApiServiceProvider {
       // .catch(this.catchError)
   }
 
+  makePost(url, body){
+    return this.http.post(this.url+ url, body);
+    //.map(this.extractData)
+    //.do(this.logResponse)
+    // .catch(this.catchError)
+  }
+
   private catchError(error: Response | any) {
     console.log(error);
     //return Observable.throw(error.json().error || 'Server error.');
