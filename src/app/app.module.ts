@@ -1,5 +1,6 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule }   from '@angular/forms';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -9,6 +10,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 //Plugins
 import { GoogleMaps } from '@ionic-native/google-maps';
 import { DatePicker } from '@ionic-native/date-picker';
+import { TextMaskModule } from 'angular2-text-mask';
 
 //Pages
 import { SearchPage } from '../pages/search/search';
@@ -42,8 +44,10 @@ import { FunctionsProvider } from '../providers/functions/functions';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     IonicModule.forRoot(MyApp),
-    HttpClientModule
+    HttpClientModule,
+    TextMaskModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

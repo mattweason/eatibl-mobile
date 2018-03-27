@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 
 import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
@@ -22,21 +23,38 @@ export class ConfirmBookingPage {
   restaurant: any;
   timeslot: any;
   people: any;
-  user = {
-    name: '',
-    phone: '',
-    email: '',
-    active: 0
-  };
   dateObject = {} as any;
   date: any;
   response: any;
+  bookingForm: FormGroup;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private functions: FunctionsProvider, private API: ApiServiceProvider, public alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private functions: FunctionsProvider, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder) {
     this.restaurant = navParams.get('restaurant');
     this.timeslot = navParams.get('timeslot');
     this.people = navParams.get('people');
     this.date = navParams.get('date');
+
+    //Form controls and validation
+    this.bookingForm = this.formBuilder.group({
+      name: [
+        '', Validators.compose([
+          Validators.required,
+          Validators.pattern('[a-zA-Z][a-zA-Z ]+')
+        ])
+      ],
+      phone: [
+        '', Validators.compose([
+          Validators.required,
+          Validators.pattern('[0-9]*')
+        ])
+      ],
+      email: [
+        '', Validators.compose([
+          Validators.required,
+          Validators.pattern('[a-zA-Z0-9.-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}')
+        ])
+      ]
+    });
   }
 
   ionViewDidLoad() {
@@ -60,50 +78,57 @@ export class ConfirmBookingPage {
   }
 
   confirm(){
-    var postObject = {
-      user: this.user,
-      people: this.people,
-      timeslot: this.timeslot,
-      date: this.date
-    };
+    if(!this.bookingForm.valid)
+      Object.keys(this.bookingForm.controls).forEach(field => { // {1}
+        const control = this.bookingForm.get(field);            // {2}
+        control.markAsTouched({ onlySelf: true });       // {3}
+      });
+    else{
+      var postObject = {
+        user: this.bookingForm.value,
+        people: this.people,
+        timeslot: this.timeslot,
+        date: this.date
+      };
 
-    this.API.makePost('booking/' + this.restaurant._id + '/create', postObject).subscribe(response => {
-      var title;
-      var message;
-      this.response = response;
+      this.API.makePost('booking/' + this.restaurant._id + '/create', postObject).subscribe(response => {
+        var title;
+        var message;
+        this.response = response;
 
-      if(this.response.message){
-        if(this.response.message == 'overcapacity'){ //If requested capacity is over the available capacity
-          title = 'Overcapacity';
-          message = 'Sorry, but this timeslot only has '+this.response.remainder+' seats left.';
+        if(this.response.message){
+          if(this.response.message == 'overcapacity'){ //If requested capacity is over the available capacity
+            title = 'Overcapacity';
+            message = 'Sorry, but this timeslot only has '+this.response.remainder+' seats left.';
+          }
+
+          if(this.response.message == 'user exists'){ //If the email address belongs to a registered account
+            title = 'Email Address Taken';
+            message = 'This email address belongs to a registered account. Please login or use a different email.';
+          }
+
+          if(this.response.message == 'booking limit'){ //If the user has reached the booking limit
+            title = 'Booking Limit';
+            message = 'You already have 3 upcoming bookings and cannot make anymore.';
+          }
+
+          if(this.response.message == 'error'){ //If there was an error adding the user or the booking
+            title = 'Error';
+            message = 'Sorry, there was an error with your booking. Please try again.';
+          }
+
+          this.presentAlert(title, message);
         }
-
-        if(this.response.message == 'user exists'){ //If the email address belongs to a registered account
-          title = 'Email Address Taken';
-          message = 'This email address belongs to a registered account. Please login or use a different email.';
-        }
-
-        if(this.response.message == 'booking limit'){ //If the user has reached the booking limit
-          title = 'Booking Limit';
-          message = 'You already have 3 upcoming bookings and cannot make anymore.';
-        }
-
-        if(this.response.message == 'error'){ //If there was an error adding the user or the booking
-          title = 'Error';
-          message = 'Sorry, there was an error with your booking. Please try again.';
-        }
-
-        this.presentAlert(title, message);
-      }
-      else
-        this.navCtrl.push(BookingConfirmedPage, {
-          booking: this.response.booking,
-          restaurant: this.restaurant
-        }).then(() => {
-          var index = this.navCtrl.getActive().index;
-          this.navCtrl.remove(index-1);
-        });
-    });
+        else
+          this.navCtrl.push(BookingConfirmedPage, {
+            booking: this.response.booking,
+            restaurant: this.restaurant
+          }).then(() => {
+            var index = this.navCtrl.getActive().index;
+            this.navCtrl.remove(index-1);
+          });
+      });
+    }
   }
 
   cancel(){

@@ -8,6 +8,11 @@ page-confirm-booking {
     text-align: center;
     margin: 0 !important;
   }
+  .form-error{
+    margin-top: 6px;
+    text-align: center;
+    color: color($colors, danger);
+  }
   .title{
     color: lighten(color($colors, dark), 50%);
   }
@@ -25,5 +30,11 @@ page-confirm-booking {
   .date, .discount, .seats{
     font-size: 32px;
     line-height: 32px;
+  }
+  ion-icon{
+    transition: all 0.2s;
+    &.invalid {
+      color: color($colors, danger) !important;
+    }
   }
 }

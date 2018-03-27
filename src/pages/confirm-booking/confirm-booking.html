@@ -48,19 +48,27 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-item class="border-bottom">
-              <ion-label fixed><ion-icon name="person"></ion-icon></ion-label>
-              <ion-input placeholder="Full Name" [(ngModel)]="user.name"></ion-input>
-            </ion-item>
-            <ion-item class="border-bottom">
-              <ion-label fixed><ion-icon name="call"></ion-icon></ion-label>
-              <ion-input placeholder="Phone Number" [(ngModel)]="user.phone"></ion-input>
-            </ion-item>
-            <ion-item class="border-bottom">
-              <ion-label fixed><ion-icon name="mail"></ion-icon></ion-label>
-              <ion-input placeholder="Email" [(ngModel)]="user.email"></ion-input>
-            </ion-item>
-            <button ion-button block color="secondary" (click)="confirm()">Confirm</button>
+            <form [formGroup]="bookingForm" (ngSubmit)="confirm()">
+              <ion-item class="border-bottom">
+                <ion-label fixed><ion-icon name="person" [ngClass]="{'invalid': !bookingForm.controls.name.valid && (bookingForm.controls.name.dirty || bookingForm.controls.name.touched)}"></ion-icon></ion-label>
+                <ion-input placeholder="Full Name" [formControl]="bookingForm.controls['name']"></ion-input>
+              </ion-item>
+              <ion-item class="border-bottom">
+                <ion-label fixed><ion-icon name="call" [ngClass]="{'invalid': !bookingForm.controls.phone.valid && (bookingForm.controls.phone.dirty || bookingForm.controls.phone.touched)}"></ion-icon></ion-label>
+                <ion-input placeholder="Phone Number" type="tel" [formControl]="bookingForm.controls['phone']"></ion-input>
+              </ion-item>
+              <ion-item class="border-bottom">
+                <ion-label fixed><ion-icon name="mail" [ngClass]="{'invalid': !bookingForm.controls.email.valid && (bookingForm.controls.email.dirty || bookingForm.controls.email.touched)}"></ion-icon></ion-label>
+                <ion-input placeholder="Email" [formControl]="bookingForm.controls['email']"></ion-input>
+              </ion-item>
+              <div class="form-error" *ngIf="(bookingForm.controls.name.hasError('required') && bookingForm.controls.name.touched) || (bookingForm.controls.phone.hasError('required') && bookingForm.controls.phone.touched) || (bookingForm.controls.email.hasError('required') && bookingForm.controls.email.touched)">
+                <span>Please fill in all the fields.</span>
+              </div>
+              <div class="form-error" *ngIf="(bookingForm.controls.name.hasError('pattern') && bookingForm.controls.name.touched ) || (bookingForm.controls.phone.hasError('pattern') && bookingForm.controls.phone.touched) || (bookingForm.controls.email.hasError('pattern') && bookingForm.controls.email.touched)">
+                <span>There is an error in the form.</span>
+              </div>
+              <button ion-button block color="secondary" type="submit">Confirm</button>
+            </form>
             <button ion-button block clear color="danger" (click)="cancel()">Cancel</button>
             <p>By clicking confirm you agree to eatibl's terms and conditions and privacy policy.</p>
           </ion-col>
