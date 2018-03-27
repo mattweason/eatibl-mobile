@@ -10,7 +10,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 //Plugins
 import { GoogleMaps } from '@ionic-native/google-maps';
 import { DatePicker } from '@ionic-native/date-picker';
-import { TextMaskModule } from 'angular2-text-mask';
 
 //Pages
 import { SearchPage } from '../pages/search/search';
@@ -21,6 +20,9 @@ import { RestaurantPage } from '../pages/restaurant/restaurant';
 import { ConfirmBookingPage } from '../pages/confirm-booking/confirm-booking';
 import { BookingConfirmedPage } from '../pages/booking-confirmed/booking-confirmed';
 import { TabsPage } from '../pages/tabs/tabs';
+
+//Directives
+import { InputMasksDirective } from '../directives/input-masks/input-masks';
 
 //Components
 import { RestaurantComponent } from "../components/restaurant/restaurant"
@@ -40,14 +42,14 @@ import { FunctionsProvider } from '../providers/functions/functions';
     BookingConfirmedPage,
     HomePage,
     TabsPage,
-    RestaurantComponent
+    RestaurantComponent,
+    InputMasksDirective
   ],
   imports: [
     BrowserModule,
     FormsModule,
     IonicModule.forRoot(MyApp),
-    HttpClientModule,
-    TextMaskModule
+    HttpClientModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

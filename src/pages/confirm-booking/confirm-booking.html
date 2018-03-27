@@ -55,7 +55,7 @@
               </ion-item>
               <ion-item class="border-bottom">
                 <ion-label fixed><ion-icon name="call" [ngClass]="{'invalid': !bookingForm.controls.phone.valid && (bookingForm.controls.phone.dirty || bookingForm.controls.phone.touched)}"></ion-icon></ion-label>
-                <ion-input placeholder="Phone Number" type="tel" [formControl]="bookingForm.controls['phone']"></ion-input>
+                <ion-input placeholder="Phone Number" mask="(***) ***-****" type="tel" [formControl]="bookingForm.controls['phone']"></ion-input>
               </ion-item>
               <ion-item class="border-bottom">
                 <ion-label fixed><ion-icon name="mail" [ngClass]="{'invalid': !bookingForm.controls.email.valid && (bookingForm.controls.email.dirty || bookingForm.controls.email.touched)}"></ion-icon></ion-label>

@@ -45,7 +45,7 @@ export class ConfirmBookingPage {
       phone: [
         '', Validators.compose([
           Validators.required,
-          Validators.pattern('[0-9]*')
+          Validators.pattern('[0-9 ()-]*')
         ])
       ],
       email: [
@@ -84,6 +84,8 @@ export class ConfirmBookingPage {
         control.markAsTouched({ onlySelf: true });       // {3}
       });
     else{
+      //Strip extra characters from phone number
+      this.bookingForm.value.phone = this.bookingForm.value.phone.replace(/[() -]/g,'');
       var postObject = {
         user: this.bookingForm.value,
         people: this.people,
