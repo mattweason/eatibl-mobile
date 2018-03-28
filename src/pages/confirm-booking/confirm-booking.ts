@@ -45,7 +45,8 @@ export class ConfirmBookingPage {
       phone: [
         '', Validators.compose([
           Validators.required,
-          Validators.pattern('[0-9 ()-]*')
+          Validators.pattern('[0-9 ()-]*'),
+          Validators.maxLength(14)
         ])
       ],
       email: [
