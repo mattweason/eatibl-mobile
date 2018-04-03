@@ -20,6 +20,7 @@ import { RestaurantPage } from '../pages/restaurant/restaurant';
 import { ConfirmBookingPage } from '../pages/confirm-booking/confirm-booking';
 import { BookingConfirmedPage } from '../pages/booking-confirmed/booking-confirmed';
 import { TabsPage } from '../pages/tabs/tabs';
+import { LoginPage } from '../pages/login/login';
 
 //Directives
 import { InputMasksDirective } from '../directives/input-masks/input-masks';
@@ -42,6 +43,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
     BookingConfirmedPage,
     HomePage,
     TabsPage,
+    LoginPage,
     RestaurantComponent,
     InputMasksDirective
   ],
@@ -62,6 +64,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
     BookingConfirmedPage,
     HomePage,
     TabsPage,
+    LoginPage,
     RestaurantComponent
   ],
   providers: [
