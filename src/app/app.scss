@@ -163,6 +163,9 @@ restaurant, page-restaurant {
 .no-padding-col{
   padding: 0 !important;
 }
+.no-padding-row {
+  padding: 0 !important;
+}
 .border-bottom{
   border-bottom: 1px solid #ccc;
 }
@@ -224,6 +227,15 @@ ion-navbar.align-toolbar{
       }
     }
   }
+}
+
+.slide-button{
+  border-radius: 0;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
 //General Styling

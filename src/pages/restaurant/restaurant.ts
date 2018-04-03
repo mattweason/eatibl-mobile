@@ -199,6 +199,18 @@ export class RestaurantPage implements OnInit {
     }, 500);
   }
 
+  nextSlide(){
+    if(this.slides){
+      this.slides.slideNext();
+    }
+  }
+
+  prevSlide(){
+    if(this.slides){
+      this.slides.slidePrev();
+    }
+  }
+
   //Navigate to confirm booking page
   bookNow(event, restaurant, timeslot, people, date){
     this.navCtrl.push(ConfirmBookingPage, {
