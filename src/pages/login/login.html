@@ -14,7 +14,7 @@
 
 
 <ion-content padding>
-  <form [formGroup]="loginForm" (ngSubmit)="confirm()">
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon name="mail"></ion-icon></ion-label>
       <ion-input placeholder="Email" [formControl]="loginForm.controls['email']"></ion-input>
