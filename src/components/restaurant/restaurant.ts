@@ -90,13 +90,13 @@ export class RestaurantComponent implements OnChanges {
     //Filter timeslots by date and time
     this.timeslots = _.filter(this.timeslotsData, function(timeslot){
       if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment().format('dddd').toString() && timeslot.time > hour);
+        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
       else
-        return (timeslot.day == moment().format('dddd').toString());
+        return (timeslot.day == moment(date).format('dddd').toString());
     });
 
     this.timeslots = _.sortBy(this.timeslots, 'time');
-
+    console.log(this.timeslots)
   }
 
   //Add open and close hours to businessHours array for ngFor loop in view

@@ -51,6 +51,7 @@ export class RestaurantPage implements OnInit {
     this.timeslotId = navParams.get('timeslotId');
     this.date = navParams.get('date');
     this.setNow();
+
   }
 
   ionViewDidLoad() {
@@ -142,8 +143,6 @@ export class RestaurantPage implements OnInit {
 
   //Filter timeslots for the currently selected date
   processTimeslots(){
-    console.log(this.date)
-    console.log(this.timeslotsData)
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
     var date = this.date;
 
@@ -154,7 +153,6 @@ export class RestaurantPage implements OnInit {
       else
         return (timeslot.day == moment(date).format('dddd').toString());
     });
-    console.log(this.timeslots)
 
     this.timeslots = _.sortBy(this.timeslots, 'time');
 
@@ -167,6 +165,9 @@ export class RestaurantPage implements OnInit {
       var timeslot = _.filter(this.timeslots, function(timeslot){
         return timeslot._id == timeslotId;
       });
+      console.log(this.timeslotId);
+      console.log(this.timeslots)
+      console.log(timeslot)
       this.selectBooking(timeslot[0]);
     }
   }
@@ -193,7 +194,6 @@ export class RestaurantPage implements OnInit {
     var index = _.findIndex(this.timeslots, function(timeslot){
       return timeslot._id == activeTimeslot._id;
     });
-    console.log(index)
     setTimeout(() => {
       this.slides.slideTo(index - 1)
     }, 500);
