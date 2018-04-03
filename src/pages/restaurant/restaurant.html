@@ -23,7 +23,7 @@
             <h2>{{restaurant?.name}}</h2>
             <p class="tags">Mediterranean, Greek</p>
             <p *ngIf="open?.open" class="open"><span>Open Now</span> {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</p>
-            <p *ngIf="!open?.open" class="closed"><span>Closed Now</span></p>
+            <p *ngIf="!open?.open" class="closed"><span>Closed</span></p>
           </ion-col>
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
             <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
@@ -40,7 +40,7 @@
           <ion-col>
               <ion-item class="border-bottom">
                 <ion-label fixed><ion-icon name="calendar"></ion-icon></ion-label>
-                <ion-datetime placeholder="Today" todayText="Today" [(ngModel)]="date"></ion-datetime>
+                <ion-datetime placeholder="Today" todayText="Today" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionChange)="processTimeslots(); processBusinessHours()"></ion-datetime>
               </ion-item>
               <ion-item>
                 <ion-label fixed><ion-icon name="people"></ion-icon></ion-label>
@@ -66,7 +66,7 @@
               </ion-slide>
             </ion-slides>
             <div *ngIf="!timeslots.length" class="no-timeslots">
-              <p>Closed Now</p>
+              <p>Closed</p>
             </div>
           </ion-col>
         </ion-row>

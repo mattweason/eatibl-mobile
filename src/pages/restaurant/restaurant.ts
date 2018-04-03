@@ -40,6 +40,8 @@ export class RestaurantPage implements OnInit {
   timeslotId: String;
   type: String;
   date: any;
+  today: string;
+  maxDate: string;
   isLoaded: boolean = false;
 
   map: GoogleMap;
@@ -48,6 +50,7 @@ export class RestaurantPage implements OnInit {
     this.restaurantId = navParams.get('restaurantId');
     this.timeslotId = navParams.get('timeslotId');
     this.date = navParams.get('date');
+    this.setNow();
   }
 
   ionViewDidLoad() {
@@ -139,16 +142,19 @@ export class RestaurantPage implements OnInit {
 
   //Filter timeslots for the currently selected date
   processTimeslots(){
+    console.log(this.date)
+    console.log(this.timeslotsData)
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
     var date = this.date;
 
     //Filter timeslots by date and time
     this.timeslots = _.filter(this.timeslotsData, function(timeslot){
       if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment().format('dddd').toString() && timeslot.time > hour);
+        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
       else
-        return (timeslot.day == moment().format('dddd').toString());
+        return (timeslot.day == moment(date).format('dddd').toString());
     });
+    console.log(this.timeslots)
 
     this.timeslots = _.sortBy(this.timeslots, 'time');
 
@@ -201,5 +207,10 @@ export class RestaurantPage implements OnInit {
       people: people,
       date: date
     });
+  }
+
+  setNow(){
+    this.today = moment().format();
+    this.maxDate = moment().add(30, 'day').format();
   }
 }
