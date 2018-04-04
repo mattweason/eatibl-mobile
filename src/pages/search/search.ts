@@ -46,8 +46,11 @@ export class SearchPage implements OnInit {
   filterRestaurants(event){
     var value = event.target.value;
 
-    this.restaurantListFiltered = this.restaurantListAll.filter((restaurant) => {
-      return (restaurant.name.toLowerCase().indexOf(value.toLowerCase()) > -1);
-    })
+    if(value)
+      this.restaurantListFiltered = this.restaurantListAll.filter((restaurant) => {
+        return (restaurant.name.toLowerCase().indexOf(value.toLowerCase()) > -1);
+      })
+    else
+      this.restaurantListFiltered = this.restaurantListAll;
   }
 }
