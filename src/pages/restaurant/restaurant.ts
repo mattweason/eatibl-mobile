@@ -24,6 +24,7 @@ export class RestaurantPage implements OnInit {
   private slides: Slides;
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
+    // this.setSlidePosition();
     if(this.timeslotId != '' && this.slides)
       this.setSlide();
   }
@@ -43,6 +44,9 @@ export class RestaurantPage implements OnInit {
   today: string;
   maxDate: string;
   isLoaded: boolean = false;
+  scrollingSlides: any;
+  isBeginning: boolean = false;
+  isEnd: boolean = false;
 
   map: GoogleMap;
 
@@ -200,14 +204,37 @@ export class RestaurantPage implements OnInit {
   }
 
   nextSlide(){
-    if(this.slides){
-      this.slides.slideNext();
-    }
+    if(this.slides)
+      if(!this.slides.isEnd())
+        this.slides.slideNext();
   }
 
   prevSlide(){
+    if(this.slides)
+      if(!this.slides.isBeginning())
+        this.slides.slidePrev();
+  }
+
+  //Run and receives response from press-hold directive
+  scrollSlides(response, direction){
+    if(response == 'press'){
+      this.scrollingSlides = setInterval(() => {
+        if(direction == 'prev')
+          this.prevSlide();
+        if(direction == 'next')
+          this.nextSlide();
+      }, 100)
+    }
+    if(response == 'pressup'){
+      clearInterval(this.scrollingSlides);
+    }
+  }
+
+  //Find and set whether the slide is at the end or the beginning
+  setSlidePosition(){
     if(this.slides){
-      this.slides.slidePrev();
+      this.isBeginning = this.slides.isBeginning();
+      this.isEnd = this.slides.isEnd();
     }
   }
 

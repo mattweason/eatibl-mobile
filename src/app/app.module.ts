@@ -24,6 +24,7 @@ import { LoginPage } from '../pages/login/login';
 
 //Directives
 import { InputMasksDirective } from '../directives/input-masks/input-masks';
+import { PressHoldDirective } from '../directives/press-hold/press-hold';
 
 //Components
 import { RestaurantComponent } from "../components/restaurant/restaurant"
@@ -45,7 +46,8 @@ import { FunctionsProvider } from '../providers/functions/functions';
     TabsPage,
     LoginPage,
     RestaurantComponent,
-    InputMasksDirective
+    InputMasksDirective,
+    PressHoldDirective
   ],
   imports: [
     BrowserModule,

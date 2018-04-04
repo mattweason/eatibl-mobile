@@ -57,10 +57,10 @@
         </ion-row>
         <ion-row class="border-bottom no-padding-row">
           <ion-col col-1 class="no-padding-col">
-            <button class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()" (press)="prevPress($event)"><ion-icon name="arrow-back"></ion-icon></button>
+            <button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()" (press-hold)="scrollSlides($event, 'prev')"><ion-icon name="arrow-back"></ion-icon></button>
           </ion-col>
           <ion-col col-10 class="no-padding-col">
-            <ion-slides #slides *ngIf="timeslots.length" slidesPerView="4" initialSlide="initialSlide">
+            <ion-slides #slides *ngIf="timeslots.length" slidesPerView="4">
               <ion-slide *ngFor="let timeslot of timeslots">
                 <div class="timeslot">
                   <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id && activeTimeslot?.quantity >= people}">{{functions.formatClockTime(timeslot.time, true)}}</p>
@@ -73,7 +73,7 @@
             </div>
           </ion-col>
           <ion-col col-1 class="no-padding-col">
-            <button class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="nextSlide()"><ion-icon name="arrow-forward"></ion-icon></button>
+            <button [disabled]="isEnd" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="nextSlide()" (press-hold)="scrollSlides($event, 'next')"><ion-icon name="arrow-forward"></ion-icon></button>
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">

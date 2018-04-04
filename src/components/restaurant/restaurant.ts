@@ -96,7 +96,6 @@ export class RestaurantComponent implements OnChanges {
     });
 
     this.timeslots = _.sortBy(this.timeslots, 'time');
-    console.log(this.timeslots)
   }
 
   //Add open and close hours to businessHours array for ngFor loop in view
