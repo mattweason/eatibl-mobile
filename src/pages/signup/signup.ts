@@ -13,17 +13,30 @@ import * as decode from 'jwt-decode';
  */
 
 @Component({
-  selector: 'page-login',
-  templateUrl: 'login.html',
+  selector: 'page-signup',
+  templateUrl: 'signup.html',
 })
-export class LoginPage {
+export class SignupPage {
 
-  loginForm: FormGroup;
+  signupForm: FormGroup;
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder, private storage: Storage) {
 
     //Form controls and validation
-    this.loginForm = this.formBuilder.group({
+    this.signupForm = this.formBuilder.group({
+      name: [
+        '', Validators.compose([
+          Validators.required,
+          Validators.pattern('[a-zA-Z][a-zA-Z ]+')
+        ])
+      ],
+      phone: [
+        '', Validators.compose([
+          Validators.required,
+          Validators.pattern('[0-9 ()-]*'),
+          Validators.maxLength(14)
+        ])
+      ],
       email: [
         '', Validators.compose([
           Validators.required,
@@ -41,7 +54,7 @@ export class LoginPage {
 
   login(){
     //make API call to get token if successful, or status 401 if login failed
-    this.API.makePost('token', this.loginForm.value).subscribe(response => {
+    this.API.makePost('token', this.signupForm.value).subscribe(response => {
 
       this.storage.set('user',response);
 

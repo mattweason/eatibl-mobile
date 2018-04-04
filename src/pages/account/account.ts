@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 
 import { LoginPage } from '../../pages/login/login';
+import { SignupPage } from '../../pages/signup/signup';
 
 /**
  * Generated class for the AccountPage page.
@@ -24,6 +25,10 @@ export class AccountPage {
   }
 
   signUp(){
+    this.navCtrl.push(SignupPage);
+  }
+
+  login(){
     this.navCtrl.push(LoginPage);
   }
 
