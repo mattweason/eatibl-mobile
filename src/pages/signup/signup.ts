@@ -52,11 +52,17 @@ export class SignupPage {
     });
   }
 
-  login(){
+  signup(){
     //make API call to get token if successful, or status 401 if login failed
-    this.API.makePost('token', this.signupForm.value).subscribe(response => {
+    this.API.makePost('register', this.signupForm.value).subscribe(response => {
 
-      this.storage.set('user',response);
+      if(!response.message)
+        this.storage.set('user',response).then((val) => {
+          console.log(val);
+          console.log(decode(val));
+        });
+      if(response.message)
+        console.log(response.message);
 
       //BELOW CODE FOR OUTPUTTING USER INFO
 
