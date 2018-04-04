@@ -10,6 +10,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 //Plugins
 import { GoogleMaps } from '@ionic-native/google-maps';
 import { DatePicker } from '@ionic-native/date-picker';
+import { IonicStorageModule } from '@ionic/storage';
 
 //Pages
 import { SearchPage } from '../pages/search/search';
@@ -53,7 +54,8 @@ import { FunctionsProvider } from '../providers/functions/functions';
     BrowserModule,
     FormsModule,
     IonicModule.forRoot(MyApp),
-    HttpClientModule
+    HttpClientModule,
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
