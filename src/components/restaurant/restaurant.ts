@@ -24,6 +24,7 @@ export class RestaurantComponent implements OnChanges {
   //Need slides to load before setting this.slides so we can set the current slide based on the active timeslot
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
+    this.setSlidePosition();
     setTimeout(() => {
       this.isLoaded = true;
       setTimeout(() => {
@@ -50,6 +51,9 @@ export class RestaurantComponent implements OnChanges {
   open: any;
   isLoaded: boolean = false;
   isInitial: boolean = true;
+  scrollingSlides: any;
+  isBeginning: boolean = false;
+  isEnd: boolean = false;
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, private functions: FunctionsProvider, private cdRef:ChangeDetectorRef) {
   }
@@ -117,5 +121,47 @@ export class RestaurantComponent implements OnChanges {
       });
       this.slides.slideTo(index - 1)
     }
+  }
+
+  nextSlide(){
+    if(this.slides)
+      if(!this.slides.isEnd()){
+        this.slides.slideNext();
+        this.isBeginning = this.slides.isBeginning();
+        this.isEnd = this.slides.isEnd();
+      }
+  }
+
+  prevSlide(){
+    if(this.slides)
+      if(!this.slides.isBeginning()){
+        this.slides.slidePrev();
+        this.isBeginning = this.slides.isBeginning();
+        this.isEnd = this.slides.isEnd();
+      }
+  }
+
+  //Run and receives response from press-hold directive
+  scrollSlides(response, direction){
+    if(response == 'press'){
+      this.scrollingSlides = setInterval(() => {
+        if(direction == 'prev')
+          this.prevSlide();
+        if(direction == 'next')
+          this.nextSlide();
+      }, 100)
+    }
+    if(response == 'pressup'){
+      clearInterval(this.scrollingSlides);
+    }
+  }
+
+  //Find and set whether the slide is at the end or the beginning
+  setSlidePosition(){
+    if(this.slides)
+      setTimeout(() => {
+        this.isBeginning = this.slides.isBeginning();
+        this.isEnd = this.slides.isEnd();
+      }, 500);
   }
 }
