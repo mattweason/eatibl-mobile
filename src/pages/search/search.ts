@@ -16,7 +16,8 @@ import * as moment from 'moment'
 })
 export class SearchPage implements OnInit {
 
-  restaurantList: any;
+  restaurantListAll: any;
+  restaurantListFiltered: any;
   bookings = [];
   date: string;
   today: string;
@@ -33,12 +34,20 @@ export class SearchPage implements OnInit {
   }
 
   ngOnInit(){
-    this.API.makeCall('restaurant/all').subscribe(data => this.restaurantList = data);
+    this.API.makeCall('restaurant/all').subscribe(data => this.restaurantListAll = this.restaurantListFiltered = data);
   }
 
   setNow(){
     this.date = this.today = moment().format();
     this.time = moment().add(30 - moment().minute() % 30, 'm').format();
     this.maxDate = moment().add(30, 'day').format();
+  }
+
+  filterRestaurants(event){
+    var value = event.target.value;
+
+    this.restaurantListFiltered = this.restaurantListAll.filter((restaurant) => {
+      return (restaurant.name.toLowerCase().indexOf(value.toLowerCase()) > -1);
+    })
   }
 }
