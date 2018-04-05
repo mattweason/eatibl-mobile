@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { Storage } from '@ionic/storage';
+import * as decode from 'jwt-decode';
 
 import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
 
@@ -20,6 +22,14 @@ import { FunctionsProvider } from '../../providers/functions/functions';
 })
 export class ConfirmBookingPage {
 
+  isLoggedIn = false;
+  user = {
+    email: '',
+    name: '',
+    phone: '',
+    type: '',
+    active: 0
+  };
   restaurant: any;
   timeslot: any;
   people: any;
@@ -28,7 +38,7 @@ export class ConfirmBookingPage {
   response: any;
   bookingForm: FormGroup;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private functions: FunctionsProvider, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private functions: FunctionsProvider, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder, private storage: Storage) {
     this.restaurant = navParams.get('restaurant');
     this.timeslot = navParams.get('timeslot');
     this.people = navParams.get('people');
@@ -54,7 +64,8 @@ export class ConfirmBookingPage {
           Validators.required,
           Validators.pattern('[a-zA-Z0-9.-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}')
         ])
-      ]
+      ],
+      active: [0]
     });
   }
 
@@ -64,6 +75,15 @@ export class ConfirmBookingPage {
 
   ngOnInit(){
     this.buildDateObject();
+    this.storage.get('user').then((val) => {
+      if(val){
+        this.user = decode(val);
+        this.bookingForm.controls['name'].setValue(this.user.name);
+        this.bookingForm.controls['phone'].setValue(this.user.phone);
+        this.bookingForm.controls['email'].setValue(this.user.email);
+        this.bookingForm.controls['active'].setValue(this.user.active);
+      }
+    });
   }
 
   buildDateObject(){
@@ -91,7 +111,7 @@ export class ConfirmBookingPage {
         user: this.bookingForm.value,
         people: this.people,
         timeslot: this.timeslot,
-        date: this.date
+        date: this.date,
       };
 
       this.API.makePost('booking/' + this.restaurant._id + '/create', postObject).subscribe(response => {

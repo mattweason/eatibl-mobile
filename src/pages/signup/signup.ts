@@ -19,6 +19,7 @@ import * as decode from 'jwt-decode';
 export class SignupPage {
 
   signupForm: FormGroup;
+  response = {} as any;
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder, private storage: Storage) {
 
@@ -55,14 +56,14 @@ export class SignupPage {
   signup(){
     //make API call to get token if successful, or status 401 if login failed
     this.API.makePost('register', this.signupForm.value).subscribe(response => {
-
-      if(!response.message)
+      this.response = response;
+      if(!this.response.message)
         this.storage.set('user',response).then((val) => {
           console.log(val);
           console.log(decode(val));
         });
-      if(response.message)
-        console.log(response.message);
+      if(this.response.message)
+        console.log(this.response.message);
 
       //BELOW CODE FOR OUTPUTTING USER INFO
 

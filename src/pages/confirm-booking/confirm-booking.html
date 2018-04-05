@@ -51,15 +51,15 @@
             <form [formGroup]="bookingForm" (ngSubmit)="confirm()">
               <ion-item class="border-bottom">
                 <ion-label fixed><ion-icon name="person" [ngClass]="{'invalid': !bookingForm.controls.name.valid && (bookingForm.controls.name.dirty || bookingForm.controls.name.touched)}"></ion-icon></ion-label>
-                <ion-input placeholder="Full Name" [formControl]="bookingForm.controls['name']"></ion-input>
+                <ion-input placeholder="Full Name" [formControl]="bookingForm.controls['name']" [disabled]="user.active == 1"></ion-input>
               </ion-item>
               <ion-item class="border-bottom">
                 <ion-label fixed><ion-icon name="call" [ngClass]="{'invalid': !bookingForm.controls.phone.valid && (bookingForm.controls.phone.dirty || bookingForm.controls.phone.touched)}"></ion-icon></ion-label>
-                <ion-input placeholder="Phone Number" mask="(***) ***-****" type="tel" [formControl]="bookingForm.controls['phone']"></ion-input>
+                <ion-input placeholder="Phone Number" mask="(***) ***-****" type="tel" [formControl]="bookingForm.controls['phone']" [disabled]="user.active == 1"></ion-input>
               </ion-item>
               <ion-item class="border-bottom">
                 <ion-label fixed><ion-icon name="mail" [ngClass]="{'invalid': !bookingForm.controls.email.valid && (bookingForm.controls.email.dirty || bookingForm.controls.email.touched)}"></ion-icon></ion-label>
-                <ion-input placeholder="Email" [formControl]="bookingForm.controls['email']"></ion-input>
+                <ion-input placeholder="Email" [formControl]="bookingForm.controls['email']" [disabled]="user.active == 1"></ion-input>
               </ion-item>
               <div class="form-error" *ngIf="(bookingForm.controls.name.hasError('required') && bookingForm.controls.name.touched) || (bookingForm.controls.phone.hasError('required') && bookingForm.controls.phone.touched) || (bookingForm.controls.email.hasError('required') && bookingForm.controls.email.touched)">
                 <span>Please fill in all the fields.</span>

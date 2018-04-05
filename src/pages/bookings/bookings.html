@@ -14,7 +14,7 @@
 
 
 <ion-content>
-  <ion-card id="signUpPrompt">
+  <ion-card *ngIf="user.email.length == 0" id="signUpPrompt">
     <ion-card-content no-padding>
       <ion-grid>
         <ion-row class="border-bottom">
