@@ -14,7 +14,7 @@
 
 
 <ion-content padding>
-  <form [formGroup]="signupForm" (ngSubmit)="confirm()">
+  <form [formGroup]="signupForm" (ngSubmit)="signup()">
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon name="person" [ngClass]="{'invalid': !signupForm.controls.name.valid && (signupForm.controls.name.dirty || signupForm.controls.name.touched)}"></ion-icon></ion-label>
       <ion-input placeholder="Full Name" [formControl]="signupForm.controls['name']"></ion-input>
