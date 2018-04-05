@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="primary" class="align-toolbar">
-    <ion-searchbar (ionInput)="filterRestaurants($event)"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="searchInput" (ionInput)="filterRestaurants($event)"></ion-searchbar>
     <!--<ion-buttons end>-->
       <!--<button ion-button icon-only clear class="options-button">-->
         <!--<ion-icon name="options"></ion-icon>-->
@@ -22,4 +22,19 @@
   <ion-list>
     <restaurant *ngFor = "let restaurant of restaurantListFiltered" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant>
   </ion-list>
+  <div *ngIf="restaurantListFiltered?.length == 0" class="no-results">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="align-center icon">
+          <ion-icon name="search"></ion-icon>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col align-items-center>
+          <p class="align-center">No results found for</p>
+          <p class="align-center bold">{{searchInput}}</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

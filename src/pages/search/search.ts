@@ -16,6 +16,7 @@ import * as moment from 'moment'
 })
 export class SearchPage implements OnInit {
 
+  searchInput: string;
   restaurantListAll: any;
   restaurantListFiltered: any;
   bookings = [];
