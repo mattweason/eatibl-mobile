@@ -24,7 +24,7 @@ export class RestaurantComponent implements OnChanges {
   //Need slides to load before setting this.slides so we can set the current slide based on the active timeslot
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
-    this.setSlidePosition();
+    this.setInitialPosition();
     setTimeout(() => {
       this.isLoaded = true;
       setTimeout(() => {
@@ -125,20 +125,14 @@ export class RestaurantComponent implements OnChanges {
 
   nextSlide(){
     if(this.slides)
-      if(!this.slides.isEnd()){
+      if(!this.slides.isEnd())
         this.slides.slideNext();
-        this.isBeginning = this.slides.isBeginning();
-        this.isEnd = this.slides.isEnd();
-      }
   }
 
   prevSlide(){
     if(this.slides)
-      if(!this.slides.isBeginning()){
+      if(!this.slides.isBeginning())
         this.slides.slidePrev();
-        this.isBeginning = this.slides.isBeginning();
-        this.isEnd = this.slides.isEnd();
-      }
   }
 
   //Run and receives response from press-hold directive
@@ -156,12 +150,20 @@ export class RestaurantComponent implements OnChanges {
     }
   }
 
-  //Find and set whether the slide is at the end or the beginning
-  setSlidePosition(){
+  //Det whether the slide is at the end or the beginning on initial load
+  setInitialPosition(){
     if(this.slides)
       setTimeout(() => {
         this.isBeginning = this.slides.isBeginning();
         this.isEnd = this.slides.isEnd();
       }, 500);
+  }
+
+  //Set whether the slide is at the end or beginning
+  slidePosition(){
+    if(this.slides){
+      this.isBeginning = this.slides.isBeginning();
+      this.isEnd = this.slides.isEnd();
+    }
   }
 }

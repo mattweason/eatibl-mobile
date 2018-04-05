@@ -60,7 +60,7 @@
             <button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()" (press-hold)="scrollSlides($event, 'prev')"><ion-icon name="arrow-back"></ion-icon></button>
           </ion-col>
           <ion-col col-10 class="no-padding-col">
-            <ion-slides #slides *ngIf="timeslots.length" slidesPerView="4">
+            <ion-slides #slides *ngIf="timeslots.length" slidesPerView="4" (ionSlideDidChange)="slidePosition()" (ionSlideWillChange)="slidePosition()">
               <ion-slide *ngFor="let timeslot of timeslots">
                 <div class="timeslot">
                   <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id && activeTimeslot?.quantity >= people}">{{functions.formatClockTime(timeslot.time, true)}}</p>

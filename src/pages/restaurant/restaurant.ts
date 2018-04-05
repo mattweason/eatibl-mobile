@@ -24,7 +24,7 @@ export class RestaurantPage implements OnInit {
   private slides: Slides;
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
-    this.setSlidePosition();
+    this.setInitialPosition();
     if(this.timeslotId != '' && this.slides)
       this.setSlide();
   }
@@ -169,9 +169,6 @@ export class RestaurantPage implements OnInit {
       var timeslot = _.filter(this.timeslots, function(timeslot){
         return timeslot._id == timeslotId;
       });
-      console.log(this.timeslotId);
-      console.log(this.timeslots)
-      console.log(timeslot)
       this.selectBooking(timeslot[0]);
     }
   }
@@ -199,28 +196,20 @@ export class RestaurantPage implements OnInit {
       return timeslot._id == activeTimeslot._id;
     });
     setTimeout(() => {
-      this.isBeginning = this.slides.isBeginning();
-      this.isEnd = this.slides.isEnd();
       this.slides.slideTo(index - 1)
     }, 500);
   }
 
   nextSlide(){
     if(this.slides)
-      if(!this.slides.isEnd()){
+      if(!this.slides.isEnd())
         this.slides.slideNext();
-        this.isBeginning = this.slides.isBeginning();
-        this.isEnd = this.slides.isEnd();
-      }
   }
 
   prevSlide(){
     if(this.slides)
-      if(!this.slides.isBeginning()){
+      if(!this.slides.isBeginning())
         this.slides.slidePrev();
-        this.isBeginning = this.slides.isBeginning();
-        this.isEnd = this.slides.isEnd();
-      }
   }
 
   //Run and receives response from press-hold directive
@@ -238,13 +227,21 @@ export class RestaurantPage implements OnInit {
     }
   }
 
-  //Find and set whether the slide is at the end or the beginning
-  setSlidePosition(){
+  //Set whether the slide is at the end or the beginning on initial load
+  setInitialPosition(){
     if(this.slides)
       setTimeout(() => {
         this.isBeginning = this.slides.isBeginning();
         this.isEnd = this.slides.isEnd();
       }, 500);
+  }
+
+  //Set whether the slide is at the end or beginning
+  slidePosition(){
+    if(this.slides){
+      this.isBeginning = this.slides.isBeginning();
+      this.isEnd = this.slides.isEnd();
+    }
   }
 
   //Navigate to confirm booking page
