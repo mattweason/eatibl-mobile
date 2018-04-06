@@ -24,6 +24,7 @@ export class ConfirmBookingPage {
 
   isLoggedIn = false;
   user = {
+    _id: '',
     email: '',
     name: '',
     phone: '',
@@ -65,7 +66,8 @@ export class ConfirmBookingPage {
           Validators.pattern('[a-zA-Z0-9.-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}')
         ])
       ],
-      active: [0]
+      active: [0],
+      _id: ['']
     });
   }
 
@@ -82,6 +84,9 @@ export class ConfirmBookingPage {
         this.bookingForm.controls['phone'].setValue(this.user.phone);
         this.bookingForm.controls['email'].setValue(this.user.email);
         this.bookingForm.controls['active'].setValue(this.user.active);
+        this.bookingForm.controls['_id'].setValue(this.user._id);
+        console.log(this.user)
+        console.log(this.bookingForm.value)
       }
     });
   }

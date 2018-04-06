@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import moment from 'moment';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
 
@@ -20,6 +21,8 @@ export class BookingConfirmedPage {
   booking: any;
   dateObject = {} as any;
   response: any;
+  upcoming = false;
+  tooClose = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private functions: FunctionsProvider, private API: ApiServiceProvider, public alertCtrl: AlertController) {
     this.restaurant = navParams.get('restaurant');
@@ -37,6 +40,7 @@ export class BookingConfirmedPage {
     this.dateObject.month = month;
     this.dateObject.date = date;
     this.dateObject.day = day;
+    this.canCancel();
   }
 
   cancelBooking(){
@@ -89,6 +93,14 @@ export class BookingConfirmedPage {
       }]
     });
     alert.present();
+  }
+
+  canCancel(){
+    var date = moment(this.booking.date).format('L');
+    var time = this.functions.formatClockTime(this.booking.time, true);
+    var datetime = moment(date+" "+time);
+    this.upcoming = moment().isBefore(datetime);
+    this.tooClose = !moment().add(30, 'minutes').isBefore(datetime);
   }
 
 }

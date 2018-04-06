@@ -42,10 +42,12 @@ export class BookingsPage {
   ionViewDidEnter() {
     console.log('ionViewDidLoad BookingsPage');
     this.storage.get('user').then((val) => {
-      this.user = decode(val);
-      this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
-        this.sortBookings(data);
-      });
+      if(val){
+        this.user = decode(val);
+        this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+          this.sortBookings(data);
+        });
+      }
     });
   }
 

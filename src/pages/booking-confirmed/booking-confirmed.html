@@ -86,7 +86,9 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <button ion-button block color="danger" (click)="cancelBooking()">Cancel Booking</button>
+            <button *ngIf="upcoming && !tooClose" ion-button block color="danger" (click)="cancelBooking()">Cancel Booking</button>
+            <p *ngIf="!upcoming" class="completed">Completed</p>
+            <p *ngIf="tooClose && upcoming" class="tooClose">Cannot Cancel</p>
           </ion-col>
         </ion-row>
       </ion-grid>

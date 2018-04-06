@@ -32,4 +32,15 @@ page-booking-confirmed {
   .field-title, .address{
     color: lighten(color($colors, dark), 60%);
   }
+  .completed, .tooClose{
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .completed{
+    color: color($colors, secondary);
+  }
+  .tooClose{
+    color: color($colors, danger);
+  }
 }
