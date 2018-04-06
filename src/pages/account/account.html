@@ -14,7 +14,7 @@
 
 
 <ion-content>
-  <ion-card id="signUpPrompt">
+  <ion-card *ngIf="!user.active" id="signUpPrompt">
     <ion-card-content no-padding>
       <ion-grid>
         <ion-row class="border-bottom">
@@ -36,6 +36,48 @@
           <ion-col>
             <button ion-button color="primary" block (tap)="signUp()">Sign Up</button>
             <button ion-button color="secondary" clear block (tap)="login()">Log In</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="user.active">
+    <ion-card-content no-padding>
+      <ion-grid>
+        <ion-row class="border-bottom">
+          <ion-col col-3 class="align-center icon">
+            <ion-icon class="user-icon" name="contact"></ion-icon>
+          </ion-col>
+          <ion-col col-9>
+            <p>{{user.name}}</p>
+            <p>{{user.email}}</p>
+            <p>{{user.phone}}</p>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <h2>Bookings</h2>
+          </ion-col>
+        </ion-row>
+        <ion-row class="booking-metrics border-bottom">
+          <ion-col col-6>
+            <p class="title">Upcoming</p>
+            <div class="metric">
+              <ion-icon name="restaurant"></ion-icon>
+              <p>{{bookingUpcoming?.length}}</p>
+            </div>
+          </ion-col>
+          <ion-col col-6>
+            <p class="title">Completed</p>
+            <div class="metric">
+              <ion-icon name="time"></ion-icon>
+              <p>{{bookingHistory?.length}}</p>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <button ion-button color="secondary" clear block (tap)="changeAccounts()">Change Accounts</button>
           </ion-col>
         </ion-row>
       </ion-grid>

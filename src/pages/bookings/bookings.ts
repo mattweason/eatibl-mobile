@@ -27,7 +27,8 @@ export class BookingsPage {
     email: '',
     name: '',
     phone: '',
-    type: ''
+    type: '',
+    active: 0
   };
   bookingUpcoming: any;
   bookingHistory: any;
