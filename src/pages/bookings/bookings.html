@@ -9,12 +9,22 @@
   <ion-navbar color="primary">
     <ion-title>Bookings</ion-title>
   </ion-navbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="type" color="secondary">
+      <ion-segment-button value="upcoming">
+        Upcoming
+      </ion-segment-button>
+      <ion-segment-button value="history">
+        History
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
 
 </ion-header>
 
 
 <ion-content>
-  <ion-card *ngIf="user.email.length == 0" id="signUpPrompt">
+  <ion-card *ngIf="!user.active" id="signUpPrompt">
     <ion-card-content no-padding>
       <ion-grid>
         <ion-row class="border-bottom">
@@ -41,4 +51,13 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
+  <div [ngSwitch]="type">
+    <ion-list *ngSwitchCase="'upcoming'">
+      <booking-card *ngFor = "let booking of bookingUpcoming" [booking]="booking"></booking-card>
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'history'">
+      <booking-card *ngFor = "let booking of bookingHistory" [booking]="booking"></booking-card>
+    </ion-list>
+  </div>
 </ion-content>

@@ -18,7 +18,6 @@ export class HomePage {
   time: any;
   showToolbar: boolean = true;
 
-
   constructor(public navCtrl: NavController, private API: ApiServiceProvider) {
     this.setNow();
   }

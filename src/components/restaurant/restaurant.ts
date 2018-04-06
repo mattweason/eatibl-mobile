@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, OnChanges, SimpleChange, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { NavController, Slides } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
-import * as _ from 'underscore'
-import * as moment from 'moment'
+import * as _ from 'underscore';
+import * as moment from 'moment';
 import { FunctionsProvider } from '../../providers/functions/functions';
 
 import { RestaurantPage } from '../../pages/restaurant/restaurant';

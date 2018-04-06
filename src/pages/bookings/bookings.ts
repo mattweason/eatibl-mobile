@@ -3,6 +3,10 @@ import { NavController, NavParams } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
+import * as _ from 'underscore';
+import moment from 'moment';
+
+import { FunctionsProvider } from '../../providers/functions/functions';
 
 import { LoginPage } from '../../pages/login/login';
 import { SignupPage } from '../../pages/signup/signup';
@@ -25,18 +29,38 @@ export class BookingsPage {
     phone: '',
     type: ''
   };
+  bookingUpcoming: any;
+  bookingHistory: any;
+  type = 'upcoming';
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider, private storage: Storage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider, private storage: Storage, private functions: FunctionsProvider) {
   }
 
   ngOnInit() {
+  }
+
+  ionViewDidEnter() {
+    console.log('ionViewDidLoad BookingsPage');
     this.storage.get('user').then((val) => {
-     this.user = decode(val);
+      this.user = decode(val);
+      this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+        this.sortBookings(data);
+      });
     });
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad BookingsPage');
+  sortBookings(data){
+    var functions = this.functions;
+    this.bookingUpcoming = _.filter(data, function(booking){
+      var date = moment(booking.date).format('L');
+      var time = functions.formatClockTime(booking.time, true);
+      return moment(date+' '+time).isAfter(moment());
+    });
+    this.bookingHistory = _.filter(data, function(booking){
+      var date = moment(booking.date).format('L');
+      var time = functions.formatClockTime(booking.time, true);
+      return moment(date+' '+time).isBefore(moment());
+    });
   }
 
   signUp(){

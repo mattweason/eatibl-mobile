@@ -30,6 +30,7 @@ import { PressHoldDirective } from '../directives/press-hold/press-hold';
 
 //Components
 import { RestaurantComponent } from "../components/restaurant/restaurant"
+import { BookingCardComponent } from "../components/booking-card/booking-card"
 
 //Services
 import { ApiServiceProvider } from '../providers/api-service/api-service';
@@ -49,6 +50,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
     LoginPage,
     SignupPage,
     RestaurantComponent,
+    BookingCardComponent,
     InputMasksDirective,
     PressHoldDirective
   ],
@@ -72,7 +74,8 @@ import { FunctionsProvider } from '../providers/functions/functions';
     TabsPage,
     LoginPage,
     SignupPage,
-    RestaurantComponent
+    RestaurantComponent,
+    BookingCardComponent
   ],
   providers: [
     StatusBar,

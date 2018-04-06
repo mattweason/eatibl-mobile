@@ -1,0 +1,40 @@
+booking-card {
+  .date-block{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .restaurant-name{
+    font-weight: 700;
+  }
+  .day, .month, .date, .time{
+    font-family: "Quicksand";
+    font-weight: 500;
+    text-align: center;
+  }
+  .day, .month, .metric{
+    color: color($colors, primary);
+  }
+  .time{
+    color: color($colors, secondary);
+  }
+  .day, .month, .time{
+    font-size: 16px;
+    line-height: 16px;
+  }
+  .date{
+    font-size: 32px;
+    line-height: 32px;
+  }
+  .metric{
+    text-align: center;
+    p{
+      font-size: 18px;
+      color: color($colors, primary);
+    }
+    ion-icon{
+      font-size: 28px;
+      color: #ccc;
+    }
+  }
+}
