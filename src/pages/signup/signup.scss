@@ -1,3 +1,33 @@
 page-signup {
-
+  .eatibl-logo{
+    text-align: center;
+    padding: 20px 0;
+    img{
+      display: inline-block;
+      width: 50%;
+    }
+  }
+  .form-error{
+    margin-top: 6px;
+    text-align: center;
+    color: color($colors, danger);
+  }
+  .no-account{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    p{
+      margin: 0;
+    }
+    button{
+      margin-left: 6px;
+    }
+  }
+  ion-icon{
+    transition: all 0.2s;
+    &.invalid {
+      color: color($colors, danger) !important;
+    }
+  }
 }

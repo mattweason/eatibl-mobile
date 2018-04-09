@@ -21,6 +21,8 @@ import { SignupPage } from '../../pages/signup/signup';
 export class LoginPage {
 
   loginForm: FormGroup;
+  submitAttempt = false;
+  response = {} as any;
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder, private storage: Storage) {
 
@@ -34,34 +36,64 @@ export class LoginPage {
       ],
       password: [
         '', Validators.compose([
-          Validators.required,
-          Validators.minLength(8)
+          Validators.required
         ])
       ]
     });
   }
 
   login(){
-    //make API call to get token if successful, or status 401 if login failed
-    this.API.makePost('token', this.loginForm.value).subscribe(response => {
+    if(!this.loginForm.valid){
+      Object.keys(this.loginForm.controls).forEach(field => { // {1}
+        const control = this.loginForm.get(field);            // {2}
+        control.markAsTouched({ onlySelf: true });       // {3}
+      });
+      this.submitAttempt = true;
+    }
+    else{
+      //make API call to get token if successful, or status 401 if login failed
+      this.API.makePost('token', this.loginForm.value).subscribe(response => {
+        var title;
+        var message;
+        this.response = response;
+        if(this.response.message == 'not found'){
+          title = 'Incorrect Credentials';
+          message = 'Email and password combination not found.';
+          this.presentAlert(title, message);
+        }
+        else{
+          this.storage.set('user',response);
+          this.navCtrl.pop();
+        }
 
-      this.storage.set('user',response);
+        //BELOW CODE FOR OUTPUTTING USER INFO
 
-      //BELOW CODE FOR OUTPUTTING USER INFO
-
-      //this.storage.get('user').then((val) => {
-      //  var currentUser = val;
-      //  console.log(currentUser);
-      //  console.log(decode(currentUser));
-      //});
-    });
+        //this.storage.get('user').then((val) => {
+        //  var currentUser = val;
+        //  console.log(currentUser);
+        //  console.log(decode(currentUser));
+        //});
+      });
+    }
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad LoginPage');
   }
 
+  presentAlert(title, message){
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      buttons: ['Dismiss']
+    });
+    alert.present();
+  }
+
   signUp(){
-    this.navCtrl.push(SignupPage);
+    this.navCtrl.push(SignupPage).then(() => {
+      var index = this.navCtrl.getActive().index;
+      this.navCtrl.remove(index-1);
+    });;
   }
 }

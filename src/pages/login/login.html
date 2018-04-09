@@ -6,7 +6,7 @@
 -->
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>Login</ion-title>
   </ion-navbar>
 
@@ -15,23 +15,32 @@
 
 <ion-content padding>
   <div class="eatibl-logo">
-    <img src="assets/imgs/white-with-text.png">
+    <img src="assets/imgs/red-with-text.png">
   </div>
   <form [formGroup]="loginForm" (ngSubmit)="login()">
     <ion-item class="border-bottom">
-      <ion-label fixed><ion-icon name="mail"></ion-icon></ion-label>
+      <ion-label fixed><ion-icon [ngClass]="{'invalid': !loginForm.controls.email.valid && (loginForm.controls.email.dirty || submitAttempt)}" name="mail"></ion-icon></ion-label>
       <ion-input class="light-placeholder" placeholder="Email" [formControl]="loginForm.controls['email']"></ion-input>
     </ion-item>
     <ion-item class="border-bottom">
-      <ion-label fixed><ion-icon name="lock"></ion-icon></ion-label>
+      <ion-label fixed><ion-icon [ngClass]="{'invalid': !loginForm.controls.password.valid && (loginForm.controls.password.dirty || submitAttempt)}" name="lock"></ion-icon></ion-label>
       <ion-input class="light-placeholder" placeholder="Password" type="password" [formControl]="loginForm.controls['password']"></ion-input>
     </ion-item>
+    <div class="form-error" *ngIf="(loginForm.controls.email.hasError('required') && submitAttempt) || (loginForm.controls.password.hasError('required') && submitAttempt)">
+      <span>Please fill in all the fields.</span>
+    </div>
+    <div class="form-error" *ngIf="(loginForm.controls.email.hasError('pattern') && submitAttempt)">
+      <span>Please enter a valid email.</span>
+    </div>
+    <div class="form-error" *ngIf="badInput">
+      <span>Email and password combination not found.</span>
+    </div>
     <button ion-button block color="secondary" type="submit">Confirm</button>
-    <p class="terms-white">By logging in, you agree to eatibl's terms and conditions and privacy policy.</p>
+    <p class="terms">By logging in, you agree to eatibl's terms and conditions and privacy policy.</p>
   </form>
   <div class="no-account">
     <p>Don't have an account?</p>
-    <button ion-button color="light" small (click)="signUp()">Sign Up</button>
+    <button ion-button color="primary" small (click)="signUp()">Sign Up</button>
   </div>
 </ion-content>
 

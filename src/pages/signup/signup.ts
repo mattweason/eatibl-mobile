@@ -20,6 +20,7 @@ export class SignupPage {
 
   signupForm: FormGroup;
   response = {} as any;
+  submitAttempt = false;
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder, private storage: Storage) {
 
@@ -54,16 +55,35 @@ export class SignupPage {
   }
 
   signup(){
+    if(!this.signupForm.valid){
+      Object.keys(this.signupForm.controls).forEach(field => { // {1}
+        const control = this.signupForm.get(field);            // {2}
+        control.markAsTouched({ onlySelf: true });       // {3}
+      });
+      this.submitAttempt = true;
+    }
     //make API call to get token if successful, or status 401 if login failed
     this.API.makePost('register', this.signupForm.value).subscribe(response => {
+      var title;
+      var message;
       this.response = response;
-      if(!this.response.message)
-        this.storage.set('user',response).then((val) => {
-          console.log(val);
-          console.log(decode(val));
+      if(this.response.message == 'success'){
+        this.storage.set('user',this.response.token).then((val) => {
+          title = 'Account created';
+          message = 'Your account has been created!';
+          this.presentSuccessAlert(title, message);
         });
-      if(this.response.message)
-        console.log(this.response.message);
+      }
+      if(this.response.message == 'email taken'){
+        title = 'Email Taken';
+        message = 'This email is already associated with an account. Please choose a different email or log in.';
+        this.presentAlert(title, message);
+      }
+      if(this.response.message == 'error'){
+        title = 'Error';
+        message = 'There was an error creating your account. Please try again.';
+        this.presentAlert(title, message);
+      }
 
       //BELOW CODE FOR OUTPUTTING USER INFO
 
@@ -72,6 +92,27 @@ export class SignupPage {
       //  console.log(currentUser);
       //  console.log(decode(currentUser));
       //});
+    });
+  }
+
+  presentAlert(title, message){
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      buttons: ['Dismiss']
+    });
+    alert.present();
+  }
+
+  presentSuccessAlert(title, message){
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      buttons: ['Dismiss']
+    });
+    alert.present();
+    alert.onDidDismiss(() => {
+      this.navCtrl.pop();
     });
   }
 

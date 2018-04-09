@@ -6,7 +6,7 @@
 -->
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>Sign Up</ion-title>
   </ion-navbar>
 
@@ -14,6 +14,9 @@
 
 
 <ion-content padding>
+  <div class="eatibl-logo">
+    <img src="assets/imgs/red-with-text.png">
+  </div>
   <form [formGroup]="signupForm" (ngSubmit)="signup()">
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon name="person" [ngClass]="{'invalid': !signupForm.controls.name.valid && (signupForm.controls.name.dirty || signupForm.controls.name.touched)}"></ion-icon></ion-label>
@@ -28,15 +31,23 @@
       <ion-input placeholder="Email" [formControl]="signupForm.controls['email']"></ion-input>
     </ion-item>
     <ion-item class="border-bottom">
-      <ion-label fixed><ion-icon name="lock" [ngClass]="{'invalid': !signupForm.controls.password.valid && (signupForm.controls.password.dirty || signupForm.controls.password.touched)}"></ion-icon></ion-label>
-      <ion-input placeholder="Password" type="password" [formControl]="signupForm.controls['password']"></ion-input>
+      <ion-label fixed><ion-icon [ngClass]="{'invalid': !signupForm.controls.password.valid && (signupForm.controls.password.dirty || signupForm.controls.password.touched)}" name="lock"></ion-icon></ion-label>
+      <ion-input class="light-placeholder" placeholder="Password" type="password" [formControl]="signupForm.controls['password']"></ion-input>
     </ion-item>
-    <div class="form-error" *ngIf="(signupForm.controls.name.hasError('required') && signupForm.controls.name.touched) || (signupForm.controls.phone.hasError('required') && signupForm.controls.phone.touched) || (signupForm.controls.email.hasError('required') && signupForm.controls.email.touched)">
+    <div class="form-error" *ngIf="(signupForm.controls.name.hasError('required') && signupForm.controls.name.touched) || (signupForm.controls.phone.hasError('required') && signupForm.controls.phone.touched) || (signupForm.controls.email.hasError('required') && signupForm.controls.email.touched) || (signupForm.controls.password.hasError('required') && signupForm.controls.password.touched) && submitAttempt">
       <span>Please fill in all the fields.</span>
     </div>
-    <div class="form-error" *ngIf="(signupForm.controls.name.hasError('pattern') && signupForm.controls.name.touched ) || (signupForm.controls.phone.hasError('pattern') && signupForm.controls.phone.touched) || (signupForm.controls.email.hasError('pattern') && signupForm.controls.email.touched)">
-      <span>There is an error in the form.</span>
+    <div class="form-error" *ngIf="(signupForm.controls.email.hasError('pattern') && submitAttempt)">
+      <span>Please enter a valid email.</span>
+    </div>
+    <div class="form-error" *ngIf="(signupForm.controls.password.hasError('minLength') && ((signupForm.controls.password.dirty || signupForm.controls.password.touched) || submitAttempt))">
+      <span>Please enter a valid email.</span>
+    </div>
+    <div class="form-error" *ngIf="badInput">
+      <span>Email and password combination not found.</span>
     </div>
     <button ion-button block color="secondary" type="submit">Confirm</button>
+    <p class="terms">By logging in, you agree to eatibl's terms and conditions and privacy policy.</p>
   </form>
 </ion-content>
+

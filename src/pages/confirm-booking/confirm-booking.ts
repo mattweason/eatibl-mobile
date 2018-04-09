@@ -81,7 +81,7 @@ export class ConfirmBookingPage {
       if(val){
         this.user = decode(val);
         this.bookingForm.controls['name'].setValue(this.user.name);
-        this.bookingForm.controls['phone'].setValue(this.user.phone);
+        this.bookingForm.controls['phone'].setValue(this.user.phone);-
         this.bookingForm.controls['email'].setValue(this.user.email);
         this.bookingForm.controls['active'].setValue(this.user.active);
         this.bookingForm.controls['_id'].setValue(this.user._id);
