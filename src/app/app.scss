@@ -175,6 +175,17 @@ restaurant, page-restaurant {
 .align-center{
   text-align: center;
 }
+.no-margin{
+  margin: 0 !important;
+}
+.terms{
+  color: #9a9a9a !important;
+  font-size: 12px !important;
+}
+.terms-white{
+  color: color($colors, light) !important;
+  font-size: 12px !important;
+}
 
 //General Directive Styling
 ion-grid{
@@ -241,4 +252,9 @@ ion-navbar.align-toolbar{
 //General Styling
 h2, p, button, span, ion-select, ion-datetime, ion-input, ion-title {
   font-family: "Quicksand";
+}
+
+.item-inner{
+  border-bottom: none !important;
+  box-shadow: none !important;
 }

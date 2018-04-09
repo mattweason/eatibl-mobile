@@ -1,3 +1,51 @@
 page-login {
-
+  ion-content{
+    background-color: color($colors, primary) !important;
+  }
+  .eatibl-logo{
+    text-align: center;
+    padding: 20px 0;
+    img{
+      display: inline-block;
+      width: 50%;
+    }
+  }
+  .no-account{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    p{
+      color: #fff;
+      margin: 0;
+    }
+    button{
+      margin-left: 6px;
+      color: color($colors, primary);
+    }
+  }
+  ion-icon{
+    transition: all 0.2s;
+    &.invalid {
+      color: color($colors, danger) !important;
+    }
+  }
+  ion-item{
+    background-color: transparent !important;
+    ion-icon{
+      color: #fff !important;
+    }
+    ion-input{
+      color: #fff;
+    }
+    .text-input::-webkit-input-placeholder{
+      color: #fff !important;
+    }
+    .text-input:-ms-input-placeholder{
+      color: #fff !important;
+    }
+    .text-input::-moz-placeholder{
+      color: #fff !important;
+    }
+  }
 }

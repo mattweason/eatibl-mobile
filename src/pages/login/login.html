@@ -14,15 +14,24 @@
 
 
 <ion-content padding>
+  <div class="eatibl-logo">
+    <img src="assets/imgs/white-with-text.png">
+  </div>
   <form [formGroup]="loginForm" (ngSubmit)="login()">
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon name="mail"></ion-icon></ion-label>
-      <ion-input placeholder="Email" [formControl]="loginForm.controls['email']"></ion-input>
+      <ion-input class="light-placeholder" placeholder="Email" [formControl]="loginForm.controls['email']"></ion-input>
     </ion-item>
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon name="lock"></ion-icon></ion-label>
-      <ion-input placeholder="Password" type="password" [formControl]="loginForm.controls['password']"></ion-input>
+      <ion-input class="light-placeholder" placeholder="Password" type="password" [formControl]="loginForm.controls['password']"></ion-input>
     </ion-item>
     <button ion-button block color="secondary" type="submit">Confirm</button>
+    <p class="terms-white">By logging in, you agree to eatibl's terms and conditions and privacy policy.</p>
   </form>
+  <div class="no-account">
+    <p>Don't have an account?</p>
+    <button ion-button color="light" small (click)="signUp()">Sign Up</button>
+  </div>
 </ion-content>
+

@@ -5,6 +5,8 @@ import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 
+import { SignupPage } from '../../pages/signup/signup';
+
 /**
  * Generated class for the LoginPage page.
  *
@@ -59,4 +61,7 @@ export class LoginPage {
     console.log('ionViewDidLoad LoginPage');
   }
 
+  signUp(){
+    this.navCtrl.push(SignupPage);
+  }
 }

@@ -23,26 +23,26 @@
           </ion-col>
         </ion-row>
         <ion-row>
-          <ion-col col-4>
+          <ion-col class="no-margin align-center" col-4>
             <p class="title">Date</p>
           </ion-col>
-          <ion-col col-4>
+          <ion-col class="no-margin align-center" col-4>
             <p class="title">Discount</p>
           </ion-col>
-          <ion-col col-4>
+          <ion-col class="no-margin align-center" col-4>
             <p class="title">Seats</p>
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">
-          <ion-col align-self-center col-4>
+          <ion-col class="no-margin align-center" align-self-center col-4>
             <p class="month">{{dateObject.month}}</p>
             <p class="date">{{dateObject.date}}</p>
           </ion-col>
-          <ion-col align-self-center col-4>
+          <ion-col class="no-margin align-center" col-4>
             <p class="time">{{functions.formatClockTime(timeslot.time, true)}}</p>
             <p class="discount">-{{timeslot.discount}}%</p>
           </ion-col>
-          <ion-col align-self-center col-4>
+          <ion-col class="no-margin align-center" col-4>
             <p class="seats">{{people}}</p>
           </ion-col>
         </ion-row>
@@ -70,7 +70,7 @@
               <button ion-button block color="secondary" type="submit">Confirm</button>
             </form>
             <button ion-button block clear color="danger" (click)="cancel()">Cancel</button>
-            <p>By clicking confirm you agree to eatibl's terms and conditions and privacy policy.</p>
+            <p class="terms">By clicking confirm you agree to eatibl's terms and conditions and privacy policy.</p>
           </ion-col>
         </ion-row>
       </ion-grid>
