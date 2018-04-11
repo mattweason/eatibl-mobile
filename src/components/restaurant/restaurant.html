@@ -22,7 +22,7 @@
       </ion-row>
       <ion-row *ngIf="open" class="no-padding-row">
         <ion-col col-1 class="no-padding-col">
-          <button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()" (press-hold)="scrollSlides($event, 'prev')"><ion-icon name="arrow-back"></ion-icon></button>
+          <button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon></button>
         </ion-col>
         <ion-col col-10 class="no-padding-col">
           <ion-slides #slides *ngIf="timeslots.length" slidesPerView="4" (ionSlideDidChange)="slidePosition()" (ionSlideWillChange)="slidePosition()">
@@ -38,7 +38,7 @@
           </div>
         </ion-col>
         <ion-col col-1 class="no-padding-col">
-          <button [disabled]="isEnd" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="nextSlide()" (press-hold)="scrollSlides($event, 'next')"><ion-icon name="arrow-forward"></ion-icon></button>
+          <button [disabled]="isEnd" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="nextSlide()"><ion-icon name="arrow-forward"></ion-icon></button>
         </ion-col>
       </ion-row>
     </ion-grid>
