@@ -15,7 +15,12 @@
 <ion-content>
 
   <ion-card *ngIf="isLoaded">
-    <img src="assets/imgs/placeholder-food.jpg">
+    <div class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'" *ngIf="!restaurant?.featuredImage" (tap)="navigateTo($event, restaurant._id, '', date)"></div>
+    <ion-slides *ngIf="restaurant?.featuredImage" paginationType="bullets" pager="true">
+      <ion-slide *ngFor="let image of orderedImgArray; let i = index">
+        <div class="featured-image" [style.background-image]="image"></div>
+      </ion-slide>
+    </ion-slides>
     <ion-card-content no-padding>
       <ion-grid>
         <ion-row class="border-bottom">

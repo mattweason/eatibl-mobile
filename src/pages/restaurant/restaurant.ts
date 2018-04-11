@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
@@ -6,6 +7,7 @@ import { FunctionsProvider } from '../../providers/functions/functions';
 import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
 import * as _ from 'underscore';
 import moment from 'moment';
+import { ENV } from '@app/env';
 
 import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking';
 
@@ -22,6 +24,8 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
 })
 export class RestaurantPage implements OnInit {
   private slides: Slides;
+  private url: string = ENV.API;
+
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
     this.setInitialPosition();
@@ -47,10 +51,12 @@ export class RestaurantPage implements OnInit {
   scrollingSlides: any;
   isBeginning: boolean = false;
   isEnd: boolean = false;
+  featuredImageUrl: any;
+  orderedImgArray = []; //for displaying the image slides in the right order
 
   map: GoogleMap;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider, private datePicker: DatePicker, private functions: FunctionsProvider, private googleMaps: GoogleMaps) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider, private datePicker: DatePicker, private functions: FunctionsProvider, private googleMaps: GoogleMaps, private sanitizer: DomSanitizer) {
     this.restaurantId = navParams.get('restaurantId');
     this.timeslotId = navParams.get('timeslotId');
     this.date = navParams.get('date');
@@ -64,7 +70,25 @@ export class RestaurantPage implements OnInit {
   }
 
   ngOnInit(){
-    this.API.makeCall('restaurant/' + this.restaurantId).subscribe(data => this.restaurant = data);
+    this.API.makeCall('restaurant/' + this.restaurantId).subscribe(data => {
+      this.restaurant = data;
+
+      if(this.restaurant.featuredImage){
+        //reorder the image array to put featured image first
+        var index = this.restaurant.images.indexOf(this.restaurant.featuredImage);
+        if(index > -1)
+          this.restaurant.images.splice(index,1); //remove from image list
+
+        this.restaurant.images.unshift(this.restaurant.featuredImage); //add featured image to start of list
+
+        for(var i = 0; i < this.restaurant.images.length; i++){
+          var imageUrl = this.url+'files/'+this.restaurant.images[i];
+          this.orderedImgArray.push(this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`));
+        }
+        console.log('rimmomg')
+        console.log(this.orderedImgArray)
+      }
+    });
     this.API.makeCall('discount/' + this.restaurantId + '/week').subscribe(data => {
       this.timeslotsData = data;
       this.processTimeslots();
