@@ -5,4 +5,10 @@
     opacity: 1;
     transition: 0.5s ease opacity;
   }
+  .featured-image{
+    height: 200px;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
 }

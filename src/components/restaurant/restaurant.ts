@@ -1,9 +1,11 @@
 import { Component, Input, OnInit, OnChanges, SimpleChange, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { NavController, Slides } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as _ from 'underscore';
 import * as moment from 'moment';
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { ENV } from '@app/env';
 
 import { RestaurantPage } from '../../pages/restaurant/restaurant';
 
@@ -20,6 +22,7 @@ import { RestaurantPage } from '../../pages/restaurant/restaurant';
 export class RestaurantComponent implements OnChanges {
   private isVisible = false;
   private slides: Slides;
+  private url: string = ENV.API;
 
   //Need slides to load before setting this.slides so we can set the current slide based on the active timeslot
   @ViewChild('slides') set content(content: Slides) {
@@ -54,8 +57,9 @@ export class RestaurantComponent implements OnChanges {
   scrollingSlides: any;
   isBeginning: boolean = false;
   isEnd: boolean = false;
+  featuredImageUrl: any;
 
-  constructor(public navCtrl: NavController, private API: ApiServiceProvider, private functions: FunctionsProvider, private cdRef:ChangeDetectorRef) {
+  constructor(public navCtrl: NavController, private API: ApiServiceProvider, private functions: FunctionsProvider, private cdRef:ChangeDetectorRef, private sanitizer: DomSanitizer) {
   }
 
   ngOnInit(){
@@ -67,6 +71,11 @@ export class RestaurantComponent implements OnChanges {
       this.businessHoursData = data;
       this.processBusinessHours()
     });
+    if(this.restaurant.featuredImage){
+      console.log('url('+this.url+'files/'+this.restaurant.featuredImage+')');
+      var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
+      this.featuredImageUrl = this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`)
+    }
   }
 
   navigateTo(event, restaurantId, timeslotId, date){
