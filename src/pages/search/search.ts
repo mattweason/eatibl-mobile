@@ -49,7 +49,10 @@ export class SearchPage implements OnInit {
 
     if(value)
       this.restaurantListFiltered = this.restaurantListAll.filter((restaurant) => {
-        return (restaurant.name.toLowerCase().indexOf(value.toLowerCase()) > -1);
+        if(restaurant.name != null) //Handle restaurants with null values
+          return (restaurant.name.toLowerCase().indexOf(value.toLowerCase()) > -1);
+        else
+          return false;
       })
     else
       this.restaurantListFiltered = this.restaurantListAll;
