@@ -26,6 +26,13 @@ export class HomePage {
     this.API.makeCall('restaurant/all').subscribe(data => this.restaurantList = data);
   }
 
+  doRefresh(refresher){
+    this.API.makeCall('restaurant/all').subscribe(data => {
+      this.restaurantList = data
+      refresher.complete();
+    });
+  }
+
   toggleToolbar(){
     this.showToolbar = !this.showToolbar;
     this.content.resize();

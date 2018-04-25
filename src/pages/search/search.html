@@ -19,6 +19,10 @@
 
 
 <ion-content>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>
+    </ion-refresher-content>
+  </ion-refresher>
   <ion-list>
     <restaurant *ngFor = "let restaurant of restaurantListFiltered" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant>
   </ion-list>

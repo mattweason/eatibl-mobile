@@ -44,6 +44,13 @@ export class SearchPage implements OnInit {
     this.maxDate = moment().add(30, 'day').format();
   }
 
+  doRefresh(refresher){
+    this.API.makeCall('restaurant/all').subscribe(data => {
+      this.restaurantListAll = this.restaurantListFiltered = data
+      refresher.complete();
+    });
+  }
+
   filterRestaurants(event){
     var value = event.target.value;
 
