@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { ENV } from '@app/env';
 
-import { RestaurantPage } from '../../pages/restaurant/restaurant';
 
 /**
  * Generated class for the RestaurantComponent component.
@@ -16,10 +15,10 @@ import { RestaurantPage } from '../../pages/restaurant/restaurant';
  * Components.
  */
 @Component({
-  selector: 'restaurant',
-  templateUrl: 'restaurant.html'
+  selector: 'restaurant-card',
+  templateUrl: 'restaurant-card.html'
 })
-export class RestaurantComponent implements OnChanges {
+export class RestaurantCardComponent implements OnChanges {
   private isVisible = false;
   private slides: Slides;
   private url: string = ENV.API;
@@ -79,7 +78,7 @@ export class RestaurantComponent implements OnChanges {
   }
 
   navigateTo(event, restaurantId, timeslotId, date){
-    this.navCtrl.push(RestaurantPage, {
+    this.navCtrl.push('RestaurantPage', {
       restaurantId: restaurantId,
       timeslotId: timeslotId,
       date: date

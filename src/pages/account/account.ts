@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
@@ -8,9 +8,6 @@ import moment from 'moment';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
 
-import { LoginPage } from '../../pages/login/login';
-import { SignupPage } from '../../pages/signup/signup';
-
 /**
  * Generated class for the AccountPage page.
  *
@@ -18,6 +15,7 @@ import { SignupPage } from '../../pages/signup/signup';
  * Ionic pages and navigation.
  */
 
+@IonicPage()
 @Component({
   selector: 'page-account',
   templateUrl: 'account.html',
@@ -74,16 +72,16 @@ export class AccountPage {
   }
 
   signUp(){
-    this.navCtrl.push(SignupPage);
+    this.navCtrl.push('SignupPage');
   }
 
   login(){
-    this.navCtrl.push(LoginPage);
+    this.navCtrl.push('LoginPage');
   }
 
   changeAccounts(){
     this.storage.remove('user');
-    this.navCtrl.push(LoginPage);
+    this.navCtrl.push('LoginPage');
   }
 
 }

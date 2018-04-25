@@ -14,6 +14,7 @@ import { SignupPage } from '../../pages/signup/signup';
  * Ionic pages and navigation.
  */
 
+@IonicPage()
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',
@@ -91,7 +92,7 @@ export class LoginPage {
   }
 
   signUp(){
-    this.navCtrl.push(SignupPage).then(() => {
+    this.navCtrl.push('SignupPage').then(() => {
       var index = this.navCtrl.getActive().index;
       this.navCtrl.remove(index-1);
     });;

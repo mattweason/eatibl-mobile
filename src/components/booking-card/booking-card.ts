@@ -3,8 +3,6 @@ import { NavController } from 'ionic-angular';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
 
-import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
-
 /**
  * Generated class for the BookingCardComponent component.
  *
@@ -41,7 +39,7 @@ export class BookingCardComponent {
   }
 
   viewBooking(){
-    this.navCtrl.push(BookingConfirmedPage, {
+    this.navCtrl.push('BookingConfirmedPage', {
       booking: this.booking,
       restaurant: this.booking.restaurant_fid //Contains all restaurant information
     });

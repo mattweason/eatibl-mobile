@@ -10,6 +10,7 @@ import * as moment from 'moment'
  * Ionic pages and navigation.
  */
 
+@IonicPage()
 @Component({
   selector: 'page-search',
   templateUrl: 'search.html',

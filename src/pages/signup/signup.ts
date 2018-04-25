@@ -12,6 +12,7 @@ import * as decode from 'jwt-decode';
  * Ionic pages and navigation.
  */
 
+@IonicPage()
 @Component({
   selector: 'page-signup',
   templateUrl: 'signup.html',

@@ -1,8 +1,9 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { NavController, Content } from 'ionic-angular';
+import { IonicPage, NavController, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as moment from 'moment'
 
+@IonicPage()
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'

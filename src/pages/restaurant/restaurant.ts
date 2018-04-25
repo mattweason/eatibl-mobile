@@ -18,6 +18,7 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
  * Ionic pages and navigation.
  */
 
+@IonicPage()
 @Component({
   selector: 'page-restaurant',
   templateUrl: 'restaurant.html',
@@ -270,7 +271,7 @@ export class RestaurantPage implements OnInit {
 
   //Navigate to confirm booking page
   bookNow(event, restaurant, timeslot, people, date){
-    this.navCtrl.push(ConfirmBookingPage, {
+    this.navCtrl.push('ConfirmBookingPage', {
       restaurant: restaurant,
       timeslot: timeslot,
       people: people,
