@@ -89,6 +89,9 @@ restaurant-card, page-restaurant {
           margin: 0;
           height: 75%;
           font-size: 2rem;
+          &.tapped{
+            background-color: darken(color($colors, primary), 20%);
+          }
           &.active{
             background-color: darken(color($colors, primary), 20%);
           }

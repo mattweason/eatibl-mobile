@@ -20,19 +20,33 @@
   .loading-overlay{
     position: absolute;
     z-index: 100000;
-    top: 80px;
-    left: 44%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
     width: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
     border-radius: 5px;
     height: 40px;
+    &.timeslot{
+      top: 10px;
+      border: none;
+      ion-spinner * {
+        stroke: #fff;
+      }
+    }
+    &.card{
+      top: 80px;
+      background-color: #fff;
+      ion-spinner * {
+        stroke: color($colors, primary);
+      }
+    }
     ion-spinner * {
       width: 28px;
       height: 28px;
-      stroke: color($colors, primary);
       fill: #fff;
     }
   }

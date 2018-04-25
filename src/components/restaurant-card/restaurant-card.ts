@@ -58,6 +58,7 @@ export class RestaurantCardComponent implements OnChanges {
   isEnd: boolean = false;
   featuredImageUrl: any;
   restaurantTapped = false;
+  timeslotTapped = '';
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, private functions: FunctionsProvider, private cdRef:ChangeDetectorRef, private sanitizer: DomSanitizer) {
   }
@@ -79,13 +80,17 @@ export class RestaurantCardComponent implements OnChanges {
   }
 
   navigateTo(event, restaurantId, timeslotId, date){
-    this.restaurantTapped = true;
+    if(timeslotId == '')
+      this.restaurantTapped = true;
+    else
+      this.timeslotTapped = timeslotId;
     this.navCtrl.push('RestaurantPage', {
       restaurantId: restaurantId,
       timeslotId: timeslotId,
       date: date
     }).then(() => {
       this.restaurantTapped = false;
+      this.timeslotTapped = '';
     });
   }
 
