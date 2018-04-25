@@ -1,6 +1,12 @@
 .restaurant-card{
   opacity: 0;
   transition: 0.5s ease opacity;
+  position: relative;
+  &.navigating{
+    .featured-image, ion-card-content{
+      opacity: 0.7 !important;
+    }
+  }
   &.display{
     opacity: 1;
     transition: 0.5s ease opacity;
@@ -10,5 +16,24 @@
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
+  }
+  .loading-overlay{
+    position: absolute;
+    z-index: 100000;
+    top: 80px;
+    left: 44%;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 5px;
+    height: 40px;
+    ion-spinner * {
+      width: 28px;
+      height: 28px;
+      stroke: color($colors, primary);
+      fill: #fff;
+    }
   }
 }
