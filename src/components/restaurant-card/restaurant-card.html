@@ -11,8 +11,9 @@
         <ion-col col-9 align-self-stretch class="first-row border-right">
           <h2>{{restaurant.name}}</h2>
           <p class="tags">Mediterranean, Greek</p>
-          <p *ngIf="open" class="open"><span>Open Now</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}</p>
-          <p *ngIf="!open" class="closed"><span>Closed</span></p>
+          <p *ngIf="openStatus == 'soon'" class="open"><span>Opening at</span> {{functions.formatClockTime(businessHours[0], true)}}</p>
+          <p *ngIf="openStatus == 'open'" class="open"><span>Open Now</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}</p>
+          <p *ngIf="openStatus == 'closed'" class="closed"><span>Closed</span></p>
         </ion-col>
         <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
           <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
@@ -24,7 +25,7 @@
           </div>
         </ion-col>
       </ion-row>
-      <ion-row *ngIf="open" class="no-padding-row">
+      <ion-row *ngIf="openStatus == 'soon' || openStatus == 'open'" class="no-padding-row">
         <ion-col col-1 class="no-padding-col">
           <button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon></button>
         </ion-col>
@@ -43,7 +44,7 @@
             </ion-slide>
           </ion-slides>
           <div *ngIf="!timeslots.length" class="no-timeslots">
-            <p>Closed</p>
+            <p>No more deals today.</p>
           </div>
         </ion-col>
         <ion-col col-1 class="no-padding-col">

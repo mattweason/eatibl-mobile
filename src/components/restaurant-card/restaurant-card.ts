@@ -50,7 +50,7 @@ export class RestaurantCardComponent implements OnChanges {
   timeslotsData = {} as any;
   businessHours = [];
   businessHoursData = {} as any;
-  open: any;
+  openStatus: any;
   isLoaded: boolean = false;
   isInitial: boolean = true;
   scrollingSlides: any;
@@ -100,7 +100,12 @@ export class RestaurantCardComponent implements OnChanges {
     var time = this.functions.formatTime(this.date);
 
     //Compare current time to open close hours and set to this.open
-    this.open = this.businessHours[0] <= time && this.businessHours[1] >= time;
+    if(time < this.businessHours[0])
+      this.openStatus = 'soon';
+    if(time >= this.businessHours[0] && time < this.businessHours[1])
+      this.openStatus = 'open';
+    if(time >= this.businessHours[1])
+      this.openStatus = 'closed';
   }
 
   //Filter timeslots for the currently selected date
