@@ -32,10 +32,11 @@ export class RestaurantCardComponent implements OnChanges {
       setTimeout(() => {
         this.isVisible = true;
       }, 0);
-    }, 0);
+    }, 500);
     this.cdRef.detectChanges();
   }
 
+  @Input() location = {} as any;
   @Input() restaurant = {} as any;
   @Input() date: string;
   @Input() time: string;
@@ -44,6 +45,7 @@ export class RestaurantCardComponent implements OnChanges {
     this.processBusinessHours();
     this.processTimeslots();
     this.setSlide();
+    this.setDistance();
   }
 
   timeslots: any;
@@ -59,19 +61,28 @@ export class RestaurantCardComponent implements OnChanges {
   featuredImageUrl: any;
   restaurantTapped = false;
   timeslotTapped = '';
+  distance: any;
 
-  constructor(public navCtrl: NavController, private API: ApiServiceProvider, private functions: FunctionsProvider, private cdRef:ChangeDetectorRef, private sanitizer: DomSanitizer) {
-  }
+  constructor(
+    public navCtrl: NavController,
+    private API: ApiServiceProvider,
+    private functions: FunctionsProvider,
+    private cdRef:ChangeDetectorRef,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(){
+    //Get discount timeslots
     this.API.makeCall('discount/' + this.restaurant._id + '/week').subscribe(data => {
       this.timeslotsData = data;
       this.processTimeslots()
     });
+    //Get business hours
     this.API.makeCall('hours/' + this.restaurant._id).subscribe(data => {
       this.businessHoursData = data;
       this.processBusinessHours()
     });
+    //If there is a featured image
     if(this.restaurant.featuredImage){
       console.log('url('+this.url+'files/'+this.restaurant.featuredImage+')');
       var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
@@ -186,6 +197,17 @@ export class RestaurantCardComponent implements OnChanges {
     if(this.slides){
       this.isBeginning = this.slides.isBeginning();
       this.isEnd = this.slides.isEnd();
+    }
+  }
+
+  //Determine and set distance in km from restaurant to user location
+  setDistance(){
+    //Get distance only if coordinates are available
+    if(this.location && this.restaurant.latitude && this.restaurant.longitude){
+      var distance = this.functions.getDistanceFromLatLonInKm(this.location['coords']['latitude'], this.location['coords']['longitude'], this.restaurant.latitude, this.restaurant.longitude);
+      console.log(distance)
+      this.distance = this.functions.roundDistances(distance);
+      console.log(this.distance)
     }
   }
 }

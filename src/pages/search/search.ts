@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as moment from 'moment'
 
@@ -25,14 +25,23 @@ export class SearchPage implements OnInit {
   today: string;
   maxDate: string;
   time: any;
+  location: any;
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider) {
-    this.setNow();
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private API: ApiServiceProvider,
+    public events: Events) {
+      this.setNow();
+      events.subscribe('user:geolocated', (location, time) => {
+        this.location = location;
+      });
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SearchPage');
+    //Call geolocation from app.component
+    this.events.publish('get:geolocation', Date.now());
   }
 
   ngOnInit(){

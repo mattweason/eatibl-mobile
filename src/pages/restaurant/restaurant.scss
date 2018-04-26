@@ -1,4 +1,21 @@
 page-restaurant{
+  ion-card{
+    position: relative;
+    .distance{
+      z-index: 10000;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 3px 6px;
+      border-radius: 3px;
+      background-color: rgba(34,34,34,0.7);
+      p{
+        color: #fff;
+        font-size: 14px;
+        margin: 0;
+      }
+    }
+  }
   .featured-image{
     height: 200px;
     background-position: center center;

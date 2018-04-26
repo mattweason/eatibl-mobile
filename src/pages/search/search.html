@@ -24,7 +24,7 @@
     </ion-refresher-content>
   </ion-refresher>
   <ion-list>
-    <restaurant-card *ngFor = "let restaurant of restaurantListFiltered" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+    <restaurant-card *ngFor = "let restaurant of restaurantListFiltered" [location]="location" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
   </ion-list>
   <div *ngIf="restaurantListFiltered?.length == 0" class="no-results">
     <ion-grid>
