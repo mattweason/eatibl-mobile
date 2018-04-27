@@ -20,19 +20,30 @@ export class HomePage {
   time: any;
   showToolbar: boolean = true;
   location: any;
+  userCoords: any;
+  firstCall = true;
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, public events: Events) {
     this.setNow();
     events.subscribe('user:geolocated', (location, time) => {
       this.location = location;
+
+      //Setting userCoords will fail if this.location is undefined
+      if(this.location){
+        this.userCoords = [this.location.coords.latitude, this.location.coords.longitude];
+
+        //Only request the geolocated restaurant list the first time this event is received
+        if(this.firstCall){
+          this.firstCall = false;
+          this.API.makePost('restaurant/all/geolocated', this.userCoords).subscribe(data => {
+            this.restaurantList = data;
+          });
+        }
+      }
     });
   }
 
   ngOnInit(){
-    this.API.makeCall('restaurant/all').subscribe(data => {
-      this.restaurantList = data;
-      console.log(this.restaurantList)
-    });
   }
 
   ionViewDidEnter(){
@@ -41,7 +52,7 @@ export class HomePage {
   }
 
   doRefresh(refresher){
-    this.API.makeCall('restaurant/all').subscribe(data => {
+    this.API.makePost('restaurant/all/geolocated', this.userCoords).subscribe(data => {
       this.restaurantList = data;
       refresher.complete();
     });

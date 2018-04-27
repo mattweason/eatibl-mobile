@@ -47,7 +47,6 @@ export class MyApp {
 
   //Push event every time the users geolocation is created or updated
   sendGeolocationEvent() {
-    console.log(this.location)
     this.events.publish('user:geolocated', this.location, Date.now());
   }
 }

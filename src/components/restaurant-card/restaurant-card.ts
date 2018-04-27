@@ -32,7 +32,7 @@ export class RestaurantCardComponent implements OnChanges {
       setTimeout(() => {
         this.isVisible = true;
       }, 0);
-    }, 500);
+    }, 0);
     this.cdRef.detectChanges();
   }
 
@@ -42,10 +42,13 @@ export class RestaurantCardComponent implements OnChanges {
   @Input() time: string;
 
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    this.processBusinessHours();
-    this.processTimeslots();
-    this.setSlide();
-    this.setDistance();
+    if(changes.hasOwnProperty('location'))
+      this.setDistance();
+    if(changes.hasOwnProperty('restaurant') || changes.hasOwnProperty('date') || changes.hasOwnProperty('time')){
+      this.processBusinessHours();
+      this.processTimeslots();
+      this.setSlide();
+    }
   }
 
   timeslots: any;
@@ -61,7 +64,6 @@ export class RestaurantCardComponent implements OnChanges {
   featuredImageUrl: any;
   restaurantTapped = false;
   timeslotTapped = '';
-  distance: any;
 
   constructor(
     public navCtrl: NavController,
