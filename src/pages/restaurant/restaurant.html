@@ -29,7 +29,7 @@
         <ion-row class="border-bottom">
           <ion-col col-9 align-self-stretch class="first-row border-right">
             <h2>{{restaurant?.name}}</h2>
-            <p class="tags">Mediterranean, Greek</p>
+            <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
             <p *ngIf="open?.open" class="open"><span>Open Now</span> {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</p>
             <p *ngIf="!open?.open" class="closed"><span>Closed</span></p>
           </ion-col>

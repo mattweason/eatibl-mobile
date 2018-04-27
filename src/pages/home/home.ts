@@ -29,7 +29,10 @@ export class HomePage {
   }
 
   ngOnInit(){
-    this.API.makeCall('restaurant/all').subscribe(data => this.restaurantList = data);
+    this.API.makeCall('restaurant/all').subscribe(data => {
+      this.restaurantList = data;
+      console.log(this.restaurantList)
+    });
   }
 
   ionViewDidEnter(){
@@ -39,7 +42,7 @@ export class HomePage {
 
   doRefresh(refresher){
     this.API.makeCall('restaurant/all').subscribe(data => {
-      this.restaurantList = data
+      this.restaurantList = data;
       refresher.complete();
     });
   }

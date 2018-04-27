@@ -61,17 +61,24 @@ export class SearchPage implements OnInit {
     });
   }
 
+  //Currently filters based on restaurant name and categories
   filterRestaurants(event){
-    var value = event.target.value;
+    var value = event.target.value.toLowerCase();
 
     if(value)
       this.restaurantListFiltered = this.restaurantListAll.filter((restaurant) => {
-        if(restaurant.name != null) //Handle restaurants with null values
-          return (restaurant.name.toLowerCase().indexOf(value.toLowerCase()) > -1);
+        if(restaurant.name.toLowerCase().indexOf(value) > -1) //First check for restaurant name
+          return true;
+        else if(restaurant.hasOwnProperty('categories')){ //Then check for restaurant categories
+          for (var i = 0; i < restaurant.categories.length; i++){
+            if(restaurant.categories[i].toLowerCase().indexOf(value) > -1)
+            return true;
+          }
+        }
         else
           return false;
-      })
-    else
+      });
+    else //If search input is empty, return all restaurants
       this.restaurantListFiltered = this.restaurantListAll;
   }
 }
