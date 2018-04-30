@@ -1,7 +1,33 @@
 .restaurant-card{
   opacity: 0;
-  transition: 0.5s ease opacity;
+  transition: 0.5s ease all;
+  -webkit-transition: 0.5s ease all;
   position: relative;
+  .button-wrapper{
+    padding: 0 !important;
+    .item-inner{
+      padding: 0 !important;
+      .input-wrapper{
+        .label{
+          margin: 0 !important;
+        }
+      }
+    }
+    &:active{
+      .featured-image:after {
+        transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: block;
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
   .distance{
     position: absolute;
     top: 10px;
@@ -25,10 +51,25 @@
     transition: 0.5s ease opacity;
   }
   .featured-image{
+    position:relative;
     height: 200px;
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
+    background-color: #000;
+    &:after {
+      transition: 0.2s ease all;
+      -webkit-transition: 0.2s ease all;
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: block;
+      background-color: rgba(0, 0, 0, 0);
+    }
+
   }
   .loading-overlay{
     position: absolute;
