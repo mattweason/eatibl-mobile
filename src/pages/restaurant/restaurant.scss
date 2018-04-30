@@ -31,4 +31,8 @@ page-restaurant{
   button.swiper-pagination-bullet-active{
     background-color: color($colors, primary);
   }
+  #map{
+    height: 400px;
+    width: 100%;
+  }
 }

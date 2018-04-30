@@ -64,6 +64,7 @@ export class RestaurantCardComponent implements OnChanges {
   featuredImageUrl: any;
   restaurantTapped = false;
   timeslotTapped = '';
+  distance: any;
 
   constructor(
     public navCtrl: NavController,
