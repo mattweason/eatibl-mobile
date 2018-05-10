@@ -75,13 +75,15 @@ export class RestaurantPage implements OnInit {
       this.timeslotsData = JSON.parse(navParams.get('timeslotsData'));
       this.businessHoursData = JSON.parse(navParams.get('businessHoursData'));
       this.timeslotId = navParams.get('timeslotId');
+      this.distance = navParams.get('distance');
       this.date = navParams.get('date');
+    console.log(this.location)
       this.setNow();
       //Subscribe to geolocation event
       events.subscribe('user:geolocated', (location, time) => {
-        this.location = location;
+        if(location)
+          this.location = location;
       });
-      console.log(this.timeslotsData)
       this.setDistance();
       this.processTimeslots();
       this.processBusinessHours();
@@ -305,9 +307,7 @@ export class RestaurantPage implements OnInit {
     //Get distance only if coordinates are available
     if(this.location && this.restaurant.latitude && this.restaurant.longitude){
       var distance = this.functions.getDistanceFromLatLonInKm(this.location['coords']['latitude'], this.location['coords']['longitude'], this.restaurant.latitude, this.restaurant.longitude);
-      console.log(distance)
       this.distance = this.functions.roundDistances(distance);
-      console.log(this.distance)
     }
   }
 }

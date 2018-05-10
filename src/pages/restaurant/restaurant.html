@@ -19,7 +19,7 @@
       <p>{{distance}}</p>
     </div>
     <div class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"
-         *ngIf="!restaurant?.featuredImage" (tap)="navigateTo($event, restaurant._id, '', date)"></div>
+         *ngIf="!restaurant?.featuredImage"></div>
     <ion-slides *ngIf="restaurant?.featuredImage" paginationType="bullets" pager="true">
       <ion-slide *ngFor="let image of orderedImgArray; let i = index">
         <div class="featured-image" [style.background-image]="image"></div>
