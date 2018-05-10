@@ -28,7 +28,7 @@ export class MyApp {
     });
   }
 
-  ngOnInit(){
+  ngOnInit(){ //TODO: wait for user to allow geolocation before loading app
     //Geolocate the user on initial load
     this.geolocation.getCurrentPosition().then((resp) => {
       this.location = resp;

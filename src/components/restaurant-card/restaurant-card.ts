@@ -93,15 +93,17 @@ export class RestaurantCardComponent implements OnChanges {
     }
   }
 
-  navigateTo(event, restaurantId, timeslotId, date){
+  navigateTo(event, timeslotId){
     if(timeslotId == '')
       this.restaurantTapped = true;
     else
       this.timeslotTapped = timeslotId;
     this.navCtrl.push('RestaurantPage', {
-      restaurantId: restaurantId,
+      restaurant: JSON.stringify(this.restaurant),
+      timeslotsData: JSON.stringify(this.timeslotsData),
+      businessHoursData: JSON.stringify(this.businessHoursData),
       timeslotId: timeslotId,
-      date: date
+      date: this.date
     }).then(() => {
       this.restaurantTapped = false;
       this.timeslotTapped = '';

@@ -97,7 +97,7 @@
           <ion-segment-button value="menu">
             Menu
           </ion-segment-button>
-          <ion-segment-button value="map">
+          <ion-segment-button value="map" (ionChange)="loadMap()">
             Map
           </ion-segment-button>
         </ion-segment>
@@ -107,15 +107,6 @@
           <ion-row>
             <ion-col>
               <p>{{restaurant?.description}}</p>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col col-3>
-              <p class="header">Address:</p>
-            </ion-col>
-            <ion-col col-9>
-              <p>{{restaurant?.address}}</p>
-              <p>{{restaurant?.city}}, {{restaurant?.state}}</p>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -149,8 +140,20 @@
         </ion-grid>
 
         <ion-grid *ngSwitchCase="'map'">
-          <div #map id="map"></div>
+          <ion-row>
+            <ion-col col-3>
+              <p class="header">Address:</p>
+            </ion-col>
+            <ion-col col-9>
+              <p>{{restaurant?.address}}</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+          </ion-row>
         </ion-grid>
+        <!--<div [style.display]="type == 'map' ? 'block' : 'none'">-->
+          <!--<div #mapCanvas id="mapCanvas"></div>-->
+        <!--</div>-->
       </div>
     </ion-card-content>
   </ion-card>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams, Slides, Events } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
@@ -26,6 +26,7 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
 export class RestaurantPage implements OnInit {
   private slides: Slides;
   private url: string = ENV.API;
+
 
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
@@ -61,14 +62,18 @@ export class RestaurantPage implements OnInit {
 
   constructor(
     public navCtrl: NavController,
+
     public navParams: NavParams,
     private API: ApiServiceProvider,
     private datePicker: DatePicker,
     private functions: FunctionsProvider,
     private googleMaps: GoogleMaps,
     private sanitizer: DomSanitizer,
+    private mapElement: ElementRef,
     public events: Events) {
-      this.restaurantId = navParams.get('restaurantId');
+      this.restaurant = JSON.parse(navParams.get('restaurant'));
+      this.timeslotsData = JSON.parse(navParams.get('timeslotsData'));
+      this.businessHoursData = JSON.parse(navParams.get('businessHoursData'));
       this.timeslotId = navParams.get('timeslotId');
       this.date = navParams.get('date');
       this.setNow();
@@ -76,20 +81,10 @@ export class RestaurantPage implements OnInit {
       events.subscribe('user:geolocated', (location, time) => {
         this.location = location;
       });
-  }
-
-  ionViewDidLoad() {
-    this.loadMap();
-    this.type = "about";
-    //Call geolocation from app.component
-    this.events.publish('get:geolocation', Date.now());
-  }
-
-  ngOnInit(){
-    //Get restaurant details
-    this.API.makeCall('restaurant/' + this.restaurantId).subscribe(data => {
-      this.restaurant = data;
+      console.log(this.timeslotsData)
       this.setDistance();
+      this.processTimeslots();
+      this.processBusinessHours();
 
       if(this.restaurant.featuredImage){
         //reorder the image array to put featured image first
@@ -104,17 +99,16 @@ export class RestaurantPage implements OnInit {
           this.orderedImgArray.push(this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`));
         }
       }
-    });
-    //Get discount timeslots
-    this.API.makeCall('discount/' + this.restaurantId + '/week').subscribe(data => {
-      this.timeslotsData = data;
-      this.processTimeslots();
-    });
-    //Get business hours
-    this.API.makeCall('hours/' + this.restaurantId).subscribe(data => {
-      this.businessHoursData = data;
-      this.processBusinessHours();
-    });
+  }
+
+  ionViewDidLoad() {
+    this.loadMap();
+    this.type = "about";
+    //Call geolocation from app.component
+    this.events.publish('get:geolocation', Date.now());
+  }
+
+  ngOnInit(){
   }
 
   loadMap() {
@@ -122,15 +116,14 @@ export class RestaurantPage implements OnInit {
     let mapOptions: GoogleMapOptions = {
       camera: {
         target: {
-          lat: 43.0741904,
-          lng: -89.3809802
+          lat: this.restaurant.latitude,
+          lng: this.restaurant.longitude
         },
-        zoom: 18,
-        tilt: 30
+        zoom: 18
       }
     };
 
-    this.map = new GoogleMap('map', mapOptions);
+    this.map = new GoogleMap('mapCanvas', mapOptions);
 
     // Wait the MAP_READY before using any methods.
     this.map.one(GoogleMapsEvent.MAP_READY)
@@ -143,9 +136,15 @@ export class RestaurantPage implements OnInit {
           icon: 'blue',
           animation: 'DROP',
           position: {
-            lat: 43.0741904,
-            lng: -89.3809802
-          }
+            lat: this.restaurant.latitude,
+            lng: this.restaurant.longitude
+          },
+          zoomControl: false,
+          mapTypeControl: false,
+          scaleControl: false,
+          streetViewControl: false,
+          rotateControl: false,
+          fullscreenControl: false
         })
           .then(marker => {
             marker.on(GoogleMapsEvent.MARKER_CLICK)
