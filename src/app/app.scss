@@ -16,7 +16,7 @@
 // automatically applied to the <body> element in the app.
 
 //Restaurant Component and Page
-restaurant, page-restaurant {
+restaurant-card, page-restaurant {
   h2{
     font-weight: 700 !important;
   }
@@ -89,6 +89,10 @@ restaurant, page-restaurant {
           margin: 0;
           height: 75%;
           font-size: 2rem;
+          &.tapped{
+            background-color: darken(color($colors, primary), 20%);
+            color: lighten(color($colors, primary), 20%);
+          }
           &.active{
             background-color: darken(color($colors, primary), 20%);
           }

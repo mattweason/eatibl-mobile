@@ -1,0 +1,70 @@
+<!-- Generated template for the RestaurantComponent component -->
+<ion-card *ngIf="isLoaded" class="restaurant-card" [ngClass]="{'display': isVisible == true, 'navigating': restaurantTapped == true}">
+  <div *ngIf="distance" class="distance">
+    <p>{{distance}}</p>
+  </div>
+  <div *ngIf="restaurantTapped" class="loading-overlay card">
+    <ion-spinner></ion-spinner>
+  </div>
+  <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item>
+    <div *ngIf="!restaurant?.featuredImage" class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"></div>
+    <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
+  </button>
+  <button class="button-wrapper" (tap)="navigateTo($event, restaurant._id, '', date)" ion-item>
+    <ion-card-content no-padding>
+      <ion-grid>
+        <ion-row class="border-bottom">
+          <ion-col col-9 align-self-stretch class="first-row border-right">
+            <h2>{{restaurant.name}}</h2>
+            <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
+            <p *ngIf="openStatus == 'soon'" class="open"><span>Opening at</span> {{functions.formatClockTime(businessHours[0], true)}}</p>
+            <p *ngIf="openStatus == 'open'" class="open"><span>Open Now</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}</p>
+            <p *ngIf="openStatus == 'closed'" class="closed"><span>Closed</span></p>
+          </ion-col>
+          <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
+            <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
+            <div class="price">
+              <p [ngClass]="restaurant.price >= 1 ? 'active' : ''">$</p>
+              <p [ngClass]="restaurant.price >= 2 ? 'active' : ''">$</p>
+              <p [ngClass]="restaurant.price >= 3 ? 'active' : ''">$</p>
+              <p [ngClass]="restaurant.price == 4 ? 'active' : ''">$</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </button>
+  <ion-card-content no-padding>
+    <ion-grid>
+      <ion-row *ngIf="openStatus == 'soon' || openStatus == 'open'" class="no-padding-row">
+        <ion-col col-1 class="no-padding-col">
+          <button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon></button>
+        </ion-col>
+        <ion-col col-10 class="no-padding-col">
+          <ion-slides #slides *ngIf="timeslots.length" slidesPerView="4" (ionSlideDidChange)="slidePosition()" (ionSlideWillChange)="slidePosition()">
+            <ion-slide *ngFor="let timeslot of timeslots">
+              <div class="timeslot">
+                <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>
+                <button ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id, 'tapped' : timeslotTapped == timeslot?._id}" (tap)="navigateTo($event, timeslot._id)">
+                  -{{timeslot?.discount}}%
+                  <div *ngIf="timeslotTapped == timeslot?._id" class="loading-overlay timeslot">
+                    <ion-spinner></ion-spinner>
+                  </div>
+                </button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+          <div *ngIf="!timeslots.length" class="no-timeslots">
+            <p>No more deals today.</p>
+          </div>
+        </ion-col>
+        <ion-col col-1 class="no-padding-col">
+          <button [disabled]="isEnd" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="nextSlide()"><ion-icon name="arrow-forward"></ion-icon></button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>
+<div class="loading" *ngIf="!isLoaded">
+  <ion-spinner></ion-spinner>
+</div>

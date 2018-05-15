@@ -15,7 +15,11 @@
 <ion-content>
 
   <ion-card *ngIf="isLoaded">
-    <div class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'" *ngIf="!restaurant?.featuredImage" (tap)="navigateTo($event, restaurant._id, '', date)"></div>
+    <div *ngIf="distance" class="distance">
+      <p>{{distance}}</p>
+    </div>
+    <div class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"
+         *ngIf="!restaurant?.featuredImage"></div>
     <ion-slides *ngIf="restaurant?.featuredImage" paginationType="bullets" pager="true">
       <ion-slide *ngFor="let image of orderedImgArray; let i = index">
         <div class="featured-image" [style.background-image]="image"></div>
@@ -26,7 +30,7 @@
         <ion-row class="border-bottom">
           <ion-col col-9 align-self-stretch class="first-row border-right">
             <h2>{{restaurant?.name}}</h2>
-            <p class="tags">Mediterranean, Greek</p>
+            <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
             <p *ngIf="open?.open" class="open"><span>Open Now</span> {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</p>
             <p *ngIf="!open?.open" class="closed"><span>Closed</span></p>
           </ion-col>
@@ -93,7 +97,7 @@
           <ion-segment-button value="menu">
             Menu
           </ion-segment-button>
-          <ion-segment-button value="map">
+          <ion-segment-button value="map" (ionChange)="loadMap()">
             Map
           </ion-segment-button>
         </ion-segment>
@@ -103,15 +107,6 @@
           <ion-row>
             <ion-col>
               <p>{{restaurant?.description}}</p>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col col-3>
-              <p class="header">Address:</p>
-            </ion-col>
-            <ion-col col-9>
-              <p>{{restaurant?.address}}</p>
-              <p>{{restaurant?.city}}, {{restaurant?.state}}</p>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -145,8 +140,20 @@
         </ion-grid>
 
         <ion-grid *ngSwitchCase="'map'">
-          <div #map id="map"></div>
+          <ion-row>
+            <ion-col col-3>
+              <p class="header">Address:</p>
+            </ion-col>
+            <ion-col col-9>
+              <p>{{restaurant?.address}}</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+          </ion-row>
         </ion-grid>
+        <!--<div [style.display]="type == 'map' ? 'block' : 'none'">-->
+          <!--<div #mapCanvas id="mapCanvas"></div>-->
+        <!--</div>-->
       </div>
     </ion-card-content>
   </ion-card>

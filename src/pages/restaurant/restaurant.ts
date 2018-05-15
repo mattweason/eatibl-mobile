@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, Events } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
@@ -18,6 +18,7 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
  * Ionic pages and navigation.
  */
 
+@IonicPage()
 @Component({
   selector: 'page-restaurant',
   templateUrl: 'restaurant.html',
@@ -25,6 +26,7 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
 export class RestaurantPage implements OnInit {
   private slides: Slides;
   private url: string = ENV.API;
+
 
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
@@ -53,25 +55,38 @@ export class RestaurantPage implements OnInit {
   isEnd: boolean = false;
   featuredImageUrl: any;
   orderedImgArray = []; //for displaying the image slides in the right order
+  location: any;
+  distance: any;
 
   map: GoogleMap;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider, private datePicker: DatePicker, private functions: FunctionsProvider, private googleMaps: GoogleMaps, private sanitizer: DomSanitizer) {
-    this.restaurantId = navParams.get('restaurantId');
-    this.timeslotId = navParams.get('timeslotId');
-    this.date = navParams.get('date');
-    this.setNow();
+  constructor(
+    public navCtrl: NavController,
 
-  }
-
-  ionViewDidLoad() {
-    this.loadMap();
-    this.type = "about";
-  }
-
-  ngOnInit(){
-    this.API.makeCall('restaurant/' + this.restaurantId).subscribe(data => {
-      this.restaurant = data;
+    public navParams: NavParams,
+    private API: ApiServiceProvider,
+    private datePicker: DatePicker,
+    private functions: FunctionsProvider,
+    private googleMaps: GoogleMaps,
+    private sanitizer: DomSanitizer,
+    private mapElement: ElementRef,
+    public events: Events) {
+      this.restaurant = JSON.parse(navParams.get('restaurant'));
+      this.timeslotsData = JSON.parse(navParams.get('timeslotsData'));
+      this.businessHoursData = JSON.parse(navParams.get('businessHoursData'));
+      this.timeslotId = navParams.get('timeslotId');
+      this.distance = navParams.get('distance');
+      this.date = navParams.get('date');
+    console.log(this.location)
+      this.setNow();
+      //Subscribe to geolocation event
+      events.subscribe('user:geolocated', (location, time) => {
+        if(location)
+          this.location = location;
+      });
+      this.setDistance();
+      this.processTimeslots();
+      this.processBusinessHours();
 
       if(this.restaurant.featuredImage){
         //reorder the image array to put featured image first
@@ -85,18 +100,17 @@ export class RestaurantPage implements OnInit {
           var imageUrl = this.url+'files/'+this.restaurant.images[i];
           this.orderedImgArray.push(this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`));
         }
-        console.log('rimmomg')
-        console.log(this.orderedImgArray)
       }
-    });
-    this.API.makeCall('discount/' + this.restaurantId + '/week').subscribe(data => {
-      this.timeslotsData = data;
-      this.processTimeslots();
-    });
-    this.API.makeCall('hours/' + this.restaurantId).subscribe(data => {
-      this.businessHoursData = data;
-      this.processBusinessHours();
-    });
+  }
+
+  ionViewDidLoad() {
+    this.loadMap();
+    this.type = "about";
+    //Call geolocation from app.component
+    this.events.publish('get:geolocation', Date.now());
+  }
+
+  ngOnInit(){
   }
 
   loadMap() {
@@ -104,15 +118,14 @@ export class RestaurantPage implements OnInit {
     let mapOptions: GoogleMapOptions = {
       camera: {
         target: {
-          lat: 43.0741904,
-          lng: -89.3809802
+          lat: this.restaurant.latitude,
+          lng: this.restaurant.longitude
         },
-        zoom: 18,
-        tilt: 30
+        zoom: 18
       }
     };
 
-    this.map = new GoogleMap('map', mapOptions);
+    this.map = new GoogleMap('mapCanvas', mapOptions);
 
     // Wait the MAP_READY before using any methods.
     this.map.one(GoogleMapsEvent.MAP_READY)
@@ -125,9 +138,15 @@ export class RestaurantPage implements OnInit {
           icon: 'blue',
           animation: 'DROP',
           position: {
-            lat: 43.0741904,
-            lng: -89.3809802
-          }
+            lat: this.restaurant.latitude,
+            lng: this.restaurant.longitude
+          },
+          zoomControl: false,
+          mapTypeControl: false,
+          scaleControl: false,
+          streetViewControl: false,
+          rotateControl: false,
+          fullscreenControl: false
         })
           .then(marker => {
             marker.on(GoogleMapsEvent.MARKER_CLICK)
@@ -270,7 +289,7 @@ export class RestaurantPage implements OnInit {
 
   //Navigate to confirm booking page
   bookNow(event, restaurant, timeslot, people, date){
-    this.navCtrl.push(ConfirmBookingPage, {
+    this.navCtrl.push('ConfirmBookingPage', {
       restaurant: restaurant,
       timeslot: timeslot,
       people: people,
@@ -281,5 +300,14 @@ export class RestaurantPage implements OnInit {
   setNow(){
     this.today = moment().format();
     this.maxDate = moment().add(30, 'day').format();
+  }
+
+  //Determine and set distance in km from restaurant to user location
+  setDistance(){
+    //Get distance only if coordinates are available
+    if(this.location && this.restaurant.latitude && this.restaurant.longitude){
+      var distance = this.functions.getDistanceFromLatLonInKm(this.location['coords']['latitude'], this.location['coords']['longitude'], this.restaurant.latitude, this.restaurant.longitude);
+      this.distance = this.functions.roundDistances(distance);
+    }
   }
 }

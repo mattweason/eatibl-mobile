@@ -41,7 +41,7 @@
       <span>Please enter a valid email.</span>
     </div>
     <div class="form-error" *ngIf="(signupForm.controls.password.hasError('minLength') && ((signupForm.controls.password.dirty || signupForm.controls.password.touched) || submitAttempt))">
-      <span>Please enter a valid email.</span>
+      <span>Your password is too short.</span>
     </div>
     <div class="form-error" *ngIf="badInput">
       <span>Email and password combination not found.</span>

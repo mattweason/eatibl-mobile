@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { ENV } from '@app/env';
 
-import { RestaurantPage } from '../../pages/restaurant/restaurant';
 
 /**
  * Generated class for the RestaurantComponent component.
@@ -16,10 +15,10 @@ import { RestaurantPage } from '../../pages/restaurant/restaurant';
  * Components.
  */
 @Component({
-  selector: 'restaurant',
-  templateUrl: 'restaurant.html'
+  selector: 'restaurant-card',
+  templateUrl: 'restaurant-card.html'
 })
-export class RestaurantComponent implements OnChanges {
+export class RestaurantCardComponent implements OnChanges {
   private isVisible = false;
   private slides: Slides;
   private url: string = ENV.API;
@@ -37,40 +36,56 @@ export class RestaurantComponent implements OnChanges {
     this.cdRef.detectChanges();
   }
 
+  @Input() location = {} as any;
   @Input() restaurant = {} as any;
   @Input() date: string;
   @Input() time: string;
 
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    this.processBusinessHours();
-    this.processTimeslots();
-    this.setSlide();
+    if(changes.hasOwnProperty('location'))
+      this.setDistance();
+    if(changes.hasOwnProperty('restaurant') || changes.hasOwnProperty('date') || changes.hasOwnProperty('time')){
+      this.processBusinessHours();
+      this.processTimeslots();
+      this.setSlide();
+    }
   }
 
   timeslots: any;
   timeslotsData = {} as any;
   businessHours = [];
   businessHoursData = {} as any;
-  open: any;
+  openStatus: any;
   isLoaded: boolean = false;
   isInitial: boolean = true;
   scrollingSlides: any;
   isBeginning: boolean = false;
   isEnd: boolean = false;
   featuredImageUrl: any;
+  restaurantTapped = false;
+  timeslotTapped = '';
+  distance: any;
 
-  constructor(public navCtrl: NavController, private API: ApiServiceProvider, private functions: FunctionsProvider, private cdRef:ChangeDetectorRef, private sanitizer: DomSanitizer) {
-  }
+  constructor(
+    public navCtrl: NavController,
+    private API: ApiServiceProvider,
+    private functions: FunctionsProvider,
+    private cdRef:ChangeDetectorRef,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(){
+    //Get discount timeslots
     this.API.makeCall('discount/' + this.restaurant._id + '/week').subscribe(data => {
       this.timeslotsData = data;
       this.processTimeslots()
     });
+    //Get business hours
     this.API.makeCall('hours/' + this.restaurant._id).subscribe(data => {
       this.businessHoursData = data;
       this.processBusinessHours()
     });
+    //If there is a featured image
     if(this.restaurant.featuredImage){
       console.log('url('+this.url+'files/'+this.restaurant.featuredImage+')');
       var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
@@ -78,11 +93,21 @@ export class RestaurantComponent implements OnChanges {
     }
   }
 
-  navigateTo(event, restaurantId, timeslotId, date){
-    this.navCtrl.push(RestaurantPage, {
-      restaurantId: restaurantId,
+  navigateTo(event, timeslotId){
+    if(timeslotId == '')
+      this.restaurantTapped = true;
+    else
+      this.timeslotTapped = timeslotId;
+    this.navCtrl.push('RestaurantPage', {
+      restaurant: JSON.stringify(this.restaurant),
+      timeslotsData: JSON.stringify(this.timeslotsData),
+      businessHoursData: JSON.stringify(this.businessHoursData),
       timeslotId: timeslotId,
-      date: date
+      distance: this.distance,
+      date: this.date
+    }).then(() => {
+      this.restaurantTapped = false;
+      this.timeslotTapped = '';
     });
   }
 
@@ -92,7 +117,12 @@ export class RestaurantComponent implements OnChanges {
     var time = this.functions.formatTime(this.date);
 
     //Compare current time to open close hours and set to this.open
-    this.open = this.businessHours[0] <= time && this.businessHours[1] >= time;
+    if(time < this.businessHours[0])
+      this.openStatus = 'soon';
+    if(time >= this.businessHours[0] && time < this.businessHours[1])
+      this.openStatus = 'open';
+    if(time >= this.businessHours[1])
+      this.openStatus = 'closed';
   }
 
   //Filter timeslots for the currently selected date
@@ -173,6 +203,17 @@ export class RestaurantComponent implements OnChanges {
     if(this.slides){
       this.isBeginning = this.slides.isBeginning();
       this.isEnd = this.slides.isEnd();
+    }
+  }
+
+  //Determine and set distance in km from restaurant to user location
+  setDistance(){
+    //Get distance only if coordinates are available
+    if(this.location && this.restaurant.latitude && this.restaurant.longitude){
+      var distance = this.functions.getDistanceFromLatLonInKm(this.location['coords']['latitude'], this.location['coords']['longitude'], this.restaurant.latitude, this.restaurant.longitude);
+      console.log(distance)
+      this.distance = this.functions.roundDistances(distance);
+      console.log(this.distance)
     }
   }
 }

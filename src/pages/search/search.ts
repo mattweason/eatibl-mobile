@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as moment from 'moment'
 
@@ -10,6 +10,7 @@ import * as moment from 'moment'
  * Ionic pages and navigation.
  */
 
+@IonicPage()
 @Component({
   selector: 'page-search',
   templateUrl: 'search.html',
@@ -24,14 +25,23 @@ export class SearchPage implements OnInit {
   today: string;
   maxDate: string;
   time: any;
+  location: any;
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider) {
-    this.setNow();
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private API: ApiServiceProvider,
+    public events: Events) {
+      this.setNow();
+      events.subscribe('user:geolocated', (location, time) => {
+        this.location = location;
+      });
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SearchPage');
+    //Call geolocation from app.component
+    this.events.publish('get:geolocation', Date.now());
   }
 
   ngOnInit(){
@@ -44,14 +54,31 @@ export class SearchPage implements OnInit {
     this.maxDate = moment().add(30, 'day').format();
   }
 
+  doRefresh(refresher){
+    this.API.makeCall('restaurant/all').subscribe(data => {
+      this.restaurantListAll = this.restaurantListFiltered = data
+      refresher.complete();
+    });
+  }
+
+  //Currently filters based on restaurant name and categories
   filterRestaurants(event){
-    var value = event.target.value;
+    var value = event.target.value.toLowerCase();
 
     if(value)
       this.restaurantListFiltered = this.restaurantListAll.filter((restaurant) => {
-        return (restaurant.name.toLowerCase().indexOf(value.toLowerCase()) > -1);
-      })
-    else
+        if(restaurant.name.toLowerCase().indexOf(value) > -1) //First check for restaurant name
+          return true;
+        else if(restaurant.hasOwnProperty('categories')){ //Then check for restaurant categories
+          for (var i = 0; i < restaurant.categories.length; i++){
+            if(restaurant.categories[i].toLowerCase().indexOf(value) > -1)
+            return true;
+          }
+        }
+        else
+          return false;
+      });
+    else //If search input is empty, return all restaurants
       this.restaurantListFiltered = this.restaurantListAll;
   }
 }

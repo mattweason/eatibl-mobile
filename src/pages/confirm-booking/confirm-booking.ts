@@ -16,6 +16,7 @@ import { FunctionsProvider } from '../../providers/functions/functions';
  * Ionic pages and navigation.
  */
 
+@IonicPage()
 @Component({
   selector: 'page-confirm-booking',
   templateUrl: 'confirm-booking.html',
@@ -148,7 +149,7 @@ export class ConfirmBookingPage {
           this.presentAlert(title, message);
         }
         else
-          this.navCtrl.push(BookingConfirmedPage, {
+          this.navCtrl.push('BookingConfirmedPage', {
             booking: this.response.booking,
             restaurant: this.restaurant
           }).then(() => {

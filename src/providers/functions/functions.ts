@@ -46,4 +46,40 @@ export class FunctionsProvider {
 
     return hour + minute;
   }
+
+  //Calculate the distance in km between two sets of coordinates
+  getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    console.log(lat1)
+    console.log(lon1)
+    console.log(lat2)
+    console.log(lon2)
+    var R = 6371; // Radius of the earth in km
+    var dLat = this.deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = this.deg2rad(lon2-lon1);
+    var a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+        Math.sin(dLon/2) * Math.sin(dLon/2)
+      ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c; // Distance in km
+    return d;
+  }
+
+  //Round distances in a scaled way (ie. 100m, 1.1km, 10km)
+  roundDistances(distance){
+    var roundedDistance;
+    if(distance >= 10)
+      roundedDistance = Math.round(distance) + ' km';
+    if(distance < 10 && distance >= 1)
+      roundedDistance = (Math.round(distance * 10) / 10) + ' km';
+    if(distance < 1)
+      roundedDistance = (Math.round(distance * 100) * 10) + ' m';
+    return roundedDistance;
+  }
+
+  //Convert degrees to radians
+  deg2rad(deg) {
+    return deg * (Math.PI/180)
+  }
 }
