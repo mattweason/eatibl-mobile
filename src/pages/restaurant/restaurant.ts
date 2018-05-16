@@ -37,7 +37,8 @@ export class RestaurantPage implements OnInit {
 
   timeslots: any;
   timeslotsData = {} as any;
-  businessHours = [['Monday','Mon','',''],['Tuesday','Tue','',''],['Wednesday','Wed','',''],['Thursday','Thu','',''],['Friday','Fri','',''],['Saturday','Sat','',''],['Sunday','Sun','','']];
+  businessHours = [[],[],[],[],[],[],[]];
+  businessDays = [['Monday','Mon'],['Tuesday','Tue'],['Wednesday','Wed','',''],['Thursday','Thu','',''],['Friday','Fri','',''],['Saturday','Sat','',''],['Sunday','Sun','','']];
   businessHoursData = {} as any;
   restaurant: any;
   activeTimeslot: any;
@@ -77,7 +78,6 @@ export class RestaurantPage implements OnInit {
       this.timeslotId = navParams.get('timeslotId');
       this.distance = navParams.get('distance');
       this.date = navParams.get('date');
-    console.log(this.location)
       this.setNow();
       //Subscribe to geolocation event
       events.subscribe('user:geolocated', (location, time) => {
@@ -87,6 +87,7 @@ export class RestaurantPage implements OnInit {
       this.setDistance();
       this.processTimeslots();
       this.processBusinessHours();
+      this.isOpen();
 
       if(this.restaurant.featuredImage){
         //reorder the image array to put featured image first
@@ -170,17 +171,25 @@ export class RestaurantPage implements OnInit {
     var hour = date.getHours() >= 6 ? date.getHours() : +date.getHours + 24;
     var minute = (date.getMinutes() / 60);
     var time = hour + minute;
-    var index = _.findIndex(this.businessHours, function(businessDay){
+    var index = _.findIndex(this.businessDays, function(businessDay){
       return businessDay[0] == days[day];
     });
-
-    //Converting open and close hours from string to numbers
-    var open: Number = +this.businessHours[index][2];
-    var close: Number = +this.businessHours[index][3];
+    console.log(this.businessHours)
+    var hoursLength = this.businessHours[index].length;
 
     //Compare current time to open close hours and set to this.open
-    var isOpen = open <= time && close >= time;
-
+    if(hoursLength == 2){
+      if(time >= this.businessHours[index][0] && time < this.businessHours[index][1])
+        var isOpen = true;
+      if(time >= this.businessHours[index][1] || time < this.businessHours[index][0])
+        var isOpen = false;
+    }
+    if(hoursLength == 4){
+      if((time >= this.businessHours[index][0] && time < this.businessHours[index][1]) || (time >= this.businessHours[index][2] && time < this.businessHours[index][3]))
+        var isOpen = true;
+      if(time >= this.businessHours[index][3] || time < this.businessHours[index][0] || (time <= this.businessHours[index][2] && time > this.businessHours[index][1]))
+        var isOpen = false;
+    }
 
     this.open = {
       open: isOpen,
@@ -223,13 +232,14 @@ export class RestaurantPage implements OnInit {
 
   //Add open and close hours to businessHours array for ngFor loop in view
   processBusinessHours(){
+    console.log(this.businessHoursData)
     for (var i = 0; i < this.businessHoursData.length; i++)
-      for(var a = 0; a < this.businessHours.length; a++)
-        if(this.businessHours[a][0] == this.businessHoursData[i]['day']){
-          this.businessHours[a][2] = this.businessHoursData[i]['open'];
-          this.businessHours[a][3] = this.businessHoursData[i]['close'];
+      for(var a = 0; a < this.businessHours.length; a++){
+        if(this.businessDays[a][0] == this.businessHoursData[i]['day']){
+          this.businessHours[a] = this.businessHoursData[i]['hours'];
         }
-    this.isOpen();
+      }
+    console.log(this.businessHours)
   }
 
   //When time changes or date changes, set slide to selected time

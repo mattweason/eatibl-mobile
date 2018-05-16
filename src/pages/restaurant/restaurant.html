@@ -31,8 +31,8 @@
           <ion-col col-9 align-self-stretch class="first-row border-right">
             <h2>{{restaurant?.name}}</h2>
             <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
-            <p *ngIf="open?.open" class="open"><span>Open Now</span> {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</p>
-            <p *ngIf="!open?.open" class="closed"><span>Closed</span></p>
+            <p *ngIf="open?.open" class="open"><span class="prefix">Open Now</span> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></p>
+            <p *ngIf="!open?.open" class="closed"><span class="prefix">Closed</span> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></p>
           </ion-col>
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
             <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
@@ -78,7 +78,7 @@
               </ion-slide>
             </ion-slides>
             <div *ngIf="!timeslots.length" class="no-timeslots">
-              <p>Closed</p>
+              <p>No more deals today.</p>
             </div>
           </ion-col>
           <ion-col col-1 class="no-padding-col">
@@ -114,12 +114,12 @@
               <p class="header">Hours:</p>
             </ion-col>
             <ion-col col-2>
-              <p class="day" *ngFor="let day of businessHours">{{day[1]}}:</p>
+              <p class="day" *ngFor="let day of businessDays; let i = index">{{day[1]}}:<span *ngIf="businessHours[i].length == 4"><br><div></div></span></p>
             </ion-col>
             <ion-col col-7>
               <p class="hours" *ngFor="let day of businessHours;">
-                <span *ngIf="day[2] != day[3]">{{functions.formatClockTime(day[2], true)}} - {{functions.formatClockTime(day[3], true)}}</span>
-                <span *ngIf="day[2] == day[3]">Closed</span>
+                <span *ngIf="day[0] != day[1]">{{functions.formatClockTime(day[0], true)}} - {{functions.formatClockTime(day[1], true)}}<span *ngIf="day.length == 4">,<br>{{functions.formatClockTime(day[2], true)}} - {{functions.formatClockTime(day[3], true)}}</span></span>
+                <span *ngIf="day[0] == day[1]">Closed</span>
               </p>
             </ion-col>
           </ion-row>

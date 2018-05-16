@@ -55,7 +55,7 @@ export class RestaurantCardComponent implements OnChanges {
   timeslotsData = {} as any;
   businessHours = [];
   businessHoursData = {} as any;
-  openStatus: any;
+  isOpen: boolean;
   isLoaded: boolean = false;
   isInitial: boolean = true;
   scrollingSlides: any;
@@ -112,17 +112,25 @@ export class RestaurantCardComponent implements OnChanges {
   }
 
   //To establish open now or closed in view
-  isOpen(){
+  checkOpen(){
     //Get current time to compare to open close hours for day
     var time = this.functions.formatTime(this.date);
+    var hoursLength = this.businessHours.length;
 
     //Compare current time to open close hours and set to this.open
-    if(time < this.businessHours[0])
-      this.openStatus = 'soon';
-    if(time >= this.businessHours[0] && time < this.businessHours[1])
-      this.openStatus = 'open';
-    if(time >= this.businessHours[1])
-      this.openStatus = 'closed';
+    if(hoursLength == 2){
+      if(time >= this.businessHours[0] && time < this.businessHours[1])
+        this.isOpen = true;
+      if(time >= this.businessHours[1] || time < this.businessHours[0])
+        this.isOpen = false;
+    }
+    if(hoursLength == 4){
+      if((time >= this.businessHours[0] && time < this.businessHours[1]) || (time >= this.businessHours[2] && time < this.businessHours[3]))
+        this.isOpen = true;
+      if(time >= this.businessHours[3] || time < this.businessHours[0] || (time <= this.businessHours[2] && time > this.businessHours[1]))
+        this.isOpen = false;
+    }
+    console.log(this.isOpen)
   }
 
   //Filter timeslots for the currently selected date
@@ -145,10 +153,9 @@ export class RestaurantCardComponent implements OnChanges {
   processBusinessHours(){
     for (var i = 0; i < this.businessHoursData.length; i++)
       if(this.businessHoursData[i]['day'] == moment(this.date).format('dddd').toString()){
-        this.businessHours[0] = this.businessHoursData[i]['open'];
-        this.businessHours[1] = this.businessHoursData[i]['close'];
+        this.businessHours = this.businessHoursData[i]['hours'];
       }
-    this.isOpen();
+    this.checkOpen();
   }
 
   //When time changes or date changes, set slide to selected time
@@ -211,9 +218,7 @@ export class RestaurantCardComponent implements OnChanges {
     //Get distance only if coordinates are available
     if(this.location && this.restaurant.latitude && this.restaurant.longitude){
       var distance = this.functions.getDistanceFromLatLonInKm(this.location['coords']['latitude'], this.location['coords']['longitude'], this.restaurant.latitude, this.restaurant.longitude);
-      console.log(distance)
       this.distance = this.functions.roundDistances(distance);
-      console.log(this.distance)
     }
   }
 }

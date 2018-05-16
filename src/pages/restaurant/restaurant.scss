@@ -15,6 +15,14 @@ page-restaurant{
         margin: 0;
       }
     }
+    .metadata{
+      display: flex;
+    }
+  }
+  .day{
+    div{
+      height: 19px;
+    }
   }
   .featured-image{
     height: 200px;

@@ -21,13 +21,15 @@ restaurant-card, page-restaurant {
     font-weight: 700 !important;
   }
   .open{
-    span{
+    .prefix{
       color: color($colors, tertiary);
     }
     font-size: 1.2rem;
   }
   .closed{
-    color: color($colors, primary);
+    .prefix{
+      color: color($colors, primary);
+    }
     font-size: 1.2rem;
   }
   img{
@@ -60,9 +62,9 @@ restaurant-card, page-restaurant {
     color: lighten(color($colors, dark), 20%);
   }
   .no-timeslots{
-    height: 80px;
+    height: 30px;
     p{
-      line-height: 80px;
+      line-height: 30px;
       color: color($colors, primary);
       font-size: 1.6rem;
       text-align: center;
