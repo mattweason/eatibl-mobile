@@ -6,11 +6,11 @@
   <div *ngIf="restaurantTapped" class="loading-overlay card">
     <ion-spinner></ion-spinner>
   </div>
-  <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item>
+  <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none>
     <div *ngIf="!restaurant?.featuredImage" class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"></div>
     <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
   </button>
-  <button class="button-wrapper" (tap)="navigateTo($event, restaurant._id, '', date)" ion-item>
+  <button class="button-wrapper" (tap)="navigateTo($event, restaurant._id, '', date)" ion-item detail-none>
     <ion-card-content no-padding>
       <ion-grid>
         <ion-row class="border-bottom">
