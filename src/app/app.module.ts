@@ -12,6 +12,7 @@ import { DatePicker } from '@ionic-native/date-picker';
 import { Geolocation } from '@ionic-native/geolocation';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { LaunchNavigator } from '@ionic-native/launch-navigator';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -41,6 +42,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
     SplashScreen,
     GoogleMaps,
     Geolocation,
+    LaunchNavigator,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ApiServiceProvider,
     FunctionsProvider,

@@ -49,10 +49,6 @@ export class FunctionsProvider {
 
   //Calculate the distance in km between two sets of coordinates
   getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
-    console.log(lat1)
-    console.log(lon1)
-    console.log(lat2)
-    console.log(lon2)
     var R = 6371; // Radius of the earth in km
     var dLat = this.deg2rad(lat2-lat1);  // deg2rad below
     var dLon = this.deg2rad(lon2-lon1);

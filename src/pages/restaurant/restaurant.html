@@ -88,6 +88,24 @@
         <ion-row class="border-bottom">
           <button ion-button block color="secondary" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, people, date)">Book Now</button>
         </ion-row>
+        <ion-row class="border-bottom no-padding-row">
+          <figure class="map-figure">
+            <img class="map" src="{{mapUrl}}" alt="">
+          </figure>
+        </ion-row>
+        <ion-row class="border-bottom">
+          <ion-col col-8>
+            <p class="address">{{restaurant?.address}}</p>
+          </ion-col>
+          <ion-col col-4 class="navigate-button">
+            <div>
+              <button (tap)="openMaps()" ion-fab color="secondary">
+                <ion-icon name="navigate"></ion-icon>
+              </button>
+              <p>Directions</p>
+            </div>
+          </ion-col>
+        </ion-row>
       </ion-grid>
       <div class="details">
         <ion-segment [(ngModel)]="type">
@@ -96,9 +114,6 @@
           </ion-segment-button>
           <ion-segment-button value="menu">
             Menu
-          </ion-segment-button>
-          <ion-segment-button value="map" (ionChange)="loadMap()">
-            Map
           </ion-segment-button>
         </ion-segment>
       </div>
@@ -138,22 +153,6 @@
             </ion-col>
           </ion-row>
         </ion-grid>
-
-        <ion-grid *ngSwitchCase="'map'">
-          <ion-row>
-            <ion-col col-3>
-              <p class="header">Address:</p>
-            </ion-col>
-            <ion-col col-9>
-              <p>{{restaurant?.address}}</p>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-          </ion-row>
-        </ion-grid>
-        <!--<div [style.display]="type == 'map' ? 'block' : 'none'">-->
-          <!--<div #mapCanvas id="mapCanvas"></div>-->
-        <!--</div>-->
       </div>
     </ion-card-content>
   </ion-card>

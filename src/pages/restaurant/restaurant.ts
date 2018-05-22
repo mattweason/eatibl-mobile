@@ -2,9 +2,9 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams, Slides, Events } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
+import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
-import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
 import * as _ from 'underscore';
 import moment from 'moment';
 import { ENV } from '@app/env';
@@ -59,7 +59,7 @@ export class RestaurantPage implements OnInit {
   location: any;
   distance: any;
 
-  map: GoogleMap;
+  mapUrl: string;
 
   constructor(
     public navCtrl: NavController,
@@ -68,9 +68,8 @@ export class RestaurantPage implements OnInit {
     private API: ApiServiceProvider,
     private datePicker: DatePicker,
     private functions: FunctionsProvider,
-    private googleMaps: GoogleMaps,
     private sanitizer: DomSanitizer,
-    private mapElement: ElementRef,
+    private launchNavigator: LaunchNavigator,
     public events: Events) {
       this.restaurant = JSON.parse(navParams.get('restaurant'));
       this.timeslotsData = JSON.parse(navParams.get('timeslotsData'));
@@ -88,6 +87,8 @@ export class RestaurantPage implements OnInit {
       this.processTimeslots();
       this.processBusinessHours();
       this.isOpen();
+      this.buildMap();
+    console.log(this.restaurant)
 
       if(this.restaurant.featuredImage){
         //reorder the image array to put featured image first
@@ -105,58 +106,12 @@ export class RestaurantPage implements OnInit {
   }
 
   ionViewDidLoad() {
-    this.loadMap();
     this.type = "about";
     //Call geolocation from app.component
     this.events.publish('get:geolocation', Date.now());
   }
 
   ngOnInit(){
-  }
-
-  loadMap() {
-
-    let mapOptions: GoogleMapOptions = {
-      camera: {
-        target: {
-          lat: this.restaurant.latitude,
-          lng: this.restaurant.longitude
-        },
-        zoom: 18
-      }
-    };
-
-    this.map = new GoogleMap('mapCanvas', mapOptions);
-
-    // Wait the MAP_READY before using any methods.
-    this.map.one(GoogleMapsEvent.MAP_READY)
-      .then(() => {
-        console.log('Map is ready!');
-
-        // Now you can use all methods safely.
-        this.map.addMarker({
-          title: 'Ionic',
-          icon: 'blue',
-          animation: 'DROP',
-          position: {
-            lat: this.restaurant.latitude,
-            lng: this.restaurant.longitude
-          },
-          zoomControl: false,
-          mapTypeControl: false,
-          scaleControl: false,
-          streetViewControl: false,
-          rotateControl: false,
-          fullscreenControl: false
-        })
-          .then(marker => {
-            marker.on(GoogleMapsEvent.MARKER_CLICK)
-              .subscribe(() => {
-                alert('clicked');
-              });
-          });
-
-      });
   }
 
   //To establish open now or closed in view
@@ -195,6 +150,17 @@ export class RestaurantPage implements OnInit {
       open: isOpen,
       index: index
     }
+  }
+
+  //Build static map url
+  buildMap(){
+    // this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&key=AIzaSyD3lkVR2f_hCqSF_7Zpj4kUIAwlqLf1uao"
+    this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=icon:https://eatibl.com/assets/images/eatibl-pin.png|"+this.restaurant.latitude+","+this.restaurant.longitude;
+  }
+
+  //Open the users relevant maps app to navigate to the restaurant
+  openMaps(){
+    this.launchNavigator.navigate(this.restaurant.address);
   }
 
   //Filter timeslots for the currently selected date
