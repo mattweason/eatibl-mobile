@@ -87,7 +87,6 @@ export class RestaurantCardComponent implements OnChanges {
     });
     //If there is a featured image
     if(this.restaurant.featuredImage){
-      console.log('url('+this.url+'files/'+this.restaurant.featuredImage+')');
       var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
       this.featuredImageUrl = this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`)
     }
@@ -130,7 +129,6 @@ export class RestaurantCardComponent implements OnChanges {
       if(time >= this.businessHours[3] || time < this.businessHours[0] || (time <= this.businessHours[2] && time > this.businessHours[1]))
         this.isOpen = false;
     }
-    console.log(this.isOpen)
   }
 
   //Filter timeslots for the currently selected date

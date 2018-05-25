@@ -13,6 +13,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
+import { AndroidPermissions } from '@ionic-native/android-permissions';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -43,6 +44,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
     GoogleMaps,
     Geolocation,
     LaunchNavigator,
+    AndroidPermissions,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ApiServiceProvider,
     FunctionsProvider,
