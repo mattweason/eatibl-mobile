@@ -17,9 +17,10 @@
   <ion-card>
     <ion-card-content no-padding>
       <ion-grid>
-        <ion-row class="border-bottom">
-          <ion-col align-self-center>
+        <ion-row class="border-bottom header">
+          <ion-col>
             <h2>Confirmation</h2>
+            <p *ngIf="upcoming" class="cancel" (click)="cancelBooking()">Cancel</p>
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">
@@ -85,10 +86,18 @@
           </ion-col>
         </ion-row>
         <ion-row>
-          <ion-col>
-            <button *ngIf="upcoming && !tooClose" ion-button block color="danger" (click)="cancelBooking()">Cancel Booking</button>
-            <p *ngIf="!upcoming" class="completed">Completed</p>
-            <p *ngIf="tooClose && upcoming" class="tooClose">Cannot Cancel</p>
+          <ion-col class="redeem">
+            <div class="redeem-wrapper">
+              <div class="redeem-liner">
+                <button ion-button block color="primary" (click)="redeemBooking()">
+                  <div *ngIf="!redeemed">REDEEM</div>
+                  <div *ngIf="!redeemed">BOOKING</div>
+                  <img *ngIf="redeemed" src="assets/imgs/white-logo.png">
+                </button>
+                <div class="geolocate-indicator orange"></div>
+              </div>
+            </div>
+            <h2 [ngClass]="{'redeemed': redeemed}">Redeemed!</h2>
           </ion-col>
         </ion-row>
       </ion-grid>

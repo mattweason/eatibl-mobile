@@ -40,7 +40,9 @@ export class BookingsPage {
 
   ionViewDidEnter() {
     console.log('ionViewDidLoad BookingsPage');
-    this.storage.get('user').then((val) => {
+    this.storage.get('eatiblUser').then((val) => {
+      console.log('got user')
+      console.log(val)
       if(val){
         this.user = decode(val);
         this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {

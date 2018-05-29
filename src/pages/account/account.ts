@@ -39,7 +39,7 @@ export class AccountPage {
   }
 
   ionViewDidEnter() {
-    this.storage.get('user').then((val) => {
+    this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
         this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
@@ -80,7 +80,7 @@ export class AccountPage {
   }
 
   changeAccounts(){
-    this.storage.remove('user');
+    this.storage.remove('eatiblUser');
     this.navCtrl.push('LoginPage');
   }
 

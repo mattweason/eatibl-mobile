@@ -63,7 +63,7 @@ export class LoginPage {
           this.presentAlert(title, message);
         }
         else{
-          this.storage.set('user',response);
+          this.storage.set('eatiblUser',response);
           this.navCtrl.pop();
         }
 

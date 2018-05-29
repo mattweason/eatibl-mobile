@@ -69,7 +69,7 @@ export class SignupPage {
       var message;
       this.response = response;
       if(this.response.message == 'success'){
-        this.storage.set('user',this.response.token).then((val) => {
+        this.storage.set('eatiblUser',this.response.token).then((val) => {
           title = 'Account created';
           message = 'Your account has been created!';
           this.presentSuccessAlert(title, message);

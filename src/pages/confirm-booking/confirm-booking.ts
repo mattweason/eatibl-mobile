@@ -78,7 +78,7 @@ export class ConfirmBookingPage {
 
   ngOnInit(){
     this.buildDateObject();
-    this.storage.get('user').then((val) => {
+    this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
         this.bookingForm.controls['name'].setValue(this.user.name);
@@ -148,7 +148,15 @@ export class ConfirmBookingPage {
 
           this.presentAlert(title, message);
         }
-        else
+        else{
+          this.storage.get('eatiblUser').then((val) => {
+            if(val){
+              this.user = decode(val);
+            }
+            else{
+              this.storage.set('eatiblUser', this.response.token)
+            }
+          });
           this.navCtrl.push('BookingConfirmedPage', {
             booking: this.response.booking,
             restaurant: this.restaurant
@@ -156,6 +164,7 @@ export class ConfirmBookingPage {
             var index = this.navCtrl.getActive().index;
             this.navCtrl.remove(index-1);
           });
+        }
       });
     }
   }

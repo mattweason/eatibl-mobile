@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { Events } from 'ionic-angular';
 import moment from 'moment';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
@@ -24,12 +25,24 @@ export class BookingConfirmedPage {
   response: any;
   upcoming = false;
   tooClose = false;
+  location: any;
+  redeemed = false;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private functions: FunctionsProvider, private API: ApiServiceProvider, public alertCtrl: AlertController) {
-    this.restaurant = navParams.get('restaurant');
-    this.booking = navParams.get('booking');
-    this.buildDateObject();
-  }
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private functions: FunctionsProvider,
+    private API: ApiServiceProvider,
+    public alertCtrl: AlertController,
+    public events: Events
+    ) {
+      this.restaurant = navParams.get('restaurant');
+      this.booking = navParams.get('booking');
+      this.buildDateObject();
+      events.subscribe('user:geolocated', (location, time) => {
+        this.location = location;
+      });
+    }
 
   buildDateObject(){
     var dateOrigin = new Date(this.booking.date);
@@ -45,32 +58,50 @@ export class BookingConfirmedPage {
   }
 
   cancelBooking(){
-    let alert = this.alertCtrl.create({
-      title: 'Cancel Booking',
-      message: 'Are you sure you want to cancel this booking?',
-      buttons: [
-        {
-          text: 'No',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
+    if(!this.tooClose){
+      let alert = this.alertCtrl.create({
+        title: 'Cancel Booking',
+        message: 'Are you sure you want to cancel this booking?',
+        buttons: [
+          {
+            text: 'No',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancel clicked');
+            }
+          },
+          {
+            text: 'Yes',
+            handler: () => {
+              this.API.makeCall('booking/'+this.booking._id+'/disable').subscribe(response => {
+                this.response = response;
+                if(this.response.message == 'error')
+                  this.errorAlert();
+                if(this.response.disabled == 1)
+                  this.successAlert();
+              });
+            }
           }
-        },
-        {
-          text: 'Yes',
-          handler: () => {
-            this.API.makeCall('booking/'+this.booking._id+'/disable').subscribe(response => {
-              this.response = response;
-              if(this.response.message == 'error')
-                this.errorAlert();
-              if(this.response.disabled == 1)
-                this.successAlert();
-            });
+        ]
+      });
+      alert.present();
+    }
+    else{
+      let alert = this.alertCtrl.create({
+        title: 'Cannot Cancel',
+        message: "You cannot cancel a booking within 30 minutes of it's start time.",
+        buttons: [
+          {
+            text: 'Ok',
+            role: 'cancel',
+            handler: () => {
+              console.log('Ok clicked');
+            }
           }
-        }
-      ]
-    });
-    alert.present();
+        ]
+      });
+      alert.present();
+    }
   }
 
   errorAlert(){
@@ -94,6 +125,17 @@ export class BookingConfirmedPage {
       }]
     });
     alert.present();
+  }
+
+  redeemBooking(){
+    if(this.location)
+
+    this.redeemed = true;
+  }
+
+  //Confirm a user is within the vicinity of the restaurant
+  checkLocation(){
+
   }
 
   canCancel(){
