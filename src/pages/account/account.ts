@@ -42,6 +42,7 @@ export class AccountPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
+        console.log(this.user)
         this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
           this.sortBookings(data);
         });

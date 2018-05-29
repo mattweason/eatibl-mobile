@@ -9,7 +9,7 @@
   <ion-navbar color="primary">
     <ion-title>Bookings</ion-title>
   </ion-navbar>
-  <ion-toolbar>
+  <ion-toolbar *ngIf="user && user.active != null">
     <ion-segment [(ngModel)]="type" color="secondary">
       <ion-segment-button value="upcoming">
         Upcoming
@@ -24,7 +24,7 @@
 
 
 <ion-content>
-  <ion-card *ngIf="!user.active" id="signUpPrompt">
+  <ion-card *ngIf="user?.active == null" id="signUpPrompt"> <!-- TODO: Add prompt to inactive users to add a password -->
     <ion-card-content no-padding>
       <ion-grid>
         <ion-row class="border-bottom">
@@ -51,12 +51,48 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
+  <ion-card class="secure-prompt" *ngIf="user && user?.active == 0">
+    <ion-card-content>
+      <p>Bookings made with <span class="bold">{{user.email}}</span> are unsecured. Click below to create your account and secure your bookings.</p>
+      <button ion-button color="secondary" small (tap)="signUp()">Secure</button>
+    </ion-card-content>
+  </ion-card>
+
   <div [ngSwitch]="type">
     <ion-list *ngSwitchCase="'upcoming'">
+      <div *ngIf="user?.active != null && bookingUpcoming?.length == 0" class="no-results">
+        <ion-grid>
+          <ion-row>
+            <ion-col class="align-center icon">
+              <ion-icon name="calendar"></ion-icon>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col align-items-center>
+              <p class="align-center">No upcoming bookings.</p>
+              <p class="align-center">Go find some deals!</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
       <booking-card *ngFor = "let booking of bookingUpcoming" [booking]="booking"></booking-card>
     </ion-list>
-
     <ion-list *ngSwitchCase="'history'">
+      <div *ngIf="user?.active != null && bookingHistory?.length == 0" class="no-results">
+        <ion-grid>
+          <ion-row>
+            <ion-col class="align-center icon">
+              <ion-icon name="time"></ion-icon>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col align-items-center>
+              <p class="align-center">No history of bookings.</p>
+              <p class="align-center">Go get some grub!</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
       <booking-card *ngFor = "let booking of bookingHistory" [booking]="booking"></booking-card>
     </ion-list>
   </div>

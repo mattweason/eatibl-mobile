@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { IonicPage, NavController, NavParams, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
@@ -21,13 +21,9 @@ import { FunctionsProvider } from '../../providers/functions/functions';
   templateUrl: 'bookings.html',
 })
 export class BookingsPage {
-  user = {
-    email: '',
-    name: '',
-    phone: '',
-    type: '',
-    active: 0
-  };
+  @ViewChild(Content) content: Content;
+
+  user = {} as any;
   bookingUpcoming: any;
   bookingHistory: any;
   type = 'upcoming';
@@ -39,15 +35,17 @@ export class BookingsPage {
   }
 
   ionViewDidEnter() {
-    console.log('ionViewDidLoad BookingsPage');
     this.storage.get('eatiblUser').then((val) => {
-      console.log('got user')
-      console.log(val)
       if(val){
         this.user = decode(val);
+        this.content.resize(); //Handle the show/hide behavior of the tabs toolbar
         this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
           this.filterAndSortBookings(data);
         });
+      }
+      else{
+        this.user = {}; //If not user exists in the localstorage, clear the user object
+        this.content.resize(); //Handle the show/hide behavior of the tabs toolbar
       }
     });
   }

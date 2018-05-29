@@ -32,7 +32,7 @@ export class LoginPage {
       email: [
         '', Validators.compose([
           Validators.required,
-          Validators.pattern('[a-zA-Z0-9.-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}')
+          Validators.email
         ])
       ],
       password: [

@@ -22,6 +22,7 @@ export class SignupPage {
   signupForm: FormGroup;
   response = {} as any;
   submitAttempt = false;
+  user: any;
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder, private storage: Storage) {
 
@@ -43,7 +44,7 @@ export class SignupPage {
       email: [
         '', Validators.compose([
           Validators.required,
-          Validators.pattern('[a-zA-Z0-9.-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}')
+          Validators.email
         ])
       ],
       password: [
@@ -52,6 +53,17 @@ export class SignupPage {
           Validators.minLength(8)
         ])
       ]
+    });
+  }
+
+  ionViewDidEnter(){
+    this.storage.get('eatiblUser').then((val) => {
+      if(val){
+        this.user = decode(val);
+        this.signupForm.controls['name'].setValue(this.user.name);
+        this.signupForm.controls['phone'].setValue(this.user.phone);
+        this.signupForm.controls['email'].setValue(this.user.email);
+      }
     });
   }
 
@@ -65,6 +77,7 @@ export class SignupPage {
     }
     //make API call to get token if successful, or status 401 if login failed
     this.API.makePost('register', this.signupForm.value).subscribe(response => {
+      console.log(response)
       var title;
       var message;
       this.response = response;

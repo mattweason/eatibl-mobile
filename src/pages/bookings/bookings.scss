@@ -1,0 +1,11 @@
+.secure-prompt{
+  ion-card-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    p{
+      font-size: 12px;
+    }
+  }
+}

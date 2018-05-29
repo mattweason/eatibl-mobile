@@ -44,7 +44,6 @@ export class HomePage {
 
   ionViewDidEnter(){
     //Call geolocation from app.component
-    console.log('request geolocation')
     this.events.publish('get:geolocation', Date.now());
   }
 
