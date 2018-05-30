@@ -178,7 +178,7 @@ export class BookingConfirmedPage {
   checkLocation(){
     if(this.location){
       this.distance = this.functions.getDistanceFromLatLonInKm(this.location.coords.latitude, this.location.coords.longitude, this.restaurant.latitude, this.restaurant.longitude);
-      if(this.distance < 100)
+      if(this.distance < 0.1) //Distance is returned in km must be within 100m or 0.1km
         this.withinDistance = true;
     }
   }
