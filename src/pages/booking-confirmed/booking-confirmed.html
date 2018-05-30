@@ -88,13 +88,14 @@
         <ion-row>
           <ion-col class="redeem">
             <div class="redeem-wrapper">
+              <p>Redeem this booking when you arrive at the restaurant and present it to your server.</p>
               <div class="redeem-liner">
                 <button ion-button block color="primary" (click)="redeemBooking()">
                   <div *ngIf="!redeemed">REDEEM</div>
                   <div *ngIf="!redeemed">BOOKING</div>
                   <img *ngIf="redeemed" src="assets/imgs/white-logo.png">
                 </button>
-                <div class="geolocate-indicator orange"></div>
+                <div *ngIf="!redeemed" [ngClass]="(withinTime && withinDistance) ? 'green' : 'orange'" class="geolocate-indicator"></div>
               </div>
             </div>
             <h2 [ngClass]="{'redeemed': redeemed}">Redeemed!</h2>

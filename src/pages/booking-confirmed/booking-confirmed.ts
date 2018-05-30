@@ -25,8 +25,12 @@ export class BookingConfirmedPage {
   response: any;
   upcoming = false;
   tooClose = false;
+  withinTime = false; //Is true if current time is within 30 minute before or 2hrs after start of timeslot
+  withinDistance = false; //Is true if current location is within 100 meters of the restaurant
   location: any;
   redeemed = false;
+  distance: any;
+  canRedeem = false;
 
   constructor(
     public navCtrl: NavController,
@@ -38,11 +42,20 @@ export class BookingConfirmedPage {
     ) {
       this.restaurant = navParams.get('restaurant');
       this.booking = navParams.get('booking');
+      console.log(this.booking)
       this.buildDateObject();
       events.subscribe('user:geolocated', (location, time) => {
         this.location = location;
+        this.checkLocation();
       });
     }
+
+  ionViewDidLoad(){
+    //Call geolocation from app.component
+    this.events.publish('get:geolocation', Date.now());
+    if(this.booking.redeemed)
+      this.redeemed = true;
+  }
 
   buildDateObject(){
     var dateOrigin = new Date(this.booking.date);
@@ -54,7 +67,7 @@ export class BookingConfirmedPage {
     this.dateObject.month = month;
     this.dateObject.date = date;
     this.dateObject.day = day;
-    this.canCancel();
+    this.checkTime();
   }
 
   cancelBooking(){
@@ -127,23 +140,56 @@ export class BookingConfirmedPage {
     alert.present();
   }
 
-  redeemBooking(){
-    if(this.location)
+  cannotRedeemAlert(){
+    let alert = this.alertCtrl.create({
+      title: "Can't Redeem",
+      subTitle: 'You must be at the restaurant and near the time of your booking to redeem.',
+      buttons: ['Dismiss']
+    });
+    alert.present();
+  }
 
-    this.redeemed = true;
+
+  redeemBooking(){
+    this.checkLocation();
+    this.checkTime();
+    if(this.withinTime && this.withinDistance){
+      var redeemObject = {
+        restoLat: this.restaurant.latitude,
+        restoLon: this.restaurant.longitude,
+        userLat: this.location.coords.latitude,
+        userLong: this.location.coords.longitude,
+        distance: this.distance,
+        timestamp: moment()
+      };
+      this.API.makePost('booking/'+this.booking._id+'/redeem', redeemObject).subscribe(response => {
+        this.response = response;
+        if(this.response.message == 'error')
+          this.errorAlert();
+        if(this.response.redeemed)
+          this.redeemed = true;
+      });
+    }
+    else
+      this.cannotRedeemAlert();
   }
 
   //Confirm a user is within the vicinity of the restaurant
   checkLocation(){
-
+    if(this.location){
+      this.distance = this.functions.getDistanceFromLatLonInKm(this.location.coords.latitude, this.location.coords.longitude, this.restaurant.latitude, this.restaurant.longitude);
+      if(this.distance < 100)
+        this.withinDistance = true;
+    }
   }
 
-  canCancel(){
+  checkTime(){
     var date = moment(this.booking.date).format('L');
     var time = this.functions.formatClockTime(this.booking.time, true);
     var datetime = moment(date+" "+time);
     this.upcoming = moment().isBefore(datetime);
     this.tooClose = !moment().add(30, 'minutes').isBefore(datetime);
+    this.withinTime = (moment().add(30, 'minutes').isAfter(datetime) && moment().isBefore(moment(datetime).add(2, 'hours')));
   }
 
 }

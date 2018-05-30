@@ -46,7 +46,6 @@ export class MyApp {
 
       //Sends the users location to a child component when requested
       events.subscribe('get:geolocation', (time) => {
-        console.log('geolocation request recieved')
         this.sendGeolocationEvent();
       });
   }
@@ -77,21 +76,15 @@ export class MyApp {
 
   //Get and watch the users location
   geolocateUser(){
-    console.log('running?')
 
     //Geolocate the user
-    this.geolocation.getCurrentPosition().then((resp) => {
-      console.log('get current position')
-      console.log(resp)
-    }).catch((error) => {
+    this.geolocation.getCurrentPosition().catch((error) => {
       console.log('Error getting location', error);
     });
 
     //Set up an observable for child components/pages to watch for geolocation data
     let watch = this.geolocation.watchPosition();
     watch.subscribe((data) => {
-      console.log('watch position');
-      console.log(data)
       this.location = data;
       this.sendGeolocationEvent();
     });
@@ -99,12 +92,8 @@ export class MyApp {
 
   //Push event every time the users geolocation is created or updated
   sendGeolocationEvent() {
-    console.log('attempting to publish location')
-    console.log(this.location)
     if(this.location) //Only send location back if you have it
       if(this.location.coords) { //Only send location if it has coordinates
-        console.log('publishing location')
-        console.log(this.location)
         this.events.publish('user:geolocated', this.location, Date.now());
       }
   }
