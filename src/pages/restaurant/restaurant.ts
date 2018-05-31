@@ -171,7 +171,7 @@ export class RestaurantPage implements OnInit {
     //Filter timeslots by date and time
     this.timeslots = _.filter(this.timeslotsData, function(timeslot){
       if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
+        return (timeslot.day == moment(date).format('dddd').toString());
       else
         return (timeslot.day == moment(date).format('dddd').toString());
     });

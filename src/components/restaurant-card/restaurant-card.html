@@ -21,7 +21,7 @@
             <p *ngIf="!isOpen" class="closed"><span class="prefix">Closed</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
           </ion-col>
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
-            <p class="rating"><ion-icon name="star"></ion-icon>4.7</p>
+            <p class="rating"><ion-icon name="star"></ion-icon><span *ngIf="restaurant.rating">{{restaurant.rating.ratingNumber}}</span><span class="na" *ngIf="!restaurant.rating">N/A</span></p>
             <div class="price">
               <p [ngClass]="restaurant.price >= 1 ? 'active' : ''">$</p>
               <p [ngClass]="restaurant.price >= 2 ? 'active' : ''">$</p>

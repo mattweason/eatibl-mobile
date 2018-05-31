@@ -39,6 +39,13 @@ restaurant-card, page-restaurant {
   .rating{
     font-size: 18px;
     color: color($colors, primary);
+    span{
+      font-size: 18px;
+      &.na{
+        font-size: 16px;
+        font-weight: 700;
+      }
+    }
   }
   .price{
     p{

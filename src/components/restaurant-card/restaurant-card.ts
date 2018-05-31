@@ -90,6 +90,7 @@ export class RestaurantCardComponent implements OnChanges {
       var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
       this.featuredImageUrl = this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`)
     }
+    console.log(this.restaurant)
   }
 
   navigateTo(event, timeslotId){
@@ -139,7 +140,7 @@ export class RestaurantCardComponent implements OnChanges {
     //Filter timeslots by date and time
     this.timeslots = _.filter(this.timeslotsData, function(timeslot){
       if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
+        return (timeslot.day == moment(date).format('dddd').toString());
       else
         return (timeslot.day == moment(date).format('dddd').toString());
     });
