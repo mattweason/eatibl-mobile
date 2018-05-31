@@ -54,7 +54,9 @@ page-restaurant{
   }
   .address{
     padding: 8px 0;
-    font-size: 12px;
+    p{
+      font-size: 12px;
+    }
   }
   .navigate-button{
     position: relative;

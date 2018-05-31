@@ -95,7 +95,10 @@
         </ion-row>
         <ion-row class="border-bottom">
           <ion-col col-8>
-            <p class="address">{{restaurant?.address}}</p>
+            <div class="address">
+              <p>{{restaurant?.address}}</p>
+              <p>{{restaurant?.city}}, {{restaurant?.state}}, {{restaurant?.zipcode}}</p>
+            </div>
           </ion-col>
           <ion-col col-4 class="navigate-button">
             <div>

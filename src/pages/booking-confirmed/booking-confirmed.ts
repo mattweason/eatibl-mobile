@@ -149,29 +149,42 @@ export class BookingConfirmedPage {
     alert.present();
   }
 
+  alreadyRedeemedAlert(){
+    let alert = this.alertCtrl.create({
+      title: "Already Redeemed",
+      subTitle: 'You have already redeemed this booking.',
+      buttons: ['Dismiss']
+    });
+    alert.present();
+  }
 
   redeemBooking(){
-    this.checkLocation();
-    this.checkTime();
-    if(this.withinTime && this.withinDistance){
-      var redeemObject = {
-        restoLat: this.restaurant.latitude,
-        restoLon: this.restaurant.longitude,
-        userLat: this.location.coords.latitude,
-        userLong: this.location.coords.longitude,
-        distance: this.distance,
-        timestamp: moment()
-      };
-      this.API.makePost('booking/'+this.booking._id+'/redeem', redeemObject).subscribe(response => {
-        this.response = response;
-        if(this.response.message == 'error')
-          this.errorAlert();
-        if(this.response.redeemed)
-          this.redeemed = true;
-      });
+    if(!this.redeemed){
+      this.checkLocation();
+      this.checkTime();
+      if(this.withinTime && this.withinDistance){
+        var redeemObject = {
+          restoLat: this.restaurant.latitude,
+          restoLon: this.restaurant.longitude,
+          userLat: this.location.coords.latitude,
+          userLong: this.location.coords.longitude,
+          distance: this.distance,
+          timestamp: moment()
+        };
+        this.API.makePost('booking/'+this.booking._id+'/redeem', redeemObject).subscribe(response => {
+          this.response = response;
+          if(this.response.message == 'error')
+            this.errorAlert();
+          if(this.response.redeemed)
+            this.redeemed = true;
+        });
+      }
+      else
+        this.cannotRedeemAlert();
     }
-    else
-      this.cannotRedeemAlert();
+    else{
+      this.alreadyRedeemedAlert();
+    }
   }
 
   //Confirm a user is within the vicinity of the restaurant
