@@ -53,9 +53,11 @@ export class RestaurantCardComponent implements OnChanges {
 
   timeslots: any;
   timeslotsData = {} as any;
+  fillerslots = [];
   businessHours = [];
   businessHoursData = {} as any;
   isOpen: boolean;
+  openStatus: string;
   isLoaded: boolean = false;
   isInitial: boolean = true;
   scrollingSlides: any;
@@ -90,7 +92,6 @@ export class RestaurantCardComponent implements OnChanges {
       var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
       this.featuredImageUrl = this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`)
     }
-    console.log(this.restaurant)
   }
 
   navigateTo(event, timeslotId){
@@ -117,18 +118,36 @@ export class RestaurantCardComponent implements OnChanges {
     var time = this.functions.formatTime(this.date);
     var hoursLength = this.businessHours.length;
 
+    if(hoursLength == 0)
+      this.openStatus = 'closedToday';
+
     //Compare current time to open close hours and set to this.open
     if(hoursLength == 2){
-      if(time >= this.businessHours[0] && time < this.businessHours[1])
+      if(time >= this.businessHours[0] && time < this.businessHours[1]){ //During business hours
         this.isOpen = true;
-      if(time >= this.businessHours[1] || time < this.businessHours[0])
+        this.openStatus = 'open';
+      }
+      if(time >= this.businessHours[1] ){ //After closed
         this.isOpen = false;
+        this.openStatus = 'closed';
+      }
+      if(time < this.businessHours[0]){ //Before open
+        this.openStatus = 'willOpen';
+      }
     }
     if(hoursLength == 4){
-      if((time >= this.businessHours[0] && time < this.businessHours[1]) || (time >= this.businessHours[2] && time < this.businessHours[3]))
+      if((time >= this.businessHours[0] && time < this.businessHours[1]) || (time >= this.businessHours[2] && time < this.businessHours[3])){ //During bussines hours
         this.isOpen = true;
-      if(time >= this.businessHours[3] || time < this.businessHours[0] || (time <= this.businessHours[2] && time > this.businessHours[1]))
+        this.openStatus = 'open';
+      }
+      if(time >= this.businessHours[3]){ //After second closed
         this.isOpen = false;
+        this.openStatus = 'closed';
+      }
+      if((time <= this.businessHours[2] && time > this.businessHours[1]) || time < this.businessHours[0]){ //Before first or second open, but after first closed
+        this.isOpen = false;
+        this.openStatus = 'willOpen';
+      }
     }
   }
 
@@ -140,12 +159,21 @@ export class RestaurantCardComponent implements OnChanges {
     //Filter timeslots by date and time
     this.timeslots = _.filter(this.timeslotsData, function(timeslot){
       if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment(date).format('dddd').toString());
+        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
       else
         return (timeslot.day == moment(date).format('dddd').toString());
     });
 
     this.timeslots = _.sortBy(this.timeslots, 'time');
+
+    //Build filler timeslots
+    if(this.timeslots.length < 4 && this.timeslots.length > 0){
+      var filler = 4 - this.timeslots.length;
+      for(var i = 0; i < filler; i++){
+        this.fillerslots.push('filler');
+      }
+    }
+
   }
 
   //Add open and close hours to businessHours array for ngFor loop in view

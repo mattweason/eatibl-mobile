@@ -10,15 +10,16 @@
     <div *ngIf="!restaurant?.featuredImage" class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"></div>
     <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
   </button>
-  <button class="button-wrapper" (tap)="navigateTo($event, restaurant._id, '', date)" ion-item detail-none text-wrap>
+  <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none text-wrap>
     <ion-card-content no-padding>
-      <ion-grid>
+      <ion-grid class="no-padding">
         <ion-row class="border-bottom">
           <ion-col col-9 align-self-stretch class="first-row border-right">
             <h2>{{restaurant.name}}</h2>
             <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
-            <p *ngIf="isOpen" class="open"><span class="prefix">Open Now</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
-            <p *ngIf="!isOpen" class="closed"><span class="prefix">Closed</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
+            <p *ngIf="openStatus == 'open'" class="open"><span class="prefix">Open Now</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
+            <p *ngIf="openStatus == 'willOpen' || openStatus == 'closed'" class="closed"><span class="prefix">Closed</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
+            <p *ngIf="openStatus == 'closedToday'" class="closed"><span class="prefix">Closed Today</span></p>
           </ion-col>
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
             <p class="rating"><ion-icon name="star"></ion-icon><span *ngIf="restaurant.rating">{{restaurant.rating.ratingNumber}}</span><span class="na" *ngIf="!restaurant.rating">N/A</span></p>
@@ -34,8 +35,8 @@
     </ion-card-content>
   </button>
   <ion-card-content no-padding>
-    <ion-grid>
-      <ion-row *ngIf="isOpen" class="no-padding-row">
+    <ion-grid class="no-padding">
+      <ion-row *ngIf="openStatus != 'closedToday'" class="no-padding-row">
         <ion-col col-1 class="no-padding-col">
           <button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon></button>
         </ion-col>
@@ -51,6 +52,9 @@
                   </div>
                 </button>
               </div>
+            </ion-slide>
+            <ion-slide *ngFor="let fillerslot of fillerslots">
+              <div class="fillerslot"></div>
             </ion-slide>
           </ion-slides>
           <div *ngIf="!timeslots.length" class="no-timeslots">
