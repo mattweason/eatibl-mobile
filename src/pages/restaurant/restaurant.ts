@@ -37,6 +37,7 @@ export class RestaurantPage implements OnInit {
 
   timeslots: any;
   timeslotsData = {} as any;
+  fillerslots = [];
   businessHours = [[],[],[],[],[],[],[]];
   businessDays = [['Monday','Mon'],['Tuesday','Tue'],['Wednesday','Wed','',''],['Thursday','Thu','',''],['Friday','Fri','',''],['Saturday','Sat','',''],['Sunday','Sun','','']];
   businessHoursData = {} as any;
@@ -88,7 +89,6 @@ export class RestaurantPage implements OnInit {
       this.processBusinessHours();
       this.isOpen();
       this.buildMap();
-    console.log(this.restaurant)
 
       if(this.restaurant.featuredImage){
         //reorder the image array to put featured image first
@@ -129,25 +129,32 @@ export class RestaurantPage implements OnInit {
     var index = _.findIndex(this.businessDays, function(businessDay){
       return businessDay[0] == days[day];
     });
-    console.log(this.businessHours)
     var hoursLength = this.businessHours[index].length;
+    var openStatus = '';
+
+    if(hoursLength == 0)
+      openStatus = 'closedToday';
 
     //Compare current time to open close hours and set to this.open
     if(hoursLength == 2){
-      if(time >= this.businessHours[index][0] && time < this.businessHours[index][1])
-        var isOpen = true;
-      if(time >= this.businessHours[index][1] || time < this.businessHours[index][0])
-        var isOpen = false;
+      if(time >= this.businessHours[index][0] && time < this.businessHours[index][1]) //During business hours
+        openStatus = 'open';
+      if(time >= this.businessHours[index][1])//After closed
+        openStatus = 'closed';
+      if(time < this.businessHours[index][0]) //Before open
+        openStatus = 'willOpen';
     }
     if(hoursLength == 4){
-      if((time >= this.businessHours[index][0] && time < this.businessHours[index][1]) || (time >= this.businessHours[index][2] && time < this.businessHours[index][3]))
-        var isOpen = true;
-      if(time >= this.businessHours[index][3] || time < this.businessHours[index][0] || (time <= this.businessHours[index][2] && time > this.businessHours[index][1]))
-        var isOpen = false;
+      if((time >= this.businessHours[index][0] && time < this.businessHours[index][1]) || (time >= this.businessHours[index][2] && time < this.businessHours[index][3])) //During bussines hours
+        openStatus = 'open';
+      if(time >= this.businessHours[index][3]) //After second closed
+        openStatus = 'closed';
+      if((time <= this.businessHours[index][2] && time > this.businessHours[index][1]) || time < this.businessHours[index][0]) //Before first or second open, but after first closed
+        openStatus = 'willOpen';
     }
 
     this.open = {
-      open: isOpen,
+      open: openStatus,
       index: index
     }
   }
@@ -171,7 +178,7 @@ export class RestaurantPage implements OnInit {
     //Filter timeslots by date and time
     this.timeslots = _.filter(this.timeslotsData, function(timeslot){
       if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment(date).format('dddd').toString());
+        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
       else
         return (timeslot.day == moment(date).format('dddd').toString());
     });
@@ -189,6 +196,14 @@ export class RestaurantPage implements OnInit {
       });
       this.selectBooking(timeslot[0]);
     }
+
+    //Build filler timeslots
+    if(this.timeslots.length < 4 && this.timeslots.length > 0){
+      var filler = 4 - this.timeslots.length;
+      for(var i = 0; i < filler; i++){
+        this.fillerslots.push('filler');
+      }
+    }
   }
 
   //Activate a booking
@@ -198,14 +213,12 @@ export class RestaurantPage implements OnInit {
 
   //Add open and close hours to businessHours array for ngFor loop in view
   processBusinessHours(){
-    console.log(this.businessHoursData)
     for (var i = 0; i < this.businessHoursData.length; i++)
       for(var a = 0; a < this.businessHours.length; a++){
         if(this.businessDays[a][0] == this.businessHoursData[i]['day']){
           this.businessHours[a] = this.businessHoursData[i]['hours'];
         }
       }
-    console.log(this.businessHours)
   }
 
   //When time changes or date changes, set slide to selected time

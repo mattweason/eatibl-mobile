@@ -31,13 +31,13 @@
           <ion-col col-9 align-self-stretch class="first-row border-right">
             <h2>{{restaurant?.name}}</h2>
             <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
-            <p *ngIf="open?.open" class="open"><span class="prefix">Open Now</span> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></p>
-            <p *ngIf="!open?.open" class="closed"><span class="prefix">Closed</span> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></p>
+            <p *ngIf="open?.open == 'open'" class="open"><span class="prefix">Open Now</span> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></p>
+            <p *ngIf="open?.open == 'willOpen'" class="closed"><span class="prefix">Closed</span> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></p>
+            <p *ngIf="open?.open == 'closedToday'" class="closed"><span class="prefix">Closed Today</span></p>
           </ion-col>
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
             <p class="rating"><ion-icon name="star"></ion-icon><span *ngIf="restaurant.rating">{{restaurant.rating.ratingNumber}}</span><span class="na" *ngIf="!restaurant.rating">N/A</span></p>
             <div class="price">
-
               <p [ngClass]="restaurant?.price >= 1 ? 'active' : ''">$</p>
               <p [ngClass]="restaurant?.price >= 2 ? 'active' : ''">$</p>
               <p [ngClass]="restaurant?.price >= 3 ? 'active' : ''">$</p>
@@ -64,7 +64,7 @@
               </ion-item>
           </ion-col>
         </ion-row>
-        <ion-row class="border-bottom no-padding-row">
+        <ion-row *ngIf="open?.open != 'closedToday'" class="border-bottom no-padding-row">
           <ion-col col-1 class="no-padding-col">
             <button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon></button>
           </ion-col>
@@ -76,8 +76,11 @@
                   <button ion-button color="primary" [disabled]="timeslot?.quantity < people" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot)">-{{timeslot?.discount}}%</button>
                 </div>
               </ion-slide>
+              <ion-slide *ngFor="let fillerslot of fillerslots">
+                <div class="fillerslot"></div>
+              </ion-slide>
             </ion-slides>
-            <div *ngIf="!timeslots.length" class="no-timeslots">
+            <div *ngIf="!timeslots.length && open?.open != 'closedToday'" class="no-timeslots">
               <p>No more deals today.</p>
             </div>
           </ion-col>
@@ -85,7 +88,7 @@
             <button [disabled]="isEnd" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="nextSlide()"><ion-icon name="arrow-forward"></ion-icon></button>
           </ion-col>
         </ion-row>
-        <ion-row class="border-bottom">
+        <ion-row *ngIf="open?.open != 'closedToday'" class="border-bottom">
           <button ion-button block color="secondary" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, people, date)">Book Now</button>
         </ion-row>
         <ion-row class="border-bottom no-padding-row">

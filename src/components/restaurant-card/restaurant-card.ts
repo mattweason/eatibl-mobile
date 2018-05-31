@@ -56,7 +56,6 @@ export class RestaurantCardComponent implements OnChanges {
   fillerslots = [];
   businessHours = [];
   businessHoursData = {} as any;
-  isOpen: boolean;
   openStatus: string;
   isLoaded: boolean = false;
   isInitial: boolean = true;
@@ -123,31 +122,20 @@ export class RestaurantCardComponent implements OnChanges {
 
     //Compare current time to open close hours and set to this.open
     if(hoursLength == 2){
-      if(time >= this.businessHours[0] && time < this.businessHours[1]){ //During business hours
-        this.isOpen = true;
+      if(time >= this.businessHours[0] && time < this.businessHours[1]) //During business hours
         this.openStatus = 'open';
-      }
-      if(time >= this.businessHours[1] ){ //After closed
-        this.isOpen = false;
+      if(time >= this.businessHours[1] ) //After closed
         this.openStatus = 'closed';
-      }
-      if(time < this.businessHours[0]){ //Before open
+      if(time < this.businessHours[0]) //Before open
         this.openStatus = 'willOpen';
-      }
     }
     if(hoursLength == 4){
-      if((time >= this.businessHours[0] && time < this.businessHours[1]) || (time >= this.businessHours[2] && time < this.businessHours[3])){ //During bussines hours
-        this.isOpen = true;
+      if((time >= this.businessHours[0] && time < this.businessHours[1]) || (time >= this.businessHours[2] && time < this.businessHours[3])) //During bussines hours
         this.openStatus = 'open';
-      }
-      if(time >= this.businessHours[3]){ //After second closed
-        this.isOpen = false;
+      if(time >= this.businessHours[3]) //After second closed
         this.openStatus = 'closed';
-      }
-      if((time <= this.businessHours[2] && time > this.businessHours[1]) || time < this.businessHours[0]){ //Before first or second open, but after first closed
-        this.isOpen = false;
+      if((time <= this.businessHours[2] && time > this.businessHours[1]) || time < this.businessHours[0]) //Before first or second open, but after first closed
         this.openStatus = 'willOpen';
-      }
     }
   }
 
