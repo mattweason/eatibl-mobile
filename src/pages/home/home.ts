@@ -56,7 +56,7 @@ export class HomePage {
   doRefresh(refresher){
     this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
     this.batch = 0; //Reset batch number to 0
-    this.API.makePost('restaurant/all/geolocated', this.userCoords).subscribe(data => {
+    this.API.makePost('restaurant/all/geolocated/' + this.batch, this.userCoords).subscribe(data => {
       this.restaurantList = data;
       refresher.complete();
     });
@@ -73,6 +73,7 @@ export class HomePage {
       if(this.restaurantList.length >= this.count)
         this.allResults = true;
     });
+    infiniteScroll.complete();
   }
 
   toggleToolbar(){

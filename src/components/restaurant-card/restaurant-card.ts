@@ -76,7 +76,6 @@ export class RestaurantCardComponent implements OnChanges {
   ) {}
 
   ngOnInit(){
-    console.log('card init')
     //Get discount timeslots
     this.API.makeCall('discount/' + this.restaurant._id + '/week').subscribe(data => {
       this.timeslotsData = data;
