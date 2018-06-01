@@ -57,8 +57,11 @@
               <div class="fillerslot"></div>
             </ion-slide>
           </ion-slides>
-          <div *ngIf="!timeslots.length" class="no-timeslots">
-            <p>No more deals today.</p>
+          <div *ngIf="!timeslots.length && timeslotsData.length" class="no-timeslots">
+            <p>No more deals today</p>
+          </div>
+          <div *ngIf="!timeslotsData.length" class="coming-soon">
+            <p>COMING SOON!</p>
           </div>
         </ion-col>
         <ion-col col-1 class="no-padding-col">

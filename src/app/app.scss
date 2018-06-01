@@ -65,13 +65,24 @@ restaurant-card, page-restaurant {
     text-decoration: line-through;
     color: lighten(color($colors, dark), 20%);
   }
-  .no-timeslots{
+  .no-timeslots, .coming-soon{
     height: 30px;
     p{
       line-height: 30px;
       color: color($colors, primary);
-      font-size: 1.6rem;
+      font-size: 16px;
       text-align: center;
+    }
+  }
+  .no-timeslots{
+    p{
+      color: color($colors, danger);
+    }
+  }
+  .coming-soon{
+    p{
+      color: color($colors, secondary);
+      font-weight: 700;
     }
   }
   ion-slides{
