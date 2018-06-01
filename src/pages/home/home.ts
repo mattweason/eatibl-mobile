@@ -72,8 +72,8 @@ export class HomePage {
       }
       if(this.restaurantList.length >= this.count)
         this.allResults = true;
+      infiniteScroll.complete();
     });
-    infiniteScroll.complete();
   }
 
   toggleToolbar(){
