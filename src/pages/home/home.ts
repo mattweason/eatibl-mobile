@@ -22,6 +22,9 @@ export class HomePage {
   location: any;
   userCoords: any;
   firstCall = true;
+  batch = 0; //Represents the batch number
+  count = 0; //Stores the total number of restaurants to compare to current restaurant list
+  allResults = false; //Becomes true when we've retrieved all of the restaurants
 
   constructor(public navCtrl: NavController, private API: ApiServiceProvider, public events: Events) {
     this.setNow();
@@ -32,8 +35,10 @@ export class HomePage {
       //Only request the geolocated restaurant list the first time this event is received
       if(this.firstCall){
         this.firstCall = false;
-        this.API.makePost('restaurant/all/geolocated', this.userCoords).subscribe(data => {
-          this.restaurantList = data;
+        this.API.makePost('restaurant/all/geolocated/' + this.batch, this.userCoords).subscribe(data => {
+          this.batch++;
+          this.count = data['count'];
+          this.restaurantList = data['restaurants'];
         });
       }
     });
@@ -47,11 +52,26 @@ export class HomePage {
     this.events.publish('get:geolocation', Date.now());
   }
 
+  //Pull down to refresh the restaurant list
   doRefresh(refresher){
-    this.events.publish('get:geolocation', Date.now());
+    this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
+    this.batch = 0; //Reset batch number to 0
     this.API.makePost('restaurant/all/geolocated', this.userCoords).subscribe(data => {
       this.restaurantList = data;
       refresher.complete();
+    });
+  }
+
+  //Call next batch of 10 restaurants when you reach the bottom of the page
+  getNextBatch(infiniteScroll){
+    this.API.makePost('restaurant/all/geolocated/' + this.batch, this.userCoords).subscribe(data => {
+      this.batch++;
+      this.count = data['count'];
+      for(var i = 0; i < data['restaurants'].length; i++){ //Append results to restaurant list
+        this.restaurantList.push(data['restaurants'][i]);
+      }
+      if(this.restaurantList.length >= this.count)
+        this.allResults = true;
     });
   }
 

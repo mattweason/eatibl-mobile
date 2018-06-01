@@ -38,4 +38,14 @@
   <ion-list>
     <restaurant-card *ngFor = "let restaurant of restaurantList" [location]="location" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
   </ion-list>
+  <ion-infinite-scroll *ngIf="!allResults" (ionInfinite)="getNextBatch($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <ion-grid *ngIf="allResults">
+    <ion-row>
+      <ion-col align-items-center>
+        <p class="align-center">That's all she's got, Captain.</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

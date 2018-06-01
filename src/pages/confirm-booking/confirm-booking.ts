@@ -154,7 +154,6 @@ export class ConfirmBookingPage {
               this.user = decode(val);
             }
             else{
-              console.log(this.response)
               this.storage.set('eatiblUser', this.response.token)
             }
           });

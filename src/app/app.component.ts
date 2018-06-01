@@ -28,6 +28,7 @@ export class MyApp {
     public events: Events) {
 
       platform.ready().then(() => {
+        console.log(Date.now() + ' platform ready')
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
         statusBar.styleDefault();
