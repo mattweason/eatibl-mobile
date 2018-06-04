@@ -7,24 +7,29 @@ booking-card {
   .restaurant-name{
     font-weight: 700;
   }
-  .day, .month, .date, .time{
-    font-family: "Quicksand";
-    font-weight: 500;
+  .day, .month, .time, .date{
     text-align: center;
+    font-weight: 500;
+    margin: 0;
   }
-  .day, .month, .metric{
+  .day, .time{
     color: color($colors, primary);
   }
-  .time{
-    color: color($colors, secondary);
-  }
-  .day, .month, .time{
+  .day, .time{
     font-size: 16px;
     line-height: 16px;
   }
-  .date{
-    font-size: 32px;
+  .date, .month{
+    font-size: 22px;
     line-height: 32px;
+  }
+  .month{
+    margin-left: 3px;
+  }
+  .dateMonth{
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .metric{
     text-align: center;

@@ -4,8 +4,10 @@
       <ion-row class="no-padding-row">
         <ion-col class="border-right date-block" align-self-strech col-4>
           <p class="day">{{dateObject.day}}</p>
-          <p class="date">{{dateObject.date}}</p>
-          <p class="month">{{dateObject.month}}</p>
+          <div class="dateMonth">
+            <p class="date">{{dateObject.date}}</p>
+            <p class="month">{{dateObject.month}}</p>
+          </div>
           <p class="time">{{functions.formatClockTime(booking.time, true)}}</p>
         </ion-col>
         <ion-col class="no-padding-col" align-self-center col-8>

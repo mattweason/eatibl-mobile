@@ -38,12 +38,12 @@
             <p class="time">{{functions.formatClockTime(booking.time, true)}}</p>
           </ion-col>
           <ion-col align-self-center col-4 class="bookingDetails">
-            <ion-icon name="person"></ion-icon>
-            <p class="people">{{booking.people}}</p>
-          </ion-col>
-          <ion-col align-self-center col-4 class="bookingDetails">
             <ion-icon name="pricetag"></ion-icon>
             <p class="people">-{{booking.discount}}%</p>
+          </ion-col>
+          <ion-col align-self-center col-4 class="bookingDetails">
+            <ion-icon name="person"></ion-icon>
+            <p class="people">{{booking.people}}</p>
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">

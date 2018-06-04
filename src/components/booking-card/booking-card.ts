@@ -28,8 +28,8 @@ export class BookingCardComponent {
 
   buildDateObject(){
     var dateOrigin = new Date(this.booking.date);
-    var days = ['Sun.','Mon.','Tues.','Wed.','Thurs.','Fri.','Sat.'];
-    var months = ['Jan.','Feb.','March','April','May','June','July','Aug.','Sept.','Oct.','Nov.','Dec.'];
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var months = ['Jan.','Feb.','Mar.','Apr.','May','Jun.','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'];
     var day = days[dateOrigin.getDay()];
     var date = dateOrigin.getDate();
     var month = months[dateOrigin.getMonth()];
