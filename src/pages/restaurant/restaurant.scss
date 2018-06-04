@@ -39,42 +39,4 @@ page-restaurant{
   button.swiper-pagination-bullet-active{
     background-color: color($colors, primary);
   }
-  .map-figure{
-    height: 100px;
-    width: 100%;
-    margin: 0;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    .map{
-      width:120%;
-      max-width: 120% !important;
-    }
-  }
-  .address{
-    padding: 8px 0;
-    p{
-      font-size: 12px;
-    }
-  }
-  .navigate-button{
-    position: relative;
-    div{
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      right: 12px;
-      top: -30px;
-      p{
-        font-size: 12px;
-        font-weight: 700;
-      }
-      button{
-        margin-bottom: 6px;
-      }
-    }
-  }
 }

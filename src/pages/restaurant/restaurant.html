@@ -94,12 +94,12 @@
         <ion-row *ngIf="open?.open != 'closedToday'" class="border-bottom">
           <button ion-button block color="secondary" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, people, date)">Book Now</button>
         </ion-row>
-        <ion-row class="border-bottom no-padding-row">
+        <ion-row class="border-bottom no-padding-row mapRow">
           <figure class="map-figure">
             <img class="map" src="{{mapUrl}}" alt="">
           </figure>
         </ion-row>
-        <ion-row class="border-bottom">
+        <ion-row class="border-bottom mapRow">
           <ion-col col-8>
             <div class="address">
               <p>{{restaurant?.address}}</p>

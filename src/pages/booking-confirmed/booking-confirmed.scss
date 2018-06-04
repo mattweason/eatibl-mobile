@@ -25,16 +25,42 @@ page-booking-confirmed {
   .day, .time{
     color: color($colors, primary);
   }
-  .day, .month, .time{
+  .day, .time{
     font-size: 16px;
     line-height: 16px;
   }
-  .date, .discount{
-    font-size: 32px;
+  .date, .month{
+    font-size: 22px;
     line-height: 32px;
   }
+  .month{
+    margin-left: 3px;
+  }
+  .dateMonth{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .bookingDetails{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    p{
+      font-size: 32px;
+      line-height: 32px;
+      color: color($colors, primary);
+    }
+    ion-icon{
+      font-size: 28px;
+      color: #ccc;
+    }
+  }
   .restaurant{
-    font-size: 16px;
+    text-align: center;
+    color: color($colors, primary);
+    font-size: 18px;
+    font-weight: 700;
     margin: 0;
   }
   .field-title, .address{
@@ -58,7 +84,7 @@ page-booking-confirmed {
   .redeem{
     h2{
       opacity: 0;
-      color: color($colors, tertiary);
+      color: color($colors, secondary);
       text-align: center;
       &.redeemed{
         opacity: 1;
@@ -104,15 +130,20 @@ page-booking-confirmed {
           justify-content: center;
           align-items: center;
           background: color($colors, primary);
-          background-image: linear-gradient(to right, color($colors, primary) 0%, lighten(color($colors, primary), 10%) 20%, color($colors, primary) 40%, color($colors, primary) 100%);
-          background-repeat: no-repeat;
-          background-size: 400% 100%;
 
-          -webkit-animation-duration: 2.5s;
-          -webkit-animation-fill-mode: forwards;
-          -webkit-animation-iteration-count: infinite;
-          -webkit-animation-name: placeholderShimmer;
-          -webkit-animation-timing-function: linear;
+          &.redeemed{
+            background-image: linear-gradient(to right, color($colors, primary) 0%, lighten(color($colors, secondary), 10%) 20%, color($colors, primary) 40%, color($colors, primary) 100%);
+            background-repeat: no-repeat;
+            background-size: 400% 100%;
+
+            -webkit-animation-duration: 2.5s;
+            -webkit-animation-fill-mode: forwards;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-name: placeholderShimmer;
+            -webkit-animation-timing-function: linear;
+          }
+
+
           .button-inner{
             flex-wrap: wrap;
             div{

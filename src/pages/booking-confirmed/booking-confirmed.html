@@ -24,35 +24,70 @@
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">
+          <ion-col>
+            <p class="restaurant">{{restaurant.name}}</p>
+          </ion-col>
+        </ion-row>
+        <ion-row class="border-bottom extra-padding">
           <ion-col align-self-center col-4>
             <p class="day">{{dateObject.day}}</p>
-            <p class="date">{{dateObject.date}}</p>
-            <p class="month">{{dateObject.month}}</p>
+            <div class="dateMonth">
+              <p class="date">{{dateObject.date}}</p>
+              <p class="month">{{dateObject.month}}</p>
+            </div>
             <p class="time">{{functions.formatClockTime(booking.time, true)}}</p>
           </ion-col>
-          <ion-col align-self-center col-8>
-            <p class="restaurant">{{restaurant.name}}</p>
-            <p class="address">{{restaurant.address}}</p>
-            <p class="address">{{restaurant.city}}, {{restaurant.state}}, {{restaurant.zipcode}}</p>
+          <ion-col align-self-center col-4 class="bookingDetails">
+            <ion-icon name="person"></ion-icon>
+            <p class="people">{{booking.people}}</p>
+          </ion-col>
+          <ion-col align-self-center col-4 class="bookingDetails">
+            <ion-icon name="pricetag"></ion-icon>
+            <p class="people">-{{booking.discount}}%</p>
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">
-          <ion-col col-4>
-            <p class="field-title">Pricing</p>
-          </ion-col>
-          <ion-col col-8>
-            <p class="field-content">{{booking.discount}}% off</p>
+          <ion-col class="redeem">
+            <div class="redeem-wrapper">
+              <p>Redeem upon arrival at the restaurant.</p>
+              <div class="redeem-liner">
+                <button ion-button block color="primary" [ngClass]="{'redeemed' : redeemed}" (click)="redeemBooking()">
+                  <div *ngIf="!redeemed">REDEEM</div>
+                  <div *ngIf="!redeemed">BOOKING</div>
+                  <img *ngIf="redeemed" src="assets/imgs/white-logo.png">
+                </button>
+                <div *ngIf="!redeemed" [ngClass]="(withinTime && withinDistance) ? 'green' : 'orange'" class="geolocate-indicator"></div>
+              </div>
+            </div>
+            <h2 [ngClass]="{'redeemed': redeemed}">Redeemed!</h2>
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">
-          <ion-col col-4>
-            <p class="field-title">People</p>
-          </ion-col>
-          <ion-col col-8>
-            <p class="field-content">{{booking.people}}</p>
+          <ion-col col-12>
+            <h2>Details</h2>
           </ion-col>
         </ion-row>
-
+        <ion-row class="border-bottom no-padding-row mapRow">
+          <figure class="map-figure">
+            <img class="map" src="{{mapUrl}}" alt="">
+          </figure>
+        </ion-row>
+        <ion-row class="border-bottom mapRow">
+          <ion-col col-8>
+            <div class="address">
+              <p>{{restaurant?.address}}</p>
+              <p>{{restaurant?.city}}, {{restaurant?.state}}, {{restaurant?.zipcode}}</p>
+            </div>
+          </ion-col>
+          <ion-col col-4 class="navigate-button">
+            <div>
+              <button (tap)="openMaps()" ion-fab color="secondary">
+                <ion-icon name="navigate"></ion-icon>
+              </button>
+              <p>Directions</p>
+            </div>
+          </ion-col>
+        </ion-row>
         <ion-row class="border-bottom">
           <ion-col col-4>
             <p class="field-title">Name</p>
@@ -83,22 +118,6 @@
           </ion-col>
           <ion-col col-8>
             <p class="field-content">{{booking.code}}</p>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col class="redeem">
-            <div class="redeem-wrapper">
-              <p>Redeem this booking when you arrive at the restaurant and present it to your server.</p>
-              <div class="redeem-liner">
-                <button ion-button block color="primary" (click)="redeemBooking()">
-                  <div *ngIf="!redeemed">REDEEM</div>
-                  <div *ngIf="!redeemed">BOOKING</div>
-                  <img *ngIf="redeemed" src="assets/imgs/white-logo.png">
-                </button>
-                <div *ngIf="!redeemed" [ngClass]="(withinTime && withinDistance) ? 'green' : 'orange'" class="geolocate-indicator"></div>
-              </div>
-            </div>
-            <h2 [ngClass]="{'redeemed': redeemed}">Redeemed!</h2>
           </ion-col>
         </ion-row>
       </ion-grid>
