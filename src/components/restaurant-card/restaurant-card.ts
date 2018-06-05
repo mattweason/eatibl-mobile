@@ -31,9 +31,9 @@ export class RestaurantCardComponent implements OnChanges {
       this.isLoaded = true;
       setTimeout(() => {
         this.isVisible = true;
+        this.cdRef.detectChanges();
       }, 0);
     }, 0);
-    this.cdRef.detectChanges();
   }
 
   @Input() location = {} as any;

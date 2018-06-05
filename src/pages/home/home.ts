@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Events } from 'ionic-angular';
@@ -26,7 +26,12 @@ export class HomePage {
   count = 0; //Stores the total number of restaurants to compare to current restaurant list
   allResults = false; //Becomes true when we've retrieved all of the restaurants
 
-  constructor(public navCtrl: NavController, private API: ApiServiceProvider, public events: Events) {
+  constructor(
+    public navCtrl: NavController,
+    private API: ApiServiceProvider,
+    private cdRef:ChangeDetectorRef,
+    public events: Events
+  ) {
     this.setNow();
     events.subscribe('user:geolocated', (location, time) => {
       this.location = location;
@@ -39,6 +44,7 @@ export class HomePage {
           this.batch++;
           this.count = data['count'];
           this.restaurantList = data['restaurants'];
+          this.cdRef.detectChanges();
         });
       }
     });
@@ -57,7 +63,7 @@ export class HomePage {
     this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
     this.batch = 0; //Reset batch number to 0
     this.API.makePost('restaurant/all/geolocated/' + this.batch, this.userCoords).subscribe(data => {
-      this.restaurantList = data;
+      this.restaurantList = data['restaurants'];
       refresher.complete();
     });
   }
@@ -72,8 +78,9 @@ export class HomePage {
       }
       if(this.restaurantList.length >= this.count)
         this.allResults = true;
+
+      infiniteScroll.complete();
     });
-    infiniteScroll.complete();
   }
 
   toggleToolbar(){
