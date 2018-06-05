@@ -9,6 +9,10 @@
     <div *ngIf="distance" class="distance">
       <p>{{distance}}</p>
     </div>
+    <div class="coming-soon" *ngIf="!timeslotsData.length">
+      <p>COMING SOON
+      </p>
+    </div>
   </button>
   <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none text-wrap>
     <ion-card-content no-padding>
@@ -59,9 +63,6 @@
           </ion-slides>
           <div *ngIf="!timeslots.length && timeslotsData.length" class="no-timeslots">
             <p>No more deals today</p>
-          </div>
-          <div *ngIf="!timeslotsData.length" class="coming-soon">
-            <p>COMING SOON!</p>
           </div>
         </ion-col>
         <ion-col col-1 class="no-padding-col">

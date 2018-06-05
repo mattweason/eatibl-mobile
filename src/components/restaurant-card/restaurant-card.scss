@@ -44,6 +44,25 @@
       margin: 0;
     }
   }
+  .coming-soon{
+    position: absolute;
+    top: 45%;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+    width: 50%;
+    padding: 8px;
+    background-color: color($colors, primary);
+    border-radius: 6px;
+    p{
+      color: #fff;
+      margin: 0;
+      text-align: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+  }
   &.navigating{
     .featured-image, ion-card-content{
       opacity: 0.7 !important;

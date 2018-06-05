@@ -20,6 +20,7 @@ restaurant-card, page-restaurant {
   ion-card{
     margin: 0 0 20px 0 !important;
     width: 100% !important;
+    border-radius: 0 !important;
   }
   h2{
     font-weight: 700 !important;
@@ -69,7 +70,7 @@ restaurant-card, page-restaurant {
     text-decoration: line-through;
     color: lighten(color($colors, dark), 20%);
   }
-  .no-timeslots, .coming-soon{
+  .no-timeslots{
     height: 30px;
     p{
       line-height: 30px;
@@ -81,12 +82,6 @@ restaurant-card, page-restaurant {
   .no-timeslots{
     p{
       color: color($colors, danger);
-    }
-  }
-  .coming-soon{
-    p{
-      color: color($colors, secondary);
-      font-weight: 700;
     }
   }
   ion-slides{
