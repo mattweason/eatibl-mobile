@@ -17,6 +17,10 @@
 
 //Restaurant Component and Page
 restaurant-card, page-restaurant {
+  ion-card{
+    margin: 0 0 20px 0 !important;
+    width: 100% !important;
+  }
   h2{
     font-weight: 700 !important;
   }
@@ -262,6 +266,10 @@ ion-grid{
       padding: 5px 5px !important;
     }
   }
+}
+
+.scroll-content{
+  background-color: #ececec !important;
 }
 
 .dateToolbar{
