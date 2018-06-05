@@ -52,8 +52,8 @@
               <p>Redeem upon arrival at the restaurant.</p>
               <div class="redeem-liner">
                 <button ion-button block color="primary" [ngClass]="{'redeemed' : redeemed}" (click)="redeemBooking()">
+                  <div *ngIf="!redeemed">TAP TO</div>
                   <div *ngIf="!redeemed">REDEEM</div>
-                  <div *ngIf="!redeemed">BOOKING</div>
                   <img *ngIf="redeemed" src="assets/imgs/white-logo.png">
                 </button>
                 <div *ngIf="!redeemed" [ngClass]="(withinTime && withinDistance) ? 'green' : 'orange'" class="geolocate-indicator"></div>

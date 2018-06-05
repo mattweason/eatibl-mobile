@@ -26,7 +26,7 @@ export class BookingConfirmedPage {
   response: any;
   upcoming = false;
   tooClose = false;
-  withinTime = false; //Is true if current time is within 30 minute before or 2hrs after start of timeslot
+  withinTime = false; //Is true if current time is within 30 minute before or 2hrs after start of timeslo
   withinDistance = false; //Is true if current location is within 100 meters of the restaurant
   location: any;
   redeemed = false;
