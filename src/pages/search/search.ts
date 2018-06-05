@@ -31,6 +31,7 @@ export class SearchPage implements OnInit {
   count = 0; //Stores the total number of restaurants to compare to current restaurant list
   allResults = false; //Becomes true when we've retrieved all of the restaurants
   value = ''; //Store the search key words
+  firstCall = true;
 
   constructor(
     public navCtrl: NavController,
@@ -47,10 +48,12 @@ export class SearchPage implements OnInit {
           location: this.userCoords
         };
 
-        this.API.makePost('restaurant/search/' + this.batch, postObject).subscribe(data => {
-          this.batch++;
-          this.restaurantList = data['restaurants'];
-        });
+        if(this.firstCall)
+          this.API.makePost('restaurant/search/' + this.batch, postObject).subscribe(data => {
+            this.firstCall = false;
+            this.batch++;
+            this.restaurantList = data['restaurants'];
+          });
       });
   }
 
