@@ -18,15 +18,19 @@ import * as moment from 'moment'
 export class SearchPage implements OnInit {
 
   searchInput: string;
-  restaurantListAll: any;
-  restaurantListFiltered: any;
+  restaurantList: any;
   bookings = [];
   date: string;
   today: string;
   maxDate: string;
+  showToolbar: boolean = true;
   time: any;
   location: any;
-
+  userCoords: any;
+  batch = 0; //Represents the batch number
+  count = 0; //Stores the total number of restaurants to compare to current restaurant list
+  allResults = false; //Becomes true when we've retrieved all of the restaurants
+  value = ''; //Store the search key words
 
   constructor(
     public navCtrl: NavController,
@@ -36,6 +40,17 @@ export class SearchPage implements OnInit {
       this.setNow();
       events.subscribe('user:geolocated', (location, time) => {
         this.location = location;
+        this.userCoords = [this.location.coords.latitude, this.location.coords.longitude];
+
+        var postObject = {
+          search: this.value,
+          location: this.userCoords
+        };
+
+        this.API.makePost('restaurant/search/' + this.batch, postObject).subscribe(data => {
+          this.batch++;
+          this.restaurantList = data['restaurants'];
+        });
       });
   }
 
@@ -45,7 +60,6 @@ export class SearchPage implements OnInit {
   }
 
   ngOnInit(){
-    this.API.makeCall('restaurant/all').subscribe(data => this.restaurantListAll = this.restaurantListFiltered = data);
   }
 
   setNow(){
@@ -54,31 +68,39 @@ export class SearchPage implements OnInit {
     this.maxDate = moment().add(30, 'day').format();
   }
 
-  doRefresh(refresher){
-    this.API.makeCall('restaurant/all').subscribe(data => {
-      this.restaurantListAll = this.restaurantListFiltered = data
-      refresher.complete();
+  //Currently filters based on restaurant name and categories
+  filterRestaurants(searchInput){
+    this.allResults = false;
+    this.batch = 0;
+    this.value = searchInput ? searchInput.toLowerCase() : ''; //Don't do toLowerCase of undefined
+
+    var postObject = {
+      search: this.value,
+      location: this.userCoords
+    };
+
+    this.API.makePost('restaurant/search/' + this.batch, postObject).subscribe(data => {
+      this.batch++;
+      this.restaurantList = data['restaurants'];
     });
   }
 
-  //Currently filters based on restaurant name and categories
-  filterRestaurants(event){
-    var value = event.target.value.toLowerCase();
+  //Call next batch of 10 restaurants when you reach the bottom of the page
+  getNextBatch(infiniteScroll){
+    var postObject = {
+      search: this.value,
+      location: this.userCoords
+    };
 
-    if(value)
-      this.restaurantListFiltered = this.restaurantListAll.filter((restaurant) => {
-        if(restaurant.name.toLowerCase().indexOf(value) > -1) //First check for restaurant name
-          return true;
-        else if(restaurant.hasOwnProperty('categories')){ //Then check for restaurant categories
-          for (var i = 0; i < restaurant.categories.length; i++){
-            if(restaurant.categories[i].toLowerCase().indexOf(value) > -1)
-            return true;
-          }
-        }
-        else
-          return false;
-      });
-    else //If search input is empty, return all restaurants
-      this.restaurantListFiltered = this.restaurantListAll;
+    this.API.makePost('restaurant/search/' + this.batch, postObject).subscribe(data => {
+      this.batch++;
+      this.count = data['count'];
+      for(var i = 0; i < data['restaurants'].length; i++){ //Append results to restaurant list
+        this.restaurantList.push(data['restaurants'][i]);
+      }
+      if(this.restaurantList.length >= this.count)
+        this.allResults = true;
+      infiniteScroll.complete();
+    });
   }
 }
