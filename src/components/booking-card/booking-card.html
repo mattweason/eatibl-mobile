@@ -1,36 +1,38 @@
 <ion-card *ngIf="booking">
-  <ion-card-content no-padding>
-    <ion-grid>
-      <ion-row class="no-padding-row">
-        <ion-col class="border-right date-block" align-self-strech col-4>
-          <p class="day">{{dateObject.day}}</p>
-          <div class="dateMonth">
-            <p class="date">{{dateObject.date}}</p>
-            <p class="month">{{dateObject.month}}</p>
-          </div>
-          <p class="time">{{functions.formatClockTime(booking.time, true)}}</p>
-        </ion-col>
-        <ion-col class="no-padding-col" align-self-center col-8>
-          <ion-row class="border-bottom">
-            <ion-col>
-              <p class="restaurant-name">{{booking.restaurant_fid.name}}</p>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col class="metric" col-4>
-              <ion-icon name="pricetag"></ion-icon>
-              <p>{{booking.discount}}%</p>
-            </ion-col>
-            <ion-col class="metric" col-4>
-              <ion-icon name="person"></ion-icon>
-              <p>{{booking.people}}</p>
-            </ion-col>
-            <ion-col class="view-booking" col-4>
-              <button ion-button color="secondary" (click)="viewBooking(booking._id)"><ion-icon name="expand"></ion-icon></button>
-            </ion-col>
-          </ion-row>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card-content>
+  <button class="button-wrapper" (tap)="viewBooking(booking._id)" ion-item detail-none text-wrap>
+    <ion-card-content no-padding>
+      <ion-grid>
+        <ion-row class="no-padding-row">
+          <ion-col class="border-right date-block" align-self-strech col-4>
+            <p class="day">{{dateObject.day}}</p>
+            <div class="dateMonth">
+              <p class="date">{{dateObject.date}}</p>
+              <p class="month">{{dateObject.month}}</p>
+            </div>
+            <p class="time">{{functions.formatClockTime(booking.time, true)}}</p>
+          </ion-col>
+          <ion-col class="no-padding-col" align-self-center col-8>
+            <ion-row class="border-bottom">
+              <ion-col>
+                <p class="restaurant-name">{{booking.restaurant_fid.name}}</p>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col class="metric" col-4>
+                <ion-icon name="pricetag"></ion-icon>
+                <p>{{booking.discount}}%</p>
+              </ion-col>
+              <ion-col class="metric" col-4>
+                <ion-icon name="person"></ion-icon>
+                <p>{{booking.people}}</p>
+              </ion-col>
+              <ion-col class="view-booking" col-4>
+                <button ion-button color="secondary" (click)="viewBooking(booking._id)"><ion-icon name="expand"></ion-icon></button>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </button>
 </ion-card>

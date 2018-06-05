@@ -1,4 +1,19 @@
 booking-card {
+  ion-card{
+    margin: 10px 0 10px 0 !important;
+    width: 100% !important;
+  }
+  .button-wrapper{
+    padding: 0 !important;
+    .item-inner{
+      padding: 0 !important;
+      .input-wrapper{
+        .label{
+          margin: 0 !important;
+        }
+      }
+    }
+  }
   .date-block{
     display: flex;
     flex-direction: column;
@@ -6,6 +21,7 @@ booking-card {
   }
   .restaurant-name{
     font-weight: 700;
+    color: color($colors, dark);
   }
   .day, .month, .time, .date{
     text-align: center;
@@ -22,6 +38,7 @@ booking-card {
   .date, .month{
     font-size: 22px;
     line-height: 32px;
+    color: color($colors, dark);
   }
   .month{
     margin-left: 3px;
