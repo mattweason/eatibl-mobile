@@ -57,14 +57,14 @@ export class ConfirmBookingPage {
       phone: [
         '', Validators.compose([
           Validators.required,
-          Validators.pattern('[0-9 ()-]*'),
-          Validators.maxLength(14)
+          Validators.pattern('[0-9 ()+-]*'),
+          Validators.maxLength(17)
         ])
       ],
       email: [
         '', Validators.compose([
           Validators.required,
-          Validators.pattern('[a-zA-Z0-9.-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}')
+          Validators.email
         ])
       ],
       active: [0],

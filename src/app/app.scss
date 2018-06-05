@@ -263,8 +263,10 @@ ion-grid{
   }
 }
 
-.scroll-content{
-  background-color: #ececec !important;
+page-home, page-search, page-bookings, page-account{
+  .scroll-content{
+    background-color: #ececec !important;
+  }
 }
 
 .dateToolbar{
