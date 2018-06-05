@@ -161,6 +161,8 @@ export class RestaurantCardComponent implements OnChanges {
         this.fillerslots.push('filler');
       }
     }
+    else
+      this.fillerslots = [];
 
   }
 
