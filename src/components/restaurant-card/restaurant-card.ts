@@ -94,21 +94,23 @@ export class RestaurantCardComponent implements OnChanges {
   }
 
   navigateTo(event, timeslotId){
-    if(timeslotId == '')
-      this.restaurantTapped = true;
-    else
-      this.timeslotTapped = timeslotId;
-    this.navCtrl.push('RestaurantPage', {
-      restaurant: JSON.stringify(this.restaurant),
-      timeslotsData: JSON.stringify(this.timeslotsData),
-      businessHoursData: JSON.stringify(this.businessHoursData),
-      timeslotId: timeslotId,
-      distance: this.distance,
-      date: this.date
-    }).then(() => {
-      this.restaurantTapped = false;
-      this.timeslotTapped = '';
-    });
+    if(this.timeslotsData.length){
+      if(timeslotId == '')
+        this.restaurantTapped = true;
+      else
+        this.timeslotTapped = timeslotId;
+      this.navCtrl.push('RestaurantPage', {
+        restaurant: JSON.stringify(this.restaurant),
+        timeslotsData: JSON.stringify(this.timeslotsData),
+        businessHoursData: JSON.stringify(this.businessHoursData),
+        timeslotId: timeslotId,
+        distance: this.distance,
+        date: this.date
+      }).then(() => {
+        this.restaurantTapped = false;
+        this.timeslotTapped = '';
+      });
+    }
   }
 
   //To establish open now or closed in view
