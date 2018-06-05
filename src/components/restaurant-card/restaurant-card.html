@@ -1,14 +1,14 @@
 <!-- Generated template for the RestaurantComponent component -->
 <ion-card *ngIf="isLoaded" class="restaurant-card" [ngClass]="{'display': isVisible == true, 'navigating': restaurantTapped == true}">
-  <div *ngIf="distance" class="distance">
-    <p>{{distance}}</p>
-  </div>
   <div *ngIf="restaurantTapped" class="loading-overlay card">
     <ion-spinner></ion-spinner>
   </div>
   <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none>
     <div *ngIf="!restaurant?.featuredImage" class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"></div>
     <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
+    <div *ngIf="distance" class="distance">
+      <p>{{distance}}</p>
+    </div>
   </button>
   <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none text-wrap>
     <ion-card-content no-padding>
