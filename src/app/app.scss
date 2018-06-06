@@ -71,17 +71,13 @@ restaurant-card, page-restaurant {
     color: lighten(color($colors, dark), 20%);
   }
   .no-timeslots{
-    height: 30px;
+    background-color: color($colors, danger);
+    height: 40px;
     p{
-      line-height: 30px;
-      color: color($colors, primary);
+      line-height: 40px;
+      color: #fff;
       font-size: 16px;
       text-align: center;
-    }
-  }
-  .no-timeslots{
-    p{
-      color: color($colors, danger);
     }
   }
   ion-slides{
