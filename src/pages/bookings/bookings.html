@@ -9,7 +9,7 @@
   <ion-navbar color="primary">
     <ion-title>Bookings</ion-title>
   </ion-navbar>
-  <ion-toolbar *ngIf="user && user.active != null">
+  <ion-toolbar>
     <ion-segment [(ngModel)]="type" color="secondary">
       <ion-segment-button value="upcoming">
         Upcoming
@@ -24,33 +24,33 @@
 
 
 <ion-content>
-  <ion-card *ngIf="user?.active == null" id="signUpPrompt"> <!-- TODO: Add prompt to inactive users to add a password -->
-    <ion-card-content no-padding>
-      <ion-grid>
-        <ion-row class="border-bottom">
-          <ion-col class="align-center icon">
-            <ion-icon name="restaurant"></ion-icon>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <h2>Sign Up or Log In to view your bookings.</h2>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <p>Join eatibl to check out your upcoming bookings and look at where you've booked before.</p>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <button ion-button color="primary" block (tap)="signUp()">Sign Up</button>
-            <button ion-button color="secondary" clear block (tap)="login()">Log In</button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-card-content>
-  </ion-card>
+  <!--<ion-card *ngIf="user?.active == null" id="signUpPrompt"> &lt;!&ndash; TODO: Add prompt to inactive users to add a password &ndash;&gt;-->
+    <!--<ion-card-content no-padding>-->
+      <!--<ion-grid>-->
+        <!--<ion-row class="border-bottom">-->
+          <!--<ion-col class="align-center icon">-->
+            <!--<ion-icon name="restaurant"></ion-icon>-->
+          <!--</ion-col>-->
+        <!--</ion-row>-->
+        <!--<ion-row>-->
+          <!--<ion-col>-->
+            <!--<h2>Sign Up or Log In to view your bookings.</h2>-->
+          <!--</ion-col>-->
+        <!--</ion-row>-->
+        <!--<ion-row>-->
+          <!--<ion-col>-->
+            <!--<p>Join eatibl to check out your upcoming bookings and look at where you've booked before.</p>-->
+          <!--</ion-col>-->
+        <!--</ion-row>-->
+        <!--<ion-row>-->
+          <!--<ion-col>-->
+            <!--<button ion-button color="primary" block (tap)="signUp()">Sign Up</button>-->
+            <!--<button ion-button color="secondary" clear block (tap)="login()">Log In</button>-->
+          <!--</ion-col>-->
+        <!--</ion-row>-->
+      <!--</ion-grid>-->
+    <!--</ion-card-content>-->
+  <!--</ion-card>-->
   <ion-card class="secure-prompt" *ngIf="user && user?.active == 0">
     <ion-card-content>
       <p>Bookings made with <span class="bold">{{user.email}}</span> are unsecured. Click below to create your account and secure your bookings.</p>
@@ -60,7 +60,7 @@
 
   <div [ngSwitch]="type">
     <ion-list *ngSwitchCase="'upcoming'">
-      <div *ngIf="user?.active != null && bookingUpcoming?.length == 0" class="no-results">
+      <div *ngIf="bookingUpcoming?.length == 0" class="no-results">
         <ion-grid>
           <ion-row>
             <ion-col class="align-center icon">
@@ -78,7 +78,7 @@
       <booking-card *ngFor = "let booking of bookingUpcoming" [booking]="booking"></booking-card>
     </ion-list>
     <ion-list *ngSwitchCase="'history'">
-      <div *ngIf="user?.active != null && bookingHistory?.length == 0" class="no-results">
+      <div *ngIf="bookingHistory?.length == 0" class="no-results">
         <ion-grid>
           <ion-row>
             <ion-col class="align-center icon">

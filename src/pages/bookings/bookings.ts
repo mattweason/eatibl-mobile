@@ -24,8 +24,8 @@ export class BookingsPage {
   @ViewChild(Content) content: Content;
 
   user = {} as any;
-  bookingUpcoming: any;
-  bookingHistory: any;
+  bookingUpcoming = [] as any;
+  bookingHistory = [] as any;
   type = 'upcoming';
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private API: ApiServiceProvider, private storage: Storage, private functions: FunctionsProvider) {
@@ -35,11 +35,13 @@ export class BookingsPage {
   }
 
   ionViewDidEnter() {
+    console.log('running')
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
         this.content.resize(); //Handle the show/hide behavior of the tabs toolbar
         this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+          console.log('running2')
           this.filterAndSortBookings(data);
         });
       }
@@ -77,6 +79,8 @@ export class BookingsPage {
       return booking.date;
     });
     this.bookingHistory = this.bookingHistory.reverse(); //Reverse the order so most recent is first
+    console.log(this.bookingHistory)
+    console.log(this.bookingUpcoming)
   }
 
   signUp(){
