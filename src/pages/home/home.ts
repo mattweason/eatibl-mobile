@@ -2,7 +2,8 @@ import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Events } from 'ionic-angular';
-import * as moment from 'moment'
+import * as moment from 'moment';
+import * as _ from 'underscore';
 
 @IonicPage()
 @Component({
@@ -12,10 +13,11 @@ import * as moment from 'moment'
 export class HomePage {
   @ViewChild(Content) content: Content;
 
-  restaurantList: any;
+  restaurantList: any; //just the ones loaded
+  restaurantAll: any; //entire list
   bookings = [];
   date: string;
-  today: string;
+  today: string; //sets the minimum of the date picker
   maxDate: string;
   time: any;
   showToolbar: boolean = true;
@@ -23,7 +25,6 @@ export class HomePage {
   userCoords: any;
   firstCall = true;
   batch = 0; //Represents the batch number
-  count = 0; //Stores the total number of restaurants to compare to current restaurant list
   allResults = false; //Becomes true when we've retrieved all of the restaurants
 
   constructor(
@@ -40,10 +41,8 @@ export class HomePage {
       //Only request the geolocated restaurant list the first time this event is received
       if(this.firstCall){
         this.firstCall = false;
-        this.API.makePost('restaurant/all/geolocated/' + this.batch, this.userCoords).subscribe(data => {
-          this.batch++;
-          this.count = data['count'];
-          this.restaurantList = data['restaurants'];
+        this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+          this.rankRestaurants(data);
           this.cdRef.detectChanges();
         });
       }
@@ -58,29 +57,78 @@ export class HomePage {
     this.events.publish('get:geolocation', Date.now());
   }
 
+  //Ranking system to dictate order of display
+  rankRestaurants(restaurantList){
+    var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
+    var hour = moment(this.date).format('H'); //24 hours format
+
+    for (var i = 0; i < restaurantList.length; i++){
+      var rank = 100; //start with default value
+      var timeslots = _.filter(restaurantList[i].timeslots, function(timeslot){
+        return timeslot.day == day && timeslot.time >= hour;
+      });
+
+      //create a separate entry for the best timeslot available for the rest of today
+      restaurantList[i].maxTimeslot = _.max(timeslots, function (timeslot) {return timeslot.discount});
+
+      //BIG PENALTY IN RANKING FOR NO DISCOUNTS FOR TODAY
+      if(timeslots.length == 0)
+        rank = rank - 30;
+
+      else //add to rank points based on discount (+1 per 10% discount at max available discount);
+        rank = rank + restaurantList[i].maxTimeslot.discount / 10; //add 1pt for each 10% discount
+
+      //if at least 5 timeslots today, add to rank
+      if(timeslots.length > 4)
+        rank++;
+
+      //bonus and penalty for distance
+      if(restaurantList[i].distance <= 1)
+        rank = rank + 1/restaurantList[i].distance;
+      else if(restaurantList[i].distance >= 3 && restaurantList[i].distance <= 10)
+        rank = rank - restaurantList[i].distance/2;
+      else if(restaurantList[i].distance > 10)
+        rank = rank - 6;
+
+      restaurantList[i].rank = rank; //SET RANKING
+    }
+
+    //sort list by rankings
+    restaurantList = _.sortBy(restaurantList, function(resto){
+      return -resto.rank;
+    });
+
+    this.restaurantList = restaurantList.splice(0,10); //load first 10
+    this.restaurantAll = restaurantList; //store all restos
+    this.batch++;
+  }
+
   //Pull down to refresh the restaurant list
   doRefresh(refresher){
     this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
-    this.batch = 0; //Reset batch number to 0
-    this.API.makePost('restaurant/all/geolocated/' + this.batch, this.userCoords).subscribe(data => {
-      this.restaurantList = data['restaurants'];
+    this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+      this.rankRestaurants(data);
       refresher.complete();
     });
   }
 
   //Call next batch of 10 restaurants when you reach the bottom of the page
   getNextBatch(infiniteScroll){
-    this.API.makePost('restaurant/all/geolocated/' + this.batch, this.userCoords).subscribe(data => {
-      this.batch++;
-      this.count = data['count'];
-      for(var i = 0; i < data['restaurants'].length; i++){ //Append results to restaurant list
-        this.restaurantList.push(data['restaurants'][i]);
-      }
-      if(this.restaurantList.length >= this.count)
-        this.allResults = true;
-      infiniteScroll.complete();
-    });
+    console.log('next');
+    var limit = Math.min(this.batch*10+10, this.restaurantAll.length);
+
+    for(var i = this.batch*10; i < limit; i++){
+      this.restaurantList.push(this.restaurantAll[i]);
+    }
+
+    this.batch++;
+
+    if(this.restaurantList.length == this.restaurantAll.length)
+      this.allResults = true;
+
+    infiniteScroll.complete();
   }
+
 
   toggleToolbar(){
     this.showToolbar = !this.showToolbar;
