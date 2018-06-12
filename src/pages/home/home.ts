@@ -68,8 +68,19 @@ export class HomePage {
         return timeslot.day == day && timeslot.time >= hour;
       });
 
+      //Make sure it's sorted by time ascending
+      timeslots = _.sortBy(timeslots, 'time');
+
       //create a separate entry for the best timeslot available for the rest of today
-      restaurantList[i].maxTimeslot = _.max(timeslots, function (timeslot) {return timeslot.discount});
+      if(timeslots.length != 0){
+        var maxDiscount = 0;
+        for (var x = 0; x < timeslots.length; x++){
+          if(timeslots[x].discount > maxDiscount){
+            maxDiscount = timeslots[x].discount;
+            restaurantList[i].maxTimeslot = timeslots[x];
+          }
+        }
+      }
 
       //BIG PENALTY IN RANKING FOR NO DISCOUNTS FOR TODAY
       if(timeslots.length == 0)

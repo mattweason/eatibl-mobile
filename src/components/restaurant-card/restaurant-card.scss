@@ -6,6 +6,9 @@
   .no-padding{
     padding-bottom: 0 !important;
   }
+  .top-of-card{
+    position: relative;
+  }
   .button-wrapper{
     padding: 0 !important;
     .item-inner{
@@ -61,6 +64,28 @@
       text-align: center;
       font-weight: 700;
       font-size: 18px;
+    }
+  }
+  .best-deal{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    height: 60px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    .button-inner{
+      flex-direction: column;
+      p{
+        margin: 0;
+        color: #fff;
+        &.discount{
+          font-size: 24px;
+          line-height: 24px;
+          margin-bottom: 2px;
+        }
+      }
     }
   }
   &.navigating{

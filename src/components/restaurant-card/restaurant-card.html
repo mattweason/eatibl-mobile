@@ -3,17 +3,22 @@
   <div *ngIf="restaurantTapped" class="loading-overlay card">
     <ion-spinner></ion-spinner>
   </div>
-  <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none>
-    <div *ngIf="!restaurant?.featuredImage" class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"></div>
-    <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
-    <div *ngIf="distance" class="distance">
-      <p>{{distance}}</p>
-    </div>
-    <div class="coming-soon" *ngIf="!timeslotsData.length">
-      <p>COMING SOON
-      </p>
-    </div>
-  </button>
+  <div class="top-of-card">
+    <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none>
+      <div *ngIf="!restaurant?.featuredImage" class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"></div>
+      <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
+      <div *ngIf="distance" class="distance">
+        <p>{{distance}}</p>
+      </div>
+      <div class="coming-soon" *ngIf="!timeslotsData.length">
+        <p>COMING SOON</p>
+      </div>
+    </button>
+    <button ion-button color="primary" class="best-deal" *ngIf="restaurant?.maxTimeslot" (tap)="navigateTo($event, restaurant.maxTimeslot._id)">
+      <p class="discount">-{{restaurant?.maxTimeslot.discount}}%</p>
+      <p class="time">@{{functions.formatClockTime(restaurant.maxTimeslot.time, true)}}</p>
+    </button>
+  </div>
   <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none text-wrap>
     <ion-card-content no-padding>
       <ion-grid class="no-padding">

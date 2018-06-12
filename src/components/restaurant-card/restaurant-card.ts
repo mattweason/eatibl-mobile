@@ -76,11 +76,8 @@ export class RestaurantCardComponent implements OnChanges {
   ) {}
 
   ngOnInit(){
-    //Get discount timeslots
-    this.API.makeCall('discount/' + this.restaurant._id + '/week').subscribe(data => {
-      this.timeslotsData = data;
-      this.processTimeslots()
-    });
+    this.timeslotsData = this.restaurant.timeslots;
+    this.processTimeslots()
     //Get business hours
     this.API.makeCall('hours/' + this.restaurant._id).subscribe(data => {
       this.businessHoursData = data;
@@ -180,9 +177,39 @@ export class RestaurantCardComponent implements OnChanges {
   //When time changes or date changes, set slide to selected time
   setSlide(){
     if(this.slides){
-      var time = this.time;
+      //time value formatted as 24hr integer
+      var time = moment(this.time).get('hour') + (moment(this.time).get('minute') / 60);
+
       var index = _.findIndex(this.timeslots, function(timeslot){
-        return timeslot.time == (moment(time).get('hour') + (moment(time).get('minute') / 60))
+        return timeslot.time == time;
+      });
+
+      //if we can't find that particular timeslot, search for nearby timeslots to shift to
+      if(index == -1){
+        var timeslotArray = [];
+        timeslotArray = _.pluck(this.timeslots, 'time'); //grab all the times
+        for (var i = 0; i < timeslotArray.length; i++){
+          //find the first timeslot that goes past the selected time
+          if (timeslotArray[i] > time && index == -1){
+            index = _.findIndex(this.timeslots, function(timeslot){
+              return timeslot.time == timeslotArray[i];
+            });
+          }
+        }
+      }
+      if(index == -1)
+        this.slides.slideTo(this.timeslots.length);
+      else
+        this.slides.slideTo(index - 1)
+    }
+  }
+
+  //Slide timeslot slider to best deal
+  slideTo(timeslotId){
+    if(this.slides) {
+      //Find index of
+      var index = _.findIndex(this.timeslots, function(timeslot){
+        return timeslot._id == timeslotId;
       });
       this.slides.slideTo(index - 1)
     }
