@@ -15,6 +15,7 @@ export class HomePage {
 
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
+  dataCache: any; //Cache the api return
   bookings = [];
   date: string;
   today: string; //sets the minimum of the date picker
@@ -33,7 +34,6 @@ export class HomePage {
     private cdRef:ChangeDetectorRef,
     public events: Events
   ) {
-    this.setNow(true);
     events.subscribe('user:geolocated', (location, time) => {
       this.location = location;
       this.userCoords = [this.location.coords.latitude, this.location.coords.longitude];
@@ -42,7 +42,8 @@ export class HomePage {
       if(this.firstCall){
         this.firstCall = false;
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
-          this.rankRestaurants(data);
+          this.dataCache = data;
+          this.setNow(true); //rankRestaurants runs inside here
           this.cdRef.detectChanges();
         });
       }
@@ -150,6 +151,7 @@ export class HomePage {
       this.date = this.today = moment().format();
       this.time = moment().add(30 - moment().minute() % 30, 'm').format();
       this.maxDate = moment().add(30, 'day').format();
+      this.rankRestaurants(this.dataCache);
     }
   }
 }

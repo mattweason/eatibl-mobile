@@ -22,6 +22,7 @@ export class SearchPage implements OnInit {
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
   restaurantFiltered: any; //filtered search results
+  dataCache: any; //Cache the api return
   bookings = [];
   date: string;
   today: string;
@@ -43,7 +44,6 @@ export class SearchPage implements OnInit {
     private cdRef:ChangeDetectorRef,
     public events: Events
   ) {
-      this.setNow();
     events.subscribe('user:geolocated', (location, time) => {
       this.location = location;
       this.userCoords = [this.location.coords.latitude, this.location.coords.longitude];
@@ -52,7 +52,8 @@ export class SearchPage implements OnInit {
       if(this.firstCall){
         this.firstCall = false;
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
-          this.rankRestaurants(data);
+          this.dataCache = data;
+          this.setNow(true);
           this.cdRef.detectChanges();
         });
       }
@@ -67,10 +68,13 @@ export class SearchPage implements OnInit {
   ngOnInit(){
   }
 
-  setNow(){
-    this.date = this.today = moment().format();
-    this.time = moment().add(30 - moment().minute() % 30, 'm').format();
-    this.maxDate = moment().add(30, 'day').format();
+  setNow(initialCall){
+    if(this.date != this.today || initialCall){
+      this.date = this.today = moment().format();
+      this.time = moment().add(30 - moment().minute() % 30, 'm').format();
+      this.maxDate = moment().add(30, 'day').format();
+      this.rankRestaurants(this.dataCache);
+    }
   }
 
   //Ranking system to dictate order of display
@@ -162,6 +166,11 @@ export class SearchPage implements OnInit {
 
     this.restaurantList = this.restaurantFiltered.slice(0,10); //load first 10
     this.batch++;
+  }
+
+  //Rank restaurants and filter them when date is changed and keyword search is active
+  rankAndFilter(searchInput){
+
   }
 
   //Call next batch of 10 restaurants when you reach the bottom of the page

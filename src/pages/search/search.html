@@ -20,7 +20,7 @@
         <ion-col col-5>
           <ion-item class="datetime-sm">
             <ion-label fixed><ion-icon name="calendar" color="primary"></ion-icon></ion-label>
-            <ion-datetime displayFormat="MMM DD" pickerFormat="MMM DDDD" [min]="today" [max]="maxDate" [(ngModel)]="date"></ion-datetime>
+            <ion-datetime displayFormat="MMM DD" pickerFormat="MMM DDDD" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionChange)="rankRestaurants(restaurantAll); filterRestaurants(searchInput)"></ion-datetime>
           </ion-item>
         </ion-col>
         <ion-col col-4>
@@ -29,7 +29,7 @@
           </ion-item>
         </ion-col>
         <ion-col col-3>
-          <button ion-button color="secondary" (click)="setNow()">Now</button>
+          <button ion-button color="secondary" (click)="setNow(false); filterRestaurants(searchInput)">Now</button>
         </ion-col>
       </ion-row>
     </ion-grid>
