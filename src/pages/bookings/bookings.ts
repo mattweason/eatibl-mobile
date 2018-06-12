@@ -58,7 +58,7 @@ export class BookingsPage {
     this.bookingUpcoming = _.filter(data, function(booking){
       var date = moment(booking.date).format('L');
       var time = functions.formatClockTime(booking.time, true);
-      return moment(date+' '+time).isAfter(moment());
+      return moment(date+' '+time).add(1, 'h').isAfter(moment());
     });
     this.bookingUpcoming = _.sortBy(this.bookingUpcoming, function(booking){ //Sort by secondary first
       return booking.time;
@@ -70,7 +70,7 @@ export class BookingsPage {
     this.bookingHistory = _.filter(data, function(booking){
       var date = moment(booking.date).format('L');
       var time = functions.formatClockTime(booking.time, true);
-      return moment(date+' '+time).isBefore(moment());
+      return moment(date+' '+time).add(1, 'h').isBefore(moment());
     });
     this.bookingHistory = _.sortBy(this.bookingHistory, function(booking){ //Sort by secondary first
       return booking.time;
