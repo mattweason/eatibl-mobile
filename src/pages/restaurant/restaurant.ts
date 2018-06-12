@@ -190,11 +190,24 @@ export class RestaurantPage implements OnInit {
     //Activate timeslot on load if one exists
     if(this.timeslotId != ''){
       var timeslotId = this.timeslotId; //Avoid this scoping issues in filter
+      var timeslotExists = false; //Set to true if timeslotid is found in list
 
-      var timeslot = _.filter(this.timeslots, function(timeslot){
-        return timeslot._id == timeslotId;
-      });
-      this.selectBooking(timeslot[0]);
+      //Check if selected timeslot still exists (may not if time has passed)
+      for(var i = 0; i < this.timeslots.length; i++){
+        if(timeslotId == this.timeslots[i]._id)
+          timeslotExists = true;
+      }
+
+      //Select the booking the user clicked from the restaurant card
+      if(timeslotExists){ //selectBooking will crash if timeslot doesn't exist
+        var timeslot = _.filter(this.timeslots, function(timeslot){
+          return timeslot._id == timeslotId;
+        });
+        this.selectBooking(timeslot[0]);
+      }
+      else{
+        this.timeslotId = '';
+      }
     }
 
     //Build filler timeslots
