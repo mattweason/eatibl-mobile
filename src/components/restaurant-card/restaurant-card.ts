@@ -31,7 +31,8 @@ export class RestaurantCardComponent implements OnChanges {
       this.isLoaded = true;
       setTimeout(() => {
         this.isVisible = true;
-        this.cdRef.detectChanges();
+        if(!this.cdRef['destroyed'])
+          this.cdRef.detectChanges();
       }, 0);
     }, 0);
   }

@@ -33,7 +33,7 @@ export class HomePage {
     private cdRef:ChangeDetectorRef,
     public events: Events
   ) {
-    this.setNow();
+    this.setNow(true);
     events.subscribe('user:geolocated', (location, time) => {
       this.location = location;
       this.userCoords = [this.location.coords.latitude, this.location.coords.longitude];
@@ -60,7 +60,7 @@ export class HomePage {
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
-    var hour = moment(this.date).format('H'); //24 hours format
+    var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
 
     for (var i = 0; i < restaurantList.length; i++){
       var rank = 100; //start with default value
@@ -109,7 +109,7 @@ export class HomePage {
       return -resto.rank;
     });
 
-    this.restaurantList = restaurantList.splice(0,10); //load first 10
+    this.restaurantList = restaurantList.slice(0,10); //load first 10
     this.restaurantAll = restaurantList; //store all restos
     this.batch++;
   }
@@ -125,7 +125,6 @@ export class HomePage {
 
   //Call next batch of 10 restaurants when you reach the bottom of the page
   getNextBatch(infiniteScroll){
-    console.log('next');
     var limit = Math.min(this.batch*10+10, this.restaurantAll.length);
 
     for(var i = this.batch*10; i < limit; i++){
@@ -146,9 +145,11 @@ export class HomePage {
     this.content.resize();
   }
 
-  setNow(){
-    this.date = this.today = moment().format();
-    this.time = moment().add(30 - moment().minute() % 30, 'm').format();
-    this.maxDate = moment().add(30, 'day').format();
+  setNow(initialCall){
+    if(this.date != this.today || initialCall){
+      this.date = this.today = moment().format();
+      this.time = moment().add(30 - moment().minute() % 30, 'm').format();
+      this.maxDate = moment().add(30, 'day').format();
+    }
   }
 }

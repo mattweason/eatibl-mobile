@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="primary" class="align-toolbar">
-    <ion-searchbar [(ngModel)]="searchInput" (search)="filterRestaurants(searchInput)"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="searchInput" (search)="filterRestaurants(searchInput)" (ionClear)="filterRestaurants('')"></ion-searchbar>
     <ion-buttons end>
       <button (tap)="filterRestaurants(searchInput)" ion-button>
         Search
