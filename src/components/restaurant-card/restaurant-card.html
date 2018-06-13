@@ -1,7 +1,9 @@
 <!-- Generated template for the RestaurantComponent component -->
-<ion-card *ngIf="isLoaded" class="restaurant-card" [ngClass]="{'display': isVisible == true, 'navigating': restaurantTapped == true}">
+<ion-card *ngIf="isLoaded" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
   <div *ngIf="restaurantTapped" class="loading-overlay card">
-    <ion-spinner></ion-spinner>
+    <div class="spinner-box">
+      <ion-spinner></ion-spinner>
+    </div>
   </div>
   <div class="top-of-card">
     <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none>

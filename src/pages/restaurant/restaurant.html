@@ -9,11 +9,29 @@
   <ion-navbar color="primary">
     <ion-title>{{restaurant?.name}}</ion-title>
   </ion-navbar>
-
+  <ion-toolbar class="dateToolbar">
+    <ion-grid>
+      <ion-row>
+        <ion-col col-5>
+          <ion-item class="datetime-sm">
+            <ion-label fixed><ion-icon name="calendar" color="primary"></ion-icon></ion-label>
+            <ion-datetime displayFormat="MMM DD" pickerFormat="MMM DDDD" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionChange)="processTimeslots(); processBusinessHours()"></ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col col-4>
+          <ion-item class="datetime-sm no-icon">
+            <ion-datetime displayFormat="h:mm A" pickerFormat="h:mm A" minuteValues="0,30" [(ngModel)]="time" (ionChange)="setSlideToTime()"></ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col col-3>
+          <button ion-button color="secondary" (click)="setNow(false)">Now</button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
   <ion-card *ngIf="isLoaded">
     <div *ngIf="distance" class="distance">
       <p>{{distance}}</p>
@@ -45,15 +63,11 @@
             </div>
           </ion-col>
         </ion-row>
-        <ion-row class="border-bottom">
+        <ion-row class="border-bottom" style="display: none;">
           <ion-col>
-              <ion-item class="border-bottom">
-                <ion-label fixed><ion-icon name="calendar"></ion-icon></ion-label>
-                <ion-datetime placeholder="Today" todayText="Today" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionChange)="processTimeslots(); processBusinessHours()"></ion-datetime>
-              </ion-item>
               <ion-item>
                 <ion-label fixed><ion-icon name="people"></ion-icon></ion-label>
-                <ion-select [(ngModel)]="people">
+                <ion-select #peopleSelect [(ngModel)]="people">
                   <ion-option value="1">1 person</ion-option>
                   <ion-option value="2">2 people</ion-option>
                   <ion-option value="3">3 people</ion-option>
@@ -72,7 +86,7 @@
             <ion-slides #slides slidesPerView="4" (ionSlideDidChange)="slidePosition()" (ionSlideWillChange)="slidePosition()">
               <ion-slide *ngFor="let timeslot of timeslots">
                 <div class="timeslot">
-                  <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id && activeTimeslot?.quantity >= people}">{{functions.formatClockTime(timeslot.time, true)}}</p>
+                  <p class="timeslot-time" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id && activeTimeslot?.quantity >= people}">{{functions.formatClockTime(timeslot.time, true)}}</p>
                   <button ion-button color="primary" [disabled]="timeslot?.quantity < people" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot)">-{{timeslot?.discount}}%</button>
                 </div>
               </ion-slide>
@@ -88,33 +102,13 @@
         <ion-row class="no-padding-row" *ngIf="!timeslots.length && timeslotsData.length">
           <ion-col class="no-padding-col">
             <div class="no-timeslots">
-              <p>NO AVAILABLE DEALS</p>
+              <p>NO DEALS FOR {{date | date: 'MMM d'}}</p>
             </div>
           </ion-col>
         </ion-row>
         <ion-row *ngIf="open?.open != 'closedToday'" class="border-bottom">
-          <button ion-button block color="secondary" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, people, date)">Book Now</button>
-        </ion-row>
-        <ion-row class="border-bottom no-padding-row mapRow">
-          <figure class="map-figure">
-            <img class="map" src="{{mapUrl}}" alt="">
-          </figure>
-        </ion-row>
-        <ion-row class="border-bottom mapRow">
-          <ion-col col-8>
-            <div class="address">
-              <p>{{restaurant?.address}}</p>
-              <p>{{restaurant?.city}}, {{restaurant?.state}}, {{restaurant?.zipcode}}</p>
-            </div>
-          </ion-col>
-          <ion-col col-4 class="navigate-button">
-            <div>
-              <button (tap)="openMaps()" ion-fab color="secondary">
-                <ion-icon name="navigate"></ion-icon>
-              </button>
-              <p>Directions</p>
-            </div>
-          </ion-col>
+          <button ion-button color="secondary" class="set-people" (click)="openPeopleSelect()">For {{people}}<ion-icon name="people"></ion-icon></button>
+          <button ion-button color="secondary" class="book-button" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, people, date)">Book Now</button>
         </ion-row>
       </ion-grid>
       <div class="details">
@@ -128,7 +122,7 @@
         </ion-segment>
       </div>
       <div [ngSwitch]="type">
-        <ion-grid *ngSwitchCase="'about'">
+        <ion-grid class="border-bottom" *ngSwitchCase="'about'">
           <ion-row *ngIf="restaurant.discountDetails">
             <ion-col>
               <p class="header">Discount Details</p>
@@ -157,7 +151,7 @@
           </ion-row>
         </ion-grid>
 
-        <ion-grid *ngSwitchCase="'menu'">
+        <ion-grid class="border-bottom" *ngSwitchCase="'menu'">
           <ion-row *ngFor="let item of restaurant.recommendedItems">
             <ion-col col-8>
               <p>{{item.item}}</p>
@@ -171,6 +165,29 @@
           </ion-row>
         </ion-grid>
       </div>
+      <ion-grid>
+        <ion-row class="border-bottom no-padding-row mapRow">
+          <figure class="map-figure">
+            <img class="map" src="{{mapUrl}}" alt="">
+          </figure>
+        </ion-row>
+        <ion-row class="mapRow">
+          <ion-col col-8>
+            <div class="address">
+              <p>{{restaurant?.address}}</p>
+              <p>{{restaurant?.city}}, {{restaurant?.state}}, {{restaurant?.zipcode}}</p>
+            </div>
+          </ion-col>
+          <ion-col col-4 class="navigate-button">
+            <div>
+              <button (tap)="openMaps()" ion-fab color="secondary">
+                <ion-icon name="navigate"></ion-icon>
+              </button>
+              <p>Directions</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-card-content>
   </ion-card>
 

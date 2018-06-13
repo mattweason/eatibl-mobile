@@ -149,9 +149,9 @@ export class HomePage {
   setNow(initialCall){
     if(this.date != this.today || initialCall){
       this.date = this.today = moment().format();
-      this.time = moment().add(30 - moment().minute() % 30, 'm').format();
       this.maxDate = moment().add(30, 'day').format();
       this.rankRestaurants(this.dataCache);
     }
+    this.time = moment().add(30 - moment().minute() % 30, 'm').format();
   }
 }

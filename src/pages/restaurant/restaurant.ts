@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { IonicPage, NavController, NavParams, Slides, Events } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, Events, Select } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
@@ -34,6 +34,7 @@ export class RestaurantPage implements OnInit {
     if(this.timeslotId != '' && this.slides)
       this.setSlide();
   }
+  @ViewChild('peopleSelect') peopleSelect: Select;
 
   timeslots: any;
   timeslotsData = {} as any;
@@ -49,6 +50,7 @@ export class RestaurantPage implements OnInit {
   timeslotId: String;
   type: String;
   date: any;
+  time: any;
   today: string;
   maxDate: string;
   isLoaded: boolean = false;
@@ -78,7 +80,7 @@ export class RestaurantPage implements OnInit {
       this.timeslotId = navParams.get('timeslotId');
       this.distance = navParams.get('distance');
       this.date = navParams.get('date');
-      this.setNow();
+      this.setNow(true);
       //Subscribe to geolocation event
       events.subscribe('user:geolocated', (location, time) => {
         if(location)
@@ -170,6 +172,13 @@ export class RestaurantPage implements OnInit {
     this.launchNavigator.navigate(this.restaurant.address);
   }
 
+  //Open people select programatically
+  openPeopleSelect(){
+    if(this.peopleSelect){
+      this.peopleSelect.open()
+    }
+  }
+
   //Filter timeslots for the currently selected date
   processTimeslots(){
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
@@ -235,8 +244,38 @@ export class RestaurantPage implements OnInit {
   }
 
   //When time changes or date changes, set slide to selected time
+  setSlideToTime(){
+    if(this.slides){
+      //time value formatted as 24hr integer
+      var time = moment(this.time).get('hour') + (moment(this.time).get('minute') / 60);
+
+      var index = _.findIndex(this.timeslots, function(timeslot){
+        return timeslot.time == time;
+      });
+
+      //if we can't find that particular timeslot, search for nearby timeslots to shift to
+      if(index == -1){
+        var timeslotArray = [];
+        timeslotArray = _.pluck(this.timeslots, 'time'); //grab all the times
+        for (var i = 0; i < timeslotArray.length; i++){
+          //find the first timeslot that goes past the selected time
+          if (timeslotArray[i] > time && index == -1){
+            index = _.findIndex(this.timeslots, function(timeslot){
+              return timeslot.time == timeslotArray[i];
+            });
+          }
+        }
+      }
+      if(index == -1)
+        this.slides.slideTo(this.timeslots.length);
+      else
+        this.slides.slideTo(index - 1)
+    }
+  }
+
+  //Move slider to the active timeslot
   setSlide(){
-  var activeTimeslot = this.activeTimeslot;
+    var activeTimeslot = this.activeTimeslot;
     var index = _.findIndex(this.timeslots, function(timeslot){
       return timeslot._id == activeTimeslot._id;
     });
@@ -299,9 +338,12 @@ export class RestaurantPage implements OnInit {
     });
   }
 
-  setNow(){
-    this.today = moment().format();
-    this.maxDate = moment().add(30, 'day').format();
+  setNow(initialCall){
+    if(this.date != this.today || initialCall){
+      this.date = this.today = moment().format();
+      this.maxDate = moment().add(30, 'day').format();
+    }
+    this.time = moment().add(30 - moment().minute() % 30, 'm').format();
   }
 
   //Determine and set distance in km from restaurant to user location

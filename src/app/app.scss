@@ -92,6 +92,9 @@ restaurant-card, page-restaurant {
           margin: 0;
           height: 25%;
           color: lighten(color($colors, dark), 20%);
+          &.timeslot-time{
+            font-size: 1.4rem;
+          }
           &.active{
             color: color($colors, primary);
             font-weight: 700;
@@ -327,4 +330,19 @@ h2, p, button, span, ion-select, ion-datetime, ion-input, ion-title {
 .item-inner{
   border-bottom: none !important;
   box-shadow: none !important;
+}
+
+//Platform specific styling
+
+restaurant-card{
+  .card-md{
+    .best-deal{
+      .button-inner{
+        justify-content: flex-start;
+        .deal-header{
+          padding: 0 0 !important;
+        }
+      }
+    }
+  }
 }
