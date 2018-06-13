@@ -14,9 +14,14 @@
         <p>COMING SOON</p>
       </div>
     </button>
-    <button ion-button color="primary" class="best-deal" *ngIf="restaurant?.maxTimeslot" (tap)="navigateTo($event, restaurant.maxTimeslot._id)">
-      <p class="discount">-{{restaurant?.maxTimeslot.discount}}%</p>
-      <p class="time">@{{functions.formatClockTime(restaurant.maxTimeslot.time, true)}}</p>
+    <button ion-button class="best-deal" *ngIf="restaurant?.maxTimeslot" (tap)="navigateTo($event, restaurant.maxTimeslot._id)">
+      <div class="deal-header">
+        <p class="title">BEST DEAL</p>
+      </div>
+      <div class="deal-details">
+        <p class="discount">-{{restaurant?.maxTimeslot.discount}}%</p>
+        <p class="time">@{{functions.formatClockTime(restaurant.maxTimeslot.time, true)}}</p>
+      </div>
     </button>
   </div>
   <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none text-wrap>
