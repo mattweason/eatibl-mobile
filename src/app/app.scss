@@ -214,6 +214,10 @@ restaurant-card, page-restaurant {
 }
 
 //General Use Classes
+.grey-background{
+  background-color: #ececec !important;
+}
+
 .bold{
   font-weight: 700;
 }
@@ -259,12 +263,6 @@ ion-grid{
     &.extra-padding{
       padding: 5px 5px !important;
     }
-  }
-}
-
-page-home, page-search, page-bookings, page-account{
-  .scroll-content{
-    background-color: #ececec !important;
   }
 }
 

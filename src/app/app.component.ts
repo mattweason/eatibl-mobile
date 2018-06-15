@@ -11,7 +11,7 @@ import { Events } from 'ionic-angular';
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = 'TabsPage';
+  rootPage:any;
   location: any;
 
   //Used for android permissions
@@ -30,6 +30,7 @@ export class MyApp {
 
       platform.ready().then(() => {
         console.log(Date.now() + ' platform ready')
+        this.rootPage = 'TabsPage';
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
         statusBar.styleDefault();
@@ -78,9 +79,11 @@ export class MyApp {
 
   //Get and watch the users location
   geolocateUser(){
+    console.log('geolocating user')
     //Set up an observable for child components/pages to watch for geolocation data
     let watch = this.geolocation.watchPosition();
     watch.subscribe((data) => {
+      console.log('got location')
       this.location = data;
       this.sendGeolocationEvent();
     });

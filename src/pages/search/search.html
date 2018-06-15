@@ -39,7 +39,7 @@
 
 
 <ion-content>
-  <ion-list>
+  <ion-list class="grey-background">
     <restaurant-card *ngFor = "let restaurant of restaurantList" [location]="location" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
   </ion-list>
   <ion-infinite-scroll *ngIf="!allResults && restaurantList?.length" threshold="500px" (ionInfinite)="getNextBatch($event)">

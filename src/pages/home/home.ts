@@ -5,6 +5,8 @@ import { Events } from 'ionic-angular';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
+import { GoogleMaps, GoogleMap, GoogleMapsEvent } from '@ionic-native/google-maps';
+
 @IonicPage()
 @Component({
   selector: 'page-home',
@@ -21,12 +23,15 @@ export class HomePage {
   today: string; //sets the minimum of the date picker
   maxDate: string;
   time: any;
+  view = 'list';
   showToolbar: boolean = true;
   location: any;
   userCoords: any;
   firstCall = true;
   batch = 0; //Represents the batch number
   allResults = false; //Becomes true when we've retrieved all of the restaurants
+
+  map: GoogleMap;
 
   constructor(
     public navCtrl: NavController,
@@ -53,9 +58,27 @@ export class HomePage {
   ngOnInit(){
   }
 
+  ionViewDidLoad() {
+  }
+
+  loadMap() {
+    // Create a map after the view is ready and the native platform is ready.
+    this.map = GoogleMaps.create('mapCanvas');
+  }
+
   ionViewDidEnter(){
     //Call geolocation from app.component
     this.events.publish('get:geolocation', Date.now());
+  }
+
+  //Toggles between list and map view
+  toggleView(){
+    if(this.view == 'list'){
+      this.view = 'map';
+      this.loadMap();
+    }
+    else if(this.view == 'map')
+      this.view = 'list';
   }
 
   //Ranking system to dictate order of display

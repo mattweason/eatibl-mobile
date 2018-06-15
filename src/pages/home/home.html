@@ -7,6 +7,7 @@
         <!--<span *ngIf="!showToolbar">Show</span>-->
       <!--</button>-->
     <!--</ion-buttons>-->
+    <button ion-button icon-left small color="secondary" (tap)="toggleView()"><span *ngIf="view == 'list'">Map View</span><span *ngIf="view == 'map'">List View</span></button>
   </ion-navbar>
   <ion-toolbar class="dateToolbar">
     <ion-grid>
@@ -31,21 +32,24 @@
 </ion-header>
 
 <ion-content>
-  <ion-refresher (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content>
-    </ion-refresher-content>
-  </ion-refresher>
-  <ion-list>
-    <restaurant-card *ngFor = "let restaurant of restaurantList" [location]="location" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
-  </ion-list>
-  <ion-infinite-scroll *ngIf="!allResults" threshold="500px" (ionInfinite)="getNextBatch($event)">
-    <ion-infinite-scroll-content></ion-infinite-scroll-content>
-  </ion-infinite-scroll>
-  <ion-grid *ngIf="allResults">
-    <ion-row>
-      <ion-col align-items-center>
-        <p class="align-center">That's all she's got, Captain.</p>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div *ngIf="view == 'list'">
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content>
+      </ion-refresher-content>
+    </ion-refresher>
+    <ion-list class="grey-background">
+      <restaurant-card *ngFor = "let restaurant of restaurantList" [location]="location" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+    </ion-list>
+    <ion-infinite-scroll *ngIf="!allResults" threshold="500px" (ionInfinite)="getNextBatch($event)">
+      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <ion-grid *ngIf="allResults">
+      <ion-row>
+        <ion-col align-items-center>
+          <p class="align-center">That's all she's got, Captain.</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <div id="mapCanvas" *ngIf="view == 'map'"></div>
 </ion-content>
