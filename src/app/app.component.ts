@@ -17,6 +17,7 @@ export class MyApp {
   //Used for android permissions
   hasPermission = false;
   interval: any;
+  interval2: any;
   requestedPermission = false;
 
   constructor(
@@ -77,12 +78,6 @@ export class MyApp {
 
   //Get and watch the users location
   geolocateUser(){
-
-    //Geolocate the user
-    this.geolocation.getCurrentPosition().catch((error) => {
-      console.log('Error getting location', error);
-    });
-
     //Set up an observable for child components/pages to watch for geolocation data
     let watch = this.geolocation.watchPosition();
     watch.subscribe((data) => {
