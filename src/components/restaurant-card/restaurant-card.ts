@@ -77,6 +77,7 @@ export class RestaurantCardComponent implements OnChanges {
   ) {}
 
   ngOnInit(){
+    console.log(this.restaurant)
     this.timeslotsData = this.restaurant.timeslots;
     this.processTimeslots()
     //Get business hours

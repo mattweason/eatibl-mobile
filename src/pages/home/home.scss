@@ -1,5 +1,52 @@
 page-home {
-  #mapCanvas {
-    height: 90%;
+  .map-container{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    #mapCanvas {
+      height: 100%;
+    }
+    .map-resto-card{
+      position: absolute;
+      margin: 10px;
+      bottom: 0;
+
+    }
+    .best-deal{
+      overflow: hidden;
+      height: 64px;
+      padding: 0;
+      background-color: darken(color($colors, primary), 10%);
+      -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0px 0px 1px 0px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0px 0px 1px 0px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+      .button-inner{
+        flex-direction: column;
+        .deal-header{
+          width: 100%;
+          padding: 3px 0;
+          background-color: #fff;
+        }
+        .deal-details{
+          padding: 0 12px 6px 12px;
+        }
+        p{
+          margin: 0;
+          color: #fff;
+          &.discount{
+            font-size: 24px;
+            line-height: 24px;
+            margin-bottom: 2px;
+          }
+          &.title{
+            font-size: 12px;
+            font-weight: 700;
+            color: darken(color($colors, primary), 10%);
+          }
+          &.time{
+            line-height: 14px;
+          }
+        }
+      }
+    }
   }
 }

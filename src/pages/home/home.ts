@@ -1,11 +1,12 @@
 import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { FunctionsProvider } from '../../providers/functions/functions';
 import { Events } from 'ionic-angular';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
-import { GoogleMaps, GoogleMap, GoogleMapsEvent } from '@ionic-native/google-maps';
+import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
 
 @IonicPage()
 @Component({
@@ -17,6 +18,8 @@ export class HomePage {
 
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
+  selectedResto: any; //Restaurant data of the selected marker
+  timeslotsLength: any; //Used to see if restaurant has discounts for a day
   dataCache: any; //Cache the api return
   bookings = [];
   date: string;
@@ -36,6 +39,7 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     private API: ApiServiceProvider,
+    private functions: FunctionsProvider,
     private cdRef:ChangeDetectorRef,
     public events: Events
   ) {
@@ -62,8 +66,109 @@ export class HomePage {
   }
 
   loadMap() {
+    //Zoom and center to user location
+    let mapOptions: GoogleMapOptions = {
+      camera: {
+        target: {
+          lat: this.userCoords[0],
+          lng: this.userCoords[1]
+        },
+        zoom: 12
+      },
+      gestures: {
+        tilt: false,
+        rotate: false
+      },
+      preferences: {
+        zoom: {
+          minZoom: 8,
+          maxZoom: 16
+        }
+      }
+    };
+
     // Create a map after the view is ready and the native platform is ready.
-    this.map = GoogleMaps.create('mapCanvas');
+    this.map = GoogleMaps.create('mapCanvas', mapOptions);
+
+    //Add all restaurants as markers
+    for(var i = 0; i < this.restaurantAll.length; i++){
+      var resto = this.restaurantAll[i]; //Cache this iteration of restaurantList
+      var current = this;
+
+      (function(resto, current) { //Self invoking to enclose each individual resto data
+        console.log(resto.timeslots.length)
+        current.map.addMarker({
+          title: resto.name,
+          icon: resto.timeslots.length ? 'red' : 'blue',
+          position: {
+            lat: resto.latitude,
+            lng: resto.longitude
+          },
+          test: resto._id,
+          disableAutoPan: true
+        }).then((marker: Marker) => {
+          marker['metadata'] = {id: resto._id};
+          marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
+            console.log(marker);
+            current.selectResto(marker['metadata'].id);
+          });
+
+        });
+      }(resto, current));
+    }
+  }
+
+  //Populate the selected restaurant from the tapped marker
+  selectResto(markerId){
+    for (var i = 0; i < this.restaurantAll.length; i++){
+      var resto = this.restaurantAll[i];
+      if(markerId == resto._id){
+        this.selectedResto = resto;
+        this.processTimeslots();
+      }
+    }
+    this.cdRef.detectChanges();
+    console.log(this.selectedResto)
+  }
+
+  //Filter timeslots for the currently selected date
+  processTimeslots(){
+    var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
+    var date = this.date;
+
+    var timeslots;
+
+    //Filter timeslots by date and time
+    timeslots = _.filter(this.selectedResto.timeslots, function(timeslot){
+      if(moment(date).isSame(moment(), 'day'))
+        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
+      else
+        return (timeslot.day == moment(date).format('dddd').toString());
+    });
+
+    this.timeslotsLength = timeslots.length;
+  }
+
+  //Add open and close hours to businessHours array for ngFor loop in view
+  processBusinessHours(){
+    // for (var i = 0; i < this.businessHoursData.length; i++)
+    //   if(this.businessHoursData[i]['day'] == moment(this.date).format('dddd').toString()){
+    //     this.businessHours = this.businessHoursData[i]['hours'];
+    //   }
+    // this.checkOpen();
+  }
+
+  navigateTo(event, timeslotId){
+    if(this.selectedResto.timeslots.length){
+      this.navCtrl.push('RestaurantPage', {
+        restaurant: JSON.stringify(this.selectedResto),
+        timeslotsData: JSON.stringify(this.selectedResto.timeslots),
+        // businessHoursData: JSON.stringify(this.businessHoursData),
+        timeslotId: timeslotId,
+        distance: this.selectedResto.distance,
+        date: this.date
+      });
+    }
   }
 
   ionViewDidEnter(){

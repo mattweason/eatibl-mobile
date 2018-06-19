@@ -51,5 +51,46 @@
       </ion-row>
     </ion-grid>
   </div>
-  <div id="mapCanvas" *ngIf="view == 'map'"></div>
+  <div *ngIf="view == 'map'" class="map-container">
+    <div id="mapCanvas"></div>
+    <ion-card *ngIf="selectedResto" class="map-resto-card">
+      <ion-grid class="no-padding">
+        <ion-row>
+          <ion-col col-8 align-self-stretch class="first-row border-right">
+            <h2>{{selectedResto.name}}</h2>
+            <p class="tags"><span *ngFor="let category of selectedResto?.categories; let i = index">{{category}}<span *ngIf="i < selectedResto.categories.length - 1">, </span></span></p>
+            <div class="card-row">
+              <p class="rating"><ion-icon name="star"></ion-icon><span *ngIf="selectedResto.rating">{{selectedResto.rating.ratingNumber}}</span><span class="na" *ngIf="!selectedResto.rating">N/A</span></p>
+              <div class="price">
+                <p [ngClass]="selectedResto.price >= 1 ? 'active' : ''">$</p>
+                <p [ngClass]="selectedResto.price >= 2 ? 'active' : ''">$</p>
+                <p [ngClass]="selectedResto.price >= 3 ? 'active' : ''">$</p>
+                <p [ngClass]="selectedResto.price == 4 ? 'active' : ''">$</p>
+              </div>
+            </div>
+            <p *ngIf="openStatus == 'open'" class="open"><span class="prefix">Open Now</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
+            <p *ngIf="openStatus == 'willOpen' || openStatus == 'closed'" class="closed"><span class="prefix">Closed</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
+            <p *ngIf="openStatus == 'closedToday'" class="closed"><span class="prefix">Closed Today</span></p>
+          </ion-col>
+          <ion-col col-4 nowrap align-self-stretch class="align-center first-row vertical-align-col">
+            <button ion-button class="best-deal" *ngIf="selectedResto?.maxTimeslot" (tap)="navigateTo($event, selectedResto.maxTimeslot._id)">
+              <div class="deal-header">
+                <p class="title">BEST DEAL</p>
+              </div>
+              <div class="deal-details">
+                <p class="discount">-{{selectedResto?.maxTimeslot.discount}}%</p>
+                <p class="time">@{{functions.formatClockTime(selectedResto.maxTimeslot.time, true)}}</p>
+              </div>
+            </button>
+            <div *ngIf="selectedResto.timeslots.length">
+              <p>Coming Soon</p>
+            </div>
+            <div *ngIf="selectedResto.timeslots.length > 0 && timeslotsLength <= 0">
+              <p>No Deals for {{date | date: 'MMM d'}}</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+  </div>
 </ion-content>

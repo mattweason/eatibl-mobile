@@ -23,7 +23,7 @@ export class MyApp {
   constructor(
     platform: Platform,
     statusBar: StatusBar,
-    splashScreen: SplashScreen,
+    public splashScreen: SplashScreen,
     private geolocation: Geolocation,
     private androidPermissions: AndroidPermissions,
     public events: Events) {
@@ -34,7 +34,6 @@ export class MyApp {
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
         statusBar.styleDefault();
-        splashScreen.hide();
 
         //Check permissions for android only. iOS and browser will return truthy always
         if (platform.is('cordova')){
@@ -83,6 +82,7 @@ export class MyApp {
     //Set up an observable for child components/pages to watch for geolocation data
     let watch = this.geolocation.watchPosition();
     watch.subscribe((data) => {
+      this.splashScreen.hide();
       console.log('got location')
       this.location = data;
       this.sendGeolocationEvent();

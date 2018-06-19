@@ -16,7 +16,15 @@
 // automatically applied to the <body> element in the app.
 
 //Restaurant Component and Page
-restaurant-card, page-restaurant {
+.map-resto-card{
+  .price{
+    margin-left: 12px;
+  }
+  ion-grid {
+    padding: 0;
+  }
+}
+restaurant-card, page-restaurant, .map-resto-card {
   ion-card{
     margin: 0 0 20px 0 !important;
     width: 100% !important;
@@ -59,6 +67,10 @@ restaurant-card, page-restaurant {
         color: color($colors, danger);
       }
     }
+  }
+  .card-row{
+    display: flex;
+    align-items: center;
   }
   .details{
     padding: 5px;
@@ -127,7 +139,7 @@ restaurant-card, page-restaurant {
     }
   }
   ion-grid{
-    padding: 0 0 5px 0 !important;
+    padding: 0 0 5px 0;
     ion-row{
       padding-right: 5px;
       padding-left: 5px;
@@ -215,7 +227,7 @@ restaurant-card, page-restaurant {
 
 //General Use Classes
 .grey-background{
-  background-color: #ececec !important;
+  background-color: #ececec;
 }
 
 .bold{

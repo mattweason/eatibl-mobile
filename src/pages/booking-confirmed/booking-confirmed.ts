@@ -57,7 +57,7 @@ export class BookingConfirmedPage {
   //Build static map url
   buildMap(){
     // this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&key=AIzaSyD3lkVR2f_hCqSF_7Zpj4kUIAwlqLf1uao"
-    this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=icon:https://eatibl.com/assets/images/eatibl-pin.png|"+this.restaurant.latitude+","+this.restaurant.longitude;
+    this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x340&maptype=roadmap&markers=icon:https://eatibl.com/assets/images/eatibl-pin.png|"+this.restaurant.latitude+","+this.restaurant.longitude;
   }
 
   //Open the users relevant maps app to navigate to the restaurant
