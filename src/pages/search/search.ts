@@ -16,7 +16,7 @@ import * as _ from 'underscore';
   selector: 'page-search',
   templateUrl: 'search.html',
 })
-export class SearchPage implements OnInit {
+export class SearchPage {
   @ViewChild(Content) content: Content;
 
   searchInput: string;
