@@ -104,7 +104,8 @@ export class RestaurantCardComponent implements OnChanges {
         businessHoursData: JSON.stringify(this.businessHoursData),
         timeslotId: timeslotId,
         distance: this.distance,
-        date: this.date
+        date: this.date,
+        time: this.time
       }).then(() => {
         this.restaurantTapped = false;
         this.timeslotTapped = '';

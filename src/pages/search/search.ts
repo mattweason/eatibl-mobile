@@ -104,6 +104,10 @@ export class SearchPage {
           }
         }
       }
+      else
+        if(restaurantList[i].maxTimeslot)
+          delete restaurantList[i].maxTimeslot;
+
 
       //BIG PENALTY IN RANKING FOR NO DISCOUNTS FOR TODAY
       if(timeslots.length == 0)

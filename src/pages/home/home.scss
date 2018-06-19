@@ -1,10 +1,28 @@
 page-home {
-  .nearby-wrapper{
-    height: 100%;
-    display: flex;
-    align-items: center;
-    img{
-      height:34px;
+  .button-wrapper {
+    padding: 0 !important;
+    .item-inner {
+      padding: 0 !important;
+      .input-wrapper {
+        .label {
+          margin: 0 !important;
+        }
+      }
+    }
+  }
+  .toolbar-title-ios{
+    .nearby-wrapper{
+      justify-content: center;
+    }
+  }
+  .toolbar-title{
+    .nearby-wrapper{
+      height: 100%;
+      display: flex;
+      align-items: center;
+      img{
+        height:34px;
+      }
     }
   }
   .map-container{

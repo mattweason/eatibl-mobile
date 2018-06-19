@@ -77,6 +77,10 @@ export class HomePage {
         },
         zoom: 12
       },
+      controls: {
+        myLocationButton: true,
+        myLocation: true
+      },
       gestures: {
         tilt: false,
         rotate: false
@@ -191,10 +195,11 @@ export class HomePage {
       this.navCtrl.push('RestaurantPage', {
         restaurant: JSON.stringify(this.selectedResto),
         timeslotsData: JSON.stringify(this.selectedResto.timeslots),
-        // businessHoursData: JSON.stringify(this.businessHoursData),
+        businessHoursData: JSON.stringify(this.selectedResto.businesshours),
         timeslotId: timeslotId,
         distance: this.selectedResto.distance,
-        date: this.date
+        date: this.date,
+        time: this.time
       });
     }
   }
@@ -218,17 +223,24 @@ export class HomePage {
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
+    var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
 
     for (var i = 0; i < restaurantList.length; i++){
       var rank = 100; //start with default value
       var timeslots = _.filter(restaurantList[i].timeslots, function(timeslot){
-        return timeslot.day == day && timeslot.time >= hour;
+
+        if(today == day) //for today filter out spots that have already passed
+          return timeslot.day == day && timeslot.time >= hour;
+        else //for other days, show all available timeslots
+          return timeslot.day == day;
+
       });
 
       //Make sure it's sorted by time ascending
       timeslots = _.sortBy(timeslots, 'time');
 
+      console.log(timeslots)
       //create a separate entry for the best timeslot available for the rest of today
       if(timeslots.length != 0){
         var maxDiscount = 0;
@@ -239,6 +251,9 @@ export class HomePage {
           }
         }
       }
+      else
+        if(restaurantList[i].maxTimeslot)
+          delete restaurantList[i].maxTimeslot;
 
       //BIG PENALTY IN RANKING FOR NO DISCOUNTS FOR TODAY
       if(timeslots.length == 0)
@@ -270,6 +285,13 @@ export class HomePage {
     this.restaurantList = restaurantList.slice(0,10); //load first 10
     this.restaurantAll = restaurantList; //store all restos
     this.batch++;
+
+    //When you've selected a restaurant and changed the date, update the restaurant data
+    if(this.view == 'map' && this.selectedResto){
+      this.processBusinessHours();
+      this.processTimeslots();
+    }
+    this.cdRef.detectChanges();
   }
 
   //Pull down to refresh the restaurant list

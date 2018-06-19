@@ -80,7 +80,7 @@ export class RestaurantPage implements OnInit {
       this.timeslotId = navParams.get('timeslotId');
       this.distance = navParams.get('distance');
       this.date = navParams.get('date');
-      this.setNow(true);
+      this.time = navParams.get('time');
       //Subscribe to geolocation event
       events.subscribe('user:geolocated', (location, time) => {
         if(location)
@@ -91,6 +91,9 @@ export class RestaurantPage implements OnInit {
       this.processBusinessHours();
       this.isOpen();
       this.buildMap();
+
+      if(!this.restaurant.recommendedItems) //Until all restaurants have at least an empty recommendItems property
+        this.restaurant.recommendedItems = [];
 
       if(this.restaurant.featuredImage){
         //reorder the image array to put featured image first
