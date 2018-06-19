@@ -53,7 +53,7 @@
   </div>
   <div *ngIf="view == 'map'" class="map-container">
     <div id="mapCanvas"></div>
-    <ion-card *ngIf="selectedResto" class="map-resto-card">
+    <ion-card *ngIf="selectedResto.hasOwnProperty('name')" class="map-resto-card">
       <ion-grid class="no-padding">
         <ion-row>
           <ion-col col-8 align-self-stretch class="first-row border-right">
@@ -82,7 +82,7 @@
                 <p class="time">@{{functions.formatClockTime(selectedResto.maxTimeslot.time, true)}}</p>
               </div>
             </button>
-            <div *ngIf="selectedResto.timeslots.length">
+            <div *ngIf="!selectedResto.timeslots.length">
               <p>Coming Soon</p>
             </div>
             <div *ngIf="selectedResto.timeslots.length > 0 && timeslotsLength <= 0">

@@ -18,8 +18,10 @@ export class HomePage {
 
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
-  selectedResto: any; //Restaurant data of the selected marker
+  selectedResto = {} as any; //Restaurant data of the selected marker
   timeslotsLength: any; //Used to see if restaurant has discounts for a day
+  businessHours = [];
+  openStatus: string;
   dataCache: any; //Cache the api return
   bookings = [];
   date: string;
@@ -96,10 +98,9 @@ export class HomePage {
       var current = this;
 
       (function(resto, current) { //Self invoking to enclose each individual resto data
-        console.log(resto.timeslots.length)
         current.map.addMarker({
           title: resto.name,
-          icon: resto.timeslots.length ? 'red' : 'blue',
+          icon: resto.timeslots.length ? 'https://eatibl.com/assets/images/eatibl-pin-red.png' : 'https://eatibl.com/assets/images/eatibl-pin-grey.png',
           position: {
             lat: resto.latitude,
             lng: resto.longitude
@@ -109,7 +110,6 @@ export class HomePage {
         }).then((marker: Marker) => {
           marker['metadata'] = {id: resto._id};
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-            console.log(marker);
             current.selectResto(marker['metadata'].id);
           });
 
@@ -125,10 +125,10 @@ export class HomePage {
       if(markerId == resto._id){
         this.selectedResto = resto;
         this.processTimeslots();
+        this.processBusinessHours();
       }
     }
     this.cdRef.detectChanges();
-    console.log(this.selectedResto)
   }
 
   //Filter timeslots for the currently selected date
@@ -151,11 +151,39 @@ export class HomePage {
 
   //Add open and close hours to businessHours array for ngFor loop in view
   processBusinessHours(){
-    // for (var i = 0; i < this.businessHoursData.length; i++)
-    //   if(this.businessHoursData[i]['day'] == moment(this.date).format('dddd').toString()){
-    //     this.businessHours = this.businessHoursData[i]['hours'];
-    //   }
-    // this.checkOpen();
+    for (var i = 0; i < this.selectedResto.businesshours.length; i++)
+      if(this.selectedResto.businesshours[i]['day'] == moment(this.date).format('dddd').toString()){
+        this.businessHours = this.selectedResto.businesshours[i]['hours'];
+      }
+    this.checkOpen();
+  }
+
+  //To establish open now or closed in view
+  checkOpen(){
+    //Get current time to compare to open close hours for day
+    var time = this.functions.formatTime(this.date);
+    var hoursLength = this.businessHours.length;
+
+    if(hoursLength == 0)
+      this.openStatus = 'closedToday';
+
+    //Compare current time to open close hours and set to this.open
+    if(hoursLength == 2){
+      if(time >= this.businessHours[0] && time < this.businessHours[1]) //During business hours
+        this.openStatus = 'open';
+      if(time >= this.businessHours[1] ) //After closed
+        this.openStatus = 'closed';
+      if(time < this.businessHours[0]) //Before open
+        this.openStatus = 'willOpen';
+    }
+    if(hoursLength == 4){
+      if((time >= this.businessHours[0] && time < this.businessHours[1]) || (time >= this.businessHours[2] && time < this.businessHours[3])) //During bussines hours
+        this.openStatus = 'open';
+      if(time >= this.businessHours[3]) //After second closed
+        this.openStatus = 'closed';
+      if((time <= this.businessHours[2] && time > this.businessHours[1]) || time < this.businessHours[0]) //Before first or second open, but after first closed
+        this.openStatus = 'willOpen';
+    }
   }
 
   navigateTo(event, timeslotId){
@@ -180,6 +208,7 @@ export class HomePage {
   toggleView(){
     if(this.view == 'list'){
       this.view = 'map';
+      this.selectedResto = {};
       this.loadMap();
     }
     else if(this.view == 'map')
