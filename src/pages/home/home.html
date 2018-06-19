@@ -18,13 +18,11 @@
             <ion-datetime displayFormat="DDD, MMM DD" pickerFormat="MMM DDDD" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionChange)="rankRestaurants(restaurantAll)"></ion-datetime>
           </ion-item>
         </ion-col>
-        <ion-col col-4>
-          <ion-item class="datetime-sm no-icon">
+        <ion-col col-6>
+          <ion-item class="datetime-sm">
+            <ion-label fixed><ion-icon name="clock" color="primary"></ion-icon></ion-label>
             <ion-datetime displayFormat="h:mm A" pickerFormat="h:mm A" minuteValues="0,30" [(ngModel)]="time"></ion-datetime>
           </ion-item>
-        </ion-col>
-        <ion-col col-2>
-          <button ion-button color="secondary" (click)="setNow(false)"><ion-icon name="refresh"></ion-icon></button>
         </ion-col>
       </ion-row>
     </ion-grid>
