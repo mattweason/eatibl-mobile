@@ -28,7 +28,11 @@ export class FunctionsProvider {
       hour = hour - 12;
       clockTime = hour + minutes + ' PM';
     }
-    else if(hour >= 24){
+    else if(hour >= 24 && hour < 25){
+      hour = hour - 12;
+      clockTime = hour + minutes + ' AM';
+    }
+    else if(hour >= 25){
       hour = hour - 24;
       clockTime = hour + minutes + ' AM';
     }

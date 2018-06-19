@@ -77,14 +77,14 @@ export class RestaurantCardComponent implements OnChanges {
   ) {}
 
   ngOnInit(){
-    console.log(this.restaurant)
+    //Get timeslots
     this.timeslotsData = this.restaurant.timeslots;
-    this.processTimeslots()
+    this.processTimeslots();
+
     //Get business hours
-    this.API.makeCall('hours/' + this.restaurant._id).subscribe(data => {
-      this.businessHoursData = data;
-      this.processBusinessHours()
-    });
+    this.businessHoursData = this.restaurant.businesshours;
+    this.processBusinessHours();
+
     //If there is a featured image
     if(this.restaurant.featuredImage){
       var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
