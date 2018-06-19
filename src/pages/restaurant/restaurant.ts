@@ -80,7 +80,7 @@ export class RestaurantPage implements OnInit {
       this.timeslotId = navParams.get('timeslotId');
       this.distance = navParams.get('distance');
       this.date = navParams.get('date');
-      this.setNow(true);
+      this.time = navParams.get('time');
       //Subscribe to geolocation event
       events.subscribe('user:geolocated', (location, time) => {
         if(location)
@@ -91,6 +91,9 @@ export class RestaurantPage implements OnInit {
       this.processBusinessHours();
       this.isOpen();
       this.buildMap();
+
+      if(!this.restaurant.recommendedItems) //Until all restaurants have at least an empty recommendItems property
+        this.restaurant.recommendedItems = [];
 
       if(this.restaurant.featuredImage){
         //reorder the image array to put featured image first
@@ -164,7 +167,7 @@ export class RestaurantPage implements OnInit {
   //Build static map url
   buildMap(){
     // this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&key=AIzaSyD3lkVR2f_hCqSF_7Zpj4kUIAwlqLf1uao"
-    this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=icon:https://eatibl.com/assets/images/eatibl-pin.png|"+this.restaurant.latitude+","+this.restaurant.longitude+"&key=AIzaSyAr99dcWf_ri92qrY7ZmcI54Uv0oaGXd2w";
+    this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x340&maptype=roadmap&markers=icon:https://eatibl.com/assets/images/eatibl-pin.png|"+this.restaurant.latitude+","+this.restaurant.longitude+"&key=AIzaSyAr99dcWf_ri92qrY7ZmcI54Uv0oaGXd2w";
   }
 
   //Open the users relevant maps app to navigate to the restaurant

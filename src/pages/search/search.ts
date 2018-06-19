@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
+import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
+import { IonicPage, NavController, NavParams, Events, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -16,7 +16,8 @@ import * as _ from 'underscore';
   selector: 'page-search',
   templateUrl: 'search.html',
 })
-export class SearchPage implements OnInit {
+export class SearchPage {
+  @ViewChild(Content) content: Content;
 
   searchInput: string;
   restaurantList: any; //just the ones loaded
@@ -65,7 +66,9 @@ export class SearchPage implements OnInit {
     this.events.publish('get:geolocation', Date.now());
   }
 
-  ngOnInit(){
+  //Fires when the home page tab is selected and is already active
+  ionSelected() {
+    this.content.scrollToTop();
   }
 
   setNow(initialCall){
@@ -101,6 +104,10 @@ export class SearchPage implements OnInit {
           }
         }
       }
+      else
+        if(restaurantList[i].maxTimeslot)
+          delete restaurantList[i].maxTimeslot;
+
 
       //BIG PENALTY IN RANKING FOR NO DISCOUNTS FOR TODAY
       if(timeslots.length == 0)

@@ -11,28 +11,29 @@ import { Events } from 'ionic-angular';
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = 'TabsPage';
+  rootPage:any;
   location: any;
 
   //Used for android permissions
   hasPermission = false;
   interval: any;
+  interval2: any;
   requestedPermission = false;
 
   constructor(
     platform: Platform,
     statusBar: StatusBar,
-    splashScreen: SplashScreen,
+    public splashScreen: SplashScreen,
     private geolocation: Geolocation,
     private androidPermissions: AndroidPermissions,
     public events: Events) {
 
       platform.ready().then(() => {
         console.log(Date.now() + ' platform ready')
+        this.rootPage = 'TabsPage';
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
         statusBar.styleDefault();
-        splashScreen.hide();
 
         //Check permissions for android only. iOS and browser will return truthy always
         if (platform.is('cordova')){
@@ -77,15 +78,12 @@ export class MyApp {
 
   //Get and watch the users location
   geolocateUser(){
-
-    //Geolocate the user
-    this.geolocation.getCurrentPosition().catch((error) => {
-      console.log('Error getting location', error);
-    });
-
+    console.log('geolocating user')
     //Set up an observable for child components/pages to watch for geolocation data
     let watch = this.geolocation.watchPosition();
     watch.subscribe((data) => {
+      this.splashScreen.hide();
+      console.log('got location')
       this.location = data;
       this.sendGeolocationEvent();
     });
