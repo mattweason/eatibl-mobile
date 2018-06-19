@@ -45,6 +45,7 @@ export class HomePage {
     private cdRef:ChangeDetectorRef,
     public events: Events
   ) {
+    //Update location when user geolocated event is recieved
     events.subscribe('user:geolocated', (location, time) => {
       this.location = location;
       this.userCoords = [this.location.coords.latitude, this.location.coords.longitude];
@@ -61,10 +62,9 @@ export class HomePage {
     });
   }
 
-  ngOnInit(){
-  }
-
-  ionViewDidLoad() {
+  //Fires when the home page tab is selected and is already active
+  ionSelected() {
+    this.content.scrollToTop();
   }
 
   loadMap() {
