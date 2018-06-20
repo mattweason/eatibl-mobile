@@ -222,6 +222,7 @@ export class HomePage {
 
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
+    console.log(Date.now() + ': ranking user')
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
     var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
@@ -240,7 +241,6 @@ export class HomePage {
       //Make sure it's sorted by time ascending
       timeslots = _.sortBy(timeslots, 'time');
 
-      console.log(timeslots)
       //create a separate entry for the best timeslot available for the rest of today
       if(timeslots.length != 0){
         var maxDiscount = 0;

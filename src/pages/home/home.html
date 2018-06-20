@@ -30,15 +30,15 @@
 </ion-header>
 
 <ion-content>
+  <ion-refresher *ngIf="view == 'list'" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>
+    </ion-refresher-content>
+  </ion-refresher>
   <div *ngIf="view == 'list'">
-    <ion-refresher (ionRefresh)="doRefresh($event)">
-      <ion-refresher-content>
-      </ion-refresher-content>
-    </ion-refresher>
     <ion-list class="grey-background">
       <restaurant-card *ngFor = "let restaurant of restaurantList" [location]="location" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
-    <ion-infinite-scroll *ngIf="!allResults" threshold="500px" (ionInfinite)="getNextBatch($event)">
+    <ion-infinite-scroll *ngIf="!allResults" threshold="1200px" (ionInfinite)="getNextBatch($event)">
       <ion-infinite-scroll-content></ion-infinite-scroll-content>
     </ion-infinite-scroll>
     <ion-grid *ngIf="allResults">

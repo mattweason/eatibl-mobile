@@ -78,14 +78,19 @@ export class MyApp {
 
   //Get and watch the users location
   geolocateUser(){
-    console.log('geolocating user')
-    //Set up an observable for child components/pages to watch for geolocation data
-    let watch = this.geolocation.watchPosition();
-    watch.subscribe((data) => {
+    this.geolocation.getCurrentPosition({timeout: 30000}).then((resp) => {
       this.splashScreen.hide();
-      console.log('got location')
-      this.location = data;
+      this.location = resp;
       this.sendGeolocationEvent();
+
+      //Set up an observable for child components/pages to watch for geolocation data
+      let watch = this.geolocation.watchPosition({maximumAge: 30000});
+      watch.subscribe((data) => {
+        this.location = data;
+        this.sendGeolocationEvent();
+      });
+    }).catch((error) => {
+      console.log('Error getting location', error);
     });
   }
 
