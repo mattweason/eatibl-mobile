@@ -36,7 +36,6 @@
     "com.googlemaps.ios": "https://github.com/mapsplugin/cordova-plugin-googlemaps-sdk",
     "cordova-android": "7.0.0",
     "cordova-browser": "5.0.3",
-    "cordova-ios": "4.5.4",
     "cordova-plugin-actionsheet": "2.3.3",
     "cordova-plugin-add-swift-support": "1.7.2",
     "cordova-plugin-android-permissions": "1.0.0",
@@ -100,7 +99,6 @@
     },
     "platforms": [
       "browser",
-      "ios",
       "android"
     ]
   }
