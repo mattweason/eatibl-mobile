@@ -81,6 +81,10 @@ export class RestaurantPage implements OnInit {
       this.distance = navParams.get('distance');
       this.date = navParams.get('date');
       this.time = navParams.get('time');
+
+      //Since we aren't doing setnow, make sure to initialize
+      this.today = moment().format();
+      this.maxDate = moment().add(30, 'day').format();
       //Subscribe to geolocation event
       events.subscribe('user:geolocated', (location, time) => {
         if(location)
