@@ -1,6 +1,6 @@
 {
   "name": "eatibl-mobile",
-  "app_id": "",
+  "app_id": "ba5923cf",
   "type": "ionic-angular",
   "integrations": {
     "cordova": {}
