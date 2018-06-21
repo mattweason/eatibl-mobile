@@ -78,7 +78,6 @@ export class HomePage {
         zoom: 12
       },
       controls: {
-        myLocationButton: true,
         myLocation: true
       },
       gestures: {
