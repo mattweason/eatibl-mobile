@@ -1,14 +1,14 @@
 <ion-header>
   <ion-navbar color="primary" class="align-toolbar">
     <ion-title><div class="nearby-wrapper"><img src="assets/imgs/nearby-header.svg"></div></ion-title>
-    <!--<ion-buttons end>-->
-      <!--<button ion-button clear class="options-button" (click)="toggleToolbar()">-->
+    <ion-buttons end>
+      <button ion-button [disabled]="togglingView" (touchend)="toggleView()"><span *ngIf="view == 'list'">Map View</span><span *ngIf="view == 'map'">List View</span></button>
+    <!--<button ion-button clear class="options-button" (click)="toggleToolbar()">-->
         <!--<span *ngIf="showToolbar">Hide</span>-->
         <!--<span *ngIf="!showToolbar">Show</span>-->
       <!--</button>-->
-    <!--</ion-buttons>-->
-    <button ion-button icon-left small color="secondary" (tap)="toggleView()"><span *ngIf="view == 'list'">Map View</span><span *ngIf="view == 'map'">List View</span></button>
-  </ion-navbar>
+    </ion-buttons>
+   </ion-navbar>
   <ion-toolbar class="dateToolbar">
     <ion-grid>
       <ion-row>
