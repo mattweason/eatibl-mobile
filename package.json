@@ -99,9 +99,9 @@
       }
     },
     "platforms": [
-      "browser",
       "android",
-      "ios"
+      "ios",
+      "browser"
     ]
   }
 }
