@@ -21,6 +21,7 @@ import { IonicStorageModule } from '@ionic/storage';
 //Services
 import { ApiServiceProvider } from '../providers/api-service/api-service';
 import { FunctionsProvider } from '../providers/functions/functions';
+import { AppErrorHandlerProvider } from '../providers/app-error-handler/app-error-handler';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { FunctionsProvider } from '../providers/functions/functions';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ApiServiceProvider,
     FunctionsProvider,
-    Events
+    Events,
+    AppErrorHandlerProvider
   ]
 })
 export class AppModule {}

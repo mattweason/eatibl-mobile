@@ -29,6 +29,7 @@ export class HomePage {
   maxDate: string;
   time: any;
   view = 'list';
+  togglingView = false; //Disables toggle view button when true
   showToolbar: boolean = true;
   location: any;
   userCoords: any;
@@ -96,6 +97,7 @@ export class HomePage {
     this.map = GoogleMaps.create('mapCanvas', mapOptions);
 
     //Add all restaurants as markers
+    var counter = 0; //For re-enabling the toggle button
     for(var i = 0; i < this.restaurantAll.length; i++){
       var resto = this.restaurantAll[i]; //Cache this iteration of restaurantList
       var current = this;
@@ -111,11 +113,13 @@ export class HomePage {
           test: resto._id,
           disableAutoPan: true
         }).then((marker: Marker) => {
+          counter++;
           marker['metadata'] = {id: resto._id};
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
             current.selectResto(marker['metadata'].id);
           });
-
+          if(counter == current.restaurantAll.length)
+            current.togglingView = false;
         });
       }(resto, current));
     }
@@ -210,13 +214,16 @@ export class HomePage {
 
   //Toggles between list and map view
   toggleView(){
+    this.togglingView = true;
     if(this.view == 'list'){
       this.view = 'map';
       this.selectedResto = {};
       this.loadMap();
     }
-    else if(this.view == 'map')
+    else if(this.view == 'map'){
       this.view = 'list';
+      this.togglingView = false;
+    }
   }
 
   //Ranking system to dictate order of display
