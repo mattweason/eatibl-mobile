@@ -3,5 +3,5 @@
  */
 export const ENV = {
   mode: 'Production',
-  API: 'https://test.eatibl.com/api/'
+  API: 'https://eatibl.com/api/'
 }

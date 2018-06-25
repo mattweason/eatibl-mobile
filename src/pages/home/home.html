@@ -29,14 +29,14 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [ngClass]="{'grey-background': view == 'list'}">
   <ion-refresher *ngIf="view == 'list'" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content>
     </ion-refresher-content>
   </ion-refresher>
   <div *ngIf="view == 'list'">
-    <ion-list class="grey-background">
-      <restaurant-card *ngFor = "let restaurant of restaurantList" [location]="location" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+    <ion-list>
+      <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [location]="location" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
     <ion-infinite-scroll *ngIf="!allResults" threshold="1500px" (ionInfinite)="getNextBatch($event)">
       <ion-infinite-scroll-content></ion-infinite-scroll-content>
@@ -45,6 +45,7 @@
       <ion-row>
         <ion-col align-items-center>
           <p class="align-center">That's all she's got, Captain.</p>
+          <p class="align-center">Know any restaurants you would like to see? Let us know!</p>
         </ion-col>
       </ion-row>
     </ion-grid>

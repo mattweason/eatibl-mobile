@@ -304,6 +304,8 @@ export class HomePage {
   doRefresh(refresher){
     this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+      this.allResults = false;
+      this.batch = 0;
       this.rankRestaurants(data);
       refresher.complete();
     });
