@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "518520693304",
+    "firebase_url": "https://eatibl-1518644305958.firebaseio.com",
+    "project_id": "eatibl-1518644305958",
+    "storage_bucket": "eatibl-1518644305958.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518520693304:android:e669af7beba9bf6e",
+        "android_client_info": {
+          "package_name": "com.eatibl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "518520693304-r2vlho0nfei8obat0eui5g196oiav98r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBPqxnmxK81_Egc7erNmEylvAP4p_vL60"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

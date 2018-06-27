@@ -4,6 +4,9 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
+import { AppVersion } from '@ionic-native/app-version';
+import { ApiServiceProvider } from "../providers/api-service/api-service";
+import { AlertController } from 'ionic-angular';
 import { Events } from 'ionic-angular';
 
 
@@ -17,7 +20,6 @@ export class MyApp {
   //Used for android permissions
   hasPermission = false;
   interval: any;
-  interval2: any;
   requestedPermission = false;
 
   constructor(
@@ -26,6 +28,9 @@ export class MyApp {
     public splashScreen: SplashScreen,
     private geolocation: Geolocation,
     private androidPermissions: AndroidPermissions,
+    private appVersion: AppVersion,
+    private alertCtrl: AlertController,
+    private API: ApiServiceProvider,
     public events: Events) {
 
       platform.ready().then(() => {
@@ -37,10 +42,30 @@ export class MyApp {
 
         //Check permissions for android only. iOS and browser will return truthy always
         if (platform.is('cordova')){
+          var self = this; //Cache this to use in functions
+          //check if we need to force update on currently installed version of app ***COMMENTED OUT FOR NOW****
+          // appVersion.getVersionNumber().then(function(version_code){
+          //   console.log(version_code);
+          //   self.API.makePost('versionCheck', {version: version_code}).subscribe(data => {
+          //     console.log(data);
+          //     if(data['result']){
+          //       let alert = self.alertCtrl.create({
+          //         title: 'New Version Available',
+          //         subTitle: 'There is a required update for Eatibl. Please update and reopen the app.',
+          //         enableBackdropDismiss: false,
+          //         buttons: [{
+          //           text: 'Update'
+          //         }]
+          //       });
+          //       alert.present();
+          //     }
+          //   });
+          // });
 
           //Android does not automatically get geolocation after user grants permission
           //so every 500ms, check if we have geolocation permission
           this.interval = setInterval(this.checkPermission.bind(this), 500);
+
         }
         else //Only for ionic lab
           this.geolocateUser();
@@ -50,6 +75,15 @@ export class MyApp {
       events.subscribe('get:geolocation', (time) => {
         this.sendGeolocationEvent();
       });
+  }
+
+  forceUpdate() {
+    let alert = this.alertCtrl.create({
+      title: 'Low battery',
+      subTitle: '10% of battery remaining',
+      buttons: ['Dismiss']
+    });
+    alert.present();
   }
 
   ngOnInit(){

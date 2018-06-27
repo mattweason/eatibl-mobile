@@ -14,6 +14,8 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
+import { AppVersion } from '@ionic-native/app-version';
+import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -22,6 +24,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { ApiServiceProvider } from '../providers/api-service/api-service';
 import { FunctionsProvider } from '../providers/functions/functions';
 import { AppErrorHandlerProvider } from '../providers/app-error-handler/app-error-handler';
+import { EventLoggerProvider } from '../providers/event-logger/event-logger';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,10 @@ import { AppErrorHandlerProvider } from '../providers/app-error-handler/app-erro
     ApiServiceProvider,
     FunctionsProvider,
     Events,
-    AppErrorHandlerProvider
+    AppErrorHandlerProvider,
+    EventLoggerProvider,
+    AppVersion,
+    FirebaseAnalytics
   ]
 })
 export class AppModule {}
