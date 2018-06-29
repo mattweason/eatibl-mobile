@@ -16,6 +16,9 @@ import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
 import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
+import { Device } from '@ionic-native/device';
+import { Contacts } from '@ionic-native/contacts';
+import { SMS } from '@ionic-native/sms';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -56,7 +59,10 @@ import { EventLoggerProvider } from '../providers/event-logger/event-logger';
     AppErrorHandlerProvider,
     EventLoggerProvider,
     AppVersion,
-    FirebaseAnalytics
+    FirebaseAnalytics,
+    Device,
+    Contacts,
+    SMS
   ]
 })
 export class AppModule {}
