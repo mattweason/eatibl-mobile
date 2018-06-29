@@ -77,13 +77,13 @@ export class RestaurantCardComponent implements OnChanges {
   ) {}
 
   ngOnInit(){
-    //Get timeslots
-    this.timeslotsData = this.restaurant.timeslots;
-    this.processTimeslots();
-
     //Get business hours
     this.businessHoursData = this.restaurant.businesshours;
     this.processBusinessHours();
+
+    //Get timeslots
+    this.timeslotsData = this.restaurant.timeslots;
+    this.processTimeslots();
 
     //If there is a featured image
     if(this.restaurant.featuredImage){
@@ -111,6 +111,15 @@ export class RestaurantCardComponent implements OnChanges {
         this.timeslotTapped = '';
       });
     }
+  }
+
+  //Add open and close hours to businessHours array for ngFor loop in view
+  processBusinessHours(){
+    for (var i = 0; i < this.businessHoursData.length; i++)
+      if(this.businessHoursData[i]['day'] == moment(this.date).format('dddd').toString()){
+        this.businessHours = this.businessHoursData[i]['hours'];
+      }
+    this.checkOpen();
   }
 
   //To establish open now or closed in view
@@ -154,6 +163,17 @@ export class RestaurantCardComponent implements OnChanges {
         return (timeslot.day == moment(date).format('dddd').toString());
     });
 
+    //Filter out timeslots that exist outside of business hours
+    var current = this; //Cache this for use in filter
+    this.timeslots = _.filter(this.timeslots, function(timeslot){
+      if(current.businessHours.length == 2){
+        return timeslot.time >= current.businessHours[0] && timeslot.time < current.businessHours[1];
+      }
+      if(current.businessHours.length == 4){
+        return (timeslot.time >= current.businessHours[0] && timeslot.time < current.businessHours[1]) || (timeslot.time >= current.businessHours[2] && timeslot.time < current.businessHours[3]);
+      }
+    });
+
     this.timeslots = _.sortBy(this.timeslots, 'time');
 
     //Build filler timeslots
@@ -166,15 +186,6 @@ export class RestaurantCardComponent implements OnChanges {
     else
       this.fillerslots = [];
 
-  }
-
-  //Add open and close hours to businessHours array for ngFor loop in view
-  processBusinessHours(){
-    for (var i = 0; i < this.businessHoursData.length; i++)
-      if(this.businessHoursData[i]['day'] == moment(this.date).format('dddd').toString()){
-        this.businessHours = this.businessHoursData[i]['hours'];
-      }
-    this.checkOpen();
   }
 
   //When time changes or date changes, set slide to selected time

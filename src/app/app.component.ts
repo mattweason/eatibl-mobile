@@ -89,7 +89,7 @@ export class MyApp {
       }
       else //Only for ionic lab
         this.geolocateUser();
-      this.promptReferral();
+      // this.promptReferral();
     });
 
     //Sends the users location to a child component when requested
