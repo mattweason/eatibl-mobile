@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Platform } from 'ionic-angular';
+import { Device } from '@ionic-native/device';
 
 /**
  * Generated class for the ReferralPage page.
@@ -25,7 +27,9 @@ export class ReferralModalPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private formBuilder: FormBuilder,
-    private platform: Platform
+    private platform: Platform,
+    private API: ApiServiceProvider,
+    private device: Device
   ) {
     //Disable back button dismiss on android
     this.backButtonUnregister = platform.registerBackButtonAction(() => {});
@@ -58,6 +62,26 @@ export class ReferralModalPage {
 
   ionViewWillLeave() {
     this.backButtonUnregister();
+  }
+
+  submitPhone(){
+    this.API.makePost('comparePhone', {phone: this.referralPhoneForm.value.phone, deviceId: this.device.uuid}).subscribe(data => { //Check backend for phone numbers that have been invited
+      if(data['result'])
+        console.log('it works');
+      else
+        console.log('nothing...');
+    })
+  }
+
+  submitCode(){
+    //make a post with referral code and deviceId (if it passes, we add deviceID in our whitelist)
+    this.API.makePost('compareCode', {code: this.referralCodeForm.value.code, deviceId: this.device.uuid}).subscribe(data => { //Check backend for activated deviceIDs
+      if(data['result']){
+        console.log('it works');
+      }
+      else
+        console.log('Nothing?!');
+    })
   }
 
 }

@@ -126,9 +126,9 @@
       "cordova-sms-plugin": {}
     },
     "platforms": [
-      "android",
       "ios",
-      "browser"
+      "browser",
+      "android"
     ]
   }
 }

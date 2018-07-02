@@ -11,6 +11,7 @@ import { Device } from '@ionic-native/device';
 import { Events } from 'ionic-angular';
 import { Contacts, Contact, ContactField, ContactName } from '@ionic-native/contacts';
 import { SMS } from '@ionic-native/sms';
+import { Storage } from '@ionic/storage';
 
 
 @Component({
@@ -36,7 +37,8 @@ export class MyApp {
     private API: ApiServiceProvider,
     public events: Events,
     private device: Device,
-    private modal: ModalController
+    private modal: ModalController,
+    private storage: Storage
   ) {
 
     platform.ready().then(() => {
@@ -73,26 +75,27 @@ export class MyApp {
           result => this.geolocateUser(),
           err => console.log('need permission')
         );
-        // this.promptReferral();
+
+        this.promptReferral();
 
         //Find out if we need to ask the user for a referral code
-        // this.storage.get('eatiblUser').then((user) => { //Check if there is a logged in user
-        //   if(!user)
-        //     this.storage.get('eatiblDeviceId').then((deviceId) => {//Check if there is a basic device ID user
-        //       if(!deviceId)
-        //         this.API.makePost('compareDeviceId', {deviceId: this.device.uuid}).subscribe(data => {//Check backend for activated deviceIDs
-        //           if(!data.result)
-        //             this.promptReferral();
-        //         })
-        //     });
-        // });
+         this.storage.get('eatiblUser').then((user) => { //Check if there is a logged in user
+           if(!user)
+             this.storage.get('eatiblDeviceId').then((deviceId) => { //Check if there is a basic device ID user
+               if(!deviceId)
+                 this.API.makePost('compareDeviceId', {deviceId: this.device.uuid}).subscribe(data => {//Check backend for activated deviceIDs
+                   if(!data['result'])
+                     this.promptReferral();
+                 })
+             });
+         });
       }
       else //Only for ionic lab
         this.geolocateUser();
       // this.promptReferral();
       const inviteModal = this.modal.create('InviteModalPage');
 
-      inviteModal.present();
+      //inviteModal.present();
 
     });
 

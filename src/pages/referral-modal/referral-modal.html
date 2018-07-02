@@ -35,7 +35,7 @@
         <form [formGroup]="referralPhoneForm" (ngSubmit)="submitPhone()">
           <ion-item>
             <ion-label fixed><ion-icon [ngClass]="{'invalid': !referralPhoneForm.controls.phone.valid}" name="call"></ion-icon></ion-label>
-            <ion-input type="tel" class="light-placeholder" placeholder="Enter phone number" [formControl]="referralPhoneForm.controls['phone']"></ion-input>
+            <ion-input type="tel" class="light-placeholder" placeholder="Enter your phone number" [formControl]="referralPhoneForm.controls['phone']"></ion-input>
           </ion-item>
           <button ion-button color="secondary" type="submit"><ion-icon name="arrow-round-forward"></ion-icon></button>
         </form>
