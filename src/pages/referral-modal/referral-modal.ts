@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
-import { Platform } from 'ionic-angular';
+import { Platform, AlertController  } from 'ionic-angular';
 import { Device } from '@ionic-native/device';
 
 /**
@@ -21,6 +21,12 @@ export class ReferralModalPage {
 
   referralCodeForm: FormGroup;
   referralPhoneForm: FormGroup;
+  codeSubmitted = false;
+  codeButtonColor: string = 'secondary';
+  codeSuccess = false;
+  phoneSubmitted = false;
+  phoneButtonColor: string = 'secondary';
+  phoneSuccess = false;
   private backButtonUnregister: any;
 
   constructor(
@@ -29,7 +35,9 @@ export class ReferralModalPage {
     private formBuilder: FormBuilder,
     private platform: Platform,
     private API: ApiServiceProvider,
-    private device: Device
+    private device: Device,
+    private viewCtrl: ViewController,
+    private alertCtrl: AlertController
   ) {
     //Disable back button dismiss on android
     this.backButtonUnregister = platform.registerBackButtonAction(() => {});
@@ -65,23 +73,65 @@ export class ReferralModalPage {
   }
 
   submitPhone(){
-    this.API.makePost('comparePhone', {phone: this.referralPhoneForm.value.phone, deviceId: this.device.uuid}).subscribe(data => { //Check backend for phone numbers that have been invited
-      if(data['result'])
-        console.log('it works');
-      else
-        console.log('nothing...');
-    })
+    if(this.referralPhoneForm.value.phone != ''){
+      this.phoneSubmitted = true;
+      this.API.makePost('comparePhone', {phone: this.referralPhoneForm.value.phone, deviceId: this.device.uuid}).subscribe(data => { //Check backend for phone numbers that have been invited
+        if(data['result']){
+          this.phoneSubmitted = false;
+          this.phoneSuccess = true;
+          this.phoneButtonColor = 'tertiary';
+          var current = this;
+          setTimeout(function(){
+            current.viewCtrl.dismiss();
+          }, 1000);
+        }
+        else{
+          this.phoneSubmitted = false;
+          let alert = this.alertCtrl.create({
+            title: 'Phone Number Not Found',
+            subTitle: 'This phone number is not associated with an active referral.',
+            buttons: ['Dismiss']
+          });
+          alert.present();
+        }
+      })
+    }
   }
 
   submitCode(){
-    //make a post with referral code and deviceId (if it passes, we add deviceID in our whitelist)
-    this.API.makePost('compareCode', {code: this.referralCodeForm.value.code, deviceId: this.device.uuid}).subscribe(data => { //Check backend for activated deviceIDs
-      if(data['result']){
-        console.log('it works');
-      }
-      else
-        console.log('Nothing?!');
-    })
+    if(this.referralCodeForm.value.code != ''){
+      this.codeSubmitted = true;
+      //make a post with referral code and deviceId (if it passes, we add deviceID in our whitelist)
+      this.API.makePost('compareCode', {code: this.referralCodeForm.value.code, deviceId: this.device.uuid}).subscribe(data => { //Check backend for activated deviceIDs
+        if(data['result'] == 'valid'){
+          this.codeSubmitted = false;
+          this.codeSuccess = true;
+          this.codeButtonColor = 'tertiary';
+          var current = this;
+          setTimeout(function(){
+            current.viewCtrl.dismiss();
+          }, 1000);
+        }
+        else if(data['result'] == 'invalid'){
+          this.codeSubmitted = false;
+          let alert = this.alertCtrl.create({
+            title: 'Referral Code Not Found',
+            subTitle: 'This referral code is not valid.',
+            buttons: ['Dismiss']
+          });
+          alert.present();
+        }
+        else if(data['result'] == 'limit'){
+          this.codeSubmitted = false;
+          let alert = this.alertCtrl.create({
+            title: 'Referral Code Limit Reached',
+            subTitle: 'The usage limit on this referral code has been reached.',
+            buttons: ['Dismiss']
+          });
+          alert.present();
+        }
+      })
+    }
   }
 
 }

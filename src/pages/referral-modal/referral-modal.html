@@ -25,7 +25,13 @@
             <ion-label fixed><ion-icon [ngClass]="{'invalid': !referralCodeForm.controls.code.valid}" name="keypad"></ion-icon></ion-label>
             <ion-input class="light-placeholder" placeholder="Enter referral code" [formControl]="referralCodeForm.controls['code']"></ion-input>
           </ion-item>
-          <button ion-button color="secondary" type="submit"><ion-icon name="arrow-round-forward"></ion-icon></button>
+          <button ion-button [color]="codeButtonColor" type="submit">
+            <ion-icon *ngIf="!codeSuccess" name="arrow-round-forward"></ion-icon>
+            <ion-icon *ngIf="codeSuccess" name="checkmark"></ion-icon>
+            <div *ngIf="codeSubmitted" class="loading-overlay">
+              <ion-spinner></ion-spinner>
+            </div>
+          </button>
         </form>
       </ion-col>
     </ion-row>
@@ -37,7 +43,13 @@
             <ion-label fixed><ion-icon [ngClass]="{'invalid': !referralPhoneForm.controls.phone.valid}" name="call"></ion-icon></ion-label>
             <ion-input type="tel" class="light-placeholder" placeholder="Enter your phone number" [formControl]="referralPhoneForm.controls['phone']"></ion-input>
           </ion-item>
-          <button ion-button color="secondary" type="submit"><ion-icon name="arrow-round-forward"></ion-icon></button>
+          <button ion-button [color]="phoneButtonColor" type="submit">
+            <ion-icon *ngIf="!phoneSuccess" name="arrow-round-forward"></ion-icon>
+            <ion-icon *ngIf="phoneSuccess" name="checkmark"></ion-icon>
+            <div *ngIf="phoneSubmitted" class="loading-overlay">
+              <ion-spinner></ion-spinner>
+            </div>
+          </button>
         </form>
       </ion-col>
     </ion-row>

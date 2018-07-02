@@ -76,14 +76,12 @@ export class MyApp {
           err => console.log('need permission')
         );
 
-        this.promptReferral();
-
         //Find out if we need to ask the user for a referral code
          this.storage.get('eatiblUser').then((user) => { //Check if there is a logged in user
            if(!user)
              this.storage.get('eatiblDeviceId').then((deviceId) => { //Check if there is a basic device ID user
                if(!deviceId)
-                 this.API.makePost('compareDeviceId', {deviceId: this.device.uuid}).subscribe(data => {//Check backend for activated deviceIDs
+                 this.API.makePost('compareDeviceId', {deviceId: this.device.uuid}).subscribe(data => { //Check backend for activated deviceIDs
                    if(!data['result'])
                      this.promptReferral();
                  })
@@ -106,6 +104,7 @@ export class MyApp {
   }
 
   promptReferral() {
+    this.splashScreen.hide();
     const referralModal = this.modal.create('ReferralModalPage', {enableBackdropDismiss: false});
 
     referralModal.present();
