@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ModalController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
@@ -21,17 +21,18 @@ import { FunctionsProvider } from '../../providers/functions/functions';
   templateUrl: 'account.html',
 })
 export class AccountPage {
-  user = {
-    email: '',
-    name: '',
-    phone: '',
-    type: '',
-    active: 0
-  };
-  bookingUpcoming: any;
-  bookingHistory: any;
+  user = {} as any;
+  bookingUpcoming = [];
+  bookingHistory = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private storage: Storage, private API: ApiServiceProvider, private functions: FunctionsProvider) {
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private storage: Storage,
+    private API: ApiServiceProvider,
+    private functions: FunctionsProvider,
+    private modal: ModalController
+  ) {
   }
 
   ionViewDidLoad() {
@@ -39,6 +40,7 @@ export class AccountPage {
   }
 
   ionViewDidEnter() {
+    console.log(this.bookingHistory)
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
@@ -52,10 +54,15 @@ export class AccountPage {
           email: '',
           name: '',
           phone: '',
-          type: '',
-          active: 0
+          type: ''
         };
     });
+  }
+
+  promptInvite() {
+    const inviteModal = this.modal.create('InviteModalPage');
+
+    inviteModal.present();
   }
 
   sortBookings(data){
@@ -82,6 +89,8 @@ export class AccountPage {
 
   changeAccounts(){
     this.storage.remove('eatiblUser');
+    this.bookingUpcoming = [];
+    this.bookingHistory = [];
     this.navCtrl.push('LoginPage');
   }
 

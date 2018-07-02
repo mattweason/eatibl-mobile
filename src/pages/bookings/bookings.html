@@ -24,33 +24,6 @@
 
 
 <ion-content class="grey-background">
-  <!--<ion-card *ngIf="user?.active == null" id="signUpPrompt"> &lt;!&ndash; TODO: Add prompt to inactive users to add a password &ndash;&gt;-->
-    <!--<ion-card-content no-padding>-->
-      <!--<ion-grid>-->
-        <!--<ion-row class="border-bottom">-->
-          <!--<ion-col class="align-center icon">-->
-            <!--<ion-icon name="restaurant"></ion-icon>-->
-          <!--</ion-col>-->
-        <!--</ion-row>-->
-        <!--<ion-row>-->
-          <!--<ion-col>-->
-            <!--<h2>Sign Up or Log In to view your bookings.</h2>-->
-          <!--</ion-col>-->
-        <!--</ion-row>-->
-        <!--<ion-row>-->
-          <!--<ion-col>-->
-            <!--<p>Join eatibl to check out your upcoming bookings and look at where you've booked before.</p>-->
-          <!--</ion-col>-->
-        <!--</ion-row>-->
-        <!--<ion-row>-->
-          <!--<ion-col>-->
-            <!--<button ion-button color="primary" block (tap)="signUp()">Sign Up</button>-->
-            <!--<button ion-button color="secondary" clear block (tap)="login()">Log In</button>-->
-          <!--</ion-col>-->
-        <!--</ion-row>-->
-      <!--</ion-grid>-->
-    <!--</ion-card-content>-->
-  <!--</ion-card>-->
   <ion-card class="secure-prompt" *ngIf="user && user?.active == 0">
     <ion-card-content>
       <p>Bookings made with <span class="bold">{{user.email}}</span> are unsecured. Click below to create your account and secure your bookings.</p>

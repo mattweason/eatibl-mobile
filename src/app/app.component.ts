@@ -90,6 +90,10 @@ export class MyApp {
       else //Only for ionic lab
         this.geolocateUser();
       // this.promptReferral();
+      const inviteModal = this.modal.create('InviteModalPage');
+
+      inviteModal.present();
+
     });
 
     //Sends the users location to a child component when requested

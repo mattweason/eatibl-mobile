@@ -1,0 +1,66 @@
+<!--
+  Generated template for the InviteFriendsPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="primary" class="align-toolbar">
+    <ion-title><img class="logo-header" src="assets/imgs/nearby-header.svg"></ion-title>
+  </ion-navbar>
+  <ion-grid>
+    <ion-row>
+      <ion-col class="align-center">
+        <h4>Choose who to invite</h4>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="align-center">
+        <button ion-button color="secondary" (tap)="addContacts()">Browse Contacts</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="or-separator">
+        <div class="line"></div>
+        <p>or</p>
+        <div class="line"></div>
+      </ion-col>
+    </ion-row>
+    <ion-row class="border-bottom">
+      <ion-col class="align-center contact-form">
+        <p>Manually add contact info:</p>
+        <form [formGroup]="addContactForm" (ngSubmit)="submitContact()">
+          <ion-item class="name">
+            <ion-input class="light-placeholder" placeholder="Name" [formControl]="addContactForm.controls['name']"></ion-input>
+          </ion-item>
+          <ion-item class="phone">
+            <ion-input type="tel" class="light-placeholder" placeholder="Phone number" [formControl]="addContactForm.controls['phone']"></ion-input>
+          </ion-item>
+          <button ion-button color="secondary" type="submit"><ion-icon name="add"></ion-icon></button>
+        </form>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item class="invitee" *ngFor="let invitee of inviteList; let i = index">
+            <ion-icon name="person" item-start></ion-icon>
+            <p>{{invitee.name}}</p>
+            <p>{{invitee.phone}}</p>
+            <button item-end large clear ion-button color="danger" (tap)="removeContact(i)"><ion-icon name="close"></ion-icon></button>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-footer>
+  <button ion-button color="secondary" (tap)="removeContact(i)"><ion-icon name="close"></ion-icon>Send</button>
+</ion-footer>

@@ -14,44 +14,30 @@
 
 
 <ion-content class="grey-background">
-  <ion-card *ngIf="!user.active" id="signUpPrompt">
-    <ion-card-content no-padding>
-      <ion-grid>
-        <ion-row class="border-bottom">
-          <ion-col class="align-center icon">
-            <ion-icon name="contact"></ion-icon>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <h2>Sign Up or Log In to manage your account.</h2>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <p>Join eatibl to have your contact info automatically applied to your bookings, check your upcoming bookings, and more!</p>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <button ion-button color="primary" block (tap)="signUp()">Sign Up</button>
-            <button ion-button color="secondary" clear block (tap)="login()">Log In</button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+  <ion-card class="secure-prompt" *ngIf="user.email && user.active == 0">
+    <ion-card-content>
+      <p>Bookings made with <span class="bold">{{user.email}}</span> are unsecured. Click below to create your account and secure your bookings.</p>
+      <button ion-button color="secondary" small (tap)="signUp()">Secure</button>
     </ion-card-content>
   </ion-card>
-  <ion-card *ngIf="user.active" id="account-card">
+  <ion-card id="account-card">
     <ion-card-content no-padding>
       <ion-grid>
-        <ion-row class="border-bottom">
+        <ion-row class="border-bottom account-header">
           <ion-col col-3 class="align-center icon">
             <ion-icon class="user-icon" name="contact"></ion-icon>
           </ion-col>
           <ion-col col-9>
-            <p>{{user.name}}</p>
-            <p>{{user.email}}</p>
-            <p>{{user.phone}}</p>
+            <div *ngIf="user.email">
+              <p>{{user.name}}</p>
+              <p>{{user.email}}</p>
+              <p>{{user.phone}}</p>
+            </div>
+            <div class="placeholders" *ngIf="!user.email">
+              <div class="grey-box"></div>
+              <div class="grey-box big"></div>
+              <div class="grey-box"></div>
+            </div>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -64,20 +50,41 @@
             <p class="title">Upcoming</p>
             <div class="metric">
               <ion-icon name="restaurant"></ion-icon>
-              <p>{{bookingUpcoming?.length}}</p>
+              <p>{{bookingUpcoming.length}}</p>
             </div>
           </ion-col>
           <ion-col col-6>
             <p class="title">Completed</p>
             <div class="metric">
               <ion-icon name="time"></ion-icon>
-              <p>{{bookingHistory?.length}}</p>
+              <p>{{bookingHistory.length}}</p>
             </div>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
-            <button ion-button color="secondary" clear block (tap)="changeAccounts()">Change Accounts</button>
+            <h2>Invites</h2>
+          </ion-col>
+        </ion-row>
+        <ion-row class="booking-metrics border-bottom">
+          <ion-col class="invites">
+            <p>Share these exclusive deals with your friends!</p>
+            <button ion-button color="secondary" (tap)="promptInvite()">Invite Friends</button>
+            <div class="remaining">
+              <p>Remaining:</p>
+              <p class="count">{{user.referral_count}}3</p>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div *ngIf="user.email">
+              <button ion-button color="secondary" clear block (tap)="changeAccounts()">Change Accounts</button>
+            </div>
+            <div *ngIf="!user.email">
+              <button ion-button color="primary" block (tap)="signUp()">Sign Up</button>
+              <button ion-button color="secondary" clear block (tap)="login()">Log In</button>
+            </div>
           </ion-col>
         </ion-row>
       </ion-grid>

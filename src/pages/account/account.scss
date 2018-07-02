@@ -5,6 +5,23 @@
     font-size: 60px;
     color: #ccc;
   }
+  .account-header{
+    .placeholders{
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .grey-box{
+        background-color: #ddd;
+        height: 10px;
+        width: 60px;
+        margin: 3px 0;
+        &.big{
+          width: 85px;
+        }
+      }
+    }
+  }
 
   h2{
     color: color($colors, primary);
@@ -30,6 +47,27 @@
         font-size: 28px;
         color: color($colors, primary);
         font-weight: 700;
+      }
+    }
+  }
+  .invites{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    p{
+      text-align: center;
+      width: 80%;
+    }
+    .remaining{
+      display: flex;
+      p{
+        width: 100%;
+        font-size: 16px;
+        &.count{
+          margin-left: 6px;
+          color: color($colors, primary);
+          font-weight: 700;
+        }
       }
     }
   }
