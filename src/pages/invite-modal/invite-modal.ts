@@ -201,7 +201,6 @@ export class InviteModalPage {
         var phoneNumber = this.inviteList[i].phoneNumbers[this.inviteList[i].phoneNumbers.length - 1];
         var message;
         if(this.type == 'reminder'){
-          console.log(this.booking)
           message = 'This is a reminder for our booking at '+this.restaurant.name+
               '\n\nDate: '+this.dateObject.day+', '+this.dateObject.month+' '+this.dateObject.date+
               '\nTime: '+this.functions.formatClockTime(this.booking.time, true)+
@@ -221,7 +220,6 @@ export class InviteModalPage {
             '\nappstore.com/eatibl';
         }
         this.sms.send(phoneNumber, message, {replaceLineBreaks: true}).then((result) => {
-          console.log(result);
         })
       }
       var current = this;
