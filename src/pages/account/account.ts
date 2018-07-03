@@ -58,7 +58,7 @@ export class AccountPage {
   }
 
   promptInvite() {
-    const inviteModal = this.modal.create('InviteModalPage', { limit: 3, type: 'referral' });
+    const inviteModal = this.modal.create('InviteModalPage', { type: 'referral' });
 
     inviteModal.present();
   }

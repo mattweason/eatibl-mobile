@@ -60,7 +60,7 @@ export class BookingConfirmedPage {
 
       //Prompt invite modal when navigated to from confirm booking page
       if(this.inviteModal && this.booking.people > 1){
-        const inviteModal = this.modal.create('InviteModalPage', { limit: this.booking.people - 1, type: 'reminder', booking: this.booking });
+        const inviteModal = this.modal.create('InviteModalPage', { type: 'reminder', booking: this.booking, restaurant: this.restaurant });
 
         inviteModal.present();
       }

@@ -27,9 +27,9 @@ export class InviteModalPage {
   allContacts = {} as any;
   inviteList = [];
   contactIds = [];
-  limit: any;
   type: any;
   booking: any;
+  restaurant: any;
   sendingSMS = false;
   sentSMS = false;
   sendButtonColor = 'secondary';
@@ -64,10 +64,10 @@ export class InviteModalPage {
       ]
     });
 
-    //Get limit from navparams
-    this.limit = navParams.get('limit');
+    //Get navparams
     this.type = navParams.get('type');
     this.booking = navParams.get('booking');
+    this.restaurant = navParams.get('restaurant');
 
     if(this.booking){
       this.buildDateObject();
@@ -196,37 +196,29 @@ export class InviteModalPage {
 
   sendInvites(){
     this.sendingSMS = true;
-    if(this.inviteList.length > this.limit){
-      var overLimit = this.inviteList.length - this.limit;
-      let alert = this.alertCtrl.create({
-        title: 'Invite Limit Exceeded',
-        subTitle: 'You have exceeded your invite limit of '+this.limit+'. Please remove '+overLimit+(overLimit == 1 ? ' contact.' : ' contacts.'),
-        buttons: ['Dismiss']
-      });
-      alert.present();
-      this.sendingSMS = false;
-    }
-    else if(this.inviteList.length <= this.limit && this.inviteList.length > 0){
+    if(this.inviteList.length > 0){
       for(var i = 0; i < this.inviteList.length; i++){
         var phoneNumber = this.inviteList[i].phoneNumbers[this.inviteList[i].phoneNumbers.length - 1];
         var message;
         if(this.type == 'reminder'){
-          message = 'This is a reminder for our booking at '+this.booking.restaurant_fid.name+
+          console.log(this.booking)
+          message = 'This is a reminder for our booking at '+this.restaurant.name+
               '\n\nDate: '+this.dateObject.day+', '+this.dateObject.month+' '+this.dateObject.date+
               '\nTime: '+this.functions.formatClockTime(this.booking.time, true)+
               '\nDiscount: '+this.booking.discount+'%'+
-              '\n\n Download Eatibl for Android:' +
-              '\n https://play.google.com/apps/testing/com.eatibl' +
-              '\n\n Download Eatibl for iOS:' +
-              '\n appstore.com/eatibl';
+              '\n\nDownload Eatibl to make your own bookings.'+
+              '\nAndroid:' +
+              '\nhttps://play.google.com/apps/testing/com.eatibl' +
+              '\n\niOS:' +
+              '\nappstore.com/eatibl';
 
         }
         else if(this.type == 'referral'){
-          message = 'Check out this great app called Eatibl! It lets you make discounted bookings at some of your favorite restaurants.' +
-            '\n\n Download Eatibl for Android:' +
-            '\n https://play.google.com/apps/testing/com.eatibl' +
-            '\n\n Download Eatibl for iOS:' +
-            '\n appstore.com/eatibl';
+          message = 'Check out this great app called Eatibl! You can get up to 50% off when you dine-in at your favourite restaurants.' +
+            '\n\nDownload Eatibl for Android:' +
+            '\nhttps://play.google.com/apps/testing/com.eatibl' +
+            '\n\nDownload Eatibl for iOS:' +
+            '\nappstore.com/eatibl';
         }
         this.sms.send(phoneNumber, message, {replaceLineBreaks: true}).then((result) => {
           console.log(result);
