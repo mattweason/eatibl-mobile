@@ -12,24 +12,27 @@
   <ion-grid>
     <ion-row>
       <ion-col class="align-center">
-        <h4>Choose who to invite</h4>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="align-center">
-        <button ion-button color="secondary" (tap)="browseContacts()">Browse Contacts</button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="or-separator">
-        <div class="line"></div>
-        <p>or</p>
-        <div class="line"></div>
+        <h4 *ngIf="type == 'referral'">Choose who to invite</h4>
+        <h4 *ngIf="type == 'reminder'">Booking Successful!</h4>
+        <p *ngIf="type == 'reminder'">Share the booking details with friends:</p>
       </ion-col>
     </ion-row>
     <ion-row class="border-bottom">
-      <ion-col class="align-center contact-form">
-        <button ion-button color="secondary" (tap)="addManually()">Add Manually</button>
+      <ion-col col-1></ion-col>
+      <ion-col col-4 class="align-center">
+        <button class="add-contact-button" ion-button color="secondary" (tap)="browseContacts()"><span>Browse</span><span>Contacts</span></button>
+      </ion-col>
+      <ion-col col-2 class="or-separator">
+        <p>or</p>
+      </ion-col>
+      <ion-col col-4 class="align-center">
+          <button class="add-contact-button" ion-button color="secondary" (tap)="addManually()"><span>Add</span><span>Manually</span></button>
+      </ion-col>
+      <ion-col col-1></ion-col>
+    </ion-row>
+    <ion-row class="border-bottom">
+      <ion-col class="align-center">
+        <p class="limit-count">Limit:<span [ngClass]="{'over-limit' : inviteList.length > limit}">{{inviteList.length}}</span>/<span>{{limit}}</span></p>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -42,9 +45,9 @@
         <ion-list>
           <ion-item class="invitee" *ngFor="let invitee of inviteList; let i = index">
             <ion-icon name="person" item-start></ion-icon>
-            <p>{{invitee.name}}</p>
-            <p>{{formatPhone(invitee.phone)}}</p>
-            <button item-end large clear ion-button color="danger" (tap)="removeContact(i)"><ion-icon name="close"></ion-icon></button>
+            <p>{{invitee.name.formatted}}</p>
+            <p>{{formatPhone(invitee.phoneNumbers[invitee.phoneNumbers.length - 1])}}</p>
+            <button item-end large clear ion-button color="danger" (tap)="removeContact(i, invitee)"><ion-icon name="close"></ion-icon></button>
           </ion-item>
         </ion-list>
       </ion-col>
@@ -67,8 +70,11 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-buttons end>
-      <button ion-button icon-end block color="secondary" (tap)="removeContact(i)">Send<ion-icon name="arrow-round-forward"></ion-icon></button>
+    <ion-buttons left>
+      <button ion-button icon-start block color="secondary" (tap)="dismiss()"><ion-icon name="close"></ion-icon><span *ngIf="type == 'referral'">Close</span><span *ngIf="type == 'reminder'">Skip</span></button>
+    </ion-buttons>
+    <ion-buttons right>
+      <button ion-button icon-end block [color]="sendButtonColor" (tap)="sendInvites()"><span *ngIf="!sentSMS">Send</span><span *ngIf="sentSMS">Sent</span><ion-icon *ngIf="!sentSMS" name="arrow-round-forward"></ion-icon><ion-icon *ngIf="sentSMS" name="checkmark"></ion-icon></button>
     </ion-buttons>
   </ion-toolbar>
 </ion-footer>

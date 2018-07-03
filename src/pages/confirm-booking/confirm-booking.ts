@@ -159,7 +159,8 @@ export class ConfirmBookingPage {
           });
           this.navCtrl.push('BookingConfirmedPage', {
             booking: this.response.booking,
-            restaurant: this.restaurant
+            restaurant: this.restaurant,
+            inviteModal: true
           }).then(() => {
             var index = this.navCtrl.getActive().index;
             this.navCtrl.remove(index-1);

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import {IonicPage, NavController, NavParams, AlertController, ModalController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator';
 import { Events } from 'ionic-angular';
@@ -33,6 +33,7 @@ export class BookingConfirmedPage {
   distance: any;
   canRedeem = false;
   mapUrl: any;
+  inviteModal: any;
 
   constructor(
     public navCtrl: NavController,
@@ -41,24 +42,32 @@ export class BookingConfirmedPage {
     private API: ApiServiceProvider,
     public alertCtrl: AlertController,
     private launchNavigator: LaunchNavigator,
-    public events: Events
+    public events: Events,
+    private modal: ModalController
     ) {
+      //Collect nav parameters
       this.restaurant = navParams.get('restaurant');
       this.booking = navParams.get('booking');
-      console.log(this.booking)
+      this.inviteModal = navParams.get('inviteModal');
+
       this.buildDateObject();
+
+      //Subscribe to geolocation events from app.component
       events.subscribe('user:geolocated', (location, time) => {
         this.location = location;
         this.checkLocation();
       });
-    this.buildMap();
-    }
 
-  //Build static map url
-  buildMap(){
-    // this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&key=AIzaSyD3lkVR2f_hCqSF_7Zpj4kUIAwlqLf1uao"
-    this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=icon:https://eatibl.com/assets/images/eatibl-pin.png|"+this.restaurant.latitude+","+this.restaurant.longitude+"&key=AIzaSyAr99dcWf_ri92qrY7ZmcI54Uv0oaGXd2w";
-  }
+      //Prompt invite modal when navigated to from confirm booking page
+      if(this.inviteModal && this.booking.people > 1){
+        const inviteModal = this.modal.create('InviteModalPage', { limit: this.booking.people - 1, type: 'reminder', booking: this.booking });
+
+        inviteModal.present();
+      }
+
+      //Build static map url
+      this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=icon:https://eatibl.com/assets/images/eatibl-pin.png|"+this.restaurant.latitude+","+this.restaurant.longitude+"&key=AIzaSyAr99dcWf_ri92qrY7ZmcI54Uv0oaGXd2w";
+    }
 
   //Open the users relevant maps app to navigate to the restaurant
   openMaps(){

@@ -6,14 +6,19 @@ page-invite-modal {
   .logo-header{
     height:34px;
   }
+  .add-contact-button{
+    height: 60px;
+    .button-inner{
+      flex-flow: column;
+      span{
+        margin: 3px 0;
+      }
+    }
+  }
   .or-separator{
     display: flex;
     justify-content: center;
     align-items: center;
-    .line{
-      width: 25%;
-      border-top: 1px solid #ccc;
-    }
     p{
       font-weight: 700;
       margin: 6px 6px;
@@ -21,36 +26,21 @@ page-invite-modal {
       color: color($colors, primary);
     }
   }
-  .contact-form{
-    p{
-      margin: 0 0 6px 0;
-    }
-    form{
-      display: flex;
-      ion-item{
-        padding-left: 0 !important;
-        &.name{
-          width: 35% !important;
-        }
-        &.phone {
-          width: auto;
-        }
-        ion-input{
-          border: 1px solid #ccc;
-          border-radius: 3px;
-        }
-      }
-      button{
-        height: 48px !important;
+  .limit-count{
+    margin: 3px 0;
+    font-weight: 700;
+    font-size: 16px;
+    span{
+      margin: 0 3px;
+      color: color($colors, secondary);
+      &.over-limit{
+        color: color($colors, danger);
       }
     }
   }
   .invitee{
     .item-inner{
       border-bottom: 1px solid #dedede !important;
-    }
-    button{
-
     }
   }
   .no-results{

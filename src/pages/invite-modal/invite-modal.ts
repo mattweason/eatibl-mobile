@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, AlertController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, AlertController, ViewController} from 'ionic-angular';
 import { Contacts, Contact, ContactField, ContactName } from '@ionic-native/contacts';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { SMS } from '@ionic-native/sms';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
+import { Storage } from '@ionic/storage';
 import * as _ from 'underscore';
+import * as decode from 'jwt-decode';
+import { FunctionsProvider } from '../../providers/functions/functions';
 
 /**
  * Generated class for the InviteFriendsPage page.
@@ -21,9 +24,17 @@ import * as _ from 'underscore';
 export class InviteModalPage {
 
   addContactForm: FormGroup;
-  contactList: any;
   allContacts = {} as any;
   inviteList = [];
+  contactIds = [];
+  limit: any;
+  type: any;
+  booking: any;
+  sendingSMS = false;
+  sentSMS = false;
+  sendButtonColor = 'secondary';
+  user: any;
+  dateObject = {} as any;
 
   constructor(
     public navCtrl: NavController,
@@ -33,6 +44,9 @@ export class InviteModalPage {
     private formBuilder: FormBuilder,
     private sms: SMS,
     private alertCtrl: AlertController,
+    public viewCtrl: ViewController,
+    private storage: Storage,
+    private functions: FunctionsProvider
   ) {
     //Form controls and validation
     this.addContactForm = this.formBuilder.group({
@@ -49,6 +63,27 @@ export class InviteModalPage {
         ])
       ]
     });
+
+    //Get limit from navparams
+    this.limit = navParams.get('limit');
+    this.type = navParams.get('type');
+    this.booking = navParams.get('booking');
+
+    if(this.booking){
+      this.buildDateObject();
+    }
+  }
+
+  buildDateObject(){
+    var dateOrigin = new Date(this.booking.date);
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var months = ['Jan.','Feb.','Mar.','Apr.','May','Jun.','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'];
+    var day = days[dateOrigin.getDay()];
+    var date = dateOrigin.getDate();
+    var month = months[dateOrigin.getMonth()];
+    this.dateObject.month = month;
+    this.dateObject.date = date;
+    this.dateObject.day = day;
   }
 
   //Manually add contacts to the invitee list
@@ -104,7 +139,6 @@ export class InviteModalPage {
             //Process each contact to add as a checkbox for import
             for(var i = 0; i < current.allContacts.length; i++){
               (function(contact){
-                console.log(contact)
                 var phoneNumbers = [];
 
                 //Loop through all the phonenumbers for each contact
@@ -124,7 +158,8 @@ export class InviteModalPage {
                     alert.addInput({
                       type: 'checkbox',
                       label: contact.name.formatted,
-                      value: contact
+                      value: contact,
+                      checked: current.contactIds.indexOf(contact.rawId) > -1
                     });
                 }
               }(current.allContacts[i]));
@@ -134,8 +169,10 @@ export class InviteModalPage {
             alert.addButton({
               text: 'Import',
               handler: (data: any) => {
+                current.contactIds = []; //Clear contact reference list
+                current.inviteList = data;
                 for(var i = 0; i < data.length; i++){
-                  current.inviteList.push({name: data[i].name.formatted, phone: data[i].phoneNumbers[data[i].phoneNumbers.length - 1]})
+                  current.contactIds.push(data[i].rawId); //Push contact ids into contact reference list so we know which ones to check when browse contacts is opened again
                 }
               }
             });
@@ -151,8 +188,64 @@ export class InviteModalPage {
     this.inviteList.push({name: this.addContactForm.value.name, phone: this.addContactForm.value.phone})
   }
 
-  removeContact(index){
+  removeContact(index, contact){
     this.inviteList.splice(index, 1);
+    var contactIdIndex = this.contactIds.indexOf(contact.rawId);
+    this.contactIds.splice(contactIdIndex, 1);
+  }
+
+  sendInvites(){
+    this.sendingSMS = true;
+    if(this.inviteList.length > this.limit){
+      var overLimit = this.inviteList.length - this.limit;
+      let alert = this.alertCtrl.create({
+        title: 'Invite Limit Exceeded',
+        subTitle: 'You have exceeded your invite limit of '+this.limit+'. Please remove '+overLimit+(overLimit == 1 ? ' contact.' : ' contacts.'),
+        buttons: ['Dismiss']
+      });
+      alert.present();
+      this.sendingSMS = false;
+    }
+    else if(this.inviteList.length <= this.limit && this.inviteList.length > 0){
+      for(var i = 0; i < this.inviteList.length; i++){
+        var phoneNumber = this.inviteList[i].phoneNumbers[this.inviteList[i].phoneNumbers.length - 1];
+        var message;
+        if(this.type == 'reminder'){
+          message = 'This is a reminder for our booking at '+this.booking.restaurant_fid.name+
+              '\n\nDate: '+this.dateObject.day+', '+this.dateObject.month+' '+this.dateObject.date+
+              '\nTime: '+this.functions.formatClockTime(this.booking.time, true)+
+              '\nDiscount: '+this.booking.discount+'%'+
+              '\n\n Download Eatibl for Android:' +
+              '\n https://play.google.com/apps/testing/com.eatibl' +
+              '\n\n Download Eatibl for iOS:' +
+              '\n appstore.com/eatibl';
+
+        }
+        else if(this.type == 'referral'){
+          message = 'Check out this great app called Eatibl! It lets you make discounted bookings at some of your favorite restaurants.' +
+            '\n\n Download Eatibl for Android:' +
+            '\n https://play.google.com/apps/testing/com.eatibl' +
+            '\n\n Download Eatibl for iOS:' +
+            '\n appstore.com/eatibl';
+        }
+        this.sms.send(phoneNumber, message, {replaceLineBreaks: true}).then((result) => {
+          console.log(result);
+        })
+      }
+      var current = this;
+      setTimeout(function(){
+        current.sendingSMS = false;
+        current.sentSMS = true;
+        current.sendButtonColor = 'tertiary';
+      }, 1000)
+      setTimeout(function(){
+        current.viewCtrl.dismiss();
+      }, 2000)
+    }
+  }
+
+  dismiss(){
+    this.viewCtrl.dismiss();
   }
 
   //Format phone number to be more readable
@@ -164,6 +257,18 @@ export class InviteModalPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad InviteModalPage');
+    this.storage.get('eatiblUser').then((val) => {
+      if(val){
+        this.user = decode(val);
+      }
+      else
+        this.user = {
+          email: '',
+          name: '',
+          phone: '',
+          type: ''
+        };
+    });
   }
 
 }
