@@ -33,7 +33,6 @@ export class BookingConfirmedPage {
   distance: any;
   canRedeem = false;
   mapUrl: any;
-  inviteModal: any;
 
   constructor(
     public navCtrl: NavController,
@@ -42,13 +41,11 @@ export class BookingConfirmedPage {
     private API: ApiServiceProvider,
     public alertCtrl: AlertController,
     private launchNavigator: LaunchNavigator,
-    public events: Events,
-    private modal: ModalController
+    public events: Events
     ) {
       //Collect nav parameters
       this.restaurant = navParams.get('restaurant');
       this.booking = navParams.get('booking');
-      this.inviteModal = navParams.get('inviteModal');
 
       this.buildDateObject();
 
@@ -57,13 +54,6 @@ export class BookingConfirmedPage {
         this.location = location;
         this.checkLocation();
       });
-
-      //Prompt invite modal when navigated to from confirm booking page
-      if(this.inviteModal && this.booking.people > 1){
-        const inviteModal = this.modal.create('InviteModalPage', { type: 'reminder', booking: this.booking, restaurant: this.restaurant });
-
-        inviteModal.present();
-      }
 
       //Build static map url
       this.mapUrl = "https://maps.googleapis.com/maps/api/staticmap?size=600x340&maptype=roadmap&markers=icon:https://eatibl.com/assets/images/eatibl-pin.png|"+this.restaurant.latitude+","+this.restaurant.longitude+"&key=AIzaSyAr99dcWf_ri92qrY7ZmcI54Uv0oaGXd2w";
