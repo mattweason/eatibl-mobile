@@ -211,7 +211,7 @@ export class InviteModalPage {
               '\nDiscount: '+this.booking.discount+'%'+
               '\n\nDownload Eatibl to make your own bookings.'+
               '\nAndroid:' +
-              '\nhttps://play.google.com/apps/testing/com.eatibl' +
+              '\nhttp://play.google.com/store/apps/details?id=com.eatibl' +
               '\n\niOS:' +
               '\nappstore.com/eatibl';
 
@@ -219,7 +219,7 @@ export class InviteModalPage {
         else if(this.type == 'referral'){
           message = 'Check out this great app called Eatibl! You can get up to 50% off when you dine-in at your favourite restaurants.' +
             '\n\nDownload Eatibl for Android:' +
-            '\nhttps://play.google.com/apps/testing/com.eatibl' +
+            '\nhttp://play.google.com/store/apps/details?id=com.eatibl' +
             '\n\nDownload Eatibl for iOS:' +
             '\nappstore.com/eatibl';
         }
