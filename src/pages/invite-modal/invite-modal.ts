@@ -8,6 +8,8 @@ import { Storage } from '@ionic/storage';
 import * as _ from 'underscore';
 import * as decode from 'jwt-decode';
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { Device } from '@ionic-native/device';
 
 /**
  * Generated class for the InviteFriendsPage page.
@@ -46,7 +48,9 @@ export class InviteModalPage {
     private alertCtrl: AlertController,
     public viewCtrl: ViewController,
     private storage: Storage,
-    private functions: FunctionsProvider
+    private functions: FunctionsProvider,
+    private device: Device,
+    private API: ApiServiceProvider
   ) {
     //Form controls and validation
     this.addContactForm = this.formBuilder.group({
@@ -219,15 +223,31 @@ export class InviteModalPage {
             '\n\nDownload Eatibl for iOS:' +
             '\nappstore.com/eatibl';
         }
-        this.sms.send(phoneNumber, message, {replaceLineBreaks: true}).then((result) => {
-        })
+        var current = this;
+        (function(phoneNumber, message){
+          current.sms.send(phoneNumber, message, {replaceLineBreaks: true}).then((result) => {
+            var postValues = {
+              ref_phone: phoneNumber,
+              message: message,
+              deviceId: current.device.uuid
+            };
+            //if we have user data, pop it in
+            if(current.user._id)
+              postValues['user_fid'] = current.user._id;
+
+            if(current.type == 'reminder') //for reminder referrals, track which booking prompted the reminder
+              postValues['booking'] = current.booking._id;
+
+            current.API.makePost('referral/save', postValues).subscribe(response => {});
+          })
+        })(phoneNumber, message);
       }
       var current = this;
       setTimeout(function(){
         current.sendingSMS = false;
         current.sentSMS = true;
         current.sendButtonColor = 'tertiary';
-      }, 1000)
+      }, 1000);
       setTimeout(function(){
         current.viewCtrl.dismiss();
       }, 2000)
