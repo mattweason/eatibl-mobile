@@ -196,6 +196,7 @@ export class ConfirmBookingPage {
     this.navCtrl.pop();
   }
 
+  //Error alert for booking errors
   presentAlert(title, message){
     let alert = this.alertCtrl.create({
       title: title,
@@ -205,4 +206,10 @@ export class ConfirmBookingPage {
     alert.present();
   }
 
+  //Prompt terms of use / privacy policy modal
+  openTermsModal(){
+    const termsModal = this.modal.create('TermsModalPage');
+
+    termsModal.present();
+  }
 }
