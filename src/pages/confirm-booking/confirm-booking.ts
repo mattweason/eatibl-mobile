@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import {IonicPage, NavController, NavParams, AlertController, ModalController} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
@@ -40,7 +40,16 @@ export class ConfirmBookingPage {
   response: any;
   bookingForm: FormGroup;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private functions: FunctionsProvider, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder, private storage: Storage) {
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private functions: FunctionsProvider,
+    private API: ApiServiceProvider,
+    public alertCtrl: AlertController,
+    private formBuilder: FormBuilder,
+    private storage: Storage,
+    private modal: ModalController
+  ) {
     this.restaurant = navParams.get('restaurant');
     this.timeslot = navParams.get('timeslot');
     this.people = navParams.get('people');
@@ -86,8 +95,6 @@ export class ConfirmBookingPage {
         this.bookingForm.controls['email'].setValue(this.user.email);
         this.bookingForm.controls['active'].setValue(this.user.active);
         this.bookingForm.controls['_id'].setValue(this.user._id);
-        console.log(this.user)
-        console.log(this.bookingForm.value)
       }
     });
   }
@@ -157,14 +164,29 @@ export class ConfirmBookingPage {
               this.storage.set('eatiblUser', this.response.token)
             }
           });
-          this.navCtrl.push('BookingConfirmedPage', {
-            booking: this.response.booking,
-            restaurant: this.restaurant,
-            inviteModal: true
-          }).then(() => {
-            var index = this.navCtrl.getActive().index;
-            this.navCtrl.remove(index-1);
-          });
+          if(this.response.booking.people > 1){
+            const inviteModal = this.modal.create('InviteModalPage', { type: 'reminder', booking: this.response.booking, restaurant: this.restaurant });
+            inviteModal.onDidDismiss(() => {
+              this.navCtrl.push('BookingConfirmedPage', {
+                booking: this.response.booking,
+                restaurant: this.restaurant
+              }).then(() => {
+                var index = this.navCtrl.getActive().index;
+                this.navCtrl.remove(index-1);
+              });
+            });
+            inviteModal.present();
+          }
+          else{
+            this.navCtrl.push('BookingConfirmedPage', {
+              booking: this.response.booking,
+              restaurant: this.restaurant,
+              inviteModal: true
+            }).then(() => {
+              var index = this.navCtrl.getActive().index;
+              this.navCtrl.remove(index-1);
+            });
+          }
         }
       });
     }
@@ -174,6 +196,7 @@ export class ConfirmBookingPage {
     this.navCtrl.pop();
   }
 
+  //Error alert for booking errors
   presentAlert(title, message){
     let alert = this.alertCtrl.create({
       title: title,
@@ -183,4 +206,10 @@ export class ConfirmBookingPage {
     alert.present();
   }
 
+  //Prompt terms of use / privacy policy modal
+  openTermsModal(){
+    const termsModal = this.modal.create('TermsModalPage');
+
+    termsModal.present();
+  }
 }

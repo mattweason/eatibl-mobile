@@ -115,7 +115,7 @@ export class InviteModalPage {
           handler: data => {
             var number = data.phone.replace(/\D/g,''); //Strip all non digits
             number = number.replace(/^1/, ''); //Strip the leading 1
-            this.inviteList.push({name: data.name, phone: number})
+            this.inviteList.push({name: {formatted: data.name}, phoneNumbers: [number]})
           }
         }
       ]

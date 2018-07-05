@@ -38,4 +38,9 @@ page-confirm-booking {
       opacity: 1 !important;
     }
   }
+  .terms{
+    span{
+      color: color($colors, secondary);
+    }
+  }
 }
