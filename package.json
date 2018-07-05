@@ -110,20 +110,20 @@
         "PLAY_SERVICES_VERSION": "15.0.1",
         "ANDROID_SUPPORT_V4_VERSION": "27.1.1"
       },
-      "cordova-plugin-ionic": {
-        "APP_ID": "ba5923cf",
-        "CHANNEL_NAME": "Production",
-        "UPDATE_METHOD": "background",
-        "WARN_DEBUG": "true",
-        "UPDATE_API": "https://api.ionicjs.com",
-        "MAX_STORE": "2"
-      },
       "cordova-plugin-app-version": {},
       "cordova-plugin-firebase-analytics": {
         "FIREBASE_CORE_VERSION": "16.0.+"
       },
       "cordova-plugin-contacts": {},
-      "cordova-sms-plugin": {}
+      "cordova-sms-plugin": {},
+      "cordova-plugin-ionic": {
+        "APP_ID": "ba5923cf",
+        "CHANNEL_NAME": "Production",
+        "UPDATE_METHOD": "auto",
+        "MAX_STORE": "2",
+        "WARN_DEBUG": "true",
+        "UPDATE_API": "https://api.ionicjs.com"
+      }
     },
     "platforms": [
       "ios",
