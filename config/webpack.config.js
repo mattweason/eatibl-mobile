@@ -15,7 +15,7 @@ useDefaultConfig.dev.resolve.alias = {
 
 if (env !== 'prod' && env !== 'dev') {
   // Default to dev config
-  useDefaultConfig[env] = useDefaultConfig.dev;
+  useDefaultConfig[env] = useDefaultConfig.prod;
   useDefaultConfig[env].resolve.alias = {
     "@app/env": path.resolve(environmentPath(env))
   };
