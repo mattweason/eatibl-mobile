@@ -19,6 +19,7 @@ import { Firebase } from '@ionic-native/firebase';
 import { Device } from '@ionic-native/device';
 import { Contacts } from '@ionic-native/contacts';
 import { SMS } from '@ionic-native/sms';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -60,7 +61,8 @@ import { AppErrorHandlerProvider } from '../providers/app-error-handler/app-erro
     Firebase,
     Device,
     Contacts,
-    SMS
+    SMS,
+    LocalNotifications
   ]
 })
 export class AppModule {}
