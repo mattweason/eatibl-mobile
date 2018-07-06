@@ -10,6 +10,7 @@ import { AlertController, ModalController } from 'ionic-angular';
 import { Device } from '@ionic-native/device';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
+import { Firebase } from '@ionic-native/firebase'
 
 
 @Component({
@@ -36,7 +37,8 @@ export class MyApp {
     public events: Events,
     private device: Device,
     private modal: ModalController,
-    private storage: Storage
+    private storage: Storage,
+    private firebase: Firebase
   ) {
 
     platform.ready().then(() => {
@@ -68,6 +70,13 @@ export class MyApp {
         //     }
         //   });
         // });
+
+        this.firebase.getToken()
+          .then(token => console.log(`The token is ${token}`)) // save the token server-side and use it to push notifications to this device
+          .catch(error => console.error('Error getting token', error));
+
+        this.firebase.onTokenRefresh()
+          .subscribe((token: string) => console.log(`Got a new token ${token}`));
 
         this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
           result => this.geolocateUser(),

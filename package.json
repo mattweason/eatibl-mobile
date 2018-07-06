@@ -29,6 +29,7 @@
     "@ionic-native/core": "^4.7.0",
     "@ionic-native/date-picker": "4.5.3",
     "@ionic-native/device": "^4.8.0",
+    "@ionic-native/firebase": "^4.9.0",
     "@ionic-native/firebase-analytics": "^4.8.0",
     "@ionic-native/geolocation": "4.7.0",
     "@ionic-native/google-maps": "^4.8.2",
@@ -51,7 +52,7 @@
     "cordova-plugin-datepicker": "0.9.3",
     "cordova-plugin-device": "2.0.2",
     "cordova-plugin-dialogs": "2.0.1",
-    "cordova-plugin-firebase-analytics": "^1.0.0",
+    "cordova-plugin-firebase": "^1.0.5",
     "cordova-plugin-geolocation": "^4.0.1",
     "cordova-plugin-googlemaps": "^2.3.6",
     "cordova-plugin-googlemaps-sdk": "git+https://github.com/mapsplugin/cordova-plugin-googlemaps-sdk.git",
@@ -119,11 +120,9 @@
         "MAX_STORE": "2"
       },
       "cordova-plugin-app-version": {},
-      "cordova-plugin-firebase-analytics": {
-        "FIREBASE_CORE_VERSION": "16.0.+"
-      },
       "cordova-plugin-contacts": {},
-      "cordova-sms-plugin": {}
+      "cordova-sms-plugin": {},
+      "cordova-plugin-firebase": {}
     },
     "platforms": [
       "browser",
