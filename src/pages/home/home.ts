@@ -5,7 +5,6 @@ import { FunctionsProvider } from '../../providers/functions/functions';
 import { Events } from 'ionic-angular';
 import * as moment from 'moment';
 import * as _ from 'underscore';
-import { EventLoggerProvider } from '../../providers/event-logger/event-logger';
 
 
 import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
@@ -46,8 +45,7 @@ export class HomePage {
     private API: ApiServiceProvider,
     private functions: FunctionsProvider,
     private cdRef:ChangeDetectorRef,
-    public events: Events,
-    public logger: EventLoggerProvider
+    public events: Events
   ) {
     //Update location when user geolocated event is recieved
     events.subscribe('user:geolocated', (location, time) => {
@@ -64,10 +62,6 @@ export class HomePage {
         });
       }
     });
-  }
-
-  logClick() {
-    this.logger.logButton('homeButton',{ pram: "paramValue" })
   }
 
   //Fires when the home page tab is selected and is already active
