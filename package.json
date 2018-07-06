@@ -123,8 +123,7 @@
         "MAX_STORE": "2",
         "WARN_DEBUG": "true",
         "UPDATE_API": "https://api.ionicjs.com"
-      },
-      "cordova-plugin-local-notification": {}
+      }
     },
     "platforms": [
       "ios",
