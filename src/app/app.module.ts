@@ -20,6 +20,8 @@ import { Device } from '@ionic-native/device';
 import { Contacts } from '@ionic-native/contacts';
 import { SMS } from '@ionic-native/sms';
 import { LocalNotifications } from '@ionic-native/local-notifications';
+import { Diagnostic } from '@ionic-native/diagnostic';
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -62,7 +64,9 @@ import { AppErrorHandlerProvider } from '../providers/app-error-handler/app-erro
     Device,
     Contacts,
     SMS,
-    LocalNotifications
+    LocalNotifications,
+    Diagnostic,
+    LocationAccuracy
   ]
 })
 export class AppModule {}

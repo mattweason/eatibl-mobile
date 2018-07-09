@@ -10,7 +10,9 @@ import { AlertController, ModalController } from 'ionic-angular';
 import { Device } from '@ionic-native/device';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { Firebase } from '@ionic-native/firebase'
+import { Firebase } from '@ionic-native/firebase';
+import { Diagnostic } from '@ionic-native/diagnostic';
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
 
 
 @Component({
@@ -26,7 +28,7 @@ export class MyApp {
   requestedPermission = false;
 
   constructor(
-    platform: Platform,
+    private platform: Platform,
     statusBar: StatusBar,
     public splashScreen: SplashScreen,
     private geolocation: Geolocation,
@@ -38,7 +40,9 @@ export class MyApp {
     private device: Device,
     private modal: ModalController,
     private storage: Storage,
-    private firebase: Firebase
+    private firebase: Firebase,
+    private diagnostic: Diagnostic,
+    private locationAccuracy: LocationAccuracy
   ) {
 
     platform.ready().then(() => {
@@ -78,10 +82,9 @@ export class MyApp {
         this.firebase.onTokenRefresh()
           .subscribe((token: string) => console.log(`Got a new token ${token}`));
 
-        this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
-          result => this.geolocateUser(),
-          err => console.log('need permission')
-        );
+        //Check for both permissions and if location services are enabled
+        this.checkGeolocation();
+
       }
       else //Only for ionic lab
         this.geolocateUser();
@@ -93,6 +96,82 @@ export class MyApp {
       this.sendGeolocationEvent();
     });
   }
+
+  //Run geolocation permissions and availability checks
+  checkGeolocation(){
+    this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
+      result => {
+        if(result.hasPermission){ //We have permission
+          this.diagnostic.isLocationEnabled().then((state) => {
+            if (state) {
+              this.geolocateUser(); //If state is true, get the geolocation
+            } else {
+              this.enableLocation(); //If state is false, prompt native dialog to enable
+            }
+          }).catch(err => console.log(err))
+        } else { //We don't have permission
+          var current = this; //Cache this
+          let alert = this.alertCtrl.create({
+            title: 'Allow location services',
+            subTitle: 'Eatibl needs location services to work. Please allow Eatibl to access your location services.',
+            enableBackdropDismiss: false,
+            buttons: [
+              {
+                text: 'Close App',
+                handler: () => {
+                  current.platform.exitApp();
+                }
+              },
+              {
+                text: 'Allow',
+                handler: () => {
+                  current.checkGeolocation(); //Rerun function to prompt permission request again
+                }
+              }]
+          });
+          alert.present();
+        }
+      },
+      err => {
+        console.log(err);
+        console.log('error getting permission')
+      }
+    );
+  }
+
+  //Prompt native dialog to turn on location services
+  enableLocation(){
+    this.locationAccuracy.canRequest().then((canRequest: boolean) => {
+      if (canRequest) {
+        // the accuracy option will be ignored by iOS
+        this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
+          () => this.geolocateUser(),
+          error => {
+            var current = this; //Cache this
+            let alert = this.alertCtrl.create({
+              title: 'Enable location services',
+              subTitle: 'Eatibl needs location services to work. Please enable your location services.',
+              enableBackdropDismiss: false,
+              buttons: [
+                {
+                  text: 'Close App',
+                  handler: () => {
+                    current.platform.exitApp();
+                  }
+                },
+                {
+                  text: 'Enable',
+                  handler: () => {
+                    current.enableLocation(); //Rerun function to prompt native enable dialog again
+                  }
+                }]
+            });
+            alert.present();
+          }
+        );
+      }
+    });
+  };
 
   forceUpdate() {
     let alert = this.alertCtrl.create({
