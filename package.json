@@ -129,7 +129,10 @@
         "UPDATE_API": "https://api.ionicjs.com"
       },
       "cordova.plugins.diagnostic": {},
-      "cordova-plugin-request-location-accuracy": {}
+      "cordova-plugin-request-location-accuracy": {},
+
+      "cordova-plugin-firebase": {},
+      "cordova-plugin-local-notification": {}
     },
     "platforms": [
       "ios",
