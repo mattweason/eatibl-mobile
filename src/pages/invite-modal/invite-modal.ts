@@ -221,7 +221,7 @@ export class InviteModalPage {
             '\n\nDownload Eatibl for Android:' +
             '\nhttp://play.google.com/store/apps/details?id=com.eatibl' +
             '\n\nDownload Eatibl for iOS:' +
-            '\nappstore.com/eatibl';
+            '\nhttps://itunes.apple.com/ca/app/eatibl/id1382344870?mt=8';
         }
         var current = this;
         (function(phoneNumber, message){
