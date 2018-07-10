@@ -230,13 +230,13 @@ export class MyApp {
   }
 
   ngOnInit(){
+    const loadingModal = this.modal.create('InitialLoadModalPage');
+    loadingModal.present();
   }
 
   //Get and watch the users location
   geolocateUser(){
     //Open loading restaurants modal
-    const loadingModal = this.modal.create('InitialLoadModalPage');
-    loadingModal.present();
 
     //Request geolocation
     this.geolocation.getCurrentPosition({timeout: 30000}).then((resp) => {

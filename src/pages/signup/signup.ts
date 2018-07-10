@@ -4,6 +4,7 @@ import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
+import { Device } from '@ionic-native/device';
 
 /**
  * Generated class for the LoginPage page.
@@ -24,7 +25,14 @@ export class SignupPage {
   submitAttempt = false;
   user: any;
 
-  constructor(public navCtrl: NavController, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder, private storage: Storage) {
+  constructor(
+    public navCtrl: NavController,
+    private API: ApiServiceProvider,
+    public alertCtrl: AlertController,
+    private formBuilder: FormBuilder,
+    private device: Device,
+    private storage: Storage
+  ) {
 
     //Form controls and validation
     this.signupForm = this.formBuilder.group({
@@ -75,8 +83,13 @@ export class SignupPage {
       });
       this.submitAttempt = true;
     }
+
+    //Cache user object and add device id
+    var postObject = this.signupForm.value;
+    postObject.deviceId = this.device.uuid;
+
     //make API call to get token if successful, or status 401 if login failed
-    this.API.makePost('register', this.signupForm.value).subscribe(response => {
+    this.API.makePost('register', postObject).subscribe(response => {
       console.log(response)
       var title;
       var message;

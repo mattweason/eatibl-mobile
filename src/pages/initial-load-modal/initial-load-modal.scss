@@ -1,12 +1,13 @@
 page-initial-load-modal {
   .initial-load-wrapper{
+    background-color: color($colors, primary);
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     img{
-      width: 30vw;
+      width: 20vw;
       margin-bottom: 20px;
       margin-top: -30px;
     }
@@ -15,12 +16,12 @@ page-initial-load-modal {
       justify-content: center;
       align-items: center;
       h4{
-        color: color($colors, primary);
+        color: #fff;
         margin: 0;
       }
       ion-spinner * {
         margin-left: 5px;
-        stroke: color($colors, primary);
+        stroke: #fff;
       }
     }
   }

@@ -4,6 +4,7 @@ import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
+import { Device } from '@ionic-native/device';
 
 import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
 
@@ -47,6 +48,7 @@ export class ConfirmBookingPage {
     private API: ApiServiceProvider,
     public alertCtrl: AlertController,
     private formBuilder: FormBuilder,
+    private device: Device,
     private storage: Storage,
     private modal: ModalController
   ) {
@@ -125,6 +127,7 @@ export class ConfirmBookingPage {
         people: this.people,
         timeslot: this.timeslot,
         date: this.date,
+        deviceId: this.device.uuid
       };
 
       this.API.makePost('booking/' + this.restaurant._id + '/create', postObject).subscribe(response => {
