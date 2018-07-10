@@ -56,6 +56,7 @@ export class HomePage {
       if(this.firstCall){
         this.firstCall = false;
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+          this.events.publish('reveal:restaurants');
           this.dataCache = data;
           this.setNow(true); //rankRestaurants runs inside here
           this.cdRef.detectChanges();
@@ -229,7 +230,6 @@ export class HomePage {
 
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
-    console.log(Date.now() + ': ranking user')
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
     var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));

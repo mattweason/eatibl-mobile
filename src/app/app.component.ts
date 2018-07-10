@@ -25,7 +25,6 @@ export class MyApp {
   //Used for android permissions
   hasPermission = false;
   interval: any;
-  private onResumeSubscription: Subscription;
 
   constructor(
     private platform: Platform,
@@ -55,7 +54,6 @@ export class MyApp {
       //Only do native stuff in android or ios
       if (platform.is('cordova')){
         var self = this; //Cache this to use in functions
-        console.log('Device UUID is: ' + this.device.uuid);
         //check if we need to force update on currently installed version of app ***COMMENTED OUT FOR NOW****
         // appVersion.getVersionNumber().then(function(version_code){
         //   console.log(version_code);
@@ -148,12 +146,10 @@ export class MyApp {
 
   //Run geolocation permissions and availability checks for android
   locationPermissionAndroid(){
+    this.splashScreen.hide();
     this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
       result => {
         if(result.hasPermission){ //We have permission
-          this.diagnostic.isLocationAvailable().then((result) => {
-            console.log(result)
-          })
           this.diagnostic.isLocationEnabled().then((state) => {
             if (state) {
               this.geolocateUser(); //If state is true, get the geolocation
@@ -185,7 +181,6 @@ export class MyApp {
         }
       },
       err => {
-        console.log(err);
         console.log('error getting permission')
       }
     );
@@ -239,8 +234,12 @@ export class MyApp {
 
   //Get and watch the users location
   geolocateUser(){
+    //Open loading restaurants modal
+    const loadingModal = this.modal.create('InitialLoadModalPage');
+    loadingModal.present();
+
+    //Request geolocation
     this.geolocation.getCurrentPosition({timeout: 30000}).then((resp) => {
-      this.splashScreen.hide();
       this.location = resp;
       this.sendGeolocationEvent();
 
