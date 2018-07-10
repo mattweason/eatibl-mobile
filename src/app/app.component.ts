@@ -25,7 +25,7 @@ export class MyApp {
   //Used for android permissions
   hasPermission = false;
   interval: any;
-  requestedPermission = false;
+  private onResumeSubscription: Subscription;
 
   constructor(
     private platform: Platform,
@@ -75,6 +75,15 @@ export class MyApp {
         //   });
         // });
 
+
+        platform.resume.subscribe(() => {
+          //Check for both permissions and if location services are enabled
+          if(platform.is('android'))
+            this.locationPermissionAndroid();
+          else if(platform.is('ios'))
+            this.locationPermissionIos();
+        });
+
         this.firebase.getToken()
           .then(token => console.log(`The token is ${token}`)) // save the token server-side and use it to push notifications to this device
           .catch(error => console.error('Error getting token', error));
@@ -83,8 +92,10 @@ export class MyApp {
           .subscribe((token: string) => console.log(`Got a new token ${token}`));
 
         //Check for both permissions and if location services are enabled
-        this.checkGeolocation();
-
+        if(platform.is('android'))
+          this.locationPermissionAndroid();
+        else if(platform.is('ios'))
+          this.locationPermissionIos();
       }
       else //Only for ionic lab
         this.geolocateUser();
@@ -97,20 +108,61 @@ export class MyApp {
     });
   }
 
-  //Run geolocation permissions and availability checks
-  checkGeolocation(){
+  //Alert to prompt user to enable location services ios
+  enableLocationIos(){
+    const current = this; //Cache this
+    let alert = this.alertCtrl.create({
+      title: 'Allow location services',
+      subTitle: 'Eatibl needs location services to work. Please allow Eatibl to access your location services.',
+      enableBackdropDismiss: false,
+      buttons: [
+        {
+          text: 'Allow',
+          handler: () => {
+            this.diagnostic.switchToSettings().then(() => { //Open app specific settings page
+              console.log('switched to settings')
+            });
+          }
+        }]
+    });
+    alert.present();
+  }
+
+  //Run geolocation permissions for iOs
+  locationPermissionIos(){
+    this.splashScreen.hide();
+    this.diagnostic.getLocationAuthorizationStatus().then((status) => {
+      if(status == 'not_determined') //Permission has not yet been asked
+        this.diagnostic.requestLocationAuthorization().then((status) => {
+          if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
+            this.geolocateUser();
+          else if(status == 'denied') //Permission has been denied
+            this.enableLocationIos();
+        });
+      else if(status == 'denied') //Permission has been denied
+        this.enableLocationIos();
+      else if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
+        this.geolocateUser();
+    })
+  }
+
+  //Run geolocation permissions and availability checks for android
+  locationPermissionAndroid(){
     this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
       result => {
         if(result.hasPermission){ //We have permission
+          this.diagnostic.isLocationAvailable().then((result) => {
+            console.log(result)
+          })
           this.diagnostic.isLocationEnabled().then((state) => {
             if (state) {
               this.geolocateUser(); //If state is true, get the geolocation
             } else {
-              this.enableLocation(); //If state is false, prompt native dialog to enable
+              this.locationEnabledAndroid(); //If state is false, prompt native dialog to enable
             }
           }).catch(err => console.log(err))
         } else { //We don't have permission
-          var current = this; //Cache this
+          const current = this; //Cache this
           let alert = this.alertCtrl.create({
             title: 'Allow location services',
             subTitle: 'Eatibl needs location services to work. Please allow Eatibl to access your location services.',
@@ -125,7 +177,7 @@ export class MyApp {
               {
                 text: 'Allow',
                 handler: () => {
-                  current.checkGeolocation(); //Rerun function to prompt permission request again
+                  current.locationPermissionAndroid(); //Rerun function to prompt permission request again
                 }
               }]
           });
@@ -139,8 +191,8 @@ export class MyApp {
     );
   }
 
-  //Prompt native dialog to turn on location services
-  enableLocation(){
+  //Prompt native dialog to turn on location services android
+  locationEnabledAndroid(){
     this.locationAccuracy.canRequest().then((canRequest: boolean) => {
       if (canRequest) {
         // the accuracy option will be ignored by iOS
@@ -162,7 +214,7 @@ export class MyApp {
                 {
                   text: 'Enable',
                   handler: () => {
-                    current.enableLocation(); //Rerun function to prompt native enable dialog again
+                    current.locationEnabledAndroid(); //Rerun function to prompt native enable dialog again
                   }
                 }]
             });
