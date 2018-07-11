@@ -40,6 +40,7 @@ export class ConfirmBookingPage {
   date: any;
   response: any;
   bookingForm: FormGroup;
+  postObject = {} as any;
 
   constructor(
     public navCtrl: NavController,
@@ -122,7 +123,7 @@ export class ConfirmBookingPage {
     else{
       //Strip extra characters from phone number
       this.bookingForm.value.phone = this.bookingForm.value.phone.replace(/[() -]/g,'');
-      var postObject = {
+      this.postObject = {
         user: this.bookingForm.value,
         people: this.people,
         timeslot: this.timeslot,
@@ -130,71 +131,171 @@ export class ConfirmBookingPage {
         deviceId: this.device.uuid
       };
 
-      this.API.makePost('booking/' + this.restaurant._id + '/create', postObject).subscribe(response => {
-        var title;
-        var message;
-        this.response = response;
+      this.API.makePost('user/verify/check', this.bookingForm.value).subscribe(response => {
+        if(response['verify'])
+          this.verifyAlert();
 
-        if(this.response.message){
-          if(this.response.message == 'overcapacity'){ //If requested capacity is over the available capacity
-            title = 'Overcapacity';
-            message = 'Sorry, but this timeslot only has '+this.response.remainder+' seats left.';
-          }
+        else
+          this.createBooking();
 
-          if(this.response.message == 'user exists'){ //If the email address belongs to a registered account
-            title = 'Email Address Taken';
-            message = 'This email address belongs to a registered account. Please login or use a different email.';
-          }
-
-          if(this.response.message == 'booking limit'){ //If the user has reached the booking limit
-            title = 'Booking Limit';
-            message = 'You already have 3 upcoming bookings and cannot make anymore.';
-          }
-
-          if(this.response.message == 'error'){ //If there was an error adding the user or the booking
-            title = 'Error';
-            message = 'Sorry, there was an error with your booking. Please try again.';
-          }
-
-          this.presentAlert(title, message);
-        }
-        else{
-          this.storage.get('eatiblUser').then((val) => {
-            if(val){
-              this.user = decode(val);
-            }
-            else{
-              this.storage.set('eatiblUser', this.response.token)
-            }
-          });
-          if(this.response.booking.people > 1){
-            const inviteModal = this.modal.create('InviteModalPage', { type: 'reminder', booking: this.response.booking, restaurant: this.restaurant });
-            inviteModal.onDidDismiss(() => {
-              this.navCtrl.push('BookingConfirmedPage', {
-                booking: this.response.booking,
-                restaurant: this.restaurant
-              }).then(() => {
-                var index = this.navCtrl.getActive().index;
-                this.navCtrl.remove(index-1);
-              });
-            });
-            inviteModal.present();
-          }
-          else{
-            this.navCtrl.push('BookingConfirmedPage', {
-              booking: this.response.booking,
-              restaurant: this.restaurant,
-              inviteModal: true
-            }).then(() => {
-              var index = this.navCtrl.getActive().index;
-              this.navCtrl.remove(index-1);
-            });
-          }
-        }
       });
     }
   }
 
+  //Verification code alert
+  verifyAlert(){
+    let alert = this.alertCtrl.create({
+      title: 'Verify Phone Number',
+      message: "We've texted you a verification code. Please enter the code below to complete the booking.",
+      inputs: [
+        {
+          name: 'code',
+          placeholder: 'Code',
+          type: 'tel'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Submit',
+          handler: data => {
+            if(data.code){
+              const postObj = {
+                phone: this.bookingForm.value.phone,
+                code: data.code
+              };
+              this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
+
+                if(response['confirmed']) //Code is good :)
+                  this.createBooking();
+
+                else { //Code is bad :(
+                  this.reverifyAlert();
+                }
+              });
+            }
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+  //Incorrect code, please try again alert
+  reverifyAlert(){
+    let alert = this.alertCtrl.create({
+      title: 'Invalid Code',
+      message: "The verification code you entered does not match the one sent to you. Please try again.",
+      inputs: [
+        {
+          name: 'code',
+          placeholder: 'Code'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Submit',
+          handler: data => {
+            const postObj = {
+              phone: this.bookingForm.value.phone,
+              code: data.code
+            };
+            this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
+
+              if(response['confirmed']) //Code is good :)
+                this.createBooking();
+
+              else { //Code is bad :(
+                this.reverifyAlert();
+              }
+            });
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+  //Create the booking
+  createBooking(){
+    this.API.makePost('booking/' + this.restaurant._id + '/create', this.postObject).subscribe(response => {
+      var title; //Used for error alerts
+      var message; //Used for error alerts
+      this.response = response;
+
+      if(this.response.message){
+        if(this.response.message == 'overcapacity'){ //If requested capacity is over the available capacity
+          title = 'Overcapacity';
+          message = 'Sorry, but this timeslot only has '+this.response.remainder+' seats left.';
+        }
+
+        if(this.response.message == 'user exists'){ //If the email address belongs to a registered account
+          title = 'Email Address Taken';
+          message = 'This email address belongs to a registered account. Please login or use a different email.';
+        }
+
+        if(this.response.message == 'booking limit'){ //If the user has reached the booking limit
+          title = 'Booking Limit';
+          message = 'You already have 3 upcoming bookings and cannot make anymore.';
+        }
+
+        if(this.response.message == 'error'){ //If there was an error adding the user or the booking
+          title = 'Error';
+          message = 'Sorry, there was an error with your booking. Please try again.';
+        }
+
+        this.presentAlert(title, message);
+      }
+      else{
+        this.storage.get('eatiblUser').then((val) => {
+          if(val){
+            this.user = decode(val);
+          }
+          else{
+            this.storage.set('eatiblUser', this.response.token)
+          }
+        });
+        if(this.response.booking.people > 1){
+          const inviteModal = this.modal.create('InviteModalPage', { type: 'reminder', booking: this.response.booking, restaurant: this.restaurant });
+          inviteModal.onDidDismiss(() => {
+            this.navCtrl.push('BookingConfirmedPage', {
+              booking: this.response.booking,
+              restaurant: this.restaurant
+            }).then(() => {
+              var index = this.navCtrl.getActive().index;
+              this.navCtrl.remove(index-1);
+            });
+          });
+          inviteModal.present();
+        }
+        else{
+          this.navCtrl.push('BookingConfirmedPage', {
+            booking: this.response.booking,
+            restaurant: this.restaurant,
+            inviteModal: true
+          }).then(() => {
+            var index = this.navCtrl.getActive().index;
+            this.navCtrl.remove(index-1);
+          });
+        }
+      }
+    });
+  }
+
+  //Don't make the booking and go back to the restaurant page
   cancel(){
     this.navCtrl.pop();
   }
