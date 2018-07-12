@@ -24,6 +24,7 @@ export class SignupPage {
   response = {} as any;
   submitAttempt = false;
   user: any;
+  postObject= {} as any;
 
   constructor(
     public navCtrl: NavController,
@@ -45,8 +46,7 @@ export class SignupPage {
       phone: [
         '', Validators.compose([
           Validators.required,
-          Validators.pattern('[0-9 ()-]*'),
-          Validators.maxLength(14)
+          Validators.pattern('[0-9 ()+-]*')
         ])
       ],
       email: [
@@ -84,12 +84,27 @@ export class SignupPage {
       this.submitAttempt = true;
     }
 
-    this.API.makePost('user/verify/check', this.signupForm.value).subscribe(response => {
-      if(response['verify'])
-        this.verifyAlert(false);
+    //Cache user object and add device id
+    this.postObject = this.signupForm.value;
+    this.postObject.deviceId = this.device.uuid;
 
-      else
-        this.submitRegistration();
+    //Clean up phone number
+    this.postObject.phone = this.postObject.phone.replace(/\D/g,''); //Strip all non digits
+    this.postObject.phone = this.postObject.phone.replace(/^1/, ''); //Strip the leading 1
+
+    this.API.makePost('user/verify/check', this.signupForm.value).subscribe(response => {
+      if(response['err']){ //Twilio says invalid phone number
+        let title = 'Invalid Phone Number',
+          message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
+        this.presentAlert(title, message);
+
+      } else { //Phone number is good
+        if (response['verify']) //Account needs verification, SMS has been sent
+          this.verifyAlert(false);
+
+        else //Account already verified, proceed
+          this.submitRegistration();
+      }
 
     });
   }
@@ -129,7 +144,6 @@ export class SignupPage {
                 code: data.code
               };
               this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
-
                 if(response['confirmed']) //Code is good :)
                   this.submitRegistration();
 
@@ -148,12 +162,8 @@ export class SignupPage {
   //Make the api call to submit the registration
   submitRegistration(){
 
-    //Cache user object and add device id
-    var postObject = this.signupForm.value;
-    postObject.deviceId = this.device.uuid;
-
     //make API call to get token if successful, or status 401 if login failed
-    this.API.makePost('register', postObject).subscribe(response => {
+    this.API.makePost('register', this.postObject).subscribe(response => {
       console.log(response)
       var title;
       var message;

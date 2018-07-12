@@ -69,8 +69,7 @@ export class ConfirmBookingPage {
       phone: [
         '', Validators.compose([
           Validators.required,
-          Validators.pattern('[0-9 ()+-]*'),
-          Validators.maxLength(17)
+          Validators.pattern('[0-9 ()+-]*')
         ])
       ],
       email: [
@@ -133,11 +132,18 @@ export class ConfirmBookingPage {
 
       //Run the check to see if this user has been verified
       this.API.makePost('user/verify/check', this.bookingForm.value).subscribe(response => {
-        if(response['verify']) //Has not been verified
-          this.verifyAlert(false);
+        if(response['err']){ //Twilio says invalid phone number
+          let title = 'Invalid Phone Number',
+            message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
+          this.presentAlert(title, message);
 
-        else
-          this.createBooking(); //Good to go
+        } else { //Phone number is good
+          if (response['verify']) //Has not been verified
+            this.verifyAlert(false);
+
+          else
+            this.createBooking(); //Good to go
+        }
 
       });
     }
