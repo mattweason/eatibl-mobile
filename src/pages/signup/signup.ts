@@ -24,6 +24,7 @@ export class SignupPage {
   response = {} as any;
   submitAttempt = false;
   user: any;
+  postObject= {} as any;
 
   constructor(
     public navCtrl: NavController,
@@ -45,8 +46,7 @@ export class SignupPage {
       phone: [
         '', Validators.compose([
           Validators.required,
-          Validators.pattern('[0-9 ()-]*'),
-          Validators.maxLength(14)
+          Validators.pattern('[0-9 ()+-]*')
         ])
       ],
       email: [
@@ -85,11 +85,85 @@ export class SignupPage {
     }
 
     //Cache user object and add device id
-    var postObject = this.signupForm.value;
-    postObject.deviceId = this.device.uuid;
+    this.postObject = this.signupForm.value;
+    this.postObject.deviceId = this.device.uuid;
+
+    //Clean up phone number
+    this.postObject.phone = this.postObject.phone.replace(/\D/g,''); //Strip all non digits
+    this.postObject.phone = this.postObject.phone.replace(/^1/, ''); //Strip the leading 1
+
+    this.API.makePost('user/verify/check', this.postObject).subscribe(response => {
+      if(response['err']){ //Twilio says invalid phone number
+        let title = 'Invalid Phone Number',
+          message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
+        this.presentAlert(title, message);
+
+      } else { //Phone number is good
+        if (response['verify']) //Account needs verification, SMS has been sent
+          this.verifyAlert(false);
+
+        else //Account already verified, proceed
+          this.submitRegistration();
+      }
+
+    });
+  }
+
+  //Verification code alert
+  verifyAlert(reverify){ //If reverify is true, the user entered a bad code and must reverify
+    let title = 'Verify Phone Number',
+      message = "We've texted you a verification code. Please enter the code below to complete your registration.";
+    if(reverify){
+      title = 'Invalid Code';
+      message = "The verification code you entered does not match the one sent to you. Please try again.";
+    }
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      inputs: [
+        {
+          name: 'code',
+          placeholder: 'Code',
+          type: 'tel'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Submit',
+          handler: data => {
+            if(data.code){
+              const postObj = {
+                phone: this.signupForm.value.phone,
+                code: data.code
+              };
+              this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
+                if(response['confirmed']) //Code is good :)
+                  this.submitRegistration();
+
+                else { //Code is bad :(
+                  this.verifyAlert(true);
+                }
+              });
+            }
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+  //Make the api call to submit the registration
+  submitRegistration(){
 
     //make API call to get token if successful, or status 401 if login failed
-    this.API.makePost('register', postObject).subscribe(response => {
+    this.API.makePost('register', this.postObject).subscribe(response => {
       console.log(response)
       var title;
       var message;

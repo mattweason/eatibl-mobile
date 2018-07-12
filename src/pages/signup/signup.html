@@ -20,7 +20,7 @@
   <form [formGroup]="signupForm" (ngSubmit)="signup()">
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon name="person" [ngClass]="{'invalid': !signupForm.controls.name.valid && (signupForm.controls.name.dirty || signupForm.controls.name.touched)}"></ion-icon></ion-label>
-      <ion-input placeholder="Full Name" [formControl]="signupForm.controls['name']"></ion-input>
+      <ion-input placeholder="Name" [formControl]="signupForm.controls['name']"></ion-input>
     </ion-item>
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon name="call" [ngClass]="{'invalid': !signupForm.controls.phone.valid && (signupForm.controls.phone.dirty || signupForm.controls.phone.touched)}"></ion-icon></ion-label>
@@ -34,6 +34,8 @@
       <ion-label fixed><ion-icon [ngClass]="{'invalid': !signupForm.controls.password.valid && (signupForm.controls.password.dirty || signupForm.controls.password.touched)}" name="lock"></ion-icon></ion-label>
       <ion-input class="light-placeholder" placeholder="Password" type="password" [formControl]="signupForm.controls['password']"></ion-input>
     </ion-item>
+
+
     <div class="form-error" *ngIf="(signupForm.controls.name.hasError('required') && signupForm.controls.name.touched) || (signupForm.controls.phone.hasError('required') && signupForm.controls.phone.touched) || (signupForm.controls.email.hasError('required') && signupForm.controls.email.touched) || (signupForm.controls.password.hasError('required') && signupForm.controls.password.touched) && submitAttempt">
       <span>Please fill in all the fields.</span>
     </div>
