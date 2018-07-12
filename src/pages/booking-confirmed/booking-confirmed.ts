@@ -176,7 +176,7 @@ export class BookingConfirmedPage {
     if(!this.redeemed){
       this.checkLocation();
       this.checkTime();
-      if(this.withinTime && this.withinDistance){
+      if(this.withinTime){
         var redeemObject = {
           restoLat: this.restaurant.latitude,
           restoLon: this.restaurant.longitude,

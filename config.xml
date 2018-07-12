@@ -127,6 +127,7 @@
     <plugin name="cordova-plugin-request-location-accuracy" spec="^2.2.3" />
     <allow-navigation href="http://192.168.1.125:8100" />
     <allow-navigation href="http://192.168.1.120:8100" />
+    <plugin name="io.kommunicate.phonegap" spec="https://github.com/Kommunicate-io/Kommunicate-Cordova-Ionic-PhoneGap-Chat-Plugin.git" />
     <engine name="ios" spec="4.5.4" />
     <engine name="browser" spec="5.0.3" />
     <engine name="android" spec="7.0.0" />
