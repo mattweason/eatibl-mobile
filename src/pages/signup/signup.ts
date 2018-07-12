@@ -84,7 +84,7 @@ export class SignupPage {
       this.submitAttempt = true;
     }
 
-    this.API.makePost('user/verify/check', this.bookingForm.value).subscribe(response => {
+    this.API.makePost('user/verify/check', this.signupForm.value).subscribe(response => {
       if(response['verify'])
         this.verifyAlert(false);
 
@@ -97,7 +97,7 @@ export class SignupPage {
   //Verification code alert
   verifyAlert(reverify){ //If reverify is true, the user entered a bad code and must reverify
     let title = 'Verify Phone Number',
-      message = "We've texted you a verification code. Please enter the code below to complete the booking.";
+      message = "We've texted you a verification code. Please enter the code below to complete your registration.";
     if(reverify){
       title = 'Invalid Code';
       message = "The verification code you entered does not match the one sent to you. Please try again.";
@@ -125,7 +125,7 @@ export class SignupPage {
           handler: data => {
             if(data.code){
               const postObj = {
-                phone: this.bookingForm.value.phone,
+                phone: this.signupForm.value.phone,
                 code: data.code
               };
               this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
