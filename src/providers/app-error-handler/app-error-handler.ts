@@ -4,7 +4,7 @@ import { IonicErrorHandler } from 'ionic-angular';
 
 // initializing the Ionic Pro client
 const IonicPro = Pro.init('ba5923cf', {
-  appVersion: "0.1.14"
+  appVersion: "0.1.15"
 });
 
 @Injectable()
