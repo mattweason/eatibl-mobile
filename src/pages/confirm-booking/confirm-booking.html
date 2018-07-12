@@ -45,6 +45,7 @@
           <ion-col class="no-margin align-center" col-4>
             <p class="seats">{{people}}</p>
           </ion-col>
+          <p class="required-alert">Valid email & phone required for booking.</p>
         </ion-row>
         <ion-row>
           <ion-col>
@@ -70,8 +71,7 @@
               <button ion-button block color="secondary" type="submit">Confirm</button>
             </form>
             <button ion-button block clear color="danger" (click)="cancel()">Cancel</button>
-            <p class="terms">* A valid email and phone number are required to make a booking.</p>
-            <p class="terms">** By clicking confirm you agree to eatibl's <span (tap)="openTermsModal()">Terms of Use and Privacy Policy.</span></p>
+            <p class="terms">By clicking confirm you agree to eatibl's <span (tap)="openTermsModal()">Terms of Use and Privacy Policy.</span></p>
           </ion-col>
         </ion-row>
       </ion-grid>
