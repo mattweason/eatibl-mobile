@@ -92,7 +92,7 @@ export class SignupPage {
     this.postObject.phone = this.postObject.phone.replace(/\D/g,''); //Strip all non digits
     this.postObject.phone = this.postObject.phone.replace(/^1/, ''); //Strip the leading 1
 
-    this.API.makePost('user/verify/check', this.signupForm.value).subscribe(response => {
+    this.API.makePost('user/verify/check', this.postObject).subscribe(response => {
       if(response['err']){ //Twilio says invalid phone number
         let title = 'Invalid Phone Number',
           message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';

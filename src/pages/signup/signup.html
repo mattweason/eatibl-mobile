@@ -34,6 +34,8 @@
       <ion-label fixed><ion-icon [ngClass]="{'invalid': !signupForm.controls.password.valid && (signupForm.controls.password.dirty || signupForm.controls.password.touched)}" name="lock"></ion-icon></ion-label>
       <ion-input class="light-placeholder" placeholder="Password" type="password" [formControl]="signupForm.controls['password']"></ion-input>
     </ion-item>
+
+
     <div class="form-error" *ngIf="(signupForm.controls.name.hasError('required') && signupForm.controls.name.touched) || (signupForm.controls.phone.hasError('required') && signupForm.controls.phone.touched) || (signupForm.controls.email.hasError('required') && signupForm.controls.email.touched) || (signupForm.controls.password.hasError('required') && signupForm.controls.password.touched) && submitAttempt">
       <span>Please fill in all the fields.</span>
     </div>

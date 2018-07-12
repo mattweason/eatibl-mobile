@@ -120,8 +120,9 @@ export class ConfirmBookingPage {
         control.markAsTouched({ onlySelf: true });       // {3}
       });
     else{
-      //Strip extra characters from phone number
-      this.bookingForm.value.phone = this.bookingForm.value.phone.replace(/[() -]/g,'');
+      //Clean up phone number
+      this.bookingForm.value.phone = this.bookingForm.value.phone.replace(/\D/g,''); //Strip all non digits
+      this.bookingForm.value.phone = this.bookingForm.value.phone.replace(/^1/, ''); //Strip the leading 1
       this.postObject = {
         user: this.bookingForm.value,
         people: this.people,
@@ -130,8 +131,16 @@ export class ConfirmBookingPage {
         deviceId: this.device.uuid
       };
 
+      //Create post object for verify check with deviceid
+      let postObj = {
+        name: this.bookingForm.value.name,
+        phone: this.bookingForm.value.phone,
+        email: this.bookingForm.value.email,
+        deviceId: this.device.uuid
+      };
+
       //Run the check to see if this user has been verified
-      this.API.makePost('user/verify/check', this.bookingForm.value).subscribe(response => {
+      this.API.makePost('user/verify/check', postObj).subscribe(response => {
         if(response['err']){ //Twilio says invalid phone number
           let title = 'Invalid Phone Number',
             message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
