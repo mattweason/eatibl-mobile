@@ -84,6 +84,70 @@ export class SignupPage {
       this.submitAttempt = true;
     }
 
+    this.API.makePost('user/verify/check', this.bookingForm.value).subscribe(response => {
+      if(response['verify'])
+        this.verifyAlert(false);
+
+      else
+        this.submitRegistration();
+
+    });
+  }
+
+  //Verification code alert
+  verifyAlert(reverify){ //If reverify is true, the user entered a bad code and must reverify
+    let title = 'Verify Phone Number',
+      message = "We've texted you a verification code. Please enter the code below to complete the booking.";
+    if(reverify){
+      title = 'Invalid Code';
+      message = "The verification code you entered does not match the one sent to you. Please try again.";
+    }
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      inputs: [
+        {
+          name: 'code',
+          placeholder: 'Code',
+          type: 'tel'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Submit',
+          handler: data => {
+            if(data.code){
+              const postObj = {
+                phone: this.bookingForm.value.phone,
+                code: data.code
+              };
+              this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
+
+                if(response['confirmed']) //Code is good :)
+                  this.submitRegistration();
+
+                else { //Code is bad :(
+                  this.verifyAlert(true);
+                }
+              });
+            }
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+  //Make the api call to submit the registration
+  submitRegistration(){
+
     //Cache user object and add device id
     var postObject = this.signupForm.value;
     postObject.deviceId = this.device.uuid;

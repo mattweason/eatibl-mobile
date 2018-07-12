@@ -131,22 +131,29 @@ export class ConfirmBookingPage {
         deviceId: this.device.uuid
       };
 
+      //Run the check to see if this user has been verified
       this.API.makePost('user/verify/check', this.bookingForm.value).subscribe(response => {
-        if(response['verify'])
-          this.verifyAlert();
+        if(response['verify']) //Has not been verified
+          this.verifyAlert(false);
 
         else
-          this.createBooking();
+          this.createBooking(); //Good to go
 
       });
     }
   }
 
   //Verification code alert
-  verifyAlert(){
+  verifyAlert(reverify){ //If reverify is true, the user entered a bad code and must reverify
+    let title = 'Verify Phone Number',
+      message = "We've texted you a verification code. Please enter the code below to complete the booking.";
+    if(reverify){
+      title = 'Invalid Code';
+      message = "The verification code you entered does not match the one sent to you. Please try again.";
+    }
     let alert = this.alertCtrl.create({
-      title: 'Verify Phone Number',
-      message: "We've texted you a verification code. Please enter the code below to complete the booking.",
+      title: title,
+      message: message,
       inputs: [
         {
           name: 'code',
@@ -176,52 +183,10 @@ export class ConfirmBookingPage {
                   this.createBooking();
 
                 else { //Code is bad :(
-                  this.reverifyAlert();
+                  this.verifyAlert(true);
                 }
               });
             }
-          }
-        }
-      ]
-    });
-    alert.present();
-  }
-
-  //Incorrect code, please try again alert
-  reverifyAlert(){
-    let alert = this.alertCtrl.create({
-      title: 'Invalid Code',
-      message: "The verification code you entered does not match the one sent to you. Please try again.",
-      inputs: [
-        {
-          name: 'code',
-          placeholder: 'Code'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Submit',
-          handler: data => {
-            const postObj = {
-              phone: this.bookingForm.value.phone,
-              code: data.code
-            };
-            this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
-
-              if(response['confirmed']) //Code is good :)
-                this.createBooking();
-
-              else { //Code is bad :(
-                this.reverifyAlert();
-              }
-            });
           }
         }
       ]
