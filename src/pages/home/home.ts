@@ -219,11 +219,13 @@ export class HomePage {
     this.togglingView = true;
     if(this.view == 'list'){
       this.view = 'map';
+      this.events.publish('view:map', true);
       this.selectedResto = {};
       this.loadMap();
     }
     else if(this.view == 'map'){
       this.view = 'list';
+      this.events.publish('view:map', false);
       this.togglingView = false;
       const nodeList = document.querySelectorAll('._gmaps_cdv_');
 

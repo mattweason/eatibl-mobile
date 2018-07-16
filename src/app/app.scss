@@ -220,11 +220,21 @@ restaurant-card, page-restaurant, .map-resto-card {
 .platform-ios{
   .help-tab{
     bottom: 52px;
+    top: auto;
+    &.map-view{
+      top: 126px;
+      bottom: auto;
+    }
   }
 }
 .platform-android{
   .help-tab{
     bottom: 60px;
+    top: auto;
+    &.map-view{
+      top: 126px;
+      bottom: auto;
+    }
   }
 }
 

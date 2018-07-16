@@ -1,5 +1,5 @@
 <ion-nav [root]="rootPage"></ion-nav>
-<div class="help-tab">
+<div class="help-tab" [ngClass]="{'map-view' : mapView}">
   <button ion-button color="secondary"><ion-icon name="help-circle" (click)="supportModal()"></ion-icon></button>
 </div>
 
