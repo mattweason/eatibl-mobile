@@ -225,6 +225,11 @@ export class HomePage {
     else if(this.view == 'map'){
       this.view = 'list';
       this.togglingView = false;
+      const nodeList = document.querySelectorAll('._gmaps_cdv_');
+
+      for (let k = 0; k < nodeList.length; ++k) {
+        nodeList.item(k).classList.remove('_gmaps_cdv_');
+      }
     }
   }
 

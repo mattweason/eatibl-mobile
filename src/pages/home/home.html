@@ -51,7 +51,7 @@
     </ion-grid>
   </div>
   <div *ngIf="view == 'map'" class="map-container">
-    <div id="mapCanvas"></div>
+    <div id="mapCanvas" [ngClass]="{'hidden': view == 'list'}"></div>
     <ion-card *ngIf="selectedResto.hasOwnProperty('name')" class="map-resto-card">
       <ion-grid class="no-padding">
         <ion-row>

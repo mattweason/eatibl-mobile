@@ -31,6 +31,9 @@ page-home {
     width: 100%;
     #mapCanvas {
       height: 100%;
+      &.hidden{
+        opacity: 0 !important;
+      }
     }
     .map-resto-card{
       position: absolute;

@@ -257,7 +257,25 @@ export class MyApp {
         this.sendGeolocationEvent();
       });
     }).catch((error) => {
-      console.log('Error getting location', error);
+      let alert = this.alertCtrl.create({
+        title: "Can't Find You",
+        message: "We're having trouble getting your location. Please try again.",
+        buttons: [
+          {
+            text: 'Close App',
+            handler: () => {
+              this.platform.exitApp();
+            }
+          },
+          {
+            text: 'Try Again',
+            handler: () => {
+              this.geolocateUser();
+            }
+          }
+        ]
+      });
+      alert.present();
     });
   }
 
