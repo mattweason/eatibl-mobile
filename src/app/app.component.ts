@@ -106,6 +106,13 @@ export class MyApp {
     });
   }
 
+  //Open the support modal
+  supportModal(){
+    console.log('something')
+    const supportModal = this.modal.create('SupportModalPage');
+    supportModal.present();
+  }
+
   //Alert to prompt user to enable location services ios
   enableLocationIos(){
     const current = this; //Cache this

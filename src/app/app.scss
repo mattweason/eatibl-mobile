@@ -205,6 +205,29 @@ restaurant-card, page-restaurant, .map-resto-card {
   }
 }
 
+//Help Fab styling
+.help-tab{
+  position: absolute;
+  left: 4px;
+  button{
+    height: 40px;
+    width: 50px;
+    ion-icon{
+      font-size: 26px;
+    }
+  }
+}
+.platform-ios{
+  .help-tab{
+    bottom: 52px;
+  }
+}
+.platform-android{
+  .help-tab{
+    bottom: 60px;
+  }
+}
+
 //Sign Up Prompt
 #signUpPrompt {
   ion-card-content{
@@ -333,7 +356,7 @@ ion-navbar.align-toolbar{
 }
 
 //General Styling
-h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title {
+h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title, ion-textarea {
   font-family: "Quicksand";
 }
 

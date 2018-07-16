@@ -1,0 +1,39 @@
+page-support-modal {
+  .scroll-content{
+    padding: 12px 0;
+    ion-list{
+      margin-bottom: 6px;
+      .question{
+        &.active{
+          background-color: color($colors, light);
+        }
+        ion-label{
+          display: flex;
+          font-weight: 700;
+          color: color($colors, secondary);
+        }
+        ion-icon{
+          color: #ccc;
+          font-weight: 300;
+        }
+      }
+    }
+  }
+  form{
+    p{
+      text-align: center;
+    }
+  }
+  .form-error{
+    margin-top: 6px;
+    text-align: center;
+    color: color($colors, danger);
+  }
+  ion-icon{
+    transition: all 0.2s;
+    &.invalid {
+      color: color($colors, danger) !important;
+    }
+  }
+}
+

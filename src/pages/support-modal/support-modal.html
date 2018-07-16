@@ -1,0 +1,71 @@
+<!--
+  Generated template for the SupportModalPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="secondary" no-border-bottom>
+    <ion-title>Support</ion-title>
+    <ion-buttons right>
+      <button ion-button icon-only color="white" (tap)="dismiss()"><ion-icon name="close"></ion-icon></button>
+    </ion-buttons>
+  </ion-navbar>
+  <ion-toolbar color="secondary" no-border-top>
+    <ion-segment [(ngModel)]="type" color="white">
+      <ion-segment-button value="faq">
+        FAQ
+      </ion-segment-button>
+      <ion-segment-button value="contact">
+        Contact Us
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+
+</ion-header>
+
+
+<ion-content>
+  <div [ngSwitch]="type">
+    <ion-grid class="border-bottom" *ngSwitchCase="'faq'">
+      <ion-list *ngFor="let faq of faqs; let i = index" text-wrap no-lines>
+        <button [ngClass]="{'active': faq.open}" class="question" ion-item detail-none (click)="toggleSection(i)">
+          {{ faq.question }}
+          <ion-icon *ngIf="faq.open" md="md-remove" ios="ios-arrow-up" item-end></ion-icon>
+          <ion-icon *ngIf="!faq.open" md="md-add" ios="ios-arrow-down" item-end></ion-icon>
+        </button>
+        <ion-item *ngIf="faq.open" text-wrap>
+          <p>{{ faq.answer }}</p>
+        </ion-item>
+      </ion-list>
+    </ion-grid>
+    <ion-grid class="border-bottom" *ngSwitchCase="'contact'">
+      <form [formGroup]="supportForm" (ngSubmit)="requestSupport()">
+        <ion-row>
+          <ion-col>
+            <p>Get in touch if you have any questions, comments or general feedback.</p>
+            <ion-item class="border-bottom">
+              <ion-label fixed><ion-icon name="person" [ngClass]="{'invalid': !supportForm.controls.name.valid && (supportForm.controls.name.dirty || supportForm.controls.name.touched)}"></ion-icon></ion-label>
+              <ion-input placeholder="Name" [formControl]="supportForm.controls['name']"></ion-input>
+            </ion-item>
+            <ion-item class="border-bottom">
+              <ion-label fixed><ion-icon name="mail" [ngClass]="{'invalid': !supportForm.controls.email.valid && (supportForm.controls.email.dirty || supportForm.controls.email.touched)}"></ion-icon></ion-label>
+              <ion-input placeholder="Email" [formControl]="supportForm.controls['email']"></ion-input>
+            </ion-item>
+            <ion-item class="border-bottom">
+              <ion-textarea placeholder="Message" [formControl]="supportForm.controls['message']"></ion-textarea>
+            </ion-item>
+            <div class="form-error" *ngIf="(supportForm.controls.name.hasError('required') && supportForm.controls.name.touched) || (supportForm.controls.email.hasError('required') && supportForm.controls.email.touched) && submitAttempt">
+              <span>Please fill in all the fields.</span>
+            </div>
+            <div class="form-error" *ngIf="(supportForm.controls.email.hasError('pattern') && submitAttempt)">
+              <span>Please enter a valid email.</span>
+            </div>
+            <button ion-button block color="secondary" type="submit">Submit</button>
+          </ion-col>
+        </ion-row>
+      </form>
+    </ion-grid>
+  </div>
+</ion-content>
