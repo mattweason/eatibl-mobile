@@ -211,7 +211,12 @@ export class HomePage {
 
   ionViewDidEnter(){
     //Call geolocation from app.component
+    this.events.publish('view:map', (this.view == 'map'));
     this.events.publish('get:geolocation', Date.now());
+  }
+
+  ionViewWillLeave(){
+    this.events.publish('view:map', false);
   }
 
   //Toggles between list and map view

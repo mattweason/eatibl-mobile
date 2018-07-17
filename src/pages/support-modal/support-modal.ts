@@ -80,7 +80,7 @@ export class SupportModalPage {
       },
       {
         question: '5. Can I change my booking once it’s confirmed?',
-        answer: 'You can cancel your booking upto 30 minutes before the booking time. Editing your booking is not possible within Eatibl since availability and discounts vary based on time and day. So if you’d like to rearrange your plans for another time, simply cancel your existing booking and create a new one based on the current availability.',
+        answer: 'You can cancel your booking up to 30 minutes before the booking time. Editing your booking is not possible within Eatibl since availability and discounts vary based on time and day. So if you’d like to rearrange your plans for another time, simply cancel your existing booking and create a new one based on the current availability.',
         open: false
       },
       {
