@@ -75,7 +75,7 @@ export class SupportModalPage {
       },
       {
         question: '4. How do I make a booking?',
-        answer: 'Find a restaurant you would like to eat it either in the Nearby tab or by searching. Click through to that restaurants page and select which discount you would like to have. Make sure to select the number of people you would like the booking to serve and press “Book Now.” Enter your name along with a valid mobile number and email and press confirm.',
+        answer: `Find a restaurant you would like to eat at in the Nearby or Search tabs. Click through to that restaurant's page and select which discount you would like to have. Make sure to select the number of people you would like the booking to serve and press “Book Now.” Enter your name along with a valid mobile number and email and press "confirm".`,
         open: false
       },
       {
