@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChange, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { NavController, Slides } from 'ionic-angular';
+import {NavController, Slides, Events} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as _ from 'underscore';
 import * as moment from 'moment';
@@ -73,8 +73,17 @@ export class RestaurantCardComponent implements OnChanges {
     private API: ApiServiceProvider,
     private functions: FunctionsProvider,
     private cdRef:ChangeDetectorRef,
-    private sanitizer: DomSanitizer
-  ) {}
+    private sanitizer: DomSanitizer,
+    public events: Events
+  ) {
+    //Sends the users location to a child component when requested
+    events.subscribe('loaded:restaurant', () => {
+      if(this.slides)
+        this.slides.update(); //Run update function on sliders to stop the stretching issue
+      this.processBusinessHours(); //Update business hours to latest when this view is entered
+      this.processTimeslots(); //Update timeslots to latest when this view is entered
+    });
+  }
 
   ngOnInit(){
     //Get business hours

@@ -66,6 +66,10 @@ export class SearchPage {
     this.events.publish('get:geolocation', Date.now());
   }
 
+  ionViewDidEnter(){
+    this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
+  }
+
   //Fires when the home page tab is selected and is already active
   ionSelected() {
     this.content.scrollToTop();
@@ -144,7 +148,6 @@ export class SearchPage {
 
   //Currently filters based on restaurant name and categories
   filterRestaurants(searchInput){
-    console.log(searchInput)
     this.allResults = false;
     this.batch = 0;
     this.value = searchInput ? searchInput.toLowerCase() : ''; //Don't do toLowerCase of undefined
@@ -182,10 +185,7 @@ export class SearchPage {
 
   //Call next batch of 10 restaurants when you reach the bottom of the page
   getNextBatch(infiniteScroll){
-    console.log(this.restaurantList.length);
-    console.log(this.restaurantFiltered.length);
     var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
-    console.log(limit);
 
     for(var i = this.batch*10; i < limit; i++){
       this.restaurantList.push(this.restaurantFiltered[i]);

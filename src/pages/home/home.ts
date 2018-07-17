@@ -211,12 +211,13 @@ export class HomePage {
 
   ionViewDidEnter(){
     //Call geolocation from app.component
-    this.events.publish('view:map', (this.view == 'map'));
+    this.events.publish('view:map', (this.view == 'map')); //Pop help button into correct position
     this.events.publish('get:geolocation', Date.now());
+    this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
   }
 
   ionViewWillLeave(){
-    this.events.publish('view:map', false);
+    this.events.publish('view:map', false); //Pop help button into correct position
   }
 
   //Toggles between list and map view

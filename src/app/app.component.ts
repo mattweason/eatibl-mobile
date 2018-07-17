@@ -108,15 +108,12 @@ export class MyApp {
 
     //Listens to whether the user in on the map view or not to move the help button
     events.subscribe('view:map', (onMap) => { //onMap is true if the user is on the map view
-      console.log(onMap)
-      console.log('toggled map')
       this.mapView = onMap;
     });
   }
 
   //Open the support modal
   supportModal(){
-    console.log('something')
     const supportModal = this.modal.create('SupportModalPage');
     supportModal.present();
   }
