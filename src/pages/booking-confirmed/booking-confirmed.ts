@@ -216,7 +216,7 @@ export class BookingConfirmedPage {
     var datetime = moment(date+" "+time);
     this.upcoming = moment().isBefore(datetime);
     this.tooClose = !moment().add(30, 'minutes').isBefore(datetime);
-    this.withinTime = (moment().add(30, 'minutes').isAfter(datetime) && moment().isBefore(moment(datetime).add(2, 'hours')));
+    this.withinTime = (moment().add(30, 'minutes').isAfter(datetime) && moment().isBefore(moment(datetime).add(4, 'hours')));
   }
 
 }
