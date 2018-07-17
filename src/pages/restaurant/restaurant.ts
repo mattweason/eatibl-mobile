@@ -204,9 +204,9 @@ export class RestaurantPage implements OnInit {
     });
 
     //For finding index of businessHours today
-    var date = new Date(this.date);
+    var dateNow = new Date(this.date);
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var day = date.getDay();
+    var day = dateNow.getDay();
     var index = _.findIndex(this.businessDays, function(businessDay){
       return businessDay[0] == days[day];
     });
