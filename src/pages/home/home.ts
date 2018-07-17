@@ -122,9 +122,15 @@ export class HomePage {
           });
           if(counter == current.restaurantAll.length)
             current.togglingView = false;
-        });
+        }).catch();
       }(resto, current));
     }
+
+    //HACK SOLUTION: allow toggle view after 4 seconds
+    setTimeout(function () {
+      if(this.togglingView)
+        this.togglingView = false;
+    }, 4000);
   }
 
   //Populate the selected restaurant from the tapped marker
