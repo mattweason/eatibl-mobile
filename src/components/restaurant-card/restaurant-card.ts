@@ -142,12 +142,16 @@ export class RestaurantCardComponent implements OnChanges {
 
     //Compare current time to open close hours and set to this.open
     if(hoursLength == 2){
-      if(time >= this.businessHours[0] && time < this.businessHours[1]) //During business hours
-        this.openStatus = 'open';
-      if(time >= this.businessHours[1] ) //After closed
-        this.openStatus = 'closed';
-      if(time < this.businessHours[0]) //Before open
-        this.openStatus = 'willOpen';
+      if(this.businessHours[0] == this.businessHours[1])
+        this.openStatus = 'closedToday';
+      else{
+        if(time >= this.businessHours[0] && time < this.businessHours[1]) //During business hours
+          this.openStatus = 'open';
+        if(time >= this.businessHours[1] ) //After closed
+          this.openStatus = 'closed';
+        if(time < this.businessHours[0]) //Before open
+          this.openStatus = 'willOpen';
+      }
     }
     if(hoursLength == 4){
       if((time >= this.businessHours[0] && time < this.businessHours[1]) || (time >= this.businessHours[2] && time < this.businessHours[3])) //During bussines hours

@@ -16,7 +16,7 @@
         <p>COMING SOON</p>
       </div>
     </button>
-    <button ion-button class="best-deal" *ngIf="restaurant?.maxTimeslot" (tap)="navigateTo($event, restaurant.maxTimeslot._id)">
+    <button ion-button class="best-deal" *ngIf="restaurant?.maxTimeslot && timeslots.length" (tap)="navigateTo($event, restaurant.maxTimeslot._id)">
       <div class="deal-header">
         <p class="title">BEST DEAL</p>
       </div>
@@ -34,7 +34,7 @@
             <h2>{{restaurant.name}}</h2>
             <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
             <p *ngIf="openStatus == 'open'" class="open"><span class="prefix">Open Now</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
-            <p *ngIf="openStatus == 'willOpen' || openStatus == 'closed'" class="closed"><span class="prefix">Closed</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
+            <p *ngIf="openStatus == 'willOpen' || openStatus == 'closed'" class="closed"><span class="prefix">Closed Now</span> {{functions.formatClockTime(businessHours[0], true)}} - {{functions.formatClockTime(businessHours[1], true)}}<span *ngIf="businessHours.length == 4">, {{functions.formatClockTime(businessHours[2], true)}} - {{functions.formatClockTime(businessHours[3], true)}}</span></p>
             <p *ngIf="openStatus == 'closedToday'" class="closed"><span class="prefix">Closed Today</span></p>
           </ion-col>
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">

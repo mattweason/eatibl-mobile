@@ -91,8 +91,8 @@ export class RestaurantPage implements OnInit {
           this.location = location;
       });
       this.setDistance();
-      this.processTimeslots();
       this.processBusinessHours();
+      this.processTimeslots();
       this.isOpen();
       this.buildMap();
 
@@ -146,12 +146,16 @@ export class RestaurantPage implements OnInit {
 
     //Compare current time to open close hours and set to this.open
     if(hoursLength == 2){
-      if(time >= this.businessHours[index][0] && time < this.businessHours[index][1]) //During business hours
-        openStatus = 'open';
-      if(time >= this.businessHours[index][1])//After closed
-        openStatus = 'closed';
-      if(time < this.businessHours[index][0]) //Before open
-        openStatus = 'willOpen';
+      if(this.businessHours[index][0] == this.businessHours[index][1])
+        openStatus = 'closedToday';
+      else{
+        if(time >= this.businessHours[index][0] && time < this.businessHours[index][1]) //During business hours
+          openStatus = 'open';
+        if(time >= this.businessHours[index][1])//After closed
+          openStatus = 'closed';
+        if(time < this.businessHours[index][0]) //Before open
+          openStatus = 'willOpen';
+      }
     }
     if(hoursLength == 4){
       if((time >= this.businessHours[index][0] && time < this.businessHours[index][1]) || (time >= this.businessHours[index][2] && time < this.businessHours[index][3])) //During bussines hours
@@ -197,6 +201,25 @@ export class RestaurantPage implements OnInit {
         return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
       else
         return (timeslot.day == moment(date).format('dddd').toString());
+    });
+
+    //For finding index of businessHours today
+    var date = new Date(this.date);
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var day = date.getDay();
+    var index = _.findIndex(this.businessDays, function(businessDay){
+      return businessDay[0] == days[day];
+    });
+
+    //Filter out timeslots that exist outside of business hours
+    var current = this; //Cache this for use in filter
+    this.timeslots = _.filter(this.timeslots, function(timeslot){
+      if(current.businessHours[index].length == 2){
+        return timeslot.time >= current.businessHours[index][0] && timeslot.time < current.businessHours[index][1];
+      }
+      if(current.businessHours[index].length == 4){
+        return (timeslot.time >= current.businessHours[index][0] && timeslot.time < current.businessHours[index][1]) || (timeslot.time >= current.businessHours[index][2] && timeslot.time < current.businessHours[index][3]);
+      }
     });
 
     this.timeslots = _.sortBy(this.timeslots, 'time');
