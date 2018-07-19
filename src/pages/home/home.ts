@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, Content } from 'ionic-angular';
+import {IonicPage, NavController, Content, ModalController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { Events } from 'ionic-angular';
@@ -36,7 +36,8 @@ export class HomePage {
   userCoords: any;
   firstCall = true;
   batch = 0; //Represents the batch number
-  allResults = false; //Becomes true when we've retrieved all of the restaurants
+  allResults = false; //Becomes true when we've retrieved all of the restaurants.
+  hideMap = true;
 
   map: GoogleMap;
 
@@ -45,6 +46,7 @@ export class HomePage {
     private API: ApiServiceProvider,
     private functions: FunctionsProvider,
     private cdRef:ChangeDetectorRef,
+    private modal: ModalController,
     public events: Events
   ) {
     //Update location when user geolocated event is recieved
@@ -63,6 +65,20 @@ export class HomePage {
         });
       }
     });
+
+    //Move other map out of the way when position map is opened
+    events.subscribe('view:positionMap', (mapOpen) => {
+      this.hideMap = mapOpen;
+    });
+  }
+
+  openMap(){
+    this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
+    const mapModal = this.modal.create('SetPositionModalPage');
+    mapModal.onDidDismiss(() => {
+      this.events.publish('view:positionMap', false); //Get tabs page to set opacity to 1
+    });
+    mapModal.present();
   }
 
   //Fires when the home page tab is selected and is already active

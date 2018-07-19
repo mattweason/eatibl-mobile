@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage } from 'ionic-angular';
+import {IonicPage, Events} from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -12,8 +12,13 @@ export class TabsPage {
   tab2Root = 'SearchPage';
   tab3Root = 'AccountPage';
   tab4Root = 'BookingsPage';
+  hideTabs = false;
 
-  constructor() {
-
+  constructor(
+    public events: Events
+  ) {
+    events.subscribe('view:positionMap', (mapOpen) => {
+      this.hideTabs = mapOpen;
+    });
   }
 }

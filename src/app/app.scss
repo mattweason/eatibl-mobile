@@ -163,6 +163,19 @@ restaurant-card, page-restaurant, .map-resto-card {
   }
 }
 
+//Hiding tabs and help button when map is open
+ion-tabs{
+  &.hideTabs{
+    opacity: 0;
+  }
+}
+
+.help-tab{
+  .hideHelp{
+    opacity: 0;
+  }
+}
+
 //Map Styling
 .mapRow{
   .map-figure{

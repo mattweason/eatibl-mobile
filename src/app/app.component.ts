@@ -22,6 +22,7 @@ export class MyApp {
   rootPage:any;
   location: any;
   mapView = false;
+  hideHelp = false;
 
   //Used for android permissions
   hasPermission = false;
@@ -99,6 +100,11 @@ export class MyApp {
       else //Only for ionic lab
         this.geolocateUser();
 
+    });
+
+    //If the set position map is open hide the help button
+    events.subscribe('view:positionMap', (mapOpen) => {
+      this.hideHelp = mapOpen;
     });
 
     //Sends the users location to a child component when requested
