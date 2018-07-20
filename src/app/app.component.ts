@@ -111,8 +111,39 @@ export class MyApp {
 
     //Sends the users location to a child component when requested
     events.subscribe('get:geolocation', (time) => {
-      console.log('geolocation requested')
       this.sendGeolocationEvent();
+    });
+
+    //Sends the users location to a child component when requested
+    events.subscribe('get:geolocation:autolocate', () => {
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(result => {
+        if(result)
+          this.diagnostic.isLocationEnabled().then((state) => {
+            if(state){
+              if(this.location)
+                this.sendGeolocationEvent();
+              else
+                this.geolocateUser();
+            } else {
+              let alert = this.alertCtrl.create({
+                title: 'Location Services Are Off',
+                subTitle: 'To auto locate you must turn your on your location services.',
+                enableBackdropDismiss: false,
+                buttons: ['Dismiss']
+              });
+              alert.present();
+            }
+          });
+        else {
+          let alert = this.alertCtrl.create({
+            title: 'Lacking Permissions',
+            subTitle: 'To auto locate you must give Eatibl permission to get your location.',
+            enableBackdropDismiss: false,
+            buttons: ['Dismiss']
+          });
+          alert.present();
+        }
+      });
     });
 
     //Listens to whether the user in on the map view or not to move the help button

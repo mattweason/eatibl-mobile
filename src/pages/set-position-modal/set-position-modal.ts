@@ -116,7 +116,6 @@ export class SetPositionModalPage {
 
   //Use the devices geolocation to set location
   autoLocate(){
-    console.log('auto locating')
     this.disableButtons = true;
     var cacheLocation = this.userCoords; //Cache location in case auto locate fails
     this.storage.remove('eatiblLocation');
@@ -140,7 +139,7 @@ export class SetPositionModalPage {
         current.viewCtrl.dismiss(current.locationUpdated);
       }, 500);
     });
-    this.events.publish('get:geolocation', Date.now());
+    this.events.publish('get:geolocation:autolocate', Date.now());
   }
 
   //Close the modal
