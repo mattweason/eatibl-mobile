@@ -90,10 +90,8 @@ export class RestaurantPage implements OnInit {
       this.maxDate = moment().add(30, 'day').format();
       //Subscribe to geolocation event
       events.subscribe('user:geolocated', (location, time) => {
-        if(location){
           this.location = location;
           this.setDistance();
-        }
       });
       this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
         if (val){

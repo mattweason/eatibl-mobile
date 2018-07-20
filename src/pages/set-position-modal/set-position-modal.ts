@@ -59,9 +59,6 @@ export class SetPositionModalPage {
         },
         zoom: 12
       },
-      controls: {
-        myLocation: true
-      },
       gestures: {
         tilt: false,
         rotate: false
@@ -127,7 +124,7 @@ export class SetPositionModalPage {
     //Update location when user geolocated event is recieved
     this.events.subscribe('user:geolocated', (location, time) => {
       this.events.unsubscribe('user:geolocated');
-      this.userCoords = [location.coords.latitude, location.coords.longitude];
+      this.userCoords = location;
       this.locationUpdated = true;
 
       let toast = this.toastCtrl.create({

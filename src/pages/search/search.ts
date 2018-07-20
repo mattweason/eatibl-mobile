@@ -30,7 +30,6 @@ export class SearchPage {
   maxDate: string;
   showToolbar: boolean = true;
   time: any;
-  location: any;
   userCoords: any;
   batch = 0; //Represents the batch number
   count = 0; //Stores the total number of restaurants to compare to current restaurant list
@@ -46,8 +45,7 @@ export class SearchPage {
     public events: Events
   ) {
     events.subscribe('user:geolocated', (location, time) => {
-      this.location = location;
-      this.userCoords = [this.location.coords.latitude, this.location.coords.longitude];
+      this.userCoords = location;
 
       //Only request the geolocated restaurant list the first time this event is received
       if(this.firstCall){

@@ -33,7 +33,6 @@ export class HomePage {
   view = 'list';
   togglingView = false; //Disables toggle view button when true
   showToolbar: boolean = true;
-  location: any;
   userCoords: any;
   firstCall = true;
   batch = 0; //Represents the batch number
@@ -53,8 +52,7 @@ export class HomePage {
   ) {
     //Update location when user geolocated event is recieved
     events.subscribe('user:geolocated', (location, time) => {
-      this.location = location;
-      this.userCoords = [this.location.coords.latitude, this.location.coords.longitude];
+      this.userCoords = location;
 
       //Only request the geolocated restaurant list the first time this event is received
       if(this.firstCall){

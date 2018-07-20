@@ -16,6 +16,7 @@ import { Platform } from 'ionic-angular';
 })
 export class InitialLoadModalPage {
   private backButtonUnregister: any;
+  hideScreen = false; //Sets opacity to 0 when true so that map shows
 
   constructor(
     public navCtrl: NavController,
@@ -32,6 +33,12 @@ export class InitialLoadModalPage {
       setTimeout(() => {
         this.viewCtrl.dismiss();
       }, 500);
+    });
+
+    //Move other map out of the way when position map is opened
+    events.subscribe('view:positionMap', (mapOpen) => {
+      if(mapOpen)
+        this.viewCtrl.dismiss();
     });
   }
 

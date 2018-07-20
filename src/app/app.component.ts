@@ -77,13 +77,14 @@ export class MyApp {
         // });
 
 
-        platform.resume.subscribe(() => {
-          //Check for both permissions and if location services are enabled
-          if(platform.is('android'))
-            this.locationPermissionAndroid();
-          else if(platform.is('ios'))
-            this.locationPermissionIos();
-        });
+        // platform.resume.subscribe(() => { //TODO: REVIEW THIS BEFORE FINISH GEOLOCATION REWORK
+        //   console.log('app resumed')
+        //   //Check for both permissions and if location services are enabled
+        //   if(platform.is('android'))
+        //     this.locationPermissionAndroid();
+        //   else if(platform.is('ios'))
+        //     this.locationPermissionIos();
+        // });
 
         this.firebase.getToken()
           .then(token => console.log(`The token is ${token}`)) // save the token server-side and use it to push notifications to this device
@@ -172,39 +173,55 @@ export class MyApp {
         if(result.hasPermission){ //We have permission
           this.diagnostic.isLocationEnabled().then((state) => {
             if (state) {
-              this.geolocateUser(); //If state is true, get the geolocation
+              //Do we already have a custom location?
+              this.storage.get('eatiblLocation').then((val) => {
+                if (val)  //Custom location has been set, set userCoords to custom value
+                  this.events.publish('user:geolocated', val, Date.now());
+                else
+                  this.geolocateUser(); //If state is true, get the geolocation
+              });
             } else {
-              this.locationEnabledAndroid(); //If state is false, prompt native dialog to enable
+              //Do we already have a custom location?
+              this.storage.get('eatiblLocation').then((val) => {
+                if (val)  //Custom location has been set, set userCoords to custom value
+                  this.events.publish('user:geolocated', val, Date.now());
+                else
+                  this.presentLocationModal(); //If location is not enabled, ask them to set a custom one
+              });
             }
           }).catch(err => console.log(err))
         } else { //We don't have permission
-          const current = this; //Cache this
-          let alert = this.alertCtrl.create({
-            title: 'Allow location services',
-            subTitle: 'Eatibl needs location services to work. Please allow Eatibl to access your location services.',
-            enableBackdropDismiss: false,
-            buttons: [
-              {
-                text: 'Close App',
-                handler: () => {
-                  current.platform.exitApp();
 
-                }
-              },
-              {
-                text: 'Allow',
-                handler: () => {
-                  current.locationPermissionAndroid(); //Rerun function to prompt permission request again
-                }
-              }]
+          //Do we already have a custom location?
+          this.storage.get('eatiblLocation').then((val) => {
+            if(val)  //Custom location has been set, set userCoords to custom value
+              this.events.publish('user:geolocated', val, Date.now());
+            else{
+              this.presentLocationModal();
+            }
           });
-          alert.present();
         }
       },
       err => {
         console.log('error getting permission')
       }
     );
+  }
+
+  //Preset custom location modal
+  presentLocationModal(){
+    this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
+    const mapModal = this.modal.create('SetPositionModalPage', {location: ['43.659870', '-79.390580']});
+    mapModal.onDidDismiss((locationUpdated) => {
+      this.events.publish('view:positionMap', false); //Get tabs page to set opacity to 1
+
+      if(locationUpdated) //Did user update the location in the modal
+        this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
+          if(val)  //Custom location has been set, set userCoords to custom value
+            this.events.publish('user:geolocated', val, Date.now());
+        });
+    });
+    mapModal.present();
   }
 
   //Prompt native dialog to turn on location services android
@@ -260,7 +277,7 @@ export class MyApp {
     //Open loading restaurants modal
 
     //Request geolocation
-    this.geolocation.getCurrentPosition({timeout: 30000}).then((resp) => {
+    this.geolocation.getCurrentPosition({timeout: 15000}).then((resp) => {
       this.location = resp;
       this.sendGeolocationEvent();
 
@@ -273,12 +290,12 @@ export class MyApp {
     }).catch((error) => {
       let alert = this.alertCtrl.create({
         title: "Can't Find You",
-        message: "We're having trouble getting your location. Please try again.",
+        message: "We're having trouble getting your location. Do you want to try again or set your location on a map?",
         buttons: [
           {
-            text: 'Close App',
+            text: 'Set Location',
             handler: () => {
-              this.platform.exitApp();
+              this.presentLocationModal();
             }
           },
           {
@@ -298,8 +315,9 @@ export class MyApp {
     this.storage.get('eatiblLocation').then((val) => {
       if(this.location && !val) { //Only send location back if you have it and there is no custom location
         console.log('custom location cleared')
-        if (this.location.coords) //Only send location if it has coordinates
-          this.events.publish('user:geolocated', this.location, Date.now());
+        if (this.location.coords) { //Only send location if it has coordinates
+          this.events.publish('user:geolocated', [this.location.coords.latitude, this.location.coords.longitude], Date.now());
+        }
       }
     });
   }

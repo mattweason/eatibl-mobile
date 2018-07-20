@@ -1,4 +1,9 @@
 page-initial-load-modal {
+  ion-content{
+    &.hideScreen{
+      opacity: 0;
+    }
+  }
   .initial-load-wrapper{
     background-color: color($colors, primary);
     height: 100vh;
