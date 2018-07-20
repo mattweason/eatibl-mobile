@@ -36,6 +36,12 @@ export class SetPositionModalPage {
   ) {
     //Get location nav param
     this.userCoords = params.get('location');
+
+    //Re-enable the set locations buttons
+    events.subscribe('enable:positionmapbuttons', () => {
+      this.disableButtons = false;
+      this.events.unsubscribe('user:geolocated');
+    });
   }
 
   ionViewDidLoad() {

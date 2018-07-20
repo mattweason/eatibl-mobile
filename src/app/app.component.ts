@@ -116,34 +116,57 @@ export class MyApp {
 
     //Sends the users location to a child component when requested
     events.subscribe('get:geolocation:autolocate', () => {
-      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(result => {
-        if(result)
-          this.diagnostic.isLocationEnabled().then((state) => {
-            if(state){
-              if(this.location)
-                this.sendGeolocationEvent();
-              else
-                this.geolocateUser();
-            } else {
-              let alert = this.alertCtrl.create({
-                title: 'Location Services Are Off',
-                subTitle: 'To auto locate you must turn your on your location services.',
-                enableBackdropDismiss: false,
-                buttons: ['Dismiss']
-              });
-              alert.present();
-            }
-          });
-        else {
-          let alert = this.alertCtrl.create({
-            title: 'Lacking Permissions',
-            subTitle: 'To auto locate you must give Eatibl permission to get your location.',
-            enableBackdropDismiss: false,
-            buttons: ['Dismiss']
-          });
-          alert.present();
-        }
+      if(platform.is('android'))
+        this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(result => {
+          if(result)
+            this.diagnostic.isLocationEnabled().then((state) => {
+              if(state){
+                if(this.location)
+                  this.sendGeolocationEvent();
+                else
+                  this.geolocateUser();
+              } else {
+                let alert = this.alertCtrl.create({
+                  title: 'Location Services Are Off',
+                  subTitle: 'To auto locate you must turn your on your location services.',
+                  enableBackdropDismiss: false,
+                  buttons: ['Dismiss']
+                });
+                alert.present();
+              }
+            });
+          else {
+            let alert = this.alertCtrl.create({
+              title: 'Lacking Permissions',
+              subTitle: 'To auto locate you must give Eatibl permission to get your location.',
+              enableBackdropDismiss: false,
+              buttons: ['Dismiss']
+            });
+            alert.present();
+          }
       });
+      else if(this.platform.is('ios'))
+        this.diagnostic.getLocationAuthorizationStatus().then((status) => {
+          if(status == 'authorized_when_in_use' || status == 'authorized_always') {
+            if (this.location)
+              this.sendGeolocationEvent();
+            else
+              this.geolocateUser();
+          } else if(status == 'denied') {
+            let alert = this.alertCtrl.create({
+              title: 'Lacking Permissions',
+              subTitle: 'To auto locate you must give Eatibl permission to get your location.',
+              enableBackdropDismiss: false,
+              buttons: [{
+                  text: 'Dismiss',
+                  handler: () => {
+                    this.events.publish('enable:positionmapbuttons');
+                  }
+                }]
+            });
+            alert.present();
+          }
+        });
     });
 
     //Listens to whether the user in on the map view or not to move the help button
@@ -185,14 +208,38 @@ export class MyApp {
       if(status == 'not_determined') //Permission has not yet been asked
         this.diagnostic.requestLocationAuthorization().then((status) => {
           if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
-            this.geolocateUser();
+          //Do we already have a custom location?
+            this.storage.get('eatiblLocation').then((val) => {
+              if (val)  //Custom location has been set, set userCoords to custom value
+                this.events.publish('user:geolocated', val, Date.now());
+              else
+                this.geolocateUser(); //If state is true, get the geolocation
+            });
           else if(status == 'denied') //Permission has been denied
-            this.enableLocationIos();
+          //Do we already have a custom location?
+            this.storage.get('eatiblLocation').then((val) => {
+              if (val)  //Custom location has been set, set userCoords to custom value
+                this.events.publish('user:geolocated', val, Date.now());
+              else
+                this.presentLocationModal(); //If location is not enabled, ask them to set a custom one
+            });
         });
       else if(status == 'denied') //Permission has been denied
-        this.enableLocationIos();
+      //Do we already have a custom location?
+        this.storage.get('eatiblLocation').then((val) => {
+          if (val)  //Custom location has been set, set userCoords to custom value
+            this.events.publish('user:geolocated', val, Date.now());
+          else
+            this.presentLocationModal(); //If location is not enabled, ask them to set a custom one
+        });
       else if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
-        this.geolocateUser();
+      //Do we already have a custom location?
+        this.storage.get('eatiblLocation').then((val) => {
+          if (val)  //Custom location has been set, set userCoords to custom value
+            this.events.publish('user:geolocated', val, Date.now());
+          else
+            this.geolocateUser(); //If state is true, get the geolocation
+        });
     })
   }
 
