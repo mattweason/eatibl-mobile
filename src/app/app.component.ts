@@ -23,6 +23,7 @@ export class MyApp {
   location: any;
   mapView = false;
   hideHelp = false;
+  watch: any; //Holds watch position subscription
 
   //Used for android permissions
   hasPermission = false;
@@ -109,6 +110,7 @@ export class MyApp {
 
     //Sends the users location to a child component when requested
     events.subscribe('get:geolocation', (time) => {
+      console.log('geolocation requested')
       this.sendGeolocationEvent();
     });
 
@@ -186,6 +188,7 @@ export class MyApp {
                 text: 'Close App',
                 handler: () => {
                   current.platform.exitApp();
+
                 }
               },
               {
@@ -292,9 +295,12 @@ export class MyApp {
 
   //Push event every time the users geolocation is created or updated
   sendGeolocationEvent() {
-    if(this.location) //Only send location back if you have it
-      if(this.location.coords) { //Only send location if it has coordinates
-        this.events.publish('user:geolocated', this.location, Date.now());
+    this.storage.get('eatiblLocation').then((val) => {
+      if(this.location && !val) { //Only send location back if you have it and there is no custom location
+        console.log('custom location cleared')
+        if (this.location.coords) //Only send location if it has coordinates
+          this.events.publish('user:geolocated', this.location, Date.now());
       }
+    });
   }
 }

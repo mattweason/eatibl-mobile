@@ -5,6 +5,7 @@ import { DatePicker } from '@ionic-native/date-picker';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { Storage } from '@ionic/storage';
 import * as _ from 'underscore';
 import moment from 'moment';
 import { ENV } from '@app/env';
@@ -73,7 +74,9 @@ export class RestaurantPage implements OnInit {
     private functions: FunctionsProvider,
     private sanitizer: DomSanitizer,
     private launchNavigator: LaunchNavigator,
-    public events: Events) {
+    public events: Events,
+    private storage: Storage
+  ) {
       this.restaurant = JSON.parse(navParams.get('restaurant'));
       this.timeslotsData = JSON.parse(navParams.get('timeslotsData'));
       this.businessHoursData = JSON.parse(navParams.get('businessHoursData'));
@@ -87,10 +90,17 @@ export class RestaurantPage implements OnInit {
       this.maxDate = moment().add(30, 'day').format();
       //Subscribe to geolocation event
       events.subscribe('user:geolocated', (location, time) => {
-        if(location)
+        if(location){
           this.location = location;
+          this.setDistance();
+        }
       });
-      this.setDistance();
+      this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
+        if (val){
+          this.location = val;
+          this.setDistance();
+        }
+      });
       this.processBusinessHours();
       this.processTimeslots();
       this.isOpen();
@@ -380,7 +390,7 @@ export class RestaurantPage implements OnInit {
   setDistance(){
     //Get distance only if coordinates are available
     if(this.location && this.restaurant.latitude && this.restaurant.longitude){
-      var distance = this.functions.getDistanceFromLatLonInKm(this.location['coords']['latitude'], this.location['coords']['longitude'], this.restaurant.latitude, this.restaurant.longitude);
+      var distance = this.functions.getDistanceFromLatLonInKm(this.location[0], this.location[1], this.restaurant.latitude, this.restaurant.longitude);
       this.distance = this.functions.roundDistances(distance);
     }
   }

@@ -290,7 +290,7 @@ export class RestaurantCardComponent implements OnChanges {
   setDistance(){
     //Get distance only if coordinates are available
     if(this.location && this.restaurant.latitude && this.restaurant.longitude){
-      var distance = this.functions.getDistanceFromLatLonInKm(this.location['coords']['latitude'], this.location['coords']['longitude'], this.restaurant.latitude, this.restaurant.longitude);
+      var distance = this.functions.getDistanceFromLatLonInKm(this.location[0], this.location[1], this.restaurant.latitude, this.restaurant.longitude);
       this.distance = this.functions.roundDistances(distance);
     }
   }

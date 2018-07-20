@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="secondary">
-    <ion-title>Change Location</ion-title>
+    <ion-title>Set Location</ion-title>
     <ion-buttons right>
       <button ion-button icon-only color="white" (tap)="dismiss()"><ion-icon name="close"></ion-icon></button>
     </ion-buttons>
@@ -19,8 +19,14 @@
 
 <ion-content>
   <div id="setPositionMap"></div>
+  <ion-card>
+    <ion-card-content>
+      <h3>Where would you like to search for deals?</h3>
+    </ion-card-content>
+  </ion-card>
   <div class="set-position-button">
-    <button ion-button block color="secondary" (tap)="setPosition()">Set My Location</button>
+    <button class="auto-locate" ion-button block color="tertiary" (tap)="autoLocate()" [disabled]="disableButtons">Auto Locate</button>
+    <button class="set-locate" ion-button block color="secondary" (tap)="setPosition()" [disabled]="disableButtons">Set Location</button>
   </div>
 
 </ion-content>

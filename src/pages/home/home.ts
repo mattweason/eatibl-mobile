@@ -3,6 +3,7 @@ import {IonicPage, NavController, Content, ModalController} from 'ionic-angular'
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { Events } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
@@ -47,7 +48,8 @@ export class HomePage {
     private functions: FunctionsProvider,
     private cdRef:ChangeDetectorRef,
     private modal: ModalController,
-    public events: Events
+    public events: Events,
+    private storage: Storage
   ) {
     //Update location when user geolocated event is recieved
     events.subscribe('user:geolocated', (location, time) => {
@@ -57,12 +59,7 @@ export class HomePage {
       //Only request the geolocated restaurant list the first time this event is received
       if(this.firstCall){
         this.firstCall = false;
-        this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
-          this.events.publish('reveal:restaurants');
-          this.dataCache = data;
-          this.setNow(true); //rankRestaurants runs inside here
-          this.cdRef.detectChanges();
-        });
+        this.getRestaurants();
       }
     });
 
@@ -72,11 +69,29 @@ export class HomePage {
     });
   }
 
+  //Get restaurant list
+  getRestaurants(){
+    this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+      this.events.publish('reveal:restaurants');
+      this.dataCache = data;
+      this.setNow(true); //rankRestaurants runs inside here
+      this.cdRef.detectChanges();
+    });
+  }
+
+  //Modal for letting the user select their location manually
   openMap(){
     this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
-    const mapModal = this.modal.create('SetPositionModalPage');
-    mapModal.onDidDismiss(() => {
+    const mapModal = this.modal.create('SetPositionModalPage', {location: this.userCoords});
+    mapModal.onDidDismiss((locationUpdated) => {
       this.events.publish('view:positionMap', false); //Get tabs page to set opacity to 1
+
+      if(locationUpdated) //Did user update the location in the modal
+        this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
+          if(val) //Custom location has been set, set userCoords to custom value
+            this.userCoords = val;
+          this.getRestaurants(); //Whether we have an updated custom location, or changed to auto locate, get new list of restaurants
+        });
     });
     mapModal.present();
   }

@@ -272,6 +272,13 @@ ion-tabs{
 }
 
 //General Use Classes
+.green-background{ //For toasts
+  .toast-wrapper{
+    .toast-container{
+      background-color: color($colors, tertiary);
+    }
+  }
+}
 .grey-background{
   background-color: #ececec !important;
 }
