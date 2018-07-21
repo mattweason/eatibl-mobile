@@ -116,12 +116,15 @@ export class MyApp {
 
     //Sends the users location to a child component when requested
     events.subscribe('get:geolocation:autolocate', () => {
-      if(platform.is('android'))
+      console.log('asked to auto locate')
+      if(this.platform.is('android')) {
+        console.log('this is android')
         this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(result => {
-          if(result)
+          console.log(result)
+          if (result.hasPermission)
             this.diagnostic.isLocationEnabled().then((state) => {
-              if(state){
-                if(this.location)
+              if (state) {
+                if (this.location)
                   this.sendGeolocationEvent();
                 else
                   this.geolocateUser();
@@ -130,7 +133,12 @@ export class MyApp {
                   title: 'Location Services Are Off',
                   subTitle: 'To auto locate you must turn your on your location services.',
                   enableBackdropDismiss: false,
-                  buttons: ['Dismiss']
+                  buttons: [{
+                    text: 'Dismiss',
+                    handler: () => {
+                      this.events.publish('enable:positionmapbuttons');
+                    }
+                  }]
                 });
                 alert.present();
               }
@@ -140,11 +148,17 @@ export class MyApp {
               title: 'Lacking Permissions',
               subTitle: 'To auto locate you must give Eatibl permission to get your location.',
               enableBackdropDismiss: false,
-              buttons: ['Dismiss']
+              buttons: [{
+                text: 'Dismiss',
+                handler: () => {
+                  this.events.publish('enable:positionmapbuttons');
+                }
+              }]
             });
             alert.present();
           }
-      });
+        });
+      }
       else if(this.platform.is('ios'))
         this.diagnostic.getLocationAuthorizationStatus().then((status) => {
           if(status == 'authorized_when_in_use' || status == 'authorized_always') {

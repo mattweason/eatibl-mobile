@@ -40,7 +40,9 @@ export class SetPositionModalPage {
     //Re-enable the set locations buttons
     events.subscribe('enable:positionmapbuttons', () => {
       this.disableButtons = false;
-      this.events.unsubscribe('user:geolocated');
+      this.events.unsubscribe('user:geolocated', () => {
+        console.log('unsubscribed')
+      });
     });
   }
 
@@ -128,7 +130,9 @@ export class SetPositionModalPage {
 
     //Update location when user geolocated event is recieved
     this.events.subscribe('user:geolocated', (location, time) => {
-      this.events.unsubscribe('user:geolocated');
+      this.events.unsubscribe('user:geolocated', () => {
+        console.log('unsubscribed')
+      });
       this.userCoords = location;
       this.locationUpdated = true;
 
