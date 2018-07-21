@@ -24,6 +24,7 @@ export class MyApp {
   mapView = false;
   hideHelp = false;
   watch: any; //Holds watch position subscription
+  _autoLocateSub: (location:any, time:any) => void;
 
   //Used for android permissions
   hasPermission = false;
@@ -127,7 +128,7 @@ export class MyApp {
                 if (this.location)
                   this.sendGeolocationEvent();
                 else
-                  this.geolocateUser();
+                  this.geolocateUser(true);
               } else {
                 let alert = this.alertCtrl.create({
                   title: 'Location Services Are Off',
@@ -165,7 +166,7 @@ export class MyApp {
             if (this.location)
               this.sendGeolocationEvent();
             else
-              this.geolocateUser();
+              this.geolocateUser(true);
           } else if(status == 'denied') {
             let alert = this.alertCtrl.create({
               title: 'Lacking Permissions',
@@ -364,9 +365,10 @@ export class MyApp {
     loadingModal.present();
   }
 
+
+
   //Get and watch the users location
-  geolocateUser(){
-    //Open loading restaurants modal
+  geolocateUser(autolocate){
 
     //Request geolocation
     this.geolocation.getCurrentPosition({timeout: 15000}).then((resp) => {
@@ -387,13 +389,16 @@ export class MyApp {
           {
             text: 'Set Location',
             handler: () => {
-              this.presentLocationModal();
+              if(autolocate) //If we are in position modal, just dismiss and renable the buttons and get rid of loading screen
+                this.events.publish('enable:positionmapbuttons');
+              else
+                this.presentLocationModal();
             }
           },
           {
             text: 'Try Again',
             handler: () => {
-              this.geolocateUser();
+              this.geolocateUser(autolocate);
             }
           }
         ]

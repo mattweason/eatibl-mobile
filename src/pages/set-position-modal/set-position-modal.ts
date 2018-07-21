@@ -22,8 +22,9 @@ export class SetPositionModalPage {
   center: LatLng;
   position = [];
   locationUpdated = false; //If true nearby list will update and rerank
-  disableButtons = false;
-  userCoords: any; //TODO: update this when you start passing through the default location from app.component
+  disableButtons = true;
+  userCoords: any;
+  loading = false;
 
   constructor(
     public navCtrl: NavController,
@@ -40,6 +41,7 @@ export class SetPositionModalPage {
     //Re-enable the set locations buttons
     events.subscribe('enable:positionmapbuttons', () => {
       this.disableButtons = false;
+      this.loading = false;
       this.events.unsubscribe('user:geolocated', () => {
         console.log('unsubscribed')
       });
@@ -88,6 +90,8 @@ export class SetPositionModalPage {
         lat: this.userCoords[0],
         lng: this.userCoords[1]
       }
+    }).then(() => {
+      this.disableButtons = false;
     });
 
     this.map.on('camera_target_changed').subscribe((params: any[]) => {
@@ -98,6 +102,7 @@ export class SetPositionModalPage {
   setPosition(){
     this.disableButtons = true;
     this.map.clear();
+    this.loading = false;
     this.map.addMarker({
       icon: 'https://eatibl.com/assets/images/eatibl-pin-red.png',
       animation: 'DROP',
@@ -122,33 +127,36 @@ export class SetPositionModalPage {
     });
   }
 
+  //Autolocate handler
+  autolocateHandler:any = (location, time) => {
+    this.events.unsubscribe('user:geolocated', this.autolocateHandler);
+    console.log('test');
+    this.userCoords = location;
+    this.locationUpdated = true;
+
+    let toast = this.toastCtrl.create({
+      message: 'Location set!',
+      duration: 2000,
+      position: 'top',
+      cssClass: 'green-background'
+    });
+    toast.present();
+
+    var current = this; //Cache this
+    setTimeout(function () {
+      current.viewCtrl.dismiss(current.locationUpdated);
+    }, 500);
+  };
+
   //Use the devices geolocation to set location
   autoLocate(){
+    this.loading = true;
     this.disableButtons = true;
     var cacheLocation = this.userCoords; //Cache location in case auto locate fails
     this.storage.remove('eatiblLocation');
 
     //Update location when user geolocated event is recieved
-    this.events.subscribe('user:geolocated', (location, time) => {
-      this.events.unsubscribe('user:geolocated', () => {
-        console.log('unsubscribed')
-      });
-      this.userCoords = location;
-      this.locationUpdated = true;
-
-      let toast = this.toastCtrl.create({
-        message: 'Location set!',
-        duration: 2000,
-        position: 'top',
-        cssClass: 'green-background'
-      });
-      toast.present();
-
-      var current = this; //Cache this
-      setTimeout(function () {
-        current.viewCtrl.dismiss(current.locationUpdated);
-      }, 500);
-    });
+    this.events.subscribe('user:geolocated', this.autolocateHandler);
     this.events.publish('get:geolocation:autolocate', Date.now());
   }
 

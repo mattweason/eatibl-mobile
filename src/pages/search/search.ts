@@ -1,6 +1,7 @@
 import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
@@ -42,7 +43,8 @@ export class SearchPage {
     public navParams: NavParams,
     private API: ApiServiceProvider,
     private cdRef:ChangeDetectorRef,
-    public events: Events
+    public events: Events,
+    private storage: Storage
   ) {
     events.subscribe('user:geolocated', (location, time) => {
       this.userCoords = location;
@@ -56,6 +58,16 @@ export class SearchPage {
           this.cdRef.detectChanges();
         });
       }
+    });
+
+    //If there is a custom location, get it
+    this.storage.get('eatiblLocation').then((location) => {
+      this.userCoords = location;
+      this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+        this.dataCache = data;
+        this.setNow(true);
+        this.cdRef.detectChanges();
+      });
     });
   }
 
