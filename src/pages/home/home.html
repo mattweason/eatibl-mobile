@@ -1,9 +1,6 @@
 <ion-header>
   <ion-navbar color="primary" class="align-toolbar">
     <ion-title><div class="nearby-wrapper"><img src="assets/imgs/logo-header.svg"></div></ion-title>
-    <ion-buttons left>
-      <button ion-button (touchend)="openMap()">Open</button>
-    </ion-buttons>
     <ion-buttons end>
       <button ion-button [disabled]="togglingView" (touchend)="toggleView()"><span *ngIf="view == 'list'">Map View</span><span *ngIf="view == 'map'">List View</span></button>
     <!--<button ion-button clear class="options-button" (click)="toggleToolbar()">-->
@@ -99,3 +96,6 @@
     </ion-card>
   </div>
 </ion-content>
+<div class="locate-tab" [ngClass]="{'map-view' : view == 'map'}">
+  <button [ngClass]="{'hideLocate' : hideLocate}" ion-button icon-start color="secondary" (click)="openMap()"><ion-icon name="pin"></ion-icon>Set Location</button>
+</div>

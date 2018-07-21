@@ -37,7 +37,7 @@ export class HomePage {
   firstCall = true;
   batch = 0; //Represents the batch number
   allResults = false; //Becomes true when we've retrieved all of the restaurants.
-  hideMap = true;
+  hideMap = false;
 
   map: GoogleMap;
 
@@ -108,9 +108,6 @@ export class HomePage {
           lng: this.userCoords[1]
         },
         zoom: 12
-      },
-      controls: {
-        myLocation: true
       },
       gestures: {
         tilt: false,

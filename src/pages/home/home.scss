@@ -86,4 +86,19 @@ page-home {
     margin: 6px 0;
     border-top: 1px solid #4d4d4d;
   }
+  .locate-tab{
+    position: absolute;
+    bottom: 60px;
+    left: 60px;
+    z-index: 999;
+    &.map-view{
+      display: none;
+    }
+    button{
+      height: 40px;
+      ion-icon{
+        font-size: 26px;
+      }
+    }
+  }
 }
