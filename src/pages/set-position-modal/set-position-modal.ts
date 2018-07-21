@@ -25,6 +25,7 @@ export class SetPositionModalPage {
   disableButtons = true;
   userCoords: any;
   loading = false;
+  cachedLocation: any;
 
   constructor(
     public navCtrl: NavController,
@@ -39,12 +40,11 @@ export class SetPositionModalPage {
     this.userCoords = params.get('location');
 
     //Re-enable the set locations buttons
-    events.subscribe('enable:positionmapbuttons', () => {
+    events.subscribe('enable:positionmapbuttons', () => { //Specifically for auto locate returning some kind of error
       this.disableButtons = false;
       this.loading = false;
-      this.events.unsubscribe('user:geolocated', () => {
-        console.log('unsubscribed')
-      });
+      this.storage.set('eatiblLocation',this.cachedLocation);
+      this.events.subscribe('user:geolocated', this.autolocateHandler);
     });
   }
 
@@ -152,7 +152,7 @@ export class SetPositionModalPage {
   autoLocate(){
     this.loading = true;
     this.disableButtons = true;
-    var cacheLocation = this.userCoords; //Cache location in case auto locate fails
+    this.cachedLocation = this.userCoords; //Cache location in case auto locate fails
     this.storage.remove('eatiblLocation');
 
     //Update location when user geolocated event is recieved

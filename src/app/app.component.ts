@@ -101,7 +101,7 @@ export class MyApp {
           this.locationPermissionIos();
       }
       else //Only for ionic lab
-        this.geolocateUser();
+        this.geolocateUser(false);
 
     });
 
@@ -228,7 +228,7 @@ export class MyApp {
               if (val)  //Custom location has been set, set userCoords to custom value
                 this.events.publish('user:geolocated', val, Date.now());
               else
-                this.geolocateUser(); //If state is true, get the geolocation
+                this.geolocateUser(false); //If state is true, get the geolocation
             });
           else if(status == 'denied') //Permission has been denied
           //Do we already have a custom location?
@@ -253,7 +253,7 @@ export class MyApp {
           if (val)  //Custom location has been set, set userCoords to custom value
             this.events.publish('user:geolocated', val, Date.now());
           else
-            this.geolocateUser(); //If state is true, get the geolocation
+            this.geolocateUser(false); //If state is true, get the geolocation
         });
     })
   }
@@ -271,7 +271,7 @@ export class MyApp {
                 if (val)  //Custom location has been set, set userCoords to custom value
                   this.events.publish('user:geolocated', val, Date.now());
                 else
-                  this.geolocateUser(); //If state is true, get the geolocation
+                  this.geolocateUser(false); //If state is true, get the geolocation
               });
             } else {
               //Do we already have a custom location?
@@ -304,7 +304,7 @@ export class MyApp {
   //Preset custom location modal
   presentLocationModal(){
     this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
-    const mapModal = this.modal.create('SetPositionModalPage', {location: ['43.659870', '-79.390580']});
+    const mapModal = this.modal.create('SetPositionModalPage', {location: ['43.656347', '-79.380890']});
     mapModal.onDidDismiss((locationUpdated) => {
       this.events.publish('view:positionMap', false); //Get tabs page to set opacity to 1
 
@@ -323,7 +323,7 @@ export class MyApp {
       if (canRequest) {
         // the accuracy option will be ignored by iOS
         this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
-          () => this.geolocateUser(),
+          () => this.geolocateUser(false),
           error => {
             var current = this; //Cache this
             let alert = this.alertCtrl.create({
