@@ -180,9 +180,9 @@ export class BookingConfirmedPage {
         var redeemObject = {
           restoLat: this.restaurant.latitude,
           restoLon: this.restaurant.longitude,
-          userLat: this.location[0],
-          userLong: this.location[1],
-          distance: this.distance,
+          userLat: this.location ? this.location[0] : 0,
+          userLong: this.location ? this.location[1] : 0,
+          distance: this.distance || 0,
           timestamp: moment()
         };
         this.API.makePost('booking/'+this.booking._id+'/redeem', redeemObject).subscribe(response => {

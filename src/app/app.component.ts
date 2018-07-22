@@ -411,7 +411,6 @@ export class MyApp {
   sendGeolocationEvent() {
     this.storage.get('eatiblLocation').then((val) => {
       if(this.location && !val) { //Only send location back if you have it and there is no custom location
-        console.log('custom location cleared')
         if (this.location.coords) { //Only send location if it has coordinates
           this.events.publish('user:geolocated', [this.location.coords.latitude, this.location.coords.longitude], Date.now());
         }

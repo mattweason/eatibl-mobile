@@ -35,6 +35,12 @@
     </ion-refresher-content>
   </ion-refresher>
   <div *ngIf="view == 'list'">
+    <ion-card *ngIf="customLocation" class="info-card">
+      <ion-card-content>
+        <ion-icon name="information-circle"></ion-icon>
+        <p>Not using your device's location.</p>
+      </ion-card-content>
+    </ion-card>
     <ion-list>
       <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>

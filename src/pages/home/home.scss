@@ -101,4 +101,18 @@ page-home {
       }
     }
   }
+  .info-card{
+    ion-card-content{
+      display: flex;
+      align-items: center;
+      ion-icon{
+        color: color($colors, secondary);
+        font-size: 24px;
+        margin-right: 6px;
+      }
+      p{
+        margin: 0;
+      }
+    }
+  }
 }

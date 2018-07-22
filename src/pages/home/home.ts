@@ -38,6 +38,7 @@ export class HomePage {
   batch = 0; //Represents the batch number
   allResults = false; //Becomes true when we've retrieved all of the restaurants.
   hideMap = false;
+  customLocation = false;
 
   map: GoogleMap;
 
@@ -59,6 +60,12 @@ export class HomePage {
         this.firstCall = false;
         this.getRestaurants();
       }
+    });
+
+    //Find out if we have a custom location
+    this.storage.get('eatiblLocation').then((val) => {
+      if(val) //If custom location, show card about custom location
+        this.customLocation = true;
     });
 
     //Move other map out of the way when position map is opened
@@ -88,6 +95,7 @@ export class HomePage {
         this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
           if(val) //Custom location has been set, set userCoords to custom value
             this.userCoords = val;
+          this.customLocation = true;
           this.getRestaurants(); //Whether we have an updated custom location, or changed to auto locate, get new list of restaurants
         });
     });
