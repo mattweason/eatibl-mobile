@@ -135,11 +135,11 @@ export class SearchPage {
         rank++;
 
       //bonus and penalty for distance
-      if(restaurantList[i].distance <= 1)
-        rank = rank + 1/restaurantList[i].distance;
-      else if(restaurantList[i].distance >= 3 && restaurantList[i].distance <= 10)
+      if(restaurantList[i].distance <= 2)
+        rank = rank + 2/restaurantList[i].distance;
+      else if(restaurantList[i].distance > 2 && restaurantList[i].distance <= 5)
         rank = rank - restaurantList[i].distance/2;
-      else if(restaurantList[i].distance > 10)
+      else if(restaurantList[i].distance > 5)
         rank = rank - 6;
 
       restaurantList[i].rank = rank; //SET RANKING
