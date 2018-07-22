@@ -93,9 +93,11 @@ export class HomePage {
 
       if(locationUpdated) //Did user update the location in the modal
         this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
-          if(val) //Custom location has been set, set userCoords to custom value
+          if(val) { //Custom location has been set, set userCoords to custom value
             this.userCoords = val;
-          this.customLocation = true;
+            this.customLocation = true;
+          } else
+            this.customLocation = false;
           this.getRestaurants(); //Whether we have an updated custom location, or changed to auto locate, get new list of restaurants
         });
     });
