@@ -239,6 +239,9 @@ ion-tabs{
       bottom: auto;
     }
   }
+  .locate-tab{
+    bottom: 52px;
+  }
 }
 .platform-android{
   .help-tab{
@@ -248,6 +251,9 @@ ion-tabs{
       top: 126px;
       bottom: auto;
     }
+  }
+  .locate-tab{
+    bottom: 60px;
   }
 }
 
