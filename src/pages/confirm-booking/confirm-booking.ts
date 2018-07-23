@@ -237,6 +237,11 @@ export class ConfirmBookingPage {
           message = 'Sorry, there was an error with your booking. Please try again.';
         }
 
+        if(this.response.message == 'booking passed'){ //If the booking time is within 15 minutes of the timeslot or after the timeslot time
+          title = 'Booking Passed';
+          message = 'You must create your booking 15 minutes or more before the booking time.';
+        }
+
         this.presentAlert(title, message);
       }
       else{

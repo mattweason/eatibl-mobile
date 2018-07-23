@@ -165,13 +165,13 @@ export class RestaurantCardComponent implements OnChanges {
 
   //Filter timeslots for the currently selected date
   processTimeslots(){
-    var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
+    var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60)); //Current time
     var date = this.date;
 
     //Filter timeslots by date and time
     this.timeslots = _.filter(this.timeslotsData, function(timeslot){
       if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
+        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour + 0.25); //Add a quarter hour to comparison to prevent bookings within 15 minutes of a booking time
       else
         return (timeslot.day == moment(date).format('dddd').toString());
     });
