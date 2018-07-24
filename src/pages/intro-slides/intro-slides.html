@@ -1,0 +1,78 @@
+<!--
+  Generated template for the IntroSlidesPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-content>
+
+  <ion-slides paginationType="bullets" pager="true" (ionSlideNextStart)="slideChanged()" (ionSlidePrevStart)="slideChanged()">
+    <ion-slide class="intro-slide">
+      <div class="logo-area">
+        <img src="assets/imgs/welcome.png">
+      </div>
+      <div class="intro-slide-liner">
+        <p>Use Eatibl to make discounted bookings for your next meal!</p>
+        <p>Before you get started, let's do a quick tour of our app.</p>
+        <div class="button-area">
+          <button ion-button color="light" (tap)="closeModal()">I'll Pass</button>
+          <button ion-button color="secondary" (tap)="nextSlide()">Let's Go!</button>
+        </div>
+      </div>
+    </ion-slide>
+    <ion-slide class="screenshot-slide">
+      <div class="screenshot-area">
+        <img src="assets/imgs/intro-slide-1.png">
+      </div>
+      <div class="info-area">
+        <h2>Get Started</h2>
+        <p>Browse through 150+ restaurants and check out their time-based discounts (ranging from 10% - 50% off).</p>
+      </div>
+    </ion-slide>
+    <ion-slide class="screenshot-slide">
+      <div class="screenshot-area">
+        <img src="assets/imgs/intro-slide-2.png">
+      </div>
+      <div class="info-area">
+        <h2>Make a Booking</h2>
+        <p>Pick an available time at a restaurant and choose your party size then provide your email and phone to confirm your booking.</p>
+      </div>
+    </ion-slide>
+    <ion-slide class="screenshot-slide">
+      <div class="screenshot-area">
+        <img src="assets/imgs/intro-slide-3.png">
+      </div>
+      <div class="info-area">
+        <h2>Show up</h2>
+        <p>Present your booking confirmation when you arrive at the restaurant and the discount will be applied to your bill. It’s that simple!</p>
+      </div>
+    </ion-slide>
+    <ion-slide class="final-slide">
+      <div class="final-slide-liner">
+        <img class="slide-graphic top-left" src="assets/imgs/final-slide-1.png">
+        <img class="slide-graphic top-right" src="assets/imgs/final-slide-2.png">
+        <h2>Make it happen!</h2>
+        <p class="list">No in-app payments</p>
+        <p class="list">No credit card information needed</p>
+        <p class="list">No account creation required</p>
+        <p>All deals are first come, first serve!</p>
+        <div class="button-area">
+          <button ion-button color="light" (tap)="learnMore()">Learn More</button>
+          <button ion-button color="secondary" (tap)="closeModal()">Get Started</button>
+        </div>
+        <img class="slide-graphic bottom-left" src="assets/imgs/final-slide-3.png">
+        <img class="slide-graphic bottom-right" src="assets/imgs/final-slide-4.png">
+      </div>
+    </ion-slide>
+  </ion-slides>
+  <ion-footer>
+    <ion-toolbar>
+      <ion-buttons left>
+        <button [disabled]="currentIndex == 0" ion-button color="secondary" icon-start (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon>Back</button>
+      </ion-buttons>
+      <ion-buttons right>
+        <button [disabled]="currentIndex == 4" ion-button color="secondary" icon-end (tap)="nextSlide()">Next<ion-icon name="arrow-forward"></ion-icon></button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-footer>
+</ion-content>

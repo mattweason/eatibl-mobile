@@ -2,6 +2,7 @@ import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import {IonicPage, NavController, Content, ModalController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { Device } from '@ionic-native/device';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
@@ -48,6 +49,7 @@ export class HomePage {
     private functions: FunctionsProvider,
     private cdRef:ChangeDetectorRef,
     private modal: ModalController,
+    private device: Device,
     public events: Events,
     private storage: Storage
   ) {
@@ -74,8 +76,26 @@ export class HomePage {
     });
   }
 
+  //Open intro slides
+  presentIntroModal(){
+    const introModal = this.modal.create('IntroSlidesPage');
+    introModal.onDidDismiss(() => {
+      this.API.makePost('/user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
+      this.storage.remove('eatiblShowSlides');
+    });
+    introModal.present();
+  }
+
   //Get restaurant list
   getRestaurants(){
+    //This is the final endpoint of the geolocation/custom location process
+    //Here is where we need to check if we need to show the intro slides or not
+    this.storage.get('eatiblShowSlides').then((val) => {
+      console.log('eatibl show slides: ' + val)
+      if(val) //If custom location, show card about custom location
+        this.presentIntroModal();
+    });
+
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
       this.events.publish('reveal:restaurants');
       this.dataCache = data;

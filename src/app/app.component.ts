@@ -25,6 +25,8 @@ export class MyApp {
   hideHelp = false;
   watch: any; //Holds watch position subscription
   _autoLocateSub: (location:any, time:any) => void;
+  blacklisted = false;
+
 
   //Used for android permissions
   hasPermission = false;
@@ -94,6 +96,15 @@ export class MyApp {
         this.firebase.onTokenRefresh()
           .subscribe((token: string) => console.log(`Got a new token ${token}`));
 
+        //Check and store device id if we do not have it
+        this.API.makePost('/user/device/check', {deviceId: this.device.uuid, platform: this.device.platform, model: this.device.model, version: this.device.version}).subscribe(result => {
+          console.log(result)
+          if(result['blacklisted'])
+            this.blacklisted = true;
+          if(!result['hideSlides'])
+            this.storage.set('eatiblShowSlides', 1);
+        });
+
         //Check for both permissions and if location services are enabled
         if(platform.is('android'))
           this.locationPermissionAndroid();
@@ -117,11 +128,8 @@ export class MyApp {
 
     //Sends the users location to a child component when requested
     events.subscribe('get:geolocation:autolocate', () => {
-      console.log('asked to auto locate')
       if(this.platform.is('android')) {
-        console.log('this is android')
         this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(result => {
-          console.log(result)
           if (result.hasPermission)
             this.diagnostic.isLocationEnabled().then((state) => {
               if (state) {
@@ -194,26 +202,6 @@ export class MyApp {
   supportModal(){
     const supportModal = this.modal.create('SupportModalPage');
     supportModal.present();
-  }
-
-  //Alert to prompt user to enable location services ios
-  enableLocationIos(){
-    const current = this; //Cache this
-    let alert = this.alertCtrl.create({
-      title: 'Allow location services',
-      subTitle: 'Eatibl needs location services to work. Please allow Eatibl to access your location services.',
-      enableBackdropDismiss: false,
-      buttons: [
-        {
-          text: 'Allow',
-          handler: () => {
-            this.diagnostic.switchToSettings().then(() => { //Open app specific settings page
-              console.log('switched to settings')
-            });
-          }
-        }]
-    });
-    alert.present();
   }
 
   //Run geolocation permissions for iOs
@@ -316,40 +304,6 @@ export class MyApp {
     });
     mapModal.present();
   }
-
-  //Prompt native dialog to turn on location services android
-  locationEnabledAndroid(){
-    this.locationAccuracy.canRequest().then((canRequest: boolean) => {
-      if (canRequest) {
-        // the accuracy option will be ignored by iOS
-        this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
-          () => this.geolocateUser(false),
-          error => {
-            var current = this; //Cache this
-            let alert = this.alertCtrl.create({
-              title: 'Enable location services',
-              subTitle: 'Eatibl needs location services to work. Please enable your location services.',
-              enableBackdropDismiss: false,
-              buttons: [
-                {
-                  text: 'Close App',
-                  handler: () => {
-                    current.platform.exitApp();
-                  }
-                },
-                {
-                  text: 'Enable',
-                  handler: () => {
-                    current.locationEnabledAndroid(); //Rerun function to prompt native enable dialog again
-                  }
-                }]
-            });
-            alert.present();
-          }
-        );
-      }
-    });
-  };
 
   forceUpdate() {
     let alert = this.alertCtrl.create({
