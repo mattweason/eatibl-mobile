@@ -29,6 +29,13 @@
 <ion-content>
   <div [ngSwitch]="type">
     <ion-grid class="border-bottom" *ngSwitchCase="'faq'">
+      <ion-row>
+        <ion-col>
+          <div class="intro-button">
+            <button ion-button color="light" (tap)="viewIntro()">View Intro</button>
+          </div>
+        </ion-col>
+      </ion-row>
       <ion-list *ngFor="let faq of faqs; let i = index" text-wrap no-lines>
         <button [ngClass]="{'active': faq.open}" class="question" ion-item detail-none (click)="toggleSection(i)">
           {{ faq.question }}

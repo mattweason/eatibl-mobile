@@ -35,5 +35,10 @@ page-support-modal {
       color: color($colors, danger) !important;
     }
   }
+  .intro-button{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
 }
 

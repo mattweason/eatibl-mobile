@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController, AlertController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ViewController, AlertController, ModalController} from 'ionic-angular';
 import {Validators, FormGroup, FormBuilder} from "@angular/forms";
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
@@ -33,6 +33,7 @@ export class SupportModalPage {
     private formBuilder: FormBuilder,
     private device: Device,
     private storage: Storage,
+    private modal: ModalController,
     private API: ApiServiceProvider,
     private alertCtrl: AlertController,
     public navParams: NavParams
@@ -124,6 +125,13 @@ export class SupportModalPage {
         open: false
       }
     ]
+  }
+
+  //Open the intro slides
+  viewIntro(){
+    const introModal = this.modal.create('IntroSlidesPage');
+    introModal.onDidDismiss(() => {});
+    introModal.present();
   }
 
   ionViewDidEnter(){
