@@ -98,7 +98,6 @@ export class MyApp {
 
         //Check and store device id if we do not have it
         this.API.makePost('/user/device/check', {deviceId: this.device.uuid, platform: this.device.platform, model: this.device.model, version: this.device.version}).subscribe(result => {
-          console.log(result)
           if(result['blacklisted'])
             this.blacklisted = true;
           if(!result['hideSlides'])
