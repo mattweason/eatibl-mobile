@@ -80,7 +80,7 @@ export class HomePage {
   presentIntroModal(){
     const introModal = this.modal.create('IntroSlidesPage');
     introModal.onDidDismiss(() => {
-      this.API.makePost('/user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
+      this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
       this.storage.remove('eatiblShowSlides');
     });
     introModal.present();

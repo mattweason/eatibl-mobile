@@ -230,6 +230,8 @@ ion-tabs{
     }
   }
 }
+
+//Platform specific styling
 .platform-ios{
   .help-tab{
     bottom: 52px;
@@ -241,6 +243,17 @@ ion-tabs{
   }
   .locate-tab{
     bottom: 52px;
+  }
+  page-intro-slides{
+    .intro-slide, .screenshot-slide, .final-slide {
+      .slide-zoom {
+        height: calc(100vh - 44px);
+        margin-bottom: 44px;
+      }
+    }
+    .swiper-pagination{
+      bottom: 12px !important;
+    }
   }
 }
 .platform-android{
@@ -254,6 +267,17 @@ ion-tabs{
   }
   .locate-tab{
     bottom: 60px;
+  }
+  page-intro-slides{
+    .intro-slide, .screenshot-slide, .final-slide {
+      .slide-zoom {
+        height: calc(100vh - 56px);
+        margin-bottom: 56px;
+      }
+    }
+    .swiper-pagination{
+      bottom: 20px !important;
+    }
   }
 }
 

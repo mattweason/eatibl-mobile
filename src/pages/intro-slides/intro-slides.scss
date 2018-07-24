@@ -6,8 +6,6 @@ page-intro-slides {
   }
   .intro-slide{
     .slide-zoom{
-      height: calc(100vh - 56px);
-      margin-bottom: 56px;
       .intro-slide-liner{
         padding: 0 5%;
         height: 60%;
@@ -20,8 +18,6 @@ page-intro-slides {
   }
   .screenshot-slide{
     .slide-zoom{
-      height: calc(100vh - 56px);
-      margin-bottom: 56px;
       .screenshot-area{
         display: flex;
         justify-content: center;
@@ -35,6 +31,11 @@ page-intro-slides {
         }
       }
       .info-area{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 40%;
         padding: 0 5%;
       }
     }
@@ -42,8 +43,6 @@ page-intro-slides {
   .final-slide{
     .slide-zoom{
       position: relative;
-      height: calc(100vh - 56px);
-      margin-bottom: 56px;
       background-color: color($colors, primary);
       .final-slide-liner{
         height: 100%;
