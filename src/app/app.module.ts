@@ -30,6 +30,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { ApiServiceProvider } from '../providers/api-service/api-service';
 import { FunctionsProvider } from '../providers/functions/functions';
 import { AppErrorHandlerProvider } from '../providers/app-error-handler/app-error-handler';
+import { ActivityLoggerProvider } from '../providers/activity-logger/activity-logger';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { AppErrorHandlerProvider } from '../providers/app-error-handler/app-erro
     SMS,
     LocalNotifications,
     Diagnostic,
-    LocationAccuracy
+    LocationAccuracy,
+    ActivityLoggerProvider
   ]
 })
 export class AppModule {}
