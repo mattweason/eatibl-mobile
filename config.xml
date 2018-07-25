@@ -87,6 +87,8 @@
     <allow-navigation href="http://192.168.1.107:8100" />
     <allow-navigation href="http://192.168.1.107:8101" />
     <allow-navigation href="http://192.168.1.146:8100" />
+    <allow-navigation href="http://192.168.1.125:8100" />
+    <allow-navigation href="http://192.168.1.120:8100" />
     <plugin name="cordova-plugin-nativegeocoder" spec="3.1.1">
         <variable name="LOCATION_WHEN_IN_USE_DESCRIPTION" value="Use geocoder service" />
     </plugin>
@@ -125,10 +127,7 @@
     <plugin name="cordova-plugin-local-notification" spec="^0.9.0-beta.2" />
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.8" />
     <plugin name="cordova-plugin-request-location-accuracy" spec="^2.2.3" />
-    <allow-navigation href="http://192.168.1.125:8100" />
-    <allow-navigation href="http://192.168.1.120:8100" />
     <engine name="ios" spec="4.5.4" />
     <engine name="android" spec="~7.0.0" />
     <engine name="browser" spec="~5.0.3" />
-    <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
 </widget>

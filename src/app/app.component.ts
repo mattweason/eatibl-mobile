@@ -90,19 +90,21 @@ export class MyApp {
         // });
 
         this.firebase.getToken()
-          .then(token => console.log(`The token is ${token}`)) // save the token server-side and use it to push notifications to this device
-          .catch(error => console.error('Error getting token', error));
+          .then(token => {
+            this.userInfo(token);
+          }) // save the token server-side and use it to push notifications to this device
+          .catch(() => {
+            this.userInfo('err');
+          });
 
-        this.firebase.onTokenRefresh()
-          .subscribe((token: string) => console.log(`Got a new token ${token}`));
+        //TODO: Find out what the hell this does
+        // this.firebase.onTokenRefresh()
+        //   .subscribe((token: string) => {
+        //     console.log(token);
+        //     console.log('token refreshed')
+        //     this.userInfo(token);
+        // });
 
-        //Check and store device id if we do not have it
-        this.API.makePost('user/device/check', {deviceId: this.device.uuid, platform: this.device.platform, model: this.device.model, version: this.device.version}).subscribe(result => {
-          if(result['blacklisted'])
-            this.blacklisted = true;
-          if(!result['hideSlides'])
-            this.storage.set('eatiblShowSlides', 1);
-        });
 
         //Check for both permissions and if location services are enabled
         if(platform.is('android'))
@@ -194,6 +196,26 @@ export class MyApp {
     //Listens to whether the user in on the map view or not to move the help button
     events.subscribe('view:map', (onMap) => { //onMap is true if the user is on the map view
       this.mapView = onMap;
+    });
+  }
+
+  //Gather initial user information
+  userInfo(token){
+    var current = this; //Cache this
+    this.appVersion.getVersionNumber().then(function(version_code) {
+      current.API.makePost('user/device/check', {
+        deviceId: current.device.uuid,
+        platform: current.device.platform,
+        model: current.device.model,
+        version: current.device.version,
+        eatiblVersion: version_code,
+        firebaseToken: token
+      }).subscribe(result => {
+        if (result['blacklisted'])
+          current.blacklisted = true;
+        if (!result['hideSlides'])
+          current.storage.set('eatiblShowSlides', 1);
+      });
     });
   }
 
