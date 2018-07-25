@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiServiceProvider } from "../providers/api-service/api-service";
+import { ApiServiceProvider } from "../api-service/api-service";
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
+import * as decode from 'jwt-decode';
 
 /*
   Generated class for the ActivityLoggerProvider provider.

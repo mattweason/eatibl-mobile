@@ -314,7 +314,7 @@ export class HomePage {
       var timeslots = _.filter(restaurantList[i].timeslots, function(timeslot){
 
         if(today == day) //for today filter out spots that have already passed
-          return timeslot.day == day && timeslot.time >= hour;
+          return timeslot.day == day && timeslot.time >= hour + 0.25; //Add a quarter hour to comparison to prevent bookings within 15 minutes of a booking time;
         else //for other days, show all available timeslots
           return timeslot.day == day;
 
