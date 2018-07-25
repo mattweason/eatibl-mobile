@@ -6,6 +6,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
 import { ApiServiceProvider } from "../providers/api-service/api-service";
+import { ActivityLoggerProvider } from "../providers/activity-logger/activity-logger";
 import { AlertController, ModalController } from 'ionic-angular';
 import { Device } from '@ionic-native/device';
 import { Events } from 'ionic-angular';
@@ -47,6 +48,7 @@ export class MyApp {
     private storage: Storage,
     private firebase: Firebase,
     private diagnostic: Diagnostic,
+    private log: ActivityLoggerProvider,
     private locationAccuracy: LocationAccuracy
   ) {
 
@@ -59,6 +61,7 @@ export class MyApp {
 
       //Only do native stuff in android or ios
       if (platform.is('cordova')){
+        this.log.sendEvent('app loaded', '', '');
         var self = this; //Cache this to use in functions
         //check if we need to force update on currently installed version of app ***COMMENTED OUT FOR NOW****
         // appVersion.getVersionNumber().then(function(version_code){

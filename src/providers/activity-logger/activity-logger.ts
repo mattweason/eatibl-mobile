@@ -25,18 +25,20 @@ export class ActivityLoggerProvider {
   }
 
   sendEvent(event, page, notes){
+    console.log('sendEvent');
     this.storage.get('eatiblUser').then((val) => {
+      console.log(val);
       if(val){
         var user = decode(val);
         this.userId = user._id;
       }
-      this.API.makePost('user/device/check', {
+      this.API.makePost('log/trackUserActivity', {
         event: event,
         page: page,
         deviceId: this.device.uuid,
         userId: this.userId,
         notes: notes
-      }).subscribe(result => {});
+      }).subscribe();
     });
   }
 
