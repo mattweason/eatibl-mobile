@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, AlertController, ModalController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator';
 import { Events } from 'ionic-angular';
 import moment from 'moment';
@@ -41,7 +42,8 @@ export class BookingConfirmedPage {
     private API: ApiServiceProvider,
     public alertCtrl: AlertController,
     private launchNavigator: LaunchNavigator,
-    public events: Events
+    public events: Events,
+    private log: ActivityLoggerProvider
     ) {
       //Collect nav parameters
       this.restaurant = navParams.get('restaurant');
@@ -61,6 +63,7 @@ export class BookingConfirmedPage {
 
   //Open the users relevant maps app to navigate to the restaurant
   openMaps(){
+    this.log.sendEvent('Get Directions', 'Booking Confirmed', 'User clicked on the navigate button below the map');
     this.launchNavigator.navigate(this.restaurant.address);
   }
 
@@ -85,6 +88,7 @@ export class BookingConfirmedPage {
   }
 
   cancelBooking(){
+    this.log.sendEvent('Cancel Booking: Attempted', 'Booking Confirmed', JSON.stringify(this.booking));
     if(!this.tooClose){
       let alert = this.alertCtrl.create({
         title: 'Cancel Booking',
@@ -101,6 +105,8 @@ export class BookingConfirmedPage {
             text: 'Yes',
             handler: () => {
               this.API.makeCall('booking/'+this.booking._id+'/disable').subscribe(response => {
+                this.log.sendEvent('Cancel Booking: Success', 'Booking Confirmed', JSON.stringify(this.booking));
+
                 this.response = response;
                 if(this.response.message == 'error')
                   this.errorAlert();
@@ -127,6 +133,8 @@ export class BookingConfirmedPage {
           }
         ]
       });
+
+      this.log.sendEvent('Cancel Booking: Failed', 'Booking Confirmed', JSON.stringify(this.booking));
       alert.present();
     }
   }
@@ -155,6 +163,7 @@ export class BookingConfirmedPage {
   }
 
   cannotRedeemAlert(){
+    this.log.sendEvent('Redeem: Fail', 'Booking Confirmed', "Can't redeem because of time restriction");
     let alert = this.alertCtrl.create({
       title: "Can't Redeem",
       subTitle: 'You must be at the restaurant and near the time of your booking to redeem.',
@@ -164,6 +173,7 @@ export class BookingConfirmedPage {
   }
 
   alreadyRedeemedAlert(){
+    this.log.sendEvent('Redeem: Already Redeemed', 'Booking Confirmed', JSON.stringify(this.booking));
     let alert = this.alertCtrl.create({
       title: "Already Redeemed",
       subTitle: 'You have already redeemed this booking.',
@@ -173,6 +183,7 @@ export class BookingConfirmedPage {
   }
 
   redeemBooking(){
+    this.log.sendEvent('Redeem: Attempted', 'Booking Confirmed', JSON.stringify(this.booking));
     if(!this.redeemed){
       this.checkLocation();
       this.checkTime();
@@ -185,12 +196,16 @@ export class BookingConfirmedPage {
           distance: this.distance || 0,
           timestamp: moment()
         };
+        this.log.sendEvent('Redeem: Within Time Limits', 'Booking Confirmed', JSON.stringify(redeemObject));
+
         this.API.makePost('booking/'+this.booking._id+'/redeem', redeemObject).subscribe(response => {
           this.response = response;
           if(this.response.message == 'error')
             this.errorAlert();
           if(this.response.redeemed)
             this.redeemed = true;
+
+          this.log.sendEvent('Redeem: Successful', 'Booking Confirmed', "Response Message from Server: "+JSON.stringify(this.response));
         });
       }
       else

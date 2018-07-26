@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ModalController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 import * as _ from 'underscore';
@@ -31,7 +32,8 @@ export class AccountPage {
     private storage: Storage,
     private API: ApiServiceProvider,
     private functions: FunctionsProvider,
-    private modal: ModalController
+    private modal: ModalController,
+    private log: ActivityLoggerProvider
   ) {
   }
 
@@ -58,6 +60,7 @@ export class AccountPage {
   }
 
   promptInvite() {
+    this.log.sendEvent('Invite Friends Modal', 'Account', 'User has opened modal to invite friends');
     const inviteModal = this.modal.create('InviteModalPage', { type: 'referral' });
 
     inviteModal.present();
@@ -78,14 +81,17 @@ export class AccountPage {
   }
 
   signUp(){
+    this.log.sendEvent('Signup: Initiated', 'Account', 'User pressed signup button');
     this.navCtrl.push('SignupPage');
   }
 
   login(){
+    this.log.sendEvent('Login: Initiated', 'Account', 'User pressed login button');
     this.navCtrl.push('LoginPage');
   }
 
   changeAccounts(){
+    this.log.sendEvent('Change account', 'Account', '');
     this.storage.remove('eatiblUser');
     this.bookingUpcoming = [];
     this.bookingHistory = [];

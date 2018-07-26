@@ -1,4 +1,4 @@
-<ion-tabs [ngClass]="{'hideTabs' : hideTabs}">
+<ion-tabs [ngClass]="{'hideTabs' : hideTabs}" (ionChange) = "logTabChange()" #tabz>
   <ion-tab [root]="tab1Root" tabTitle="Nearby" tabIcon="navigate"></ion-tab>
   <ion-tab [root]="tab2Root" tabTitle="Search" tabIcon="search"></ion-tab>
   <ion-tab [root]="tab3Root" tabTitle="Account" tabIcon="contact"></ion-tab>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ViewController, AlertController, ModalController} from 'ionic-angular';
 import {Validators, FormGroup, FormBuilder} from "@angular/forms";
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
@@ -36,7 +37,8 @@ export class SupportModalPage {
     private modal: ModalController,
     private API: ApiServiceProvider,
     private alertCtrl: AlertController,
-    public navParams: NavParams
+    public navParams: NavParams,
+    private log: ActivityLoggerProvider
   ) {
     //Form content and validation for support form
     this.supportForm = this.formBuilder.group({
@@ -130,6 +132,7 @@ export class SupportModalPage {
   //Open the intro slides
   viewIntro(){
     const introModal = this.modal.create('IntroSlidesPage');
+    this.log.sendEvent('Intro slides', 'FAQ', 'Pressed Intro slides button from within Modal');
     introModal.onDidDismiss(() => {});
     introModal.present();
   }
@@ -146,11 +149,13 @@ export class SupportModalPage {
 
   //Close the modal
   dismiss(){
+    this.log.sendEvent('Support Modal: Closed', 'Support Modal', '');
     this.viewCtrl.dismiss();
   }
 
   //Submit the contact us form
   requestSupport(){
+    this.log.sendEvent('Request Support: Attempted', 'Support Modal', 'Tried to make a support submission');
     if(!this.submitAttempt){ //Don't submit form twice
       if(!this.supportForm.valid){
         Object.keys(this.supportForm.controls).forEach(field => { // {1}
@@ -174,6 +179,7 @@ export class SupportModalPage {
 
       this.API.makePost('support/submit', this.postObject).subscribe(response => {
         if(response){
+          this.log.sendEvent('Request Support: Completed', 'Support Modal', 'Successfully sent out support request');
           this.submitAttempt = false;
           let alert = this.alertCtrl.create({
             title: 'Message Sent',
@@ -195,6 +201,7 @@ export class SupportModalPage {
   }
 
   toggleSection(i){
+    this.log.sendEvent('FAQ Section: Toggle FAQ-'+i, 'Support Modal', 'Open/close QnA');
     this.faqs[i].open = !this.faqs[i].open;
   }
 

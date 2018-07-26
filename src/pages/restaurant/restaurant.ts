@@ -3,6 +3,7 @@ import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browse
 import { IonicPage, NavController, NavParams, Slides, Events, Select } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator';
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { Storage } from '@ionic/storage';
@@ -27,7 +28,7 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
 export class RestaurantPage implements OnInit {
   private slides: Slides;
   private url: string = ENV.API;
-
+  private log: ActivityLoggerProvider
 
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
@@ -77,6 +78,7 @@ export class RestaurantPage implements OnInit {
     public events: Events,
     private storage: Storage
   ) {
+
       this.restaurant = JSON.parse(navParams.get('restaurant'));
       this.timeslotsData = JSON.parse(navParams.get('timeslotsData'));
       this.businessHoursData = JSON.parse(navParams.get('businessHoursData'));
@@ -85,7 +87,9 @@ export class RestaurantPage implements OnInit {
       this.date = navParams.get('date');
       this.time = navParams.get('time');
 
-      //Since we aren't doing setnow, make sure to initialize
+      this.log.sendEvent('Visit Restaurant', 'Restaurant', 'Visited: ' + this.restaurant.name);
+
+    //Since we aren't doing setnow, make sure to initialize
       this.today = moment().format();
       this.maxDate = moment().add(30, 'day').format();
       //Subscribe to geolocation event
@@ -188,6 +192,7 @@ export class RestaurantPage implements OnInit {
 
   //Open the users relevant maps app to navigate to the restaurant
   openMaps(){
+    this.log.sendEvent('Get Directions', 'Restaurant', 'User clicked on the navigate button below the map');
     this.launchNavigator.navigate(this.restaurant.address);
   }
 
@@ -268,6 +273,7 @@ export class RestaurantPage implements OnInit {
 
   //Activate a booking
   selectBooking(timeslot){
+    this.log.sendEvent('Timeslot: Selected', 'Restaurant', 'User chose timeslot: '+ JSON.stringify(timeslot));
     this.activeTimeslot = timeslot;
   }
 
@@ -323,12 +329,14 @@ export class RestaurantPage implements OnInit {
   }
 
   nextSlide(){
+    this.log.sendEvent('Timeslot: Next Slide', 'Restaurant', '');
     if(this.slides)
       if(!this.slides.isEnd())
         this.slides.slideNext();
   }
 
   prevSlide(){
+    this.log.sendEvent('Timeslot: Previous Slide', 'Restaurant', '');
     if(this.slides)
       if(!this.slides.isBeginning())
         this.slides.slidePrev();
@@ -368,6 +376,7 @@ export class RestaurantPage implements OnInit {
 
   //Navigate to confirm booking page
   bookNow(event, restaurant, timeslot, people, date){
+    this.log.sendEvent('Booking: Initiated', 'Restaurant', 'At time: '+timeslot.time+' At discount: '+timeslot.discount+ ' For party size: '+people+ ' At date: '+date+ ' At restaurant: '+restaurant.name);
     this.navCtrl.push('ConfirmBookingPage', {
       restaurant: restaurant,
       timeslot: timeslot,
@@ -391,5 +400,21 @@ export class RestaurantPage implements OnInit {
       var distance = this.functions.getDistanceFromLatLonInKm(this.location[0], this.location[1], this.restaurant.latitude, this.restaurant.longitude);
       this.distance = this.functions.roundDistances(distance);
     }
+  }
+
+  //Keep track of when people are adjust date values
+  logDate(action, data){
+    if(action == 'changed')
+      this.log.sendEvent('DatePicker: Updated', 'Restaurant', JSON.stringify(data));
+    if(action =='cancelled')
+      this.log.sendEvent('DatePicker: Cancelled', 'Restaurant', JSON.stringify(data));
+  }
+
+  //Keep track of when people are adjust time values
+  logTime(action, data){
+    if(action == 'changed')
+      this.log.sendEvent('TimePicker: Updated', 'Restaurant', JSON.stringify(data));
+    if(action =='cancelled')
+      this.log.sendEvent('TimePicker: Cancelled', 'Restaurant', JSON.stringify(data));
   }
 }

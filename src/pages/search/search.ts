@@ -1,6 +1,7 @@
 import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -44,7 +45,8 @@ export class SearchPage {
     private API: ApiServiceProvider,
     private cdRef:ChangeDetectorRef,
     public events: Events,
-    private storage: Storage
+    private storage: Storage,
+    private log: ActivityLoggerProvider
   ) {
     events.subscribe('user:geolocated', (location, time) => {
       this.userCoords = location;
@@ -82,6 +84,7 @@ export class SearchPage {
 
   //Fires when the home page tab is selected and is already active
   ionSelected() {
+    this.log.sendEvent('Scroll to Top', 'Search', '');
     this.content.scrollToTop();
   }
 
@@ -158,6 +161,7 @@ export class SearchPage {
 
   //Currently filters based on restaurant name and categories
   filterRestaurants(searchInput){
+    this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: '+searchInput);
     this.allResults = false;
     this.batch = 0;
     this.value = searchInput ? searchInput.toLowerCase() : ''; //Don't do toLowerCase of undefined
@@ -184,6 +188,8 @@ export class SearchPage {
       return false;
     });
 
+    this.log.sendEvent('Restaurant Search: Completed', 'Search', 'Results came back, with a total restaurant count of: '+this.restaurantFiltered.length);
+
     this.restaurantList = this.restaurantFiltered.slice(0,10); //load first 10
     this.batch++;
   }
@@ -195,6 +201,7 @@ export class SearchPage {
 
   //Call next batch of 10 restaurants when you reach the bottom of the page
   getNextBatch(infiniteScroll){
+    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User scrolled down until next batch was populated, batch #: '+this.batch);
     var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
 
     for(var i = this.batch*10; i < limit; i++){
@@ -207,5 +214,20 @@ export class SearchPage {
       this.allResults = true;
 
     infiniteScroll.complete();
+  }
+  //Keep track of when people are adjust date values
+  logDate(action, data){
+    if(action == 'changed')
+      this.log.sendEvent('DatePicker: Updated', 'Search', JSON.stringify(data));
+    if(action =='cancelled')
+      this.log.sendEvent('DatePicker: Cancelled', 'Search', JSON.stringify(data));
+  }
+
+  //Keep track of when people are adjust time values
+  logTime(action, data){
+    if(action == 'changed')
+      this.log.sendEvent('TimePicker: Updated', 'Search', JSON.stringify(data));
+    if(action =='cancelled')
+      this.log.sendEvent('TimePicker: Cancelled', 'Search', JSON.stringify(data));
   }
 }

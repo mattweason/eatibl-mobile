@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ViewController, ToastController, Events} from 'ionic-angular';
 import { Storage } from '@ionic/storage';
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 
 import {GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker, LatLng} from '@ionic-native/google-maps';
 
@@ -34,7 +35,8 @@ export class SetPositionModalPage {
     private storage: Storage,
     private params: NavParams,
     private events: Events,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private log: ActivityLoggerProvider
   ) {
     //Get location nav param
     this.userCoords = params.get('location');
@@ -100,6 +102,7 @@ export class SetPositionModalPage {
   }
 
   setPosition(){
+    this.log.sendEvent('Set Position: Manual', 'Set Position Modal', '');
     this.disableButtons = true;
     this.map.clear();
     this.loading = false;
@@ -134,6 +137,8 @@ export class SetPositionModalPage {
     this.userCoords = location;
     this.locationUpdated = true;
 
+    this.log.sendEvent('Set Position: Autolocate Completed', 'Set Position Modal', 'User got autolocated, coords: '+JSON.stringify(location));
+
     let toast = this.toastCtrl.create({
       message: 'Location set!',
       duration: 2000,
@@ -150,6 +155,7 @@ export class SetPositionModalPage {
 
   //Use the devices geolocation to set location
   autoLocate(){
+    this.log.sendEvent('Set Position: Autolocate Initiated', 'Set Position Modal', 'User pressed the autolocate button');
     this.loading = true;
     this.disableButtons = true;
     this.cachedLocation = this.userCoords; //Cache location in case auto locate fails
@@ -162,6 +168,7 @@ export class SetPositionModalPage {
 
   //Close the modal
   dismiss(){
+    this.log.sendEvent('Set Position Modal: Closed', 'Set Position Modal', 'Did they update the info: '+this.locationUpdated);
     this.viewCtrl.dismiss(this.locationUpdated);
   }
 

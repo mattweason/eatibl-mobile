@@ -4,6 +4,7 @@ import { Contacts, Contact, ContactField, ContactName } from '@ionic-native/cont
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { SMS } from '@ionic-native/sms';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Storage } from '@ionic/storage';
 import * as _ from 'underscore';
 import * as decode from 'jwt-decode';
@@ -50,7 +51,8 @@ export class InviteModalPage {
     private storage: Storage,
     private functions: FunctionsProvider,
     private device: Device,
-    private API: ApiServiceProvider
+    private API: ApiServiceProvider,
+    private log: ActivityLoggerProvider
   ) {
     //Form controls and validation
     this.addContactForm = this.formBuilder.group({
@@ -72,6 +74,8 @@ export class InviteModalPage {
     this.type = navParams.get('type');
     this.booking = navParams.get('booking');
     this.restaurant = navParams.get('restaurant');
+
+    this.log.sendEvent('Invite Modal: Initiated', 'Invite Modal', 'Type: ' +this.type + ' booking: ' +this.booking || "none" +' Restaurant:' +this.restaurant.name || "none");
 
     if(this.booking){
       this.buildDateObject();
@@ -125,10 +129,12 @@ export class InviteModalPage {
 
   //Browse the phone's contacts to add to the invitee list
   browseContacts(){
+    this.log.sendEvent('Invite Modal: Contact Initiated', 'Invite Modal', 'User clicked to get contacts from phone');
     var current = this;
 
     this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.READ_CONTACTS, this.androidPermissions.PERMISSION.SEND_SMS]).then(
       result => {
+        this.log.sendEvent('Invite Modal: Contact Launched', 'Invite Modal', 'User went into their contacts (feature needs debug)');
         current.contacts.find(['displayName', 'name', 'phoneNumbers', 'emails'], {filter: "", multiple: true})
           .then(data => {
             //Initialize alert
@@ -189,16 +195,19 @@ export class InviteModalPage {
   }
 
   submitContact(){
+    this.log.sendEvent('Invite Modal: Contact Added', 'Invite Modal', 'Added new contact to send invite list: '+this.addContactForm.value.name+ ", "+ this.addContactForm.value.phone);
     this.inviteList.push({name: this.addContactForm.value.name, phone: this.addContactForm.value.phone})
   }
 
   removeContact(index, contact){
+    this.log.sendEvent('Invite Modal: Contact Removed', 'Invite Modal', 'Removed contact from send invite list: '+this.inviteList[index].name+ ", "+ this.inviteList[index].phone);
     this.inviteList.splice(index, 1);
     var contactIdIndex = this.contactIds.indexOf(contact.rawId);
     this.contactIds.splice(contactIdIndex, 1);
   }
 
   sendInvites(){
+    this.log.sendEvent('Invite Modal: SMS Attempted', 'Invite Modal', JSON.stringify(this.inviteList));
     this.sendingSMS = true;
     if(this.inviteList.length > 0){
       for(var i = 0; i < this.inviteList.length; i++){
@@ -226,6 +235,7 @@ export class InviteModalPage {
         var current = this;
         (function(phoneNumber, message){
           current.sms.send(phoneNumber, message, {replaceLineBreaks: true}).then((result) => {
+            this.log.sendEvent('Invite Modal: SMS Sent', 'Invite Modal', phoneNumber);
             var postValues = {
               ref_phone: phoneNumber,
               message: message,
@@ -238,7 +248,7 @@ export class InviteModalPage {
             if(current.type == 'reminder') //for reminder referrals, track which booking prompted the reminder
               postValues['booking'] = current.booking._id;
 
-            current.API.makePost('referral/save', postValues).subscribe(response => {});
+            current.API.makePost('referral/save', postValues).subscribe();
           })
         })(phoneNumber, message);
       }
@@ -255,6 +265,7 @@ export class InviteModalPage {
   }
 
   dismiss(){
+    this.log.sendEvent('Invite Modal: Closed', 'Invite Modal', '');
     this.viewCtrl.dismiss();
   }
 

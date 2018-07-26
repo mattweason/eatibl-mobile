@@ -14,6 +14,8 @@ import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
+import * as moment from 'moment';
+import * as decode from 'jwt-decode';
 
 
 @Component({
@@ -27,7 +29,8 @@ export class MyApp {
   watch: any; //Holds watch position subscription
   _autoLocateSub: (location:any, time:any) => void;
   blacklisted = false;
-
+  locationCachedTime: any; //Used to send mark the last time geolocation data was sent to the backend
+  user: any;
 
   //Used for android permissions
   hasPermission = false;
@@ -61,8 +64,30 @@ export class MyApp {
 
       //Only do native stuff in android or ios
       if (platform.is('cordova')){
-        this.log.sendEvent('app loaded', '', '');
-        var self = this; //Cache this to use in functions
+        this.log.sendEvent('App Start', 'runTime', '');
+
+        this.diagnostic.getLocationAuthorizationStatus().then((status) => {
+          if(status == 'not_determined') //track cases where users are required to provide permission
+            this.log.sendEvent('Asked Permission', 'runTime', '');
+          if(status == 'denied')
+            this.log.sendEvent('Loaded without Geolocation', 'runTime', 'User previously declined to give geolocation permission');
+          if(status == 'authorized_when_in_use' || status == 'authorized_always')
+            this.log.sendEvent('Loaded with Geolocation', 'runTime', 'User previously granted geolocation permission');
+
+        });
+
+        //check if user is logged in
+        this.storage.get('eatiblUser').then((val) => {
+          if(val){
+            this.user = decode(val);
+            this.log.sendEvent('Loaded: User Data', 'runTime', JSON.stringify(this.user));
+          }
+          else
+            this.log.sendEvent('Loaded: Unregistered User', 'runTime', "User isn't logged in");
+
+        });
+
+          //var self = this; //Cache this to use in functions
         //check if we need to force update on currently installed version of app ***COMMENTED OUT FOR NOW****
         // appVersion.getVersionNumber().then(function(version_code){
         //   console.log(version_code);
@@ -214,6 +239,11 @@ export class MyApp {
         eatiblVersion: version_code,
         firebaseToken: token
       }).subscribe(result => {
+        if(result.newUser)
+          this.log.sendEvent('Device: New', 'runTime', "This is the first time we're tracking this device");
+        else
+          this.log.sendEvent('Device: Existing', 'runTime', "This device has accessed the app before");
+
         if (result['blacklisted'])
           current.blacklisted = true;
         if (!result['hideSlides'])
@@ -225,6 +255,7 @@ export class MyApp {
   //Open the support modal
   supportModal(){
     const supportModal = this.modal.create('SupportModalPage');
+    this.log.sendEvent('Support Modal', 'unknown', 'Modal can be called from anywhere in the app');
     supportModal.present();
   }
 
@@ -315,6 +346,7 @@ export class MyApp {
 
   //Preset custom location modal
   presentLocationModal(){
+    this.log.sendEvent('Location Modal', 'runTime', ''); //log each time modal is opened
     this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
     const mapModal = this.modal.create('SetPositionModalPage', {location: ['43.656347', '-79.380890']});
     mapModal.onDidDismiss((locationUpdated) => {
@@ -343,19 +375,27 @@ export class MyApp {
     loadingModal.present();
   }
 
-
+  //Function to log geolocation every 5 minutes
+  logLocation(data){
+    if(moment().isAfter(moment(this.locationCachedTime).add(5, 'm'))){
+      this.API.makePost('user/geolocation', {deviceId: this.device.uuid, user_fid: this.user._id || '', lat: data.coords.latitude, lng: data.coords.longitude})
+      this.locationCachedTime = moment();
+    }
+  }
 
   //Get and watch the users location
   geolocateUser(autolocate){
 
     //Request geolocation
     this.geolocation.getCurrentPosition({timeout: 15000}).then((resp) => {
+      this.logLocation(resp);
       this.location = resp;
       this.sendGeolocationEvent();
 
       //Set up an observable for child components/pages to watch for geolocation data
       let watch = this.geolocation.watchPosition({maximumAge: 30000});
       watch.subscribe((data) => {
+        this.logLocation(data);
         this.location = data;
         this.sendGeolocationEvent();
       });

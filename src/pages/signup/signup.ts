@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, AlertController } from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
@@ -32,7 +33,8 @@ export class SignupPage {
     public alertCtrl: AlertController,
     private formBuilder: FormBuilder,
     private device: Device,
-    private storage: Storage
+    private storage: Storage,
+    private log: ActivityLoggerProvider
   ) {
 
     //Form controls and validation
@@ -76,6 +78,7 @@ export class SignupPage {
   }
 
   signup(){
+    this.log.sendEvent('Signup: Attempted', 'Sign up', 'User has begun sign-up process');
     if(!this.signupForm.valid){
       Object.keys(this.signupForm.controls).forEach(field => { // {1}
         const control = this.signupForm.get(field);            // {2}
@@ -99,6 +102,8 @@ export class SignupPage {
         this.presentAlert(title, message);
 
       } else { //Phone number is good
+        var newObj = this.postObject; delete newObj.password; //remove password and save data to log
+        this.log.sendEvent('Signup: Verification Sent', 'Sign up', 'System has sent SMS to user for verification. Post Object: '+JSON.stringify(newObj));
         if (response['verify']) //Account needs verification, SMS has been sent
           this.verifyAlert(false);
 
@@ -164,11 +169,12 @@ export class SignupPage {
 
     //make API call to get token if successful, or status 401 if login failed
     this.API.makePost('register', this.postObject).subscribe(response => {
-      console.log(response)
+      var newObj = this.postObject; delete newObj.password; //remove password and save data to log
       var title;
       var message;
       this.response = response;
       if(this.response.message == 'success'){
+        this.log.sendEvent('Signup: Success', 'Sign up', JSON.stringify(newObj));
         this.storage.set('eatiblUser',this.response.token).then((val) => {
           title = 'Account created';
           message = 'Your account has been created!';
@@ -176,11 +182,13 @@ export class SignupPage {
         });
       }
       if(this.response.message == 'email taken'){
+        this.log.sendEvent('Signup: Email Taken', 'Sign up', JSON.stringify(newObj));
         title = 'Email Taken';
         message = 'This email is already associated with an account. Please choose a different email or log in.';
         this.presentAlert(title, message);
       }
       if(this.response.message == 'error'){
+        this.log.sendEvent('Signup: Error', 'Sign up', JSON.stringify(newObj));
         title = 'Error';
         message = 'There was an error creating your account. Please try again.';
         this.presentAlert(title, message);

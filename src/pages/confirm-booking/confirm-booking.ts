@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {IonicPage, NavController, NavParams, AlertController, ModalController} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
@@ -51,7 +52,8 @@ export class ConfirmBookingPage {
     private formBuilder: FormBuilder,
     private device: Device,
     private storage: Storage,
-    private modal: ModalController
+    private modal: ModalController,
+    private log: ActivityLoggerProvider
   ) {
     this.restaurant = navParams.get('restaurant');
     this.timeslot = navParams.get('timeslot');
@@ -91,6 +93,7 @@ export class ConfirmBookingPage {
     this.buildDateObject();
     this.storage.get('eatiblUser').then((val) => {
       if(val){
+        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
         this.user = decode(val);
         this.bookingForm.controls['name'].setValue(this.user.name);
         this.bookingForm.controls['phone'].setValue(this.user.phone);
@@ -114,11 +117,14 @@ export class ConfirmBookingPage {
   }
 
   confirm(){
-    if(!this.bookingForm.valid)
+    this.log.sendEvent('Confirm Booking: Initiated', 'Confirm Booking', JSON.stringify(this.bookingForm.value));
+    if(!this.bookingForm.valid) {
+      this.log.sendEvent('Confirm Booking: Invalid', 'Confirm Booking', JSON.stringify(this.bookingForm.value));
       Object.keys(this.bookingForm.controls).forEach(field => { // {1}
         const control = this.bookingForm.get(field);            // {2}
-        control.markAsTouched({ onlySelf: true });       // {3}
+        control.markAsTouched({onlySelf: true});       // {3}
       });
+    }
     else{
       //Clean up phone number
       this.bookingForm.value.phone = this.bookingForm.value.phone.replace(/\D/g,''); //Strip all non digits
@@ -141,6 +147,7 @@ export class ConfirmBookingPage {
 
       //Run the check to see if this user has been verified
       this.API.makePost('user/verify/check', postObj).subscribe(response => {
+        this.log.sendEvent('Confirm Booking: Try Validate', 'Confirm Booking', JSON.stringify(postObj));
         if(response['err']){ //Twilio says invalid phone number
           let title = 'Invalid Phone Number',
             message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
@@ -160,6 +167,7 @@ export class ConfirmBookingPage {
 
   //Verification code alert
   verifyAlert(reverify){ //If reverify is true, the user entered a bad code and must reverify
+    this.log.sendEvent('Confirm Booking: Verification Requested', 'Confirm Booking', 'Reverify: '+reverify);
     let title = 'Verify Phone Number',
       message = "We've texted you a verification code. Please enter the code below to complete the booking.";
     if(reverify){
@@ -194,6 +202,7 @@ export class ConfirmBookingPage {
               };
               this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
 
+                this.log.sendEvent('Confirm Booking: Verification Success', 'Confirm Booking', JSON.stringify(postObj));
                 if(response['confirmed']) //Code is good :)
                   this.createBooking();
 
@@ -211,6 +220,7 @@ export class ConfirmBookingPage {
 
   //Create the booking
   createBooking(){
+    this.log.sendEvent('Create Booking: Initiated', 'Confirm Booking', JSON.stringify(this.postObject));
     this.API.makePost('booking/' + this.restaurant._id + '/create', this.postObject).subscribe(response => {
       var title; //Used for error alerts
       var message; //Used for error alerts
@@ -242,10 +252,13 @@ export class ConfirmBookingPage {
           message = 'You must create your booking 15 minutes or more before the booking time.';
         }
 
+        this.log.sendEvent('Create Booking: Response', 'Confirm Booking', 'Response Message: '+this.response.message);
+
         this.presentAlert(title, message);
       }
       else{
         this.storage.get('eatiblUser').then((val) => {
+          this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+val || "none");
           if(val){
             this.user = decode(val);
           }

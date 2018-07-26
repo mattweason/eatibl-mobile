@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 
 /**
  * Generated class for the TermsModalPage page.
@@ -18,7 +19,8 @@ export class TermsModalPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public viewCtrl: ViewController
+    public viewCtrl: ViewController,
+    private log: ActivityLoggerProvider
   ) {
   }
 
@@ -27,6 +29,7 @@ export class TermsModalPage {
   }
 
   dismiss(){
+    this.log.sendEvent('Terms Modal: Opened', 'Terms Modal', '');
     this.viewCtrl.dismiss();
   }
 

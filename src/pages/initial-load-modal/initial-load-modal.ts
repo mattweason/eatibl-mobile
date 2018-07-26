@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, Events } from 'ionic-angular';
 import { Platform } from 'ionic-angular';
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 
 /**
  * Generated class for the InitialLoadModalPage page.
@@ -23,7 +24,8 @@ export class InitialLoadModalPage {
     public navParams: NavParams,
     private platform: Platform,
     public events: Events,
-    public viewCtrl: ViewController
+    public viewCtrl: ViewController,
+    private log: ActivityLoggerProvider
   ) {
     //Disable back button dismiss on android
     this.backButtonUnregister = platform.registerBackButtonAction(() => {});
@@ -43,10 +45,12 @@ export class InitialLoadModalPage {
   }
 
   ionViewDidLoad() {
+    this.log.sendEvent('Loading Restaurant: Start', 'Intro Load Modal', '');
     console.log('ionViewDidLoad InitialLoadModalPage');
   }
 
   ionViewWillLeave() {
+    this.log.sendEvent('Loading Restaurant: End', 'Intro Load Modal', '');
     this.backButtonUnregister();
   }
 

@@ -1,6 +1,7 @@
 import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import {IonicPage, NavController, Content, ModalController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { Device } from '@ionic-native/device';
 import { Events } from 'ionic-angular';
@@ -51,7 +52,8 @@ export class HomePage {
     private modal: ModalController,
     private device: Device,
     public events: Events,
-    private storage: Storage
+    private storage: Storage,
+    private log: ActivityLoggerProvider
   ) {
     //Update location when user geolocated event is recieved
     events.subscribe('user:geolocated', (location, time) => {
@@ -78,6 +80,7 @@ export class HomePage {
 
   //Open intro slides
   presentIntroModal(){
+    this.log.sendEvent('Intro Slides', 'Home', 'Default Intro slides for first time users');
     const introModal = this.modal.create('IntroSlidesPage');
     introModal.onDidDismiss(() => {
       this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
@@ -106,6 +109,7 @@ export class HomePage {
 
   //Modal for letting the user select their location manually
   openMap(){
+    this.log.sendEvent('Location Modal: Open', 'Home', 'Clicked set location button at bottom section');
     this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
     const mapModal = this.modal.create('SetPositionModalPage', {location: this.userCoords});
     mapModal.onDidDismiss((locationUpdated) => {
@@ -116,8 +120,11 @@ export class HomePage {
           if(val) { //Custom location has been set, set userCoords to custom value
             this.userCoords = val;
             this.customLocation = true;
-          } else
+            this.log.sendEvent('Custom Location: Set', 'Set Position Modal', 'User successfully set a custom location');
+          } else {
             this.customLocation = false;
+            this.log.sendEvent('Custom Location: Unchanged', 'Set Position Modal', 'User did not make changes to their location data');
+          }
           this.getRestaurants(); //Whether we have an updated custom location, or changed to auto locate, get new list of restaurants
         });
     });
@@ -126,6 +133,7 @@ export class HomePage {
 
   //Fires when the home page tab is selected and is already active
   ionSelected() {
+    this.log.sendEvent('Scroll to Top', 'Home', '');
     this.content.scrollToTop();
   }
 
@@ -197,6 +205,7 @@ export class HomePage {
         this.selectedResto = resto;
         this.processTimeslots();
         this.processBusinessHours();
+        this.log.sendEvent('Restaurant Marker: Selected', 'Map view', 'User clicked on the marker for: '+resto.name);
       }
     }
     this.cdRef.detectChanges();
@@ -259,6 +268,7 @@ export class HomePage {
 
   navigateTo(event, timeslotId){
     if(this.selectedResto.timeslots.length){
+      this.log.sendEvent('Navigate to Restaurant', 'Home || Map view', 'User clicked into restaurant: '+this.selectedResto.name);
       this.navCtrl.push('RestaurantPage', {
         restaurant: JSON.stringify(this.selectedResto),
         timeslotsData: JSON.stringify(this.selectedResto.timeslots),
@@ -286,12 +296,14 @@ export class HomePage {
   toggleView(){
     this.togglingView = true;
     if(this.view == 'list'){
+      this.log.sendEvent('Map View: Loaded', 'Home', 'User switched from list view to map view');
       this.view = 'map';
       this.events.publish('view:map', true);
       this.selectedResto = {};
       this.loadMap();
     }
     else if(this.view == 'map'){
+      this.log.sendEvent('List View: Loaded', 'Home', 'User switched from map view to list view');
       this.view = 'list';
       this.events.publish('view:map', false);
       this.togglingView = false;
@@ -378,6 +390,7 @@ export class HomePage {
 
   //Pull down to refresh the restaurant list
   doRefresh(refresher){
+    this.log.sendEvent('List View: Refreshed', 'Home', 'User refreshed the restaurant list');
     this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
       this.allResults = false;
@@ -389,6 +402,7 @@ export class HomePage {
 
   //Call next batch of 10 restaurants when you reach the bottom of the page
   getNextBatch(infiniteScroll){
+    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Home', 'User scrolled down until next batch was populated, batch #: '+this.batch);
     var limit = Math.min(this.batch*10+10, this.restaurantAll.length);
 
     for(var i = this.batch*10; i < limit; i++){
@@ -417,4 +431,20 @@ export class HomePage {
     }
     this.time = moment().add(30 - moment().minute() % 30, 'm').format();
   }
+  //Keep track of when people are adjust date values
+  logDate(action, data){
+    if(action == 'changed')
+      this.log.sendEvent('DatePicker: Updated', 'Home', JSON.stringify(data));
+    if(action =='cancelled')
+      this.log.sendEvent('DatePicker: Cancelled', 'Home', JSON.stringify(data));
+  }
+
+  //Keep track of when people are adjust time values
+  logTime(action, data){
+    if(action == 'changed')
+      this.log.sendEvent('TimePicker: Updated', 'Home', JSON.stringify(data));
+    if(action =='cancelled')
+      this.log.sendEvent('TimePicker: Cancelled', 'Home', JSON.stringify(data));
+  }
+
 }

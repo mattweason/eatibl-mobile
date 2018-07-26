@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, AlertController } from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 
@@ -25,7 +26,14 @@ export class LoginPage {
   submitAttempt = false;
   response = {} as any;
 
-  constructor(public navCtrl: NavController, private API: ApiServiceProvider, public alertCtrl: AlertController, private formBuilder: FormBuilder, private storage: Storage) {
+  constructor(
+    public navCtrl: NavController,
+    private API: ApiServiceProvider,
+    public alertCtrl: AlertController,
+    private formBuilder: FormBuilder,
+    private storage: Storage,
+    private log: ActivityLoggerProvider
+  ) {
 
     //Form controls and validation
     this.loginForm = this.formBuilder.group({
@@ -44,7 +52,9 @@ export class LoginPage {
   }
 
   login(){
+    this.log.sendEvent('Login: Attempted', 'Login', this.loginForm.value.email || "");
     if(!this.loginForm.valid){
+      this.log.sendEvent('Login: Invalid', 'Login', 'Form does not have valid inputs');
       Object.keys(this.loginForm.controls).forEach(field => { // {1}
         const control = this.loginForm.get(field);            // {2}
         control.markAsTouched({ onlySelf: true });       // {3}
@@ -58,11 +68,13 @@ export class LoginPage {
         var message;
         this.response = response;
         if(this.response.message == 'not found'){
+          this.log.sendEvent('Login: Unsuccessful', 'Login', this.loginForm.value.email || "");
           title = 'Incorrect Credentials';
           message = 'Email and password combination not found.';
           this.presentAlert(title, message);
         }
         else{
+          this.log.sendEvent('Login: Successful', 'Login', this.loginForm.value.email || "");
           this.storage.set('eatiblUser',response);
           this.navCtrl.pop();
         }
@@ -92,6 +104,7 @@ export class LoginPage {
   }
 
   signUp(){
+    this.log.sendEvent('Signup: Initiated', 'Login', "User clicked the signup button from the login section");
     this.navCtrl.push('SignupPage').then(() => {
       var index = this.navCtrl.getActive().index;
       this.navCtrl.remove(index-1);

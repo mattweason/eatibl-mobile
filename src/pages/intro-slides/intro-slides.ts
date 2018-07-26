@@ -1,5 +1,6 @@
 import {Component, ViewChild} from '@angular/core';
 import {IonicPage, NavController, NavParams, Slides, ViewController, ModalController} from 'ionic-angular';
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 
 /**
  * Generated class for the IntroSlidesPage page.
@@ -22,7 +23,8 @@ export class IntroSlidesPage {
     public navCtrl: NavController,
     public viewCtrl: ViewController,
     private modal: ModalController,
-    public navParams: NavParams
+    public navParams: NavParams,
+    private log: ActivityLoggerProvider
   ) {}
 
   ionViewDidLoad() {
@@ -34,20 +36,24 @@ export class IntroSlidesPage {
     console.log(this.currentIndex)
   }
 
-  nextSlide(){
+  nextSlide(cond){
+    this.log.sendEvent('Intro Slide: Next', 'Intro Slides Modal', 'Condition (Lets go at start, or normal next button): '+cond);
     this.slides.slideNext();
   }
 
   prevSlide(){
+    this.log.sendEvent('Intro Slide: Previous', 'Intro Slides Modal', '');
     this.slides.slidePrev();
   }
 
-  closeModal(){
+  closeModal(cond){
+    this.log.sendEvent('Intro Slide: Closed', 'Intro Slides Modal', 'Condition (pass at start, or close at end): '+cond);
     this.viewCtrl.dismiss();
   }
 
   //Open the faqs and support modal
   learnMore(){
+    this.log.sendEvent('Learn More: Visit FAQ', 'Intro Slides Modal', '');
     const supportModal = this.modal.create('SupportModalPage');
     supportModal.present();
     this.viewCtrl.dismiss();

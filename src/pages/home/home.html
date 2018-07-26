@@ -15,13 +15,13 @@
         <ion-col col-7>
           <ion-item class="datetime-sm">
             <ion-label fixed><ion-icon name="calendar" color="primary"></ion-icon></ion-label>
-            <ion-datetime displayFormat="DDD, MMM DD" pickerFormat="MMM DDDD" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionChange)="rankRestaurants(restaurantAll)"></ion-datetime>
+            <ion-datetime displayFormat="DDD, MMM DD" pickerFormat="MMM DDDD" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionCancel)="logDate('cancelled', date);" (ionChange)="rankRestaurants(restaurantAll); logDate('changed', date);"></ion-datetime>
           </ion-item>
         </ion-col>
         <ion-col col-5>
           <ion-item class="datetime-sm">
             <ion-label fixed><ion-icon name="clock" color="primary"></ion-icon></ion-label>
-            <ion-datetime displayFormat="h:mm A" pickerFormat="h:mm A" minuteValues="0,30" [(ngModel)]="time"></ion-datetime>
+            <ion-datetime displayFormat="h:mm A" pickerFormat="h:mm A" minuteValues="0,30" [(ngModel)]="time" (ionCancel)="logTime('cancelled', time)" (ionChange)="logTime('changed', time)"></ion-datetime>
           </ion-item>
         </ion-col>
       </ion-row>

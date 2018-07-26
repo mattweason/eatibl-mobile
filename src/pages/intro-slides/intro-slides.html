@@ -15,8 +15,8 @@
         <p>Use Eatibl to make discounted bookings for your next meal!</p>
         <p>Before you get started, let's do a quick tour of our app.</p>
         <div class="button-area">
-          <button ion-button color="light" (tap)="closeModal()">I'll Pass</button>
-          <button ion-button color="secondary" (tap)="nextSlide()">Let's Go!</button>
+          <button ion-button color="light" (tap)="closeModal('pass')">I'll Pass</button>
+          <button ion-button color="secondary" (tap)="nextSlide('start')">Let's Go!</button>
         </div>
       </div>
     </ion-slide>
@@ -58,7 +58,7 @@
         <p>All deals are first come, first serve!</p>
         <div class="button-area">
           <button ion-button color="light" (tap)="learnMore()">Learn More</button>
-          <button ion-button color="secondary" (tap)="closeModal()">Get Started</button>
+          <button ion-button color="secondary" (tap)="closeModal('end')">Get Started</button>
         </div>
         <img class="slide-graphic bottom-left" src="assets/imgs/final-slide-3.png">
         <img class="slide-graphic bottom-right" src="assets/imgs/final-slide-4.png">
@@ -71,7 +71,7 @@
         <button [disabled]="currentIndex == 0" ion-button color="secondary" icon-start (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon>Back</button>
       </ion-buttons>
       <ion-buttons right>
-        <button [disabled]="currentIndex == 4" ion-button color="secondary" icon-end (tap)="nextSlide()">Next<ion-icon name="arrow-forward"></ion-icon></button>
+        <button [disabled]="currentIndex == 4" ion-button color="secondary" icon-end (tap)="nextSlide('standard')">Next<ion-icon name="arrow-forward"></ion-icon></button>
       </ion-buttons>
     </ion-toolbar>
   </ion-footer>
