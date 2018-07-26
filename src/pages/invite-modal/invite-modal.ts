@@ -228,9 +228,9 @@ export class InviteModalPage {
         else if(this.type == 'referral'){
           message = 'Check out this great app called Eatibl! You can get up to 50% off when you dine-in at your favourite restaurants.' +
             '\n\nDownload Eatibl for Android:' +
-            '\nhttp://play.google.com/store/apps/details?id=com.eatibl' +
+            '\nhttp://bit.ly/eatibl_droid' +
             '\n\nDownload Eatibl for iOS:' +
-            '\nhttps://itunes.apple.com/ca/app/eatibl/id1382344870?mt=8';
+            '\nhttp://bit.ly/eatibl_ios';
         }
         var current = this;
         (function(phoneNumber, message){

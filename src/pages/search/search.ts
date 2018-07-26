@@ -161,7 +161,7 @@ export class SearchPage {
 
   //Currently filters based on restaurant name and categories
   filterRestaurants(searchInput){
-    this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: '+searchInput);
+    this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: ' + searchInput);
     this.allResults = false;
     this.batch = 0;
     this.value = searchInput ? searchInput.toLowerCase() : ''; //Don't do toLowerCase of undefined

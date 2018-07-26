@@ -6,7 +6,7 @@
     </div>
   </div>
   <div class="top-of-card">
-    <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none>
+    <button class="button-wrapper" (tap)="navigateTo('restaurant-image', '')" ion-item detail-none>
       <div *ngIf="!restaurant?.featuredImage" class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"></div>
       <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
       <div *ngIf="distance" class="distance">
@@ -16,7 +16,7 @@
         <p>COMING SOON</p>
       </div>
     </button>
-    <button ion-button class="best-deal" *ngIf="restaurant?.maxTimeslot && timeslots.length" (tap)="navigateTo($event, restaurant.maxTimeslot._id)">
+    <button ion-button class="best-deal" *ngIf="restaurant?.maxTimeslot && timeslots.length" (tap)="navigateTo('best-deal', restaurant.maxTimeslot._id)">
       <div class="deal-header">
         <p class="title">BEST DEAL</p>
       </div>
@@ -26,7 +26,7 @@
       </div>
     </button>
   </div>
-  <button class="button-wrapper" (tap)="navigateTo($event, '')" ion-item detail-none text-wrap>
+  <button class="button-wrapper" (tap)="navigateTo('title-and-rating', '')" ion-item detail-none text-wrap>
     <ion-card-content no-padding>
       <ion-grid class="no-padding">
         <ion-row class="border-bottom">
@@ -61,7 +61,7 @@
             <ion-slide *ngFor="let timeslot of timeslots">
               <div class="timeslot">
                 <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>
-                <button ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id, 'tapped' : timeslotTapped == timeslot?._id}" (tap)="navigateTo($event, timeslot._id)">
+                <button ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id, 'tapped' : timeslotTapped == timeslot?._id}" (tap)="navigateTo('timeslot', timeslot._id)">
                   -{{timeslot?.discount}}%
                   <div *ngIf="timeslotTapped == timeslot?._id" class="loading-overlay timeslot">
                     <ion-spinner></ion-spinner>

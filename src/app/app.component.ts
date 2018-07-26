@@ -107,15 +107,13 @@ export class MyApp {
         //   });
         // });
 
+        platform.pause.subscribe(() => {
+          this.log.sendEvent('App Instance Paused', 'unknown', 'The user put the app into the background');
+        });
 
-        // platform.resume.subscribe(() => { //TODO: REVIEW THIS BEFORE FINISH GEOLOCATION REWORK
-        //   console.log('app resumed')
-        //   //Check for both permissions and if location services are enabled
-        //   if(platform.is('android'))
-        //     this.locationPermissionAndroid();
-        //   else if(platform.is('ios'))
-        //     this.locationPermissionIos();
-        // });
+        platform.resume.subscribe(() => {
+          this.log.sendEvent('App Instance Resumed', 'unknown', 'The user brought the app into the foreground');
+        });
 
         this.firebase.getToken()
           .then(token => {
@@ -239,10 +237,10 @@ export class MyApp {
         eatiblVersion: version_code,
         firebaseToken: token
       }).subscribe(result => {
-        if(result.newUser)
-          this.log.sendEvent('Device: New', 'runTime', "This is the first time we're tracking this device");
+        if(result['newUser'])
+          current.log.sendEvent('Device: New', 'runTime', "This is the first time we're tracking this device");
         else
-          this.log.sendEvent('Device: Existing', 'runTime', "This device has accessed the app before");
+          current.log.sendEvent('Device: Existing', 'runTime', "This device has accessed the app before");
 
         if (result['blacklisted'])
           current.blacklisted = true;
@@ -377,8 +375,17 @@ export class MyApp {
 
   //Function to log geolocation every 5 minutes
   logLocation(data){
-    if(moment().isAfter(moment(this.locationCachedTime).add(5, 'm'))){
-      this.API.makePost('user/geolocation', {deviceId: this.device.uuid, user_fid: this.user._id || '', lat: data.coords.latitude, lng: data.coords.longitude})
+    var postObject = {
+      deviceId: this.device.uuid,
+      lat: data.coords.latitude,
+      lng: data.coords.longitude
+    };
+
+    if(this.user) //Only add user_fid if a user object exists
+      postObject['user_fid'] = this.user._id;
+
+    if(moment().isAfter(moment(this.locationCachedTime).add(5, 'm')) || !this.locationCachedTime){ //Check if locationCachedTime is not set or is over 5 minutes old
+      this.API.makePost('user/geolocation', postObject).subscribe();
       this.locationCachedTime = moment();
     }
   }
@@ -400,6 +407,7 @@ export class MyApp {
         this.sendGeolocationEvent();
       });
     }).catch((error) => {
+      console.log(error)
       let alert = this.alertCtrl.create({
         title: "Can't Find You",
         message: "We're having trouble getting your location. Do you want to try again or set your location on a map?",

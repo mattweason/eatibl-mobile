@@ -5,6 +5,7 @@ import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import * as _ from 'underscore';
 import * as moment from 'moment';
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { ENV } from '@app/env';
 
 
@@ -74,6 +75,7 @@ export class RestaurantCardComponent implements OnChanges {
     private functions: FunctionsProvider,
     private cdRef:ChangeDetectorRef,
     private sanitizer: DomSanitizer,
+    private log: ActivityLoggerProvider,
     public events: Events
   ) {
     //Sends the users location to a child component when requested
@@ -101,7 +103,8 @@ export class RestaurantCardComponent implements OnChanges {
     }
   }
 
-  navigateTo(event, timeslotId){
+  navigateTo(target, timeslotId){
+    this.log.sendEvent('Restaurant Card Clicked', 'Restaurant Card', 'User clicked on '+target);
     if(this.timeslotsData.length){
       if(timeslotId == '')
         this.restaurantTapped = true;
@@ -243,12 +246,14 @@ export class RestaurantCardComponent implements OnChanges {
   }
 
   nextSlide(){
+    this.log.sendEvent('Timeslot: Next Slide', 'Restaurant Card', '');
     if(this.slides)
       if(!this.slides.isEnd())
         this.slides.slideNext();
   }
 
   prevSlide(){
+    this.log.sendEvent('Timeslot: Prev Slide', 'Restaurant Card', '');
     if(this.slides)
       if(!this.slides.isBeginning())
         this.slides.slidePrev();
