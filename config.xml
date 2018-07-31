@@ -48,6 +48,9 @@
         <edit-config file="*-Info.plist" mode="merge" target="NSContactsUsageDescription">
             <string>This app needs access to your contacts.</string>
         </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
+            <string>This app needs your location to recommend nearby restaurants.</string>
+        </edit-config>
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
@@ -128,6 +131,6 @@
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.8" />
     <plugin name="cordova-plugin-request-location-accuracy" spec="^2.2.3" />
     <engine name="ios" spec="4.5.4" />
-    <engine name="android" spec="~7.0.0" />
-    <engine name="browser" spec="~5.0.3" />
+    <engine name="android" spec="7.0.0" />
+    <engine name="browser" spec="5.0.3" />
 </widget>
