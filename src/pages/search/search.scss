@@ -8,4 +8,21 @@
       font-weight: 700;
     }
   }
+  &.categories{
+    margin-top: 12px;
+    padding-left: 12px;
+  }
+}
+.category-list{
+  position: absolute;
+  z-index: 99999;
+  width: 100%;
+  background-color: rgba(0,0,0,0.6);
+  ion-list-header{
+    background-color: color($colors, light);
+    font-family: Quicksand;
+    margin-bottom: 0;
+    font-size: 16px;
+    font-weight: 700;
+  }
 }

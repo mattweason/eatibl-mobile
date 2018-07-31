@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef, Renderer2, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
@@ -20,6 +20,7 @@ import * as _ from 'underscore';
 })
 export class SearchPage {
   @ViewChild(Content) content: Content;
+  @ViewChild('searchbar') searchbar : any;
 
   searchInput: string;
   restaurantList: any; //just the ones loaded
@@ -38,6 +39,10 @@ export class SearchPage {
   allResults = false; //Becomes true when we've retrieved all of the restaurants
   value = ''; //Store the search key words
   firstCall = true;
+  searchCategories = []; //List of clickable search categories
+  searchCategoriesCache = []; //Cache of full list of search categories
+  showCategories = false; //Show category list if true
+
 
   constructor(
     public navCtrl: NavController,
@@ -46,6 +51,7 @@ export class SearchPage {
     private cdRef:ChangeDetectorRef,
     public events: Events,
     private storage: Storage,
+    private renderer: Renderer2,
     private log: ActivityLoggerProvider
   ) {
     events.subscribe('user:geolocated', (location, time) => {
@@ -56,6 +62,7 @@ export class SearchPage {
         this.firstCall = false;
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
           this.dataCache = data;
+          this.processCategories();
           this.setNow(true);
           this.cdRef.detectChanges();
         });
@@ -95,6 +102,50 @@ export class SearchPage {
       this.maxDate = moment().add(30, 'day').format();
       this.rankRestaurants(this.dataCache);
     }
+  }
+
+  //Toggle category select
+  toggleCategorySelect(event, condition){
+    this.showCategories = condition;
+    this.events.publish('hideshow:helptab', condition);
+  }
+
+  //Search for restaurants with the selected category
+  searchCategory(category) {
+    this.log.sendEvent('Category List Item Clicked', 'Search', category);
+    this.filterRestaurants('', category); //Filter the restaurants
+    this.searchInput = category; //Pop the category into the search bar
+  }
+
+  filterCategories(searchInput) {
+    this.searchCategories = JSON.parse(JSON.stringify(this.searchCategoriesCache)); //reset the category list. Parse and stringify to clone
+    let val = searchInput;
+
+    if (val && val.trim() !== '') {
+      this.searchCategories = this.searchCategories.filter(function(item) {
+        return item[0].toLowerCase().includes(val.toLowerCase());
+      });
+    }
+  }
+
+  //Gather and sort tags
+  processCategories(){
+    var rawCats = []; //Every existing category goes here to be sorted and counted
+    for(var i = 0; i < this.dataCache.length; i++){
+      if(this.dataCache[i].categories) //Don't loop through categories if there are none
+        for(var x = 0; x < this.dataCache[i].categories.length; x++){
+          rawCats.push(this.dataCache[i].categories[x])
+        }
+    }
+    var countedCats = _.countBy(rawCats); //Count category occurrences and split the resulting objects into an arrays of key value pairs
+    var sortableCats = [];
+    for(var cat in countedCats){
+      sortableCats.push([cat, countedCats[cat]])
+    }
+    this.searchCategories = _.sortBy(sortableCats, function(cat){ //Sorted the categories by occurrences descending
+      return cat[1]
+    }).reverse();
+    this.searchCategoriesCache = JSON.parse(JSON.stringify(this.searchCategories)); //Cache the categories so we can always go back to full list. Parse and stringify to clone
   }
 
   //Ranking system to dictate order of display
@@ -160,7 +211,9 @@ export class SearchPage {
   }
 
   //Currently filters based on restaurant name and categories
-  filterRestaurants(searchInput){
+  filterRestaurants(event, searchInput){
+    if(event) //Event is an optional argument, so handle cases where it is a string
+      event.target.blur(); //Blur (defocus) searchbar on search
     this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: ' + searchInput);
     this.allResults = false;
     this.batch = 0;
