@@ -106,6 +106,7 @@ export class SearchPage {
 
   //Toggle category select
   toggleCategorySelect(event, condition){
+    console.log()
     this.showCategories = condition;
     this.events.publish('hideshow:helptab', condition);
   }
@@ -115,6 +116,11 @@ export class SearchPage {
     this.log.sendEvent('Category List Item Clicked', 'Search', category);
     this.filterRestaurants('', category); //Filter the restaurants
     this.searchInput = category; //Pop the category into the search bar
+  }
+
+  //hide category list
+  hideCategoryList(){
+    this.showCategories = false;
   }
 
   filterCategories(searchInput) {
@@ -212,6 +218,7 @@ export class SearchPage {
 
   //Currently filters based on restaurant name and categories
   filterRestaurants(event, searchInput){
+    console.log('filtering restaurants')
     if(event) //Event is an optional argument, so handle cases where it is a string
       event.target.blur(); //Blur (defocus) searchbar on search
     this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: ' + searchInput);
