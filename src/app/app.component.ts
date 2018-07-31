@@ -25,7 +25,7 @@ export class MyApp {
   rootPage:any;
   location: any;
   mapView = false;
-  hideHelp = false;
+  hideHelp = true;
   watch: any; //Holds watch position subscription
   _autoLocateSub: (location:any, time:any) => void;
   blacklisted = false;
@@ -114,6 +114,17 @@ export class MyApp {
         platform.resume.subscribe(() => {
           this.log.sendEvent('App Instance Resumed', 'unknown', 'The user brought the app into the foreground');
         });
+
+        //Show the help button when the loading modal closes
+        events.subscribe('reveal:restaurants', () => {
+          this.hideHelp = false;
+        });
+
+        //Hide and show modal when search is focused
+        events.subscribe('hideshow:helptab', (condition) => {
+          this.hideHelp = condition;
+        });
+
 
         this.firebase.getToken()
           .then(token => {

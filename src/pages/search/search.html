@@ -7,9 +7,9 @@
 <ion-header>
 
   <ion-navbar color="primary" class="align-toolbar">
-    <ion-searchbar [(ngModel)]="searchInput" (search)="filterRestaurants(searchInput)" (ionClear)="filterRestaurants('')"></ion-searchbar>
+    <ion-searchbar #searchbar [(ngModel)]="searchInput" (ionInput)="filterCategories(searchInput)" (search)="filterRestaurants($event, searchInput)" (ionClear)="filterRestaurants($event, '')" (ionFocus)="toggleCategorySelect($event, true)" (ionBlur)="toggleCategorySelect(false)"></ion-searchbar>
     <ion-buttons end>
-      <button (tap)="filterRestaurants(searchInput)" ion-button>
+      <button (tap)="filterRestaurants('', searchInput)" ion-button>
         Search
       </button>
     </ion-buttons>
@@ -32,6 +32,16 @@
       </ion-row>
     </ion-grid>
   </ion-toolbar>
+
+  <ion-scroll *ngIf="showCategories" scrollY="true" class="category-list">
+    <ion-list *ngIf="searchCategories.length">
+      <ion-list-header>
+        <ion-icon name="restaurant"></ion-icon>
+        Popular Categories
+      </ion-list-header>
+      <button ion-item *ngFor="let category of searchCategories" (tap)="searchCategory(category[0])"><div [innerHTML]="category[0] | highlightSearch: searchInput"></div></button>
+    </ion-list>
+  </ion-scroll>
 
 </ion-header>
 
