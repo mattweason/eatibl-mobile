@@ -240,8 +240,7 @@ export class SearchPage {
 
   //Currently filters based on restaurant name and categories
   filterRestaurants(event, searchInput, category){
-    if(event) //Event is an optional argument, so handle cases where it is a string
-      event.target.blur(); //Blur (defocus) searchbar on search
+    this.searchbar._searchbarInput.nativeElement.blur(); //Blur on search (causing the keyboard to hide)
     this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: ' + searchInput);
     this.allResults = false;
     this.batch = 0;
