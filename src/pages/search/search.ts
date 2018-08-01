@@ -130,6 +130,7 @@ export class SearchPage {
 
   //Search for restaurants with the selected category
   searchCategory(category) {
+    this.searchbar._searchbarInput.nativeElement.blur();
     this.log.sendEvent('Category List Item Clicked', 'Search', category);
     this.filterRestaurants('', category, true); //Filter the restaurants
     this.searchInput = category; //Pop the category into the search bar
