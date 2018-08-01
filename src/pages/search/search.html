@@ -7,9 +7,9 @@
 <ion-header>
 
   <ion-navbar color="primary" class="align-toolbar">
-    <ion-searchbar #searchbar [(ngModel)]="searchInput" [showCancelButton]="true" (ionCancel)="hideCategoryList()" (ionInput)="filterCategories(searchInput)" (search)="filterRestaurants($event, searchInput)" (ionFocus)="toggleCategorySelect($event, true)"></ion-searchbar>
+    <ion-searchbar #searchbar [(ngModel)]="searchInput" [showCancelButton]="true" (ionCancel)="hideCategoryList()" (ionInput)="filterCategories(searchInput)" (search)="filterRestaurants($event, searchInput, false); hideCategoryList()" (ionFocus)="toggleCategorySelect($event, true)"></ion-searchbar>
     <ion-buttons end>
-      <button (tap)="filterRestaurants('', searchInput)" ion-button>
+      <button (tap)="filterRestaurants('', searchInput, false); hideCategoryList()" ion-button>
         Search
       </button>
     </ion-buttons>

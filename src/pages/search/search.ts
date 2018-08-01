@@ -106,7 +106,6 @@ export class SearchPage {
 
   //Toggle category select
   toggleCategorySelect(event, condition){
-    console.log()
     this.showCategories = condition;
     this.events.publish('hideshow:helptab', condition);
   }
@@ -114,8 +113,12 @@ export class SearchPage {
   //Search for restaurants with the selected category
   searchCategory(category) {
     this.log.sendEvent('Category List Item Clicked', 'Search', category);
-    this.filterRestaurants('', category); //Filter the restaurants
+    this.filterRestaurants('', category, true); //Filter the restaurants
     this.searchInput = category; //Pop the category into the search bar
+    var current = this; //Cache this for setTimeout
+    setTimeout(function () { //Allow the click event animation to occur
+      current.hideCategoryList();
+    }, 500);
   }
 
   //hide category list
@@ -217,8 +220,7 @@ export class SearchPage {
   }
 
   //Currently filters based on restaurant name and categories
-  filterRestaurants(event, searchInput){
-    console.log('filtering restaurants')
+  filterRestaurants(event, searchInput, category){
     if(event) //Event is an optional argument, so handle cases where it is a string
       event.target.blur(); //Blur (defocus) searchbar on search
     this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: ' + searchInput);
@@ -234,13 +236,15 @@ export class SearchPage {
     //filter list
     this.restaurantFiltered = _.filter(this.restaurantAll, function(resto){
       for (var i = 0; i < search.length; i++) {
-        if (resto.name.toLowerCase().indexOf(search[i]) > -1)
+        if (resto.name.toLowerCase().indexOf(search[i]) > -1 && !category) //Category is true if we are doing a category search
           return true;
 
         //if restaurant has categories
         if(resto.categories)
           for(var x = 0; x < resto.categories.length; x++){
-            if (resto.categories[x].toLowerCase().indexOf(search[i]) > -1)
+            if (resto.categories[x].toLowerCase().indexOf(search[i]) > -1 && !category)
+              return true;
+            else if(resto.categories[x].toLowerCase() == searchInput.toLowerCase() && category) //If we are doing category search, look for exact matches
               return true;
           }
       }
@@ -252,11 +256,6 @@ export class SearchPage {
 
     this.restaurantList = this.restaurantFiltered.slice(0,10); //load first 10
     this.batch++;
-  }
-
-  //Rank restaurants and filter them when date is changed and keyword search is active
-  rankAndFilter(searchInput){
-
   }
 
   //Call next batch of 10 restaurants when you reach the bottom of the page
