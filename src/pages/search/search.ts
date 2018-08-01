@@ -2,6 +2,7 @@ import { Component, ViewChild, OnInit, ChangeDetectorRef, Renderer2, ElementRef 
 import { IonicPage, NavController, NavParams, Events, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
+import { FunctionsProvider } from '../../providers/functions/functions';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -52,6 +53,7 @@ export class SearchPage {
     public events: Events,
     private storage: Storage,
     private renderer: Renderer2,
+    private functions: FunctionsProvider,
     private log: ActivityLoggerProvider
   ) {
     events.subscribe('user:geolocated', (location, time) => {
@@ -71,12 +73,14 @@ export class SearchPage {
 
     //If there is a custom location, get it
     this.storage.get('eatiblLocation').then((location) => {
-      this.userCoords = location;
-      this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
-        this.dataCache = data;
-        this.setNow(true);
-        this.cdRef.detectChanges();
-      });
+      if(location){
+        this.userCoords = location;
+        this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+          this.dataCache = data;
+          this.setNow(true);
+          this.cdRef.detectChanges();
+        });
+      }
     });
   }
 
@@ -87,6 +91,20 @@ export class SearchPage {
 
   ionViewDidEnter(){
     this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
+
+    //If we are not entering this page for the first time, check the location status and update restaurants as necessary
+    if(!this.firstCall){
+      this.storage.get('eatiblLocation').then((location) => {
+        if(location && this.userCoords != location){
+          this.userCoords = location;
+          this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+            this.dataCache = data;
+            this.setNow(true);
+            this.cdRef.detectChanges();
+          });
+        }
+      });
+    }
   }
 
   //Fires when the home page tab is selected and is already active
@@ -274,6 +292,20 @@ export class SearchPage {
 
     infiniteScroll.complete();
   }
+
+  //Pull down to refresh the restaurant list
+  doRefresh(refresher){
+    this.log.sendEvent('List View: Refreshed', 'Search', 'User refreshed the restaurant list');
+    this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
+    this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+      this.allResults = false;
+      this.batch = 0;
+      this.rankRestaurants(data);
+      this.filterRestaurants('', this.searchInput, false)
+      refresher.complete();
+    });
+  }
+
   //Keep track of when people are adjust date values
   logDate(action, data){
     if(action == 'changed')
