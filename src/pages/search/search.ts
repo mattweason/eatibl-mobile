@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit, ChangeDetectorRef, Renderer2, ElementRef } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, Content } from 'ionic-angular';
+import {IonicPage, NavController, NavParams, Events, Content, Platform} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { FunctionsProvider } from '../../providers/functions/functions';
@@ -43,6 +43,7 @@ export class SearchPage {
   searchCategories = []; //List of clickable search categories
   searchCategoriesCache = []; //Cache of full list of search categories
   showCategories = false; //Show category list if true
+  backButtonPressed: any;
 
 
   constructor(
@@ -54,7 +55,8 @@ export class SearchPage {
     private storage: Storage,
     private renderer: Renderer2,
     private functions: FunctionsProvider,
-    private log: ActivityLoggerProvider
+    private log: ActivityLoggerProvider,
+    private platform: Platform
   ) {
     events.subscribe('user:geolocated', (location, time) => {
       this.userCoords = location;
@@ -77,11 +79,18 @@ export class SearchPage {
         this.userCoords = location;
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
           this.dataCache = data;
+          this.processCategories();
           this.setNow(true);
           this.cdRef.detectChanges();
         });
       }
     });
+
+    //Catch backbutton click on android
+    this.backButtonPressed = platform.registerBackButtonAction(() => {
+      console.log('pressing back button')
+      this.hideCategoryList(false);
+    }, 101);
   }
 
   ionViewDidLoad() {
@@ -136,13 +145,18 @@ export class SearchPage {
     this.searchInput = category; //Pop the category into the search bar
     var current = this; //Cache this for setTimeout
     setTimeout(function () { //Allow the click event animation to occur
-      current.hideCategoryList();
+      current.hideCategoryList(false);
     }, 500);
   }
 
   //hide category list
-  hideCategoryList(){
-    this.showCategories = false;
+  hideCategoryList(checkAndroid){ //If checkAndroid is true, only hide categories if it is android
+    if(checkAndroid){
+      if(this.platform.is('android'))
+        this.showCategories = false; //Catch back button presses on android and hide category list
+    } else {
+      this.showCategories = false;
+    }
   }
 
   filterCategories(searchInput) {

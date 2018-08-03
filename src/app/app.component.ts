@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -7,9 +6,8 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
 import { ApiServiceProvider } from "../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../providers/activity-logger/activity-logger";
-import { AlertController, ModalController } from 'ionic-angular';
+import { AlertController, ModalController, Platform, Events } from 'ionic-angular';
 import { Device } from '@ionic-native/device';
-import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { Diagnostic } from '@ionic-native/diagnostic';
@@ -31,6 +29,7 @@ export class MyApp {
   blacklisted = false;
   locationCachedTime: any; //Used to send mark the last time geolocation data was sent to the backend
   user: any;
+  forcedUpdateAlertOpen = false;
 
   //Used for android permissions
   hasPermission = false;
@@ -87,25 +86,8 @@ export class MyApp {
 
         });
 
-          //var self = this; //Cache this to use in functions
-        //check if we need to force update on currently installed version of app ***COMMENTED OUT FOR NOW****
-        // appVersion.getVersionNumber().then(function(version_code){
-        //   console.log(version_code);
-        //   self.API.makePost('versionCheck', {version: version_code}).subscribe(data => {
-        //     console.log(data);
-        //     if(data['result']){
-        //       let alert = self.alertCtrl.create({
-        //         title: 'New Version Available',
-        //         subTitle: 'There is a required update for Eatibl. Please update and reopen the app.',
-        //         enableBackdropDismiss: false,
-        //         buttons: [{
-        //           text: 'Update'
-        //         }]
-        //       });
-        //       alert.present();
-        //     }
-        //   });
-        // });
+        //Run force update
+        // this.forceUpdate();
 
         platform.pause.subscribe(() => {
           this.log.sendEvent('App Instance Paused', 'unknown', 'The user put the app into the background');
@@ -113,6 +95,7 @@ export class MyApp {
 
         platform.resume.subscribe(() => {
           this.log.sendEvent('App Instance Resumed', 'unknown', 'The user brought the app into the foreground');
+          // this.forceUpdate(); //Resume runs first time app opens as well as resume events
         });
 
         //Show the help button when the loading modal closes
@@ -233,6 +216,43 @@ export class MyApp {
     //Listens to whether the user in on the map view or not to move the help button
     events.subscribe('view:map', (onMap) => { //onMap is true if the user is on the map view
       this.mapView = onMap;
+    });
+  }
+
+  //Force the user to update if they have an unacceptable older version
+  forceUpdate(){
+    var self = this;
+    this.appVersion.getVersionNumber().then(function(version_code){
+      console.log(version_code);
+      // self.API.makePost('versionCheck', {vers`ion: version_code}).subscribe(data => {
+      var storeLink, version;
+      if(this.platform.is('android')){ //Set up link and version numbers for android
+        storeLink = 'market://details?id=com.eatibl';
+        version = '0.1.16';
+      }
+      else if(this.platform.is('ios')){ //Set up link and version numbers for android
+        storeLink = 'itms-apps://itunes.apple.com/us/app/domainsicle-domain-name-search/id511364723?ls=1&mt=8';
+        version = '0.1.16';
+      }
+      if(version_code == version){
+        let alert = self.alertCtrl.create({
+          title: 'New Version Available',
+          subTitle: 'There is a required update for Eatibl. Please update and reopen the app.',
+          enableBackdropDismiss: false,
+          buttons: [{
+            text: 'Update',
+            handler: () => {
+              window.open(storeLink);
+              self.forcedUpdateAlertOpen = false;
+            }
+          }]
+        });
+        if(!self.forcedUpdateAlertOpen){ //Don't open alert if it is already open
+          alert.present();
+          self.forcedUpdateAlertOpen = true;
+        }
+      }
+      // });
     });
   }
 
@@ -368,15 +388,6 @@ export class MyApp {
         });
     });
     mapModal.present();
-  }
-
-  forceUpdate() {
-    let alert = this.alertCtrl.create({
-      title: 'Low battery',
-      subTitle: '10% of battery remaining',
-      buttons: ['Dismiss']
-    });
-    alert.present();
   }
 
   ngOnInit(){
