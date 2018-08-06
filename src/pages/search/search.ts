@@ -1,7 +1,8 @@
-import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, Content } from 'ionic-angular';
+import { Component, ViewChild, OnInit, ChangeDetectorRef, Renderer2, ElementRef } from '@angular/core';
+import {IonicPage, NavController, NavParams, Events, Content, Platform} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
+import { FunctionsProvider } from '../../providers/functions/functions';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -20,6 +21,7 @@ import * as _ from 'underscore';
 })
 export class SearchPage {
   @ViewChild(Content) content: Content;
+  @ViewChild('searchbar') searchbar : any;
 
   searchInput: string;
   restaurantList: any; //just the ones loaded
@@ -38,6 +40,11 @@ export class SearchPage {
   allResults = false; //Becomes true when we've retrieved all of the restaurants
   value = ''; //Store the search key words
   firstCall = true;
+  searchCategories = []; //List of clickable search categories
+  searchCategoriesCache = []; //Cache of full list of search categories
+  showCategories = false; //Show category list if true
+  backButtonPressed: any;
+
 
   constructor(
     public navCtrl: NavController,
@@ -46,7 +53,10 @@ export class SearchPage {
     private cdRef:ChangeDetectorRef,
     public events: Events,
     private storage: Storage,
-    private log: ActivityLoggerProvider
+    private renderer: Renderer2,
+    private functions: FunctionsProvider,
+    private log: ActivityLoggerProvider,
+    private platform: Platform
   ) {
     events.subscribe('user:geolocated', (location, time) => {
       this.userCoords = location;
@@ -56,6 +66,7 @@ export class SearchPage {
         this.firstCall = false;
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
           this.dataCache = data;
+          this.processCategories();
           this.setNow(true);
           this.cdRef.detectChanges();
         });
@@ -64,13 +75,22 @@ export class SearchPage {
 
     //If there is a custom location, get it
     this.storage.get('eatiblLocation').then((location) => {
-      this.userCoords = location;
-      this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
-        this.dataCache = data;
-        this.setNow(true);
-        this.cdRef.detectChanges();
-      });
+      if(location){
+        this.userCoords = location;
+        this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+          this.dataCache = data;
+          this.processCategories();
+          this.setNow(true);
+          this.cdRef.detectChanges();
+        });
+      }
     });
+
+    //Catch backbutton click on android
+    this.backButtonPressed = platform.registerBackButtonAction(() => {
+      console.log('pressing back button')
+      this.hideCategoryList(false);
+    }, 101);
   }
 
   ionViewDidLoad() {
@@ -80,6 +100,20 @@ export class SearchPage {
 
   ionViewDidEnter(){
     this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
+
+    //If we are not entering this page for the first time, check the location status and update restaurants as necessary
+    if(!this.firstCall){
+      this.storage.get('eatiblLocation').then((location) => {
+        if(location && this.userCoords != location){
+          this.userCoords = location;
+          this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+            this.dataCache = data;
+            this.setNow(true);
+            this.cdRef.detectChanges();
+          });
+        }
+      });
+    }
   }
 
   //Fires when the home page tab is selected and is already active
@@ -95,6 +129,65 @@ export class SearchPage {
       this.maxDate = moment().add(30, 'day').format();
       this.rankRestaurants(this.dataCache);
     }
+  }
+
+  //Toggle category select
+  toggleCategorySelect(event, condition){
+    this.showCategories = condition;
+    this.events.publish('hideshow:helptab', condition);
+  }
+
+  //Search for restaurants with the selected category
+  searchCategory(category) {
+    this.searchbar._searchbarInput.nativeElement.blur();
+    this.log.sendEvent('Category List Item Clicked', 'Search', category);
+    this.filterRestaurants('', category, true); //Filter the restaurants
+    this.searchInput = category; //Pop the category into the search bar
+    var current = this; //Cache this for setTimeout
+    setTimeout(function () { //Allow the click event animation to occur
+      current.hideCategoryList(false);
+    }, 500);
+  }
+
+  //hide category list
+  hideCategoryList(checkAndroid){ //If checkAndroid is true, only hide categories if it is android
+    if(checkAndroid){
+      if(this.platform.is('android'))
+        this.showCategories = false; //Catch back button presses on android and hide category list
+    } else {
+      this.showCategories = false;
+    }
+  }
+
+  filterCategories(searchInput) {
+    this.searchCategories = JSON.parse(JSON.stringify(this.searchCategoriesCache)); //reset the category list. Parse and stringify to clone
+    let val = searchInput;
+
+    if (val && val.trim() !== '') {
+      this.searchCategories = this.searchCategories.filter(function(item) {
+        return item[0].toLowerCase().includes(val.toLowerCase());
+      });
+    }
+  }
+
+  //Gather and sort tags
+  processCategories(){
+    var rawCats = []; //Every existing category goes here to be sorted and counted
+    for(var i = 0; i < this.dataCache.length; i++){
+      if(this.dataCache[i].categories) //Don't loop through categories if there are none
+        for(var x = 0; x < this.dataCache[i].categories.length; x++){
+          rawCats.push(this.dataCache[i].categories[x])
+        }
+    }
+    var countedCats = _.countBy(rawCats); //Count category occurrences and split the resulting objects into an arrays of key value pairs
+    var sortableCats = [];
+    for(var cat in countedCats){
+      sortableCats.push([cat, countedCats[cat]])
+    }
+    this.searchCategories = _.sortBy(sortableCats, function(cat){ //Sorted the categories by occurrences descending
+      return cat[1]
+    }).reverse();
+    this.searchCategoriesCache = JSON.parse(JSON.stringify(this.searchCategories)); //Cache the categories so we can always go back to full list. Parse and stringify to clone
   }
 
   //Ranking system to dictate order of display
@@ -160,8 +253,9 @@ export class SearchPage {
   }
 
   //Currently filters based on restaurant name and categories
-  filterRestaurants(searchInput){
-    this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: '+searchInput);
+  filterRestaurants(event, searchInput, category){
+    this.searchbar._searchbarInput.nativeElement.blur(); //Blur on search (causing the keyboard to hide)
+    this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: ' + searchInput);
     this.allResults = false;
     this.batch = 0;
     this.value = searchInput ? searchInput.toLowerCase() : ''; //Don't do toLowerCase of undefined
@@ -174,13 +268,15 @@ export class SearchPage {
     //filter list
     this.restaurantFiltered = _.filter(this.restaurantAll, function(resto){
       for (var i = 0; i < search.length; i++) {
-        if (resto.name.toLowerCase().indexOf(search[i]) > -1)
+        if (resto.name.toLowerCase().indexOf(search[i]) > -1 && !category) //Category is true if we are doing a category search
           return true;
 
         //if restaurant has categories
         if(resto.categories)
           for(var x = 0; x < resto.categories.length; x++){
-            if (resto.categories[x].toLowerCase().indexOf(search[i]) > -1)
+            if (resto.categories[x].toLowerCase().indexOf(search[i]) > -1 && !category)
+              return true;
+            else if(resto.categories[x].toLowerCase() == searchInput.toLowerCase() && category) //If we are doing category search, look for exact matches
               return true;
           }
       }
@@ -192,11 +288,6 @@ export class SearchPage {
 
     this.restaurantList = this.restaurantFiltered.slice(0,10); //load first 10
     this.batch++;
-  }
-
-  //Rank restaurants and filter them when date is changed and keyword search is active
-  rankAndFilter(searchInput){
-
   }
 
   //Call next batch of 10 restaurants when you reach the bottom of the page
@@ -215,6 +306,20 @@ export class SearchPage {
 
     infiniteScroll.complete();
   }
+
+  //Pull down to refresh the restaurant list
+  doRefresh(refresher){
+    this.log.sendEvent('List View: Refreshed', 'Search', 'User refreshed the restaurant list');
+    this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
+    this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+      this.allResults = false;
+      this.batch = 0;
+      this.rankRestaurants(data);
+      this.filterRestaurants('', this.searchInput, false)
+      refresher.complete();
+    });
+  }
+
   //Keep track of when people are adjust date values
   logDate(action, data){
     if(action == 'changed')

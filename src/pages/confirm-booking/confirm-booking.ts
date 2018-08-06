@@ -258,12 +258,13 @@ export class ConfirmBookingPage {
       }
       else{
         this.storage.get('eatiblUser').then((val) => {
-          this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+val || "none");
           if(val){
             this.user = decode(val);
+            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+this.user || "none");
           }
           else{
             this.storage.set('eatiblUser', this.response.token)
+            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+decode(this.response.token) || "none");
           }
         });
         if(this.response.booking.people > 1){

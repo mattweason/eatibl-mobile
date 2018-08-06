@@ -7,9 +7,9 @@
 <ion-header>
 
   <ion-navbar color="primary" class="align-toolbar">
-    <ion-searchbar [(ngModel)]="searchInput" (search)="filterRestaurants(searchInput)" (ionClear)="filterRestaurants('')"></ion-searchbar>
+    <ion-searchbar #searchbar [(ngModel)]="searchInput" [showCancelButton]="true" (ionCancel)="hideCategoryList(false)" (ionInput)="filterCategories(searchInput)" (search)="filterRestaurants($event, searchInput, false); hideCategoryList(false)" (ionBlur)="hideCategoryList(true)" (ionFocus)="toggleCategorySelect($event, true)"></ion-searchbar>
     <ion-buttons end>
-      <button (tap)="filterRestaurants(searchInput)" ion-button>
+      <button (tap)="filterRestaurants('', searchInput, false); hideCategoryList(false)" ion-button>
         Search
       </button>
     </ion-buttons>
@@ -20,7 +20,7 @@
         <ion-col col-7>
           <ion-item class="datetime-sm">
             <ion-label fixed><ion-icon name="calendar" color="primary"></ion-icon></ion-label>
-            <ion-datetime displayFormat="DDD, MMM DD" pickerFormat="MMM DDDD" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionCancel)="logDate('cancelled', date);" (ionChange)="rankRestaurants(restaurantAll); filterRestaurants(searchInput); logDate('changed', date);"></ion-datetime>
+            <ion-datetime displayFormat="DDD, MMM DD" pickerFormat="MMM DDDD" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionCancel)="logDate('cancelled', date);" (ionChange)="rankRestaurants(restaurantAll); filterRestaurants('', searchInput, false); logDate('changed', date);"></ion-datetime>
           </ion-item>
         </ion-col>
         <ion-col col-5>
@@ -33,10 +33,24 @@
     </ion-grid>
   </ion-toolbar>
 
+  <ion-scroll *ngIf="showCategories" scrollY="true" class="category-list">
+    <ion-list *ngIf="searchCategories.length">
+      <ion-list-header>
+        <ion-icon name="restaurant"></ion-icon>
+        Popular Categories
+      </ion-list-header>
+      <button ion-item *ngFor="let category of searchCategories" (tap)="searchCategory(category[0])"><div [innerHTML]="category[0] | highlightSearch: searchInput"></div></button>
+    </ion-list>
+  </ion-scroll>
+
 </ion-header>
 
 
 <ion-content>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>
+    </ion-refresher-content>
+  </ion-refresher>
   <ion-list class="grey-background">
     <restaurant-card *ngFor = "let restaurant of restaurantList" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
   </ion-list>

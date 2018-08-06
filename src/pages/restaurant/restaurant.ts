@@ -28,7 +28,6 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
 export class RestaurantPage implements OnInit {
   private slides: Slides;
   private url: string = ENV.API;
-  private log: ActivityLoggerProvider
 
   @ViewChild('slides') set content(content: Slides) {
     this.slides = content;
@@ -76,6 +75,7 @@ export class RestaurantPage implements OnInit {
     private sanitizer: DomSanitizer,
     private launchNavigator: LaunchNavigator,
     public events: Events,
+    private log: ActivityLoggerProvider,
     private storage: Storage
   ) {
 

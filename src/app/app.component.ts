@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -7,9 +6,8 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
 import { ApiServiceProvider } from "../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../providers/activity-logger/activity-logger";
-import { AlertController, ModalController } from 'ionic-angular';
+import { AlertController, ModalController, Platform, Events } from 'ionic-angular';
 import { Device } from '@ionic-native/device';
-import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { Diagnostic } from '@ionic-native/diagnostic';
@@ -25,12 +23,13 @@ export class MyApp {
   rootPage:any;
   location: any;
   mapView = false;
-  hideHelp = false;
+  hideHelp = true;
   watch: any; //Holds watch position subscription
   _autoLocateSub: (location:any, time:any) => void;
   blacklisted = false;
   locationCachedTime: any; //Used to send mark the last time geolocation data was sent to the backend
   user: any;
+  forcedUpdateAlertOpen = false;
 
   //Used for android permissions
   hasPermission = false;
@@ -87,35 +86,28 @@ export class MyApp {
 
         });
 
-          //var self = this; //Cache this to use in functions
-        //check if we need to force update on currently installed version of app ***COMMENTED OUT FOR NOW****
-        // appVersion.getVersionNumber().then(function(version_code){
-        //   console.log(version_code);
-        //   self.API.makePost('versionCheck', {version: version_code}).subscribe(data => {
-        //     console.log(data);
-        //     if(data['result']){
-        //       let alert = self.alertCtrl.create({
-        //         title: 'New Version Available',
-        //         subTitle: 'There is a required update for Eatibl. Please update and reopen the app.',
-        //         enableBackdropDismiss: false,
-        //         buttons: [{
-        //           text: 'Update'
-        //         }]
-        //       });
-        //       alert.present();
-        //     }
-        //   });
-        // });
+        //Run force update
+        // this.forceUpdate();
 
+        platform.pause.subscribe(() => {
+          this.log.sendEvent('App Instance Paused', 'unknown', 'The user put the app into the background');
+        });
 
-        // platform.resume.subscribe(() => { //TODO: REVIEW THIS BEFORE FINISH GEOLOCATION REWORK
-        //   console.log('app resumed')
-        //   //Check for both permissions and if location services are enabled
-        //   if(platform.is('android'))
-        //     this.locationPermissionAndroid();
-        //   else if(platform.is('ios'))
-        //     this.locationPermissionIos();
-        // });
+        platform.resume.subscribe(() => {
+          this.log.sendEvent('App Instance Resumed', 'unknown', 'The user brought the app into the foreground');
+          // this.forceUpdate(); //Resume runs first time app opens as well as resume events
+        });
+
+        //Show the help button when the loading modal closes
+        events.subscribe('reveal:restaurants', () => {
+          this.hideHelp = false;
+        });
+
+        //Hide and show modal when search is focused
+        events.subscribe('hideshow:helptab', (condition) => {
+          this.hideHelp = condition;
+        });
+
 
         this.firebase.getToken()
           .then(token => {
@@ -227,6 +219,43 @@ export class MyApp {
     });
   }
 
+  //Force the user to update if they have an unacceptable older version
+  forceUpdate(){
+    var self = this;
+    this.appVersion.getVersionNumber().then(function(version_code){
+      console.log(version_code);
+      // self.API.makePost('versionCheck', {vers`ion: version_code}).subscribe(data => {
+      var storeLink, version;
+      if(this.platform.is('android')){ //Set up link and version numbers for android
+        storeLink = 'market://details?id=com.eatibl';
+        version = '0.1.16';
+      }
+      else if(this.platform.is('ios')){ //Set up link and version numbers for android
+        storeLink = 'itms-apps://itunes.apple.com/us/app/domainsicle-domain-name-search/id511364723?ls=1&mt=8';
+        version = '0.1.16';
+      }
+      if(version_code == version){
+        let alert = self.alertCtrl.create({
+          title: 'New Version Available',
+          subTitle: 'There is a required update for Eatibl. Please update and reopen the app.',
+          enableBackdropDismiss: false,
+          buttons: [{
+            text: 'Update',
+            handler: () => {
+              window.open(storeLink);
+              self.forcedUpdateAlertOpen = false;
+            }
+          }]
+        });
+        if(!self.forcedUpdateAlertOpen){ //Don't open alert if it is already open
+          alert.present();
+          self.forcedUpdateAlertOpen = true;
+        }
+      }
+      // });
+    });
+  }
+
   //Gather initial user information
   userInfo(token){
     var current = this; //Cache this
@@ -239,10 +268,10 @@ export class MyApp {
         eatiblVersion: version_code,
         firebaseToken: token
       }).subscribe(result => {
-        if(result.newUser)
-          this.log.sendEvent('Device: New', 'runTime', "This is the first time we're tracking this device");
+        if(result['newUser'])
+          current.log.sendEvent('Device: New', 'runTime', "This is the first time we're tracking this device");
         else
-          this.log.sendEvent('Device: Existing', 'runTime', "This device has accessed the app before");
+          current.log.sendEvent('Device: Existing', 'runTime', "This device has accessed the app before");
 
         if (result['blacklisted'])
           current.blacklisted = true;
@@ -361,15 +390,6 @@ export class MyApp {
     mapModal.present();
   }
 
-  forceUpdate() {
-    let alert = this.alertCtrl.create({
-      title: 'Low battery',
-      subTitle: '10% of battery remaining',
-      buttons: ['Dismiss']
-    });
-    alert.present();
-  }
-
   ngOnInit(){
     const loadingModal = this.modal.create('InitialLoadModalPage');
     loadingModal.present();
@@ -377,8 +397,17 @@ export class MyApp {
 
   //Function to log geolocation every 5 minutes
   logLocation(data){
-    if(moment().isAfter(moment(this.locationCachedTime).add(5, 'm'))){
-      this.API.makePost('user/geolocation', {deviceId: this.device.uuid, user_fid: this.user._id || '', lat: data.coords.latitude, lng: data.coords.longitude})
+    var postObject = {
+      deviceId: this.device.uuid,
+      lat: data.coords.latitude,
+      lng: data.coords.longitude
+    };
+
+    if(this.user) //Only add user_fid if a user object exists
+      postObject['user_fid'] = this.user._id;
+
+    if(moment().isAfter(moment(this.locationCachedTime).add(5, 'm')) || !this.locationCachedTime){ //Check if locationCachedTime is not set or is over 5 minutes old
+      this.API.makePost('user/geolocation', postObject).subscribe();
       this.locationCachedTime = moment();
     }
   }
@@ -400,6 +429,7 @@ export class MyApp {
         this.sendGeolocationEvent();
       });
     }).catch((error) => {
+      console.log(error)
       let alert = this.alertCtrl.create({
         title: "Can't Find You",
         message: "We're having trouble getting your location. Do you want to try again or set your location on a map?",

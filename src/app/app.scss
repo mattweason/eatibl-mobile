@@ -233,7 +233,7 @@ ion-tabs{
 
 //Platform specific styling
 .platform-ios{
-  .help-tab{
+  .help-tab{ //Support fab
     bottom: 52px;
     top: auto;
     &.map-view{
@@ -241,10 +241,10 @@ ion-tabs{
       bottom: auto;
     }
   }
-  .locate-tab{
+  .locate-tab{ //Set location tab
     bottom: 52px;
   }
-  page-intro-slides{
+  page-intro-slides{ //Intro modal
     .intro-slide, .screenshot-slide, .final-slide {
       .slide-zoom {
         height: calc(100vh - 44px);
@@ -255,9 +255,13 @@ ion-tabs{
       bottom: 12px !important;
     }
   }
+  .category-list{ //Search category drop down
+    top: 72px;
+    height: calc(100vh - 72px);
+  }
 }
 .platform-android{
-  .help-tab{
+  .help-tab{ //Support fab
     bottom: 60px;
     top: auto;
     &.map-view{
@@ -265,10 +269,10 @@ ion-tabs{
       bottom: auto;
     }
   }
-  .locate-tab{
+  .locate-tab{ //Set location tab
     bottom: 60px;
   }
-  page-intro-slides{
+  page-intro-slides{ //Intro modal
     .intro-slide, .screenshot-slide, .final-slide {
       .slide-zoom {
         height: calc(100vh - 56px);
@@ -278,6 +282,10 @@ ion-tabs{
     .swiper-pagination{
       bottom: 20px !important;
     }
+  }
+  .category-list{ //Search category drop down
+    top: 58px;
+    height: calc(100vh - 98px);
   }
 }
 
