@@ -67,11 +67,12 @@
               </div>
               <div class="form-error" *ngIf="(bookingForm.controls.name.hasError('pattern') && bookingForm.controls.name.touched ) || (bookingForm.controls.phone.hasError('pattern') && bookingForm.controls.phone.touched) || (bookingForm.controls.email.hasError('pattern') && bookingForm.controls.email.touched)">
                 <span>There is an error in the form.</span>
+              </div><div class="button-row">
+                <button ion-button block color="danger" type="button" (click)="cancel()">Cancel</button>
+                <button ion-button block color="secondary" type="submit">Confirm</button>
               </div>
-              <button ion-button block color="secondary" type="submit">Confirm</button>
             </form>
-            <button ion-button block clear color="danger" (click)="cancel()">Cancel</button>
-            <p class="terms">By clicking confirm you agree to eatibl's <span (tap)="openTermsModal()">Terms of Use and Privacy Policy.</span></p>
+            <p class="terms">By clicking confirm you agree to Eatibl's <span (tap)="openTermsModal()">Terms of Use and Privacy Policy.</span></p>
           </ion-col>
         </ion-row>
       </ion-grid>

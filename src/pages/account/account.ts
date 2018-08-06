@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ModalController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ModalController, AlertController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Storage } from '@ionic/storage';
@@ -31,6 +31,7 @@ export class AccountPage {
     public navParams: NavParams,
     private storage: Storage,
     private API: ApiServiceProvider,
+    public alertCtrl: AlertController,
     private functions: FunctionsProvider,
     private modal: ModalController,
     private log: ActivityLoggerProvider
@@ -90,12 +91,27 @@ export class AccountPage {
     this.navCtrl.push('LoginPage');
   }
 
-  changeAccounts(){
-    this.log.sendEvent('Change account', 'Account', '');
-    this.storage.remove('eatiblUser');
-    this.bookingUpcoming = [];
-    this.bookingHistory = [];
-    this.navCtrl.push('LoginPage');
+  logout(){
+    let alert = this.alertCtrl.create({
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Logout',
+          handler: data => {
+            this.log.sendEvent('Logout', 'Account', '');
+            this.storage.remove('eatiblUser');
+            this.bookingUpcoming = [];
+            this.bookingHistory = [];
+            this.user = {};
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 
 }

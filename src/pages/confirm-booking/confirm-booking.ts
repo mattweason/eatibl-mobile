@@ -89,6 +89,29 @@ export class ConfirmBookingPage {
     console.log('ionViewDidLoad ConfirmBookingPage');
   }
 
+  ionViewDidEnter(){
+    this.storage.get('eatiblUser').then((val) => {
+      if(val){
+        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
+        this.user = decode(val);
+        this.bookingForm.controls['name'].setValue(this.user.name);
+        this.bookingForm.controls['phone'].setValue(this.user.phone);
+        this.bookingForm.controls['email'].setValue(this.user.email);
+        this.bookingForm.controls['active'].setValue(this.user.active);
+        this.bookingForm.controls['_id'].setValue(this.user._id);
+      } else { //
+        this.user = {
+          _id: '',
+          email: '',
+          name: '',
+          phone: '',
+          type: '',
+          active: 0
+        }
+      }
+    });
+  }
+
   ngOnInit(){
     this.buildDateObject();
     this.storage.get('eatiblUser').then((val) => {
@@ -235,6 +258,7 @@ export class ConfirmBookingPage {
         if(this.response.message == 'user exists'){ //If the email address belongs to a registered account
           title = 'Email Address Taken';
           message = 'This email address belongs to a registered account. Please login or use a different email.';
+          this.presentAlertWithLogin(title, message);
         }
 
         if(this.response.message == 'booking limit'){ //If the user has reached the booking limit
@@ -254,7 +278,8 @@ export class ConfirmBookingPage {
 
         this.log.sendEvent('Create Booking: Response', 'Confirm Booking', 'Response Message: '+this.response.message);
 
-        this.presentAlert(title, message);
+        if(this.response.message != 'user exists') //If user exists we use presentAlertWithLogin
+          this.presentAlert(title, message);
       }
       else{
         this.storage.get('eatiblUser').then((val) => {
@@ -305,6 +330,27 @@ export class ConfirmBookingPage {
       title: title,
       message: message,
       buttons: ['Dismiss']
+    });
+    alert.present();
+  }
+
+  //Error alert for booking errors
+  presentAlertWithLogin(title, message){
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      buttons: [
+        {
+          text: 'Dismiss'
+        },
+        {
+          text: 'Login',
+          handler: data => {
+            this.log.sendEvent('Login: Initiated', 'Confirm Booking', 'User pressed login button');
+            this.navCtrl.push('LoginPage');
+          }
+        }
+      ]
     });
     alert.present();
   }

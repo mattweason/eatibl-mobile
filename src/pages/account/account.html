@@ -42,6 +42,17 @@
         </ion-row>
         <ion-row>
           <ion-col>
+            <h2>Invites</h2>
+          </ion-col>
+        </ion-row>
+        <ion-row class="booking-metrics border-bottom">
+          <ion-col class="invites">
+            <p>Share these exclusive deals with your friends!</p>
+            <button ion-button color="secondary" (tap)="promptInvite()">Invite Friends</button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
             <h2>Bookings</h2>
           </ion-col>
         </ion-row>
@@ -63,23 +74,12 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <h2>Invites</h2>
-          </ion-col>
-        </ion-row>
-        <ion-row class="booking-metrics border-bottom">
-          <ion-col class="invites">
-            <p>Share these exclusive deals with your friends!</p>
-            <button ion-button color="secondary" (tap)="promptInvite()">Invite Friends</button>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <div *ngIf="user.email">
-              <button ion-button color="secondary" clear block (tap)="changeAccounts()">Change Accounts</button>
+            <div *ngIf="user.email" class="logout-button">
+              <button ion-button color="danger" small (tap)="logout()">Log Out</button>
             </div>
-            <div *ngIf="!user.email">
+            <div *ngIf="!user.email" class="button-row">
               <button ion-button color="primary" block (tap)="signUp()">Sign Up</button>
-              <button ion-button color="secondary" clear block (tap)="login()">Log In</button>
+              <button ion-button color="secondary" block (tap)="login()">Log In</button>
             </div>
           </ion-col>
         </ion-row>

@@ -331,6 +331,13 @@ ion-tabs{
   align-items: center !important;
 }
 
+.button-row{
+  display: flex;
+  :not(:last-child) {
+    margin-right: 6px;
+  }
+}
+
 .no-padding-col{
   padding: 0 !important;
 }
@@ -432,6 +439,8 @@ h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title,
   border-bottom: none !important;
   box-shadow: none !important;
 }
+
+
 
 //Platform specific styling
 
