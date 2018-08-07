@@ -211,7 +211,7 @@ export class SignupPage {
     let alert = this.alertCtrl.create({
       title: title,
       message: message,
-      buttons: ['Dismiss']
+      buttons: ['Ok']
     });
     alert.present();
   }
@@ -220,7 +220,7 @@ export class SignupPage {
     let alert = this.alertCtrl.create({
       title: title,
       message: message,
-      buttons: ['Dismiss']
+      buttons: ['Ok']
     });
     alert.present();
     alert.onDidDismiss(() => {

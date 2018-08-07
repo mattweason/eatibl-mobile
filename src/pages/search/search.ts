@@ -64,10 +64,11 @@ export class SearchPage {
       //Only request the geolocated restaurant list the first time this event is received
       if(this.firstCall){
         this.firstCall = false;
+        this.setNow(true);
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
           this.dataCache = data;
           this.processCategories();
-          this.setNow(true);
+          this.rankRestaurants(this.dataCache);
           this.cdRef.detectChanges();
         });
       }
@@ -77,10 +78,11 @@ export class SearchPage {
     this.storage.get('eatiblLocation').then((location) => {
       if(location){
         this.userCoords = location;
+        this.setNow(true);
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
           this.dataCache = data;
           this.processCategories();
-          this.setNow(true);
+          this.rankRestaurants(this.dataCache);
           this.cdRef.detectChanges();
         });
       }
@@ -88,7 +90,6 @@ export class SearchPage {
 
     //Catch backbutton click on android
     this.backButtonPressed = platform.registerBackButtonAction(() => {
-      console.log('pressing back button')
       this.hideCategoryList(false);
     }, 101);
   }
@@ -100,6 +101,8 @@ export class SearchPage {
 
   ionViewDidEnter(){
     this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
+    if(this.searchCategories && !this.restaurantList)
+      this.searchbar._searchbarInput.nativeElement.focus(); //Auto focus on the searchbar after the categories have sorted
 
     //If we are not entering this page for the first time, check the location status and update restaurants as necessary
     if(!this.firstCall){
@@ -127,7 +130,6 @@ export class SearchPage {
       this.date = this.today = moment().format();
       this.time = moment().add(30 - moment().minute() % 30, 'm').format();
       this.maxDate = moment().add(30, 'day').format();
-      this.rankRestaurants(this.dataCache);
     }
   }
 
@@ -139,7 +141,7 @@ export class SearchPage {
 
   //Search for restaurants with the selected category
   searchCategory(category) {
-    this.searchbar._searchbarInput.nativeElement.blur();
+    console.log(category)
     this.log.sendEvent('Category List Item Clicked', 'Search', category);
     this.filterRestaurants('', category, true); //Filter the restaurants
     this.searchInput = category; //Pop the category into the search bar
@@ -172,6 +174,7 @@ export class SearchPage {
 
   //Gather and sort tags
   processCategories(){
+    this.searchbar._searchbarInput.nativeElement.blur(); //Blur on search (causing the keyboard to hide)
     var rawCats = []; //Every existing category goes here to be sorted and counted
     for(var i = 0; i < this.dataCache.length; i++){
       if(this.dataCache[i].categories) //Don't loop through categories if there are none
@@ -188,6 +191,7 @@ export class SearchPage {
       return cat[1]
     }).reverse();
     this.searchCategoriesCache = JSON.parse(JSON.stringify(this.searchCategories)); //Cache the categories so we can always go back to full list. Parse and stringify to clone
+    this.searchbar._searchbarInput.nativeElement.focus(); //Auto focus on the searchbar after the categories have sorted
   }
 
   //Ranking system to dictate order of display
@@ -248,7 +252,6 @@ export class SearchPage {
 
     this.restaurantAll = restaurantList; //store all restos
     this.restaurantFiltered = restaurantList; //initial filtered list is the full restaurant list
-    this.restaurantList = this.restaurantFiltered.slice(0,10); //load first 10
     this.batch++;
   }
 

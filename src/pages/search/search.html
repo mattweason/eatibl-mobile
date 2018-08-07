@@ -46,8 +46,22 @@
 </ion-header>
 
 
-<ion-content>
-  <ion-refresher (ionRefresh)="doRefresh($event)">
+<ion-content [ngClass]="{'grey-background' : !restaurantList?.length}">
+  <div *ngIf="!restaurantList?.length" class="no-results">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="align-center icon">
+          <ion-icon name="search"></ion-icon>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col align-items-center>
+          <p class="align-center">Search by category or keyword.</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <ion-refresher *ngIf="restaurantList?.length" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content>
     </ion-refresher-content>
   </ion-refresher>
