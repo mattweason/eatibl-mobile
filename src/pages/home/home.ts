@@ -380,6 +380,9 @@ export class HomePage {
     this.restaurantAll = restaurantList; //store all restos
     this.batch++;
 
+    //Send first batch of restaurants to backend for logging
+    this.restaurantDisplayLog(this.restaurantList, 0);
+
     //When you've selected a restaurant and changed the date, update the restaurant data
     if(this.view == 'map' && this.selectedResto){
       this.processBusinessHours();
@@ -403,11 +406,16 @@ export class HomePage {
   //Call next batch of 10 restaurants when you reach the bottom of the page
   getNextBatch(infiniteScroll){
     this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Home', 'User scrolled down until next batch was populated, batch #: '+this.batch);
+
     var limit = Math.min(this.batch*10+10, this.restaurantAll.length);
+    var currentBatch = []; //for display log
 
     for(var i = this.batch*10; i < limit; i++){
-      this.restaurantList.push(this.restaurantAll[i]);
+      this.restaurantList.push(this.restaurantAll[i]); //add restaurant to the current display list
+      currentBatch.push(this.restaurantAll[i]);
     }
+    //capture restaurants displayed in this batch and send to log
+    this.restaurantDisplayLog(currentBatch, this.batch);
 
     this.batch++;
 
@@ -447,4 +455,32 @@ export class HomePage {
       this.log.sendEvent('TimePicker: Cancelled', 'Home', JSON.stringify(data));
   }
 
+  //take a specific chunk of restaurants and log them to backend (revealing what is shown to specific users)
+  restaurantDisplayLog(restoList, batchNumber){
+    console.log(this.time);
+    console.log(this.date);
+    var formattedList = [];
+    //format restoList before sending it over
+    for (var i = 0; i < restoList.length; i++){
+
+      var currentHour = this.time ? moment(this.time).format('H') : moment(this.date).format('H');
+      var currentMinute = this.time ? moment(this.time).format('m') : moment(this.date).format('m');
+
+      var selectedTime = Math.round((parseInt(currentHour) + parseInt(currentMinute)/60) * 100) / 100;
+
+      formattedList.push({
+        deviceId: this.device.uuid,
+        restaurant_fid: restoList[i]._id,
+        restaurantName: restoList[i].name,
+        selectedDay: this.date,
+        selectedTime: selectedTime,
+        bestDeal: restoList[i].maxTimeslot.discount,
+        rank: i + (batchNumber * 10),
+        location: this.userCoords,
+        distance: Math.round(restoList[i].distance * 100) / 100
+      });
+    }
+
+    this.API.makePost('log/trackDisplayActivity', {restaurants: formattedList}).subscribe(() => {});
+  }
 }
