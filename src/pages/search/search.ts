@@ -290,24 +290,38 @@ export class SearchPage {
     this.log.sendEvent('Restaurant Search: Completed', 'Search', 'Results came back, with a total restaurant count of: '+this.restaurantFiltered.length);
 
     this.restaurantList = this.restaurantFiltered.slice(0,10); //load first 10
-    this.batch++;
+
+    if(this.batch*10 >= this.restaurantFiltered.length || this.restaurantFiltered.length <= 10)
+      this.allResults = true; //If the first search results are less than 10, don't show buttons
+    else
+      this.batch++; //Only increment batch if there are more results
   }
 
-  //Call next batch of 10 restaurants when you reach the bottom of the page
-  getNextBatch(infiniteScroll){
+  //Call next batch of 10 restaurants
+  nextBatch(){
     this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User scrolled down until next batch was populated, batch #: '+this.batch);
     var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
 
-    for(var i = this.batch*10; i < limit; i++){
-      this.restaurantList.push(this.restaurantFiltered[i]);
-    }
+    this.restaurantList = this.restaurantFiltered.slice(this.batch*10, limit); //Replace current list of restos with next 10
 
     this.batch++;
 
-    if(this.restaurantList.length == this.restaurantFiltered.length)
+    if(this.batch*10 >= this.restaurantFiltered.length)
       this.allResults = true;
 
-    infiniteScroll.complete();
+    this.content.scrollToTop();
+  }
+
+  //Call prev batch of 10 restaurants
+  prevBatch(){
+    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User scrolled down until next batch was populated, batch #: '+this.batch);
+    var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
+
+    this.restaurantList = this.restaurantFiltered.slice(this.batch*10 - 10, limit); //Replace current list of restos with prev 10
+
+    this.batch--;
+
+    this.content.scrollToTop();
   }
 
   //Pull down to refresh the restaurant list

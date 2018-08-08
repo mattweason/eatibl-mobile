@@ -100,7 +100,7 @@ export class RestaurantCardComponent implements OnChanges {
     //If there is a featured image
     if(this.restaurant.featuredImage){
       var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
-      this.featuredImageUrl = imageUrl;
+      this.featuredImageUrl = this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`);
     }
   }
 
