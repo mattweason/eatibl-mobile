@@ -38,7 +38,6 @@ export class HomePage {
   userCoords: any;
   firstCall = true;
   batch = 0; //Represents the batch number
-  allResults = false; //Becomes true when we've retrieved all of the restaurants.
   hideMap = false;
   customLocation = false;
   loadMorePressed: number = 0; //Increments by one each time load more is pressed
@@ -399,7 +398,7 @@ export class HomePage {
     this.log.sendEvent('List View: Refreshed', 'Home', 'User refreshed the restaurant list');
     this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
-      this.allResults = false;
+      this.loadMorePressed = 0;
       this.batch = 0;
       this.rankRestaurants(data);
       refresher.complete();
