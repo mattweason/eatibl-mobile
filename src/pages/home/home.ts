@@ -41,6 +41,9 @@ export class HomePage {
   allResults = false; //Becomes true when we've retrieved all of the restaurants.
   hideMap = false;
   customLocation = false;
+  loadMorePressed: number = 0; //Increments by one each time load more is pressed
+  loadMoreCount: number = 10; //Number of additional nearby restaurants loaded when load more is pressed
+  initLoadCount: number = 5; //Number of nearby restaurants loaded initially
 
   map: GoogleMap;
 
@@ -376,7 +379,7 @@ export class HomePage {
       return -resto.rank;
     });
 
-    this.restaurantList = restaurantList.slice(0,10); //load first 10
+    this.restaurantList = restaurantList.slice(0,this.initLoadCount); //load first 5
     this.restaurantAll = restaurantList; //store all restos
     this.batch++;
 
@@ -403,32 +406,20 @@ export class HomePage {
     });
   }
 
-  //Call next batch of 10 restaurants when you reach the bottom of the page
-  getNextBatch(infiniteScroll){
-    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Home', 'User scrolled down until next batch was populated, batch #: '+this.batch);
+  //Load 10 more restaurants, but not more than 25
+  loadMore(){
+    this.log.sendEvent('Load More: Pressed', 'Home', 'User requested to load more restaurants: ' + this.loadMorePressed == 0 ? 'first time' : 'second time');
 
-    var limit = Math.min(this.batch*10+10, this.restaurantAll.length);
+    this.loadMorePressed++;
+    var limit = this.initLoadCount + this.loadMorePressed * this.loadMoreCount;
     var currentBatch = []; //for display log
 
-    for(var i = this.batch*10; i < limit; i++){
+    for(var i = this.restaurantList.length; i < limit; i++) {
       this.restaurantList.push(this.restaurantAll[i]); //add restaurant to the current display list
       currentBatch.push(this.restaurantAll[i]);
     }
     //capture restaurants displayed in this batch and send to log
-    this.restaurantDisplayLog(currentBatch, this.batch);
-
-    this.batch++;
-
-    if(this.restaurantList.length == this.restaurantAll.length)
-      this.allResults = true;
-
-    infiniteScroll.complete();
-  }
-
-
-  toggleToolbar(){
-    this.showToolbar = !this.showToolbar;
-    this.content.resize();
+    this.restaurantDisplayLog(currentBatch, limit - this.loadMoreCount);
   }
 
   setNow(initialCall){
@@ -456,7 +447,7 @@ export class HomePage {
   }
 
   //take a specific chunk of restaurants and log them to backend (revealing what is shown to specific users)
-  restaurantDisplayLog(restoList, batchNumber){
+  restaurantDisplayLog(restoList, currentIndex){
     console.log(this.time);
     console.log(this.date);
     var formattedList = [];
@@ -475,7 +466,7 @@ export class HomePage {
         selectedDay: this.date,
         selectedTime: selectedTime,
         bestDeal: restoList[i].maxTimeslot.discount,
-        rank: i + (batchNumber * 10),
+        rank: currentIndex + i,
         location: this.userCoords,
         distance: Math.round(restoList[i].distance * 100) / 100
       });

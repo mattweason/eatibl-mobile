@@ -44,11 +44,11 @@
     <ion-list>
       <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
-    <ion-infinite-scroll *ngIf="!allResults" threshold="1500px" (ionInfinite)="getNextBatch($event)">
-      <ion-infinite-scroll-content></ion-infinite-scroll-content>
-    </ion-infinite-scroll>
-    <ion-grid *ngIf="allResults">
-      <ion-row>
+    <div *ngIf="loadMorePressed < 2" class="load-more">
+      <button ion-button block color="light" (tap)="loadMore()">Load 10 More</button>
+    </div>
+    <ion-grid>
+      <ion-row *ngIf="loadMorePressed >= 2">
         <ion-col align-items-center>
           <p class="align-center">That's all she's got, Captain.</p>
           <p class="align-center">Know any restaurants you would like to see? Let us know!</p>

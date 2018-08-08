@@ -25,7 +25,8 @@ export class RestaurantCardComponent implements OnChanges {
   private url: string = ENV.API;
 
   //Need slides to load before setting this.slides so we can set the current slide based on the active timeslot
-  @ViewChild('slides') set content(content: Slides) {
+  @ViewChild('slides') set content(content: Slides
+  ) {
     this.slides = content;
     this.setInitialPosition();
     setTimeout(() => {
@@ -59,7 +60,7 @@ export class RestaurantCardComponent implements OnChanges {
   businessHours = [];
   businessHoursData = {} as any;
   openStatus: string;
-  isLoaded: boolean = false;
+  isLoaded: boolean = true;
   isInitial: boolean = true;
   scrollingSlides: any;
   isBeginning: boolean = false;
@@ -99,7 +100,7 @@ export class RestaurantCardComponent implements OnChanges {
     //If there is a featured image
     if(this.restaurant.featuredImage){
       var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
-      this.featuredImageUrl = this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`)
+      this.featuredImageUrl = imageUrl;
     }
   }
 
@@ -228,9 +229,11 @@ export class RestaurantCardComponent implements OnChanges {
         }
       }
       if(index == -1)
-        this.slides.slideTo(this.timeslots.length);
+        if(this.slides)
+          this.slides.slideTo(this.timeslots.length);
       else
-        this.slides.slideTo(index - 1)
+        if(this.slides)
+          this.slides.slideTo(index - 1)
     }
   }
 
