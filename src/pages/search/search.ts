@@ -24,6 +24,7 @@ export class SearchPage {
   @ViewChild('searchbar') searchbar : any;
 
   searchInput: string;
+  searchCache: string; //Cache the search input for the no results text
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
   restaurantFiltered: any; //filtered search results
@@ -257,6 +258,7 @@ export class SearchPage {
 
   //Currently filters based on restaurant name and categories
   filterRestaurants(event, searchInput, category){
+    this.searchCache = this.searchInput; //Update search cache
     this.searchbar._searchbarInput.nativeElement.blur(); //Blur on search (causing the keyboard to hide)
     this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: ' + searchInput);
     this.allResults = false;

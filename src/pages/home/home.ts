@@ -407,7 +407,7 @@ export class HomePage {
 
   //Load 10 more restaurants, but not more than 25
   loadMore(){
-    this.log.sendEvent('Load More: Pressed', 'Home', 'User requested to load more restaurants: ' + this.loadMorePressed == 0 ? 'first time' : 'second time');
+    this.log.sendEvent('Load More: Pressed', 'Home', 'User requested to load more restaurants: ' + (this.loadMorePressed == 0 ? 'first time' : 'second time'));
 
     this.loadMorePressed++;
     var limit = this.initLoadCount + this.loadMorePressed * this.loadMoreCount;
