@@ -447,8 +447,6 @@ export class HomePage {
 
   //take a specific chunk of restaurants and log them to backend (revealing what is shown to specific users)
   restaurantDisplayLog(restoList, currentIndex){
-    console.log(this.time);
-    console.log(this.date);
     var formattedList = [];
     //format restoList before sending it over
     for (var i = 0; i < restoList.length; i++){
@@ -459,6 +457,7 @@ export class HomePage {
       var selectedTime = Math.round((parseInt(currentHour) + parseInt(currentMinute)/60) * 100) / 100;
 
       formattedList.push({
+        page: 'nearby',
         deviceId: this.device.uuid,
         restaurant_fid: restoList[i]._id,
         restaurantName: restoList[i].name,

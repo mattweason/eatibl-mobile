@@ -3,6 +3,7 @@ import {IonicPage, NavController, NavParams, Events, Content, Platform} from 'io
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -53,6 +54,7 @@ export class SearchPage {
     private API: ApiServiceProvider,
     private cdRef:ChangeDetectorRef,
     public events: Events,
+    private device: Device,
     private storage: Storage,
     private renderer: Renderer2,
     private functions: FunctionsProvider,
@@ -142,7 +144,6 @@ export class SearchPage {
 
   //Search for restaurants with the selected category
   searchCategory(category) {
-    console.log(category)
     this.log.sendEvent('Category List Item Clicked', 'Search', category);
     this.filterRestaurants('', category, true); //Filter the restaurants
     this.searchInput = category; //Pop the category into the search bar
@@ -301,28 +302,31 @@ export class SearchPage {
 
   //Call next batch of 10 restaurants
   nextBatch(){
-    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User scrolled down until next batch was populated, batch #: '+this.batch);
+    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User pressed the next 10 results button, batch #: '+this.batch);
     var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
 
     this.restaurantList = this.restaurantFiltered.slice(this.batch*10, limit); //Replace current list of restos with next 10
 
-    this.batch++;
+    //capture restaurants displayed in this batch and send to log
+    this.restaurantDisplayLog(this.restaurantList, this.batch*10);
 
+    this.batch++;
     if(this.batch*10 >= this.restaurantFiltered.length)
       this.allResults = true;
-
     this.content.scrollToTop();
   }
 
   //Call prev batch of 10 restaurants
   prevBatch(){
-    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User scrolled down until next batch was populated, batch #: '+this.batch);
+    this.log.sendEvent('Infinite Scroll: Loaded Previous Batch', 'Search', 'User pressed the prev 10 results button, batch #: '+this.batch);
     var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
 
-    this.restaurantList = this.restaurantFiltered.slice(this.batch*10 - 10, limit); //Replace current list of restos with prev 10
+    this.restaurantList = this.restaurantFiltered.slice(this.batch*10 - 20, limit); //Replace current list of restos with prev 10
+
+    //capture restaurants displayed in this batch and send to log
+    this.restaurantDisplayLog(this.restaurantList, this.batch*10 - 20);
 
     this.batch--;
-
     this.content.scrollToTop();
   }
 
@@ -334,7 +338,7 @@ export class SearchPage {
       this.allResults = false;
       this.batch = 0;
       this.rankRestaurants(data);
-      this.filterRestaurants('', this.searchInput, false)
+      this.filterRestaurants('', this.searchInput, false);
       refresher.complete();
     });
   }
@@ -353,5 +357,33 @@ export class SearchPage {
       this.log.sendEvent('TimePicker: Updated', 'Search', JSON.stringify(data));
     if(action =='cancelled')
       this.log.sendEvent('TimePicker: Cancelled', 'Search', JSON.stringify(data));
+  }
+
+  //take a specific chunk of restaurants and log them to backend (revealing what is shown to specific users)
+  restaurantDisplayLog(restoList, currentIndex){
+    var formattedList = [];
+    //format restoList before sending it over
+    for (var i = 0; i < restoList.length; i++){
+
+      var currentHour = this.time ? moment(this.time).format('H') : moment(this.date).format('H');
+      var currentMinute = this.time ? moment(this.time).format('m') : moment(this.date).format('m');
+
+      var selectedTime = Math.round((parseInt(currentHour) + parseInt(currentMinute)/60) * 100) / 100;
+
+      formattedList.push({
+        page: 'search',
+        deviceId: this.device.uuid,
+        restaurant_fid: restoList[i]._id,
+        restaurantName: restoList[i].name,
+        selectedDay: this.date,
+        selectedTime: selectedTime,
+        bestDeal: restoList[i].maxTimeslot ? restoList[i].maxTimeslot.discount : '',
+        rank: currentIndex + i,
+        location: this.userCoords,
+        distance: Math.round(restoList[i].distance * 100) / 100
+      });
+    }
+
+    this.API.makePost('log/trackDisplayActivity', {restaurants: formattedList}).subscribe(() => {});
   }
 }
