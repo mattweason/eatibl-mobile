@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, trigger } from '@angular/core';
 import {IonicPage, NavController, NavParams, AlertController, ModalController} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
@@ -6,6 +6,8 @@ import { ActivityLoggerProvider } from "../../providers/activity-logger/activity
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
+import { LocalNotifications } from '@ionic-native/local-notifications';
+import moment from 'moment';
 
 import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
 
@@ -37,6 +39,7 @@ export class ConfirmBookingPage {
   restaurant: any;
   timeslot: any;
   people: any;
+  timeOfBooking: any;
   dateObject = {} as any;
   date: any;
   response: any;
@@ -53,7 +56,8 @@ export class ConfirmBookingPage {
     private device: Device,
     private storage: Storage,
     private modal: ModalController,
-    private log: ActivityLoggerProvider
+    private log: ActivityLoggerProvider,
+    public localnotifications: LocalNotifications
   ) {
     this.restaurant = navParams.get('restaurant');
     this.timeslot = navParams.get('timeslot');
@@ -282,6 +286,42 @@ export class ConfirmBookingPage {
           this.presentAlert(title, message);
       }
       else{
+        var timeOfBooking = moment(); //Get the time the create booking function is processed
+        var dateTimeReservation = new Date(this.date); //Get the time for the reservation
+        var timeOfReservation = this.timeslot.time; //Get the time of the reservation
+
+        if(timeOfBooking.dates()==dateTimeReservation.getDate()){ //Check if reservation was made same day
+          if((timeOfReservation-timeOfBooking.hours())>1){//If same day, check if greater than an hour
+            //If the time of reservation is 10 minutes to the next hour, and the reservation is the next hour,
+            //it sends a notification at 5 mins rather than an hour (eg. 2:56pm reservation for 4pm)
+            if(timeOfBooking.minutes()>50 && timeOfReservation-timeOfBooking.hours()==2){ 
+              this.localnotifications.schedule({
+                text: "Your reservation for " + this.restaurant + " is in 5 minutes!",
+                trigger: {at: (moment().startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
+              });
+            }
+            else{ //More than an hour, and not close to the hour mark
+            this.localnotifications.schedule({
+              text: "Your reservation for " + this.restaurant + " is in an hour!",
+              trigger: {at: (((moment().startOf('day').add(this.timeslot.time-1, 'hours')).toDate()))}
+            });
+          }
+        }
+          else{ //Less than an hour
+            this.localnotifications.schedule({
+              text: "Your reservation for " + this.restaurant + " is in 5 minutes!",
+              trigger: {at: (moment().startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
+            });
+          }
+        }
+
+        else{ //Reservation not made for the same day, so send the notification that day an hour before
+          this.localnotifications.schedule({
+            text: "Your reservation for " + this.restaurant + " is in an hour!",
+            trigger: {at: (((moment().startOf('day').add(this.timeslot.time-1, 'hours')).add(dateTimeReservation.getDate()-timeOfBooking.dates(), 'days').toDate()))}
+          });
+        }
+
         this.storage.get('eatiblUser').then((val) => {
           if(val){
             this.user = decode(val);
