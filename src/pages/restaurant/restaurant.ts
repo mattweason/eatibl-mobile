@@ -79,51 +79,70 @@ export class RestaurantPage implements OnInit {
     private storage: Storage
   ) {
 
-      this.restaurant = JSON.parse(navParams.get('restaurant'));
-      this.timeslotsData = JSON.parse(navParams.get('timeslotsData'));
-      this.businessHoursData = JSON.parse(navParams.get('businessHoursData'));
-      this.timeslotId = navParams.get('timeslotId');
-      this.distance = this.functions.roundDistances(navParams.get('distance'));
-      this.date = navParams.get('date');
-      this.time = navParams.get('time');
+    this.restaurant = JSON.parse(navParams.get('restaurant'));
+    this.timeslotsData = JSON.parse(navParams.get('timeslotsData'));
+    this.businessHoursData = JSON.parse(navParams.get('businessHoursData'));
+    this.timeslotId = navParams.get('timeslotId');
+    this.distance = this.functions.roundDistances(navParams.get('distance'));
+    this.date = navParams.get('date');
+    this.time = navParams.get('time');
 
-      this.log.sendEvent('Visit Restaurant', 'Restaurant', 'Visited: ' + this.restaurant.name);
+    this.log.sendEvent('Visit Restaurant', 'Restaurant', 'Visited: ' + this.restaurant.name);
 
-    //Since we aren't doing setnow, make sure to initialize
-      this.today = moment().format();
-      this.maxDate = moment().add(30, 'day').format();
-      //Subscribe to geolocation event
-      events.subscribe('user:geolocated', (location, time) => {
-          this.location = location;
-          this.setDistance();
-      });
-      this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
-        if (val){
-          this.location = val;
-          this.setDistance();
-        }
-      });
-      this.processBusinessHours();
-      this.processTimeslots();
-      this.isOpen();
-      this.buildMap();
+  //Since we aren't doing setnow, make sure to initialize
+    this.today = moment().format();
+    this.maxDate = moment().add(30, 'day').format();
+    //Subscribe to geolocation event
+    events.subscribe('user:geolocated', (location, time) => {
+        this.location = location;
+        this.setDistance();
+    });
 
-      if(!this.restaurant.recommendedItems) //Until all restaurants have at least an empty recommendItems property
-        this.restaurant.recommendedItems = [];
-
-      if(this.restaurant.featuredImage){
-        //reorder the image array to put featured image first
-        var index = this.restaurant.images.indexOf(this.restaurant.featuredImage);
-        if(index > -1)
-          this.restaurant.images.splice(index,1); //remove from image list
-
-        this.restaurant.images.unshift(this.restaurant.featuredImage); //add featured image to start of list
-
-        for(var i = 0; i < this.restaurant.images.length; i++){
-          var imageUrl = this.url+'files/'+this.restaurant.images[i];
-          this.orderedImgArray.push(this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`));
-        }
+    this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
+      if (val){
+        this.location = val;
+        this.setDistance();
       }
+    });
+
+    this.processBusinessHours();
+    this.processTimeslots();
+    this.isOpen();
+    this.buildMap();
+
+    this.API.makePost('booking/specific', {restaurantId: this.restaurant._id, date: this.date}).subscribe(response => {
+      var bookings: any = response;
+
+      //Loop through all of our booking for this day, at this restaurant
+      for(var i = 0; i < bookings.length; i++){
+        //find the index of the timeslot that needs to be reduced becaused of current booking
+        var index = _.findIndex(this.timeslots, function(timeslot){
+          return timeslot._id == bookings[i].timeslot_fid;
+        });
+
+        //reduce capacity by the number already taken in booking
+        if(index >= 0)
+          this.timeslots[index].quantity -= bookings[i].people;
+      }
+      this.processTimeslots();
+    });
+
+    if(!this.restaurant.recommendedItems) //Until all restaurants have at least an empty recommendItems property
+      this.restaurant.recommendedItems = [];
+
+    if(this.restaurant.featuredImage){
+      //reorder the image array to put featured image first
+      var index = this.restaurant.images.indexOf(this.restaurant.featuredImage);
+      if(index > -1)
+        this.restaurant.images.splice(index,1); //remove from image list
+
+      this.restaurant.images.unshift(this.restaurant.featuredImage); //add featured image to start of list
+
+      for(var i = 0; i < this.restaurant.images.length; i++){
+        var imageUrl = this.url+'files/'+this.restaurant.images[i];
+        this.orderedImgArray.push(this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`));
+      }
+    }
   }
 
   ionViewDidLoad() {

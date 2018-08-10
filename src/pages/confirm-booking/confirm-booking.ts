@@ -252,7 +252,7 @@ export class ConfirmBookingPage {
       if(this.response.message){
         if(this.response.message == 'overcapacity'){ //If requested capacity is over the available capacity
           title = 'Overcapacity';
-          message = 'Sorry, but this timeslot only has '+this.response.remainder+' seats left.';
+          message = 'Sorry, but this timeslot only has '+this.response.remaining+' seats left.';
         }
 
         if(this.response.message == 'user exists'){ //If the email address belongs to a registered account
