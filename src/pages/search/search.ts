@@ -161,6 +161,7 @@ export class SearchPage {
     } else {
       this.showCategories = false;
     }
+    this.events.publish('hideshow:helptab', false);
   }
 
   filterCategories(searchInput) {
