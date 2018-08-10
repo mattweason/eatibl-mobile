@@ -226,15 +226,16 @@ export class MyApp {
       console.log(version_code);
       // self.API.makePost('versionCheck', {vers`ion: version_code}).subscribe(data => {
       var storeLink, version;
-      if(this.platform.is('android')){ //Set up link and version numbers for android
+      if(self.platform.is('android')){ //Set up link and version numbers for android
         storeLink = 'market://details?id=com.eatibl';
         version = '0.1.16';
       }
-      else if(this.platform.is('ios')){ //Set up link and version numbers for android
-        storeLink = 'itms-apps://itunes.apple.com/us/app/domainsicle-domain-name-search/id511364723?ls=1&mt=8';
-        version = '0.1.16';
+      else if(self.platform.is('ios')){ //Set up link and version numbers for android
+        storeLink = 'itms://itunes.apple.com/ca/app/eatibl-eat-food-save-money/id1382344870?mt=8';
+        version = '0.1.20';
       }
       if(version_code == version){
+        console.log(storeLink)
         let alert = self.alertCtrl.create({
           title: 'New Version Available',
           subTitle: 'There is a required update for Eatibl. Please update and reopen the app.',
@@ -242,7 +243,7 @@ export class MyApp {
           buttons: [{
             text: 'Update',
             handler: () => {
-              window.open(storeLink);
+              window.open(storeLink, '_blank');
               self.forcedUpdateAlertOpen = false;
             }
           }]
