@@ -1,5 +1,5 @@
 <!-- Generated template for the RestaurantComponent component -->
-<ion-card *ngIf="isLoaded" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
+<ion-card *ngIf="isLoaded && cardType == 'standard'" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
   <div *ngIf="restaurantTapped" class="loading-overlay card">
     <div class="spinner-box">
       <ion-spinner></ion-spinner>
@@ -87,6 +87,36 @@
       </ion-row>
     </ion-grid>
   </ion-card-content>
+</ion-card>
+<ion-card *ngIf="isLoaded && cardType == 'top-pick'" class="top-pick-card">
+  <div *ngIf="restaurantTapped" class="loading-overlay card">
+    <div class="spinner-box">
+      <ion-spinner></ion-spinner>
+    </div>
+  </div>
+  <ion-grid no-padding>
+    <ion-row no-padding>
+      <ion-col col-8>
+        <button class="button-wrapper" (tap)="navigateTo('best-deal', restaurant.maxTimeslot._id)" ion-item detail-none>
+          <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
+          <div class="title-box">
+            <h3>{{restaurant.name}}</h3>
+          </div>
+        </button>
+      </ion-col>
+      <ion-col col-4>
+        <button ion-button class="best-deal" *ngIf="restaurant?.maxTimeslot" (tap)="navigateTo('best-deal', restaurant.maxTimeslot._id)">
+          <div class="deal-details">
+            <p class="discount">-{{restaurant?.maxTimeslot.discount}}%</p>
+            <p class="time">@{{functions.formatClockTime(restaurant.maxTimeslot.time, true)}}</p>
+          </div>
+          <div class="cta">
+            <p>Claim</p>
+          </div>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-card>
 <div class="loading" *ngIf="!isLoaded">
   <ion-spinner></ion-spinner>

@@ -43,6 +43,7 @@ export class RestaurantCardComponent implements OnChanges {
   @Input() restaurant = {} as any;
   @Input() date: string;
   @Input() time: string;
+  @Input() cardType: string;
 
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     if(changes.hasOwnProperty('location'))

@@ -32,7 +32,7 @@
     </ion-grid>
     <ion-slides class="top-pick-slider" spaceBetween="-15" pager="true">
       <ion-slide class="top-pick-slide" *ngFor="let restaurant of (restaurantList ? restaurantList.slice(0,5) : []);">
-        <top-pick-card [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></top-pick-card>
+        <restaurant-card [cardType]="'top-pick'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
       </ion-slide>
     </ion-slides>
     <ion-grid class="section-header deals-nearby">
@@ -43,7 +43,7 @@
       </ion-row>
     </ion-grid>
     <ion-list>
-      <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+      <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
     <div class="load-more">
       <button *ngIf="loadMorePressed < 2" ion-button block color="light" (tap)="loadMore()">Show More Restaurants</button>

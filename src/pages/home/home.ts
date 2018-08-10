@@ -104,7 +104,6 @@ export class HomePage {
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
       this.events.publish('reveal:restaurants');
       this.dataCache = data;
-      console.log(data)
       this.setNow(true); //rankRestaurants runs inside here
       this.cdRef.detectChanges();
     });

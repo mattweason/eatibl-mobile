@@ -180,3 +180,116 @@
     height: 200px;
   }
 }
+.top-pick-card {
+  margin-bottom: 0 !important;
+  ion-row{
+    padding: 0 !important;
+  }
+  .button-wrapper{
+    position: relative;
+    .featured-image {
+      position: relative;
+      height: 140px;
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-color: #000;
+      &:after {
+        transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: block;
+        background-color: rgba(0, 0, 0, 0);
+      }
+    }
+    .title-box{
+      h3{
+        color: #fff;
+        font-weight: 700;
+      }
+      position: absolute;
+      bottom: 6px;
+      width:95%;
+      left:0;
+      right:0;
+      white-space: normal;
+      margin-left:auto;
+      margin-right:auto;
+      padding: 3px 6px;
+      border-radius: 3px;
+      background-color: rgba(34,34,34,0.7);
+    }
+  }
+  .best-deal{
+    height: 100%;
+    width: 100%;
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+    padding: 0;
+    .deal-header{
+      width: 100%;
+      padding: 3px 0;
+      background-color: #fff;
+    }
+    .deal-details{
+      height: 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .cta{
+      border-top: 1px solid color($colors, light);
+      width: 100%;
+      height: 40%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: color($colors, secondary);
+      p{
+        margin: 0;
+        text-align: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: 1px;
+      }
+    }
+    .button-inner{
+      flex-direction: column;
+      p{
+        margin: 0;
+        color: #fff;
+        &.discount{
+          font-size: 24px;
+          line-height: 24px;
+          margin-bottom: 2px;
+        }
+        &.title{
+          font-size: 12px;
+          font-weight: 700;
+          color: darken(color($colors, primary), 10%);
+        }
+        &.time{
+          line-height: 14px;
+        }
+      }
+    }
+  }
+  .restaurant-name{
+    text-align: left;
+    padding:3px 6px;
+    h3{
+      font-weight: 700;
+    }
+    p{
+      margin: 0;
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { ENV } from '@app/env';
 
 /**
@@ -22,9 +23,11 @@ export class TopPickCardComponent {
 
   private url: string = ENV.API;
   featuredImageUrl: any;
+  restaurantTapped = false;
 
   constructor(
     private sanitizer: DomSanitizer,
+    private log: ActivityLoggerProvider,
     private functions: FunctionsProvider
   ) {}
 

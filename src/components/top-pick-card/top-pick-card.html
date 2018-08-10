@@ -1,8 +1,13 @@
 <ion-card>
+  <div *ngIf="restaurantTapped" class="loading-overlay card">
+    <div class="spinner-box">
+      <ion-spinner></ion-spinner>
+    </div>
+  </div>
   <ion-grid no-padding>
     <ion-row no-padding>
       <ion-col col-8>
-        <button class="button-wrapper" (tap)="navigateTo('restaurant-image', '')" ion-item detail-none>
+        <button class="button-wrapper" (tap)="navigateTo('best-deal', restaurant.maxTimeslot._id)" ion-item detail-none>
           <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
           <div class="title-box">
             <h3>{{restaurant.name}}</h3>
