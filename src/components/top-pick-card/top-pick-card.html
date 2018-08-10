@@ -1,0 +1,25 @@
+<ion-card>
+  <ion-grid no-padding>
+    <ion-row no-padding>
+      <ion-col col-8>
+        <button class="button-wrapper" (tap)="navigateTo('restaurant-image', '')" ion-item detail-none>
+          <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
+          <div class="title-box">
+            <h3>{{restaurant.name}}</h3>
+          </div>
+        </button>
+      </ion-col>
+      <ion-col col-4>
+        <button ion-button class="best-deal" *ngIf="restaurant?.maxTimeslot" (tap)="navigateTo('best-deal', restaurant.maxTimeslot._id)">
+          <div class="deal-details">
+            <p class="discount">-{{restaurant?.maxTimeslot.discount}}%</p>
+            <p class="time">@{{functions.formatClockTime(restaurant.maxTimeslot.time, true)}}</p>
+          </div>
+          <div class="cta">
+            <p>Claim</p>
+          </div>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-card>

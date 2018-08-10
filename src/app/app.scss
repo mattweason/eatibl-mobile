@@ -25,10 +25,14 @@
   }
 }
 restaurant-card, page-restaurant, .map-resto-card {
+  ion-card {
+    border-radius: 0 !important;
+  }
+}
+restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
   ion-card{
     margin: 0 0 20px 0 !important;
     width: 100% !important;
-    border-radius: 0 !important;
   }
   h2{
     font-weight: 700 !important;

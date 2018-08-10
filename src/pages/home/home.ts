@@ -104,6 +104,7 @@ export class HomePage {
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
       this.events.publish('reveal:restaurants');
       this.dataCache = data;
+      console.log(data)
       this.setNow(true); //rankRestaurants runs inside here
       this.cdRef.detectChanges();
     });
@@ -331,7 +332,6 @@ export class HomePage {
           return timeslot.day == day && timeslot.time >= hour + 0.25; //Add a quarter hour to comparison to prevent bookings within 15 minutes of a booking time;
         else //for other days, show all available timeslots
           return timeslot.day == day;
-
       });
 
       //Make sure it's sorted by time ascending
