@@ -207,6 +207,19 @@
         background-color: rgba(0, 0, 0, 0);
       }
     }
+    .distance{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 3px 6px;
+      border-radius: 3px;
+      background-color: rgba(34,34,34,0.7);
+      p{
+        color: #fff;
+        font-size: 14px;
+        margin: 0;
+      }
+    }
     .title-box{
       h3{
         color: #fff;

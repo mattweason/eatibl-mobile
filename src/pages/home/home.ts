@@ -22,6 +22,7 @@ export class HomePage {
 
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
+  restaurantPicks = []; //List of restaraunt of today's top picks (total of 5)
   selectedResto = {} as any; //Restaurant data of the selected marker
   timeslotsLength: any; //Used to see if restaurant has discounts for a day
   businessHours = [];
@@ -380,6 +381,13 @@ export class HomePage {
     this.restaurantList = restaurantList.slice(0,this.initLoadCount); //load first 5
     this.restaurantAll = restaurantList; //store all restos
     this.batch++;
+
+    //Get top picks based on current ranking
+    for (var i = 0; i < this.restaurantAll.length; i++){
+      if(this.restaurantAll[i].maxTimeslot) //make sure all our entries have some discount (will never happen but Matt insisted on it)
+       if(this.restaurantPicks.length < 5 && this.restaurantAll[i].maxTimeslot.discount > 15)
+          this.restaurantPicks.push(this.restaurantAll[i]);
+    }
 
     //Send first batch of restaurants to backend for logging
     this.restaurantDisplayLog(this.restaurantList, 0);

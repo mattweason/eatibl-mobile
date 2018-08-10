@@ -31,7 +31,7 @@
       </ion-row>
     </ion-grid>
     <ion-slides class="top-pick-slider" spaceBetween="-15" pager="true">
-      <ion-slide class="top-pick-slide" *ngFor="let restaurant of (restaurantList ? restaurantList.slice(0,5) : []);">
+      <ion-slide class="top-pick-slide" *ngFor="let restaurant of restaurantPicks">
         <restaurant-card [cardType]="'top-pick'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
       </ion-slide>
     </ion-slides>
