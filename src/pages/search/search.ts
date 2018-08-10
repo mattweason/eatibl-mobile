@@ -199,12 +199,22 @@ export class SearchPage {
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
+    var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
+
+    //filter out restaurants that have no timeslots
+    restaurantList = _.filter(restaurantList, function(resto){
+      return resto.timeslots.length;
+    })
 
     for (var i = 0; i < restaurantList.length; i++){
       var rank = 100; //start with default value
       var timeslots = _.filter(restaurantList[i].timeslots, function(timeslot){
-        return timeslot.day == day && timeslot.time >= hour;
+
+        if(today == day) //for today filter out spots that have already passed
+          return timeslot.day == day && timeslot.time >= hour + 0.25; //Add a quarter hour to comparison to prevent bookings within 15 minutes of a booking time;
+        else //for other days, show all available timeslots
+          return timeslot.day == day;
       });
 
       //Make sure it's sorted by time ascending
@@ -313,21 +323,22 @@ export class SearchPage {
     this.batch++;
     if(this.batch*10 >= this.restaurantFiltered.length)
       this.allResults = true;
-    this.content.scrollToTop();
+    this.content.scrollToTop(0,0,0);
   }
 
   //Call prev batch of 10 restaurants
   prevBatch(){
+    this.batch--;
+    this.allResults = false;
     this.log.sendEvent('Infinite Scroll: Loaded Previous Batch', 'Search', 'User pressed the prev 10 results button, batch #: '+this.batch);
-    var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
+    var limit = Math.min(this.batch*10, this.restaurantFiltered.length);
 
-    this.restaurantList = this.restaurantFiltered.slice(this.batch*10 - 20, limit); //Replace current list of restos with prev 10
+    this.restaurantList = this.restaurantFiltered.slice(this.batch*10 - 10, limit); //Replace current list of restos with prev 10
 
     //capture restaurants displayed in this batch and send to log
-    this.restaurantDisplayLog(this.restaurantList, this.batch*10 - 20);
+    this.restaurantDisplayLog(this.restaurantList, this.batch*10 - 10);
 
-    this.batch--;
-    this.content.scrollToTop();
+    this.content.scrollToTop(0,0,0);
   }
 
   //Pull down to refresh the restaurant list
