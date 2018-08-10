@@ -323,7 +323,7 @@ export class SearchPage {
     this.batch++;
     if(this.batch*10 >= this.restaurantFiltered.length)
       this.allResults = true;
-    this.content.scrollToTop(0,0,0);
+    this.content.scrollToTop(0);
   }
 
   //Call prev batch of 10 restaurants
@@ -338,7 +338,7 @@ export class SearchPage {
     //capture restaurants displayed in this batch and send to log
     this.restaurantDisplayLog(this.restaurantList, this.batch*10 - 10);
 
-    this.content.scrollToTop(0,0,0);
+    this.content.scrollToTop(0);
   }
 
   //Pull down to refresh the restaurant list
