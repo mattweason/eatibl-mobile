@@ -3,6 +3,7 @@ import {IonicPage, NavController, NavParams, Events, Content, Platform} from 'io
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -24,6 +25,7 @@ export class SearchPage {
   @ViewChild('searchbar') searchbar : any;
 
   searchInput: string;
+  searchCache: string; //Cache the search input for the no results text
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
   restaurantFiltered: any; //filtered search results
@@ -52,6 +54,7 @@ export class SearchPage {
     private API: ApiServiceProvider,
     private cdRef:ChangeDetectorRef,
     public events: Events,
+    private device: Device,
     private storage: Storage,
     private renderer: Renderer2,
     private functions: FunctionsProvider,
@@ -64,10 +67,11 @@ export class SearchPage {
       //Only request the geolocated restaurant list the first time this event is received
       if(this.firstCall){
         this.firstCall = false;
+        this.setNow(true);
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
           this.dataCache = data;
           this.processCategories();
-          this.setNow(true);
+          this.rankRestaurants(this.dataCache);
           this.cdRef.detectChanges();
         });
       }
@@ -77,10 +81,11 @@ export class SearchPage {
     this.storage.get('eatiblLocation').then((location) => {
       if(location){
         this.userCoords = location;
+        this.setNow(true);
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
           this.dataCache = data;
           this.processCategories();
-          this.setNow(true);
+          this.rankRestaurants(this.dataCache);
           this.cdRef.detectChanges();
         });
       }
@@ -88,7 +93,6 @@ export class SearchPage {
 
     //Catch backbutton click on android
     this.backButtonPressed = platform.registerBackButtonAction(() => {
-      console.log('pressing back button')
       this.hideCategoryList(false);
     }, 101);
   }
@@ -100,6 +104,8 @@ export class SearchPage {
 
   ionViewDidEnter(){
     this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
+    if(this.searchCategories && !this.restaurantList)
+      this.searchbar._searchbarInput.nativeElement.focus(); //Auto focus on the searchbar after the categories have sorted
 
     //If we are not entering this page for the first time, check the location status and update restaurants as necessary
     if(!this.firstCall){
@@ -127,7 +133,6 @@ export class SearchPage {
       this.date = this.today = moment().format();
       this.time = moment().add(30 - moment().minute() % 30, 'm').format();
       this.maxDate = moment().add(30, 'day').format();
-      this.rankRestaurants(this.dataCache);
     }
   }
 
@@ -139,7 +144,6 @@ export class SearchPage {
 
   //Search for restaurants with the selected category
   searchCategory(category) {
-    this.searchbar._searchbarInput.nativeElement.blur();
     this.log.sendEvent('Category List Item Clicked', 'Search', category);
     this.filterRestaurants('', category, true); //Filter the restaurants
     this.searchInput = category; //Pop the category into the search bar
@@ -157,6 +161,7 @@ export class SearchPage {
     } else {
       this.showCategories = false;
     }
+    this.events.publish('hideshow:helptab', false);
   }
 
   filterCategories(searchInput) {
@@ -172,6 +177,7 @@ export class SearchPage {
 
   //Gather and sort tags
   processCategories(){
+    this.searchbar._searchbarInput.nativeElement.blur(); //Blur on search (causing the keyboard to hide)
     var rawCats = []; //Every existing category goes here to be sorted and counted
     for(var i = 0; i < this.dataCache.length; i++){
       if(this.dataCache[i].categories) //Don't loop through categories if there are none
@@ -184,21 +190,33 @@ export class SearchPage {
     for(var cat in countedCats){
       sortableCats.push([cat, countedCats[cat]])
     }
+    sortableCats.push(['*Everything*', 999999]); //Add everything category and ensure it is always at the top of the list
     this.searchCategories = _.sortBy(sortableCats, function(cat){ //Sorted the categories by occurrences descending
       return cat[1]
     }).reverse();
     this.searchCategoriesCache = JSON.parse(JSON.stringify(this.searchCategories)); //Cache the categories so we can always go back to full list. Parse and stringify to clone
+    this.searchbar._searchbarInput.nativeElement.focus(); //Auto focus on the searchbar after the categories have sorted
   }
 
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
+    var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
+
+    //filter out restaurants that have no timeslots
+    restaurantList = _.filter(restaurantList, function(resto){
+      return resto.timeslots.length;
+    })
 
     for (var i = 0; i < restaurantList.length; i++){
       var rank = 100; //start with default value
       var timeslots = _.filter(restaurantList[i].timeslots, function(timeslot){
-        return timeslot.day == day && timeslot.time >= hour;
+
+        if(today == day) //for today filter out spots that have already passed
+          return timeslot.day == day && timeslot.time >= hour + 0.25; //Add a quarter hour to comparison to prevent bookings within 15 minutes of a booking time;
+        else //for other days, show all available timeslots
+          return timeslot.day == day;
       });
 
       //Make sure it's sorted by time ascending
@@ -248,12 +266,12 @@ export class SearchPage {
 
     this.restaurantAll = restaurantList; //store all restos
     this.restaurantFiltered = restaurantList; //initial filtered list is the full restaurant list
-    this.restaurantList = this.restaurantFiltered.slice(0,10); //load first 10
     this.batch++;
   }
 
   //Currently filters based on restaurant name and categories
   filterRestaurants(event, searchInput, category){
+    this.searchCache = this.searchInput; //Update search cache
     this.searchbar._searchbarInput.nativeElement.blur(); //Blur on search (causing the keyboard to hide)
     this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: ' + searchInput);
     this.allResults = false;
@@ -266,45 +284,68 @@ export class SearchPage {
     }
 
     //filter list
-    this.restaurantFiltered = _.filter(this.restaurantAll, function(resto){
-      for (var i = 0; i < search.length; i++) {
-        if (resto.name.toLowerCase().indexOf(search[i]) > -1 && !category) //Category is true if we are doing a category search
-          return true;
+    if(searchInput == '*Everything*' && category) //If someone clicks the everything category, show everything
+      this.restaurantFiltered = this.restaurantAll;
+    else
+      this.restaurantFiltered = _.filter(this.restaurantAll, function(resto){
+        for (var i = 0; i < search.length; i++) {
+          if (resto.name.toLowerCase().indexOf(search[i]) > -1 && !category) //Category is true if we are doing a category search
+            return true;
 
-        //if restaurant has categories
-        if(resto.categories)
-          for(var x = 0; x < resto.categories.length; x++){
-            if (resto.categories[x].toLowerCase().indexOf(search[i]) > -1 && !category)
-              return true;
-            else if(resto.categories[x].toLowerCase() == searchInput.toLowerCase() && category) //If we are doing category search, look for exact matches
-              return true;
-          }
-      }
-      //if nothing matches, you're outttaa heeerreee!
-      return false;
-    });
+          //if restaurant has categories
+          if(resto.categories)
+            for(var x = 0; x < resto.categories.length; x++){
+              if (resto.categories[x].toLowerCase().indexOf(search[i]) > -1 && !category)
+                return true;
+              else if(resto.categories[x].toLowerCase() == searchInput.toLowerCase() && category) //If we are doing category search, look for exact matches
+                return true;
+            }
+        }
+        //if nothing matches, you're outttaa heeerreee!
+        return false;
+      });
 
     this.log.sendEvent('Restaurant Search: Completed', 'Search', 'Results came back, with a total restaurant count of: '+this.restaurantFiltered.length);
 
     this.restaurantList = this.restaurantFiltered.slice(0,10); //load first 10
-    this.batch++;
+
+    if(this.batch*10 >= this.restaurantFiltered.length || this.restaurantFiltered.length <= 10)
+      this.allResults = true; //If the first search results are less than 10, don't show buttons
+    else
+      this.batch++; //Only increment batch if there are more results
+
+    this.content.scrollToTop(0);
   }
 
-  //Call next batch of 10 restaurants when you reach the bottom of the page
-  getNextBatch(infiniteScroll){
-    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User scrolled down until next batch was populated, batch #: '+this.batch);
+  //Call next batch of 10 restaurants
+  nextBatch(){
+    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User pressed the next 10 results button, batch #: '+this.batch);
     var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
 
-    for(var i = this.batch*10; i < limit; i++){
-      this.restaurantList.push(this.restaurantFiltered[i]);
-    }
+    this.restaurantList = this.restaurantFiltered.slice(this.batch*10, limit); //Replace current list of restos with next 10
+
+    //capture restaurants displayed in this batch and send to log
+    this.restaurantDisplayLog(this.restaurantList, this.batch*10);
 
     this.batch++;
-
-    if(this.restaurantList.length == this.restaurantFiltered.length)
+    if(this.batch*10 >= this.restaurantFiltered.length)
       this.allResults = true;
+    this.content.scrollToTop(0);
+  }
 
-    infiniteScroll.complete();
+  //Call prev batch of 10 restaurants
+  prevBatch(){
+    this.batch--;
+    this.allResults = false;
+    this.log.sendEvent('Infinite Scroll: Loaded Previous Batch', 'Search', 'User pressed the prev 10 results button, batch #: '+this.batch);
+    var limit = Math.min(this.batch*10, this.restaurantFiltered.length);
+
+    this.restaurantList = this.restaurantFiltered.slice(this.batch*10 - 10, limit); //Replace current list of restos with prev 10
+
+    //capture restaurants displayed in this batch and send to log
+    this.restaurantDisplayLog(this.restaurantList, this.batch*10 - 10);
+
+    this.content.scrollToTop(0);
   }
 
   //Pull down to refresh the restaurant list
@@ -315,7 +356,7 @@ export class SearchPage {
       this.allResults = false;
       this.batch = 0;
       this.rankRestaurants(data);
-      this.filterRestaurants('', this.searchInput, false)
+      this.filterRestaurants('', this.searchInput, false);
       refresher.complete();
     });
   }
@@ -334,5 +375,33 @@ export class SearchPage {
       this.log.sendEvent('TimePicker: Updated', 'Search', JSON.stringify(data));
     if(action =='cancelled')
       this.log.sendEvent('TimePicker: Cancelled', 'Search', JSON.stringify(data));
+  }
+
+  //take a specific chunk of restaurants and log them to backend (revealing what is shown to specific users)
+  restaurantDisplayLog(restoList, currentIndex){
+    var formattedList = [];
+    //format restoList before sending it over
+    for (var i = 0; i < restoList.length; i++){
+
+      var currentHour = this.time ? moment(this.time).format('H') : moment(this.date).format('H');
+      var currentMinute = this.time ? moment(this.time).format('m') : moment(this.date).format('m');
+
+      var selectedTime = Math.round((parseInt(currentHour) + parseInt(currentMinute)/60) * 100) / 100;
+
+      formattedList.push({
+        page: 'search',
+        deviceId: this.device.uuid,
+        restaurant_fid: restoList[i]._id,
+        restaurantName: restoList[i].name,
+        selectedDay: this.date,
+        selectedTime: selectedTime,
+        bestDeal: restoList[i].maxTimeslot ? restoList[i].maxTimeslot.discount : '',
+        rank: currentIndex + i,
+        location: this.userCoords,
+        distance: Math.round(restoList[i].distance * 100) / 100
+      });
+    }
+
+    this.API.makePost('log/trackDisplayActivity', {restaurants: formattedList}).subscribe(() => {});
   }
 }

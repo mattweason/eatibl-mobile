@@ -132,8 +132,13 @@ export class MyApp {
         else if(platform.is('ios'))
           this.locationPermissionIos();
       }
-      else //Only for ionic lab
-        this.geolocateUser(false);
+      else {
+        //**********************ONLY FOR IONIC LAB********************************//
+        //Hardcode location and send it so we don't have to wait for geolocation
+        //while developing. Coordinates are set to Palmerston office.
+        this.location = {coords: [43.655922, - 79.410125]};
+        this.sendGeolocationEvent();
+      }
 
     });
 
@@ -226,15 +231,16 @@ export class MyApp {
       console.log(version_code);
       // self.API.makePost('versionCheck', {vers`ion: version_code}).subscribe(data => {
       var storeLink, version;
-      if(this.platform.is('android')){ //Set up link and version numbers for android
+      if(self.platform.is('android')){ //Set up link and version numbers for android
         storeLink = 'market://details?id=com.eatibl';
         version = '0.1.16';
       }
-      else if(this.platform.is('ios')){ //Set up link and version numbers for android
-        storeLink = 'itms-apps://itunes.apple.com/us/app/domainsicle-domain-name-search/id511364723?ls=1&mt=8';
-        version = '0.1.16';
+      else if(self.platform.is('ios')){ //Set up link and version numbers for android
+        storeLink = 'itms://itunes.apple.com/ca/app/eatibl-eat-food-save-money/id1382344870?mt=8';
+        version = '0.1.20';
       }
       if(version_code == version){
+        console.log(storeLink)
         let alert = self.alertCtrl.create({
           title: 'New Version Available',
           subTitle: 'There is a required update for Eatibl. Please update and reopen the app.',
@@ -242,7 +248,7 @@ export class MyApp {
           buttons: [{
             text: 'Update',
             handler: () => {
-              window.open(storeLink);
+              window.open(storeLink, '_blank');
               self.forcedUpdateAlertOpen = false;
             }
           }]
@@ -458,11 +464,9 @@ export class MyApp {
   //Push event every time the users geolocation is created or updated
   sendGeolocationEvent() {
     this.storage.get('eatiblLocation').then((val) => {
-      if(this.location && !val) { //Only send location back if you have it and there is no custom location
-        if (this.location.coords) { //Only send location if it has coordinates
+      if(this.location && !val) //Only send location back if you have it and there is no custom location
+        if (this.location.coords) //Only send location if it has coordinates
           this.events.publish('user:geolocated', [this.location.coords.latitude, this.location.coords.longitude], Date.now());
-        }
-      }
     });
   }
 }

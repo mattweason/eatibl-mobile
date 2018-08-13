@@ -25,10 +25,14 @@
   }
 }
 restaurant-card, page-restaurant, .map-resto-card {
+  ion-card {
+    border-radius: 0 !important;
+  }
+}
+restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
   ion-card{
     margin: 0 0 20px 0 !important;
     width: 100% !important;
-    border-radius: 0 !important;
   }
   h2{
     font-weight: 700 !important;
@@ -218,6 +222,25 @@ ion-tabs{
   }
 }
 
+//Load more button
+.load-more{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 60px;
+  margin-top: -8px;
+  .blue-text{
+    color: color($colors, secondary);
+  }
+  .search-more{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button{
+      margin-left: 6px;
+    }
+  }
+}
+
 //Help Fab styling
 .help-tab{
   position: absolute;
@@ -331,6 +354,13 @@ ion-tabs{
   align-items: center !important;
 }
 
+.button-row{
+  display: flex;
+  :not(:last-child) {
+    margin-right: 6px;
+  }
+}
+
 .no-padding-col{
   padding: 0 !important;
 }
@@ -432,6 +462,8 @@ h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title,
   border-bottom: none !important;
   box-shadow: none !important;
 }
+
+
 
 //Platform specific styling
 

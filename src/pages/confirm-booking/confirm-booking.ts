@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, trigger } from '@angular/core';
 import {IonicPage, NavController, NavParams, AlertController, ModalController} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
@@ -6,6 +6,8 @@ import { ActivityLoggerProvider } from "../../providers/activity-logger/activity
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
+import { LocalNotifications } from '@ionic-native/local-notifications';
+import moment from 'moment';
 
 import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
 
@@ -37,6 +39,7 @@ export class ConfirmBookingPage {
   restaurant: any;
   timeslot: any;
   people: any;
+  timeOfBooking: any;
   dateObject = {} as any;
   date: any;
   response: any;
@@ -53,7 +56,8 @@ export class ConfirmBookingPage {
     private device: Device,
     private storage: Storage,
     private modal: ModalController,
-    private log: ActivityLoggerProvider
+    private log: ActivityLoggerProvider,
+    public localnotifications: LocalNotifications
   ) {
     this.restaurant = navParams.get('restaurant');
     this.timeslot = navParams.get('timeslot');
@@ -64,8 +68,7 @@ export class ConfirmBookingPage {
     this.bookingForm = this.formBuilder.group({
       name: [
         '', Validators.compose([
-          Validators.required,
-          Validators.pattern('[a-zA-Z][a-zA-Z ]+')
+          Validators.required
         ])
       ],
       phone: [
@@ -87,6 +90,29 @@ export class ConfirmBookingPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ConfirmBookingPage');
+  }
+
+  ionViewDidEnter(){
+    this.storage.get('eatiblUser').then((val) => {
+      if(val){
+        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
+        this.user = decode(val);
+        this.bookingForm.controls['name'].setValue(this.user.name);
+        this.bookingForm.controls['phone'].setValue(this.user.phone);
+        this.bookingForm.controls['email'].setValue(this.user.email);
+        this.bookingForm.controls['active'].setValue(this.user.active);
+        this.bookingForm.controls['_id'].setValue(this.user._id);
+      } else { //
+        this.user = {
+          _id: '',
+          email: '',
+          name: '',
+          phone: '',
+          type: '',
+          active: 0
+        }
+      }
+    });
   }
 
   ngOnInit(){
@@ -114,6 +140,12 @@ export class ConfirmBookingPage {
     this.dateObject.month = month;
     this.dateObject.date = date;
     this.dateObject.day = day;
+  }
+
+  //Trim the trailing spaces from form input values
+  cleanValue(field){
+    if(/\s+$/.test(this.bookingForm.value[field]))
+      this.bookingForm.controls['email'].setValue(this.bookingForm.value.email.trim());
   }
 
   confirm(){
@@ -229,12 +261,13 @@ export class ConfirmBookingPage {
       if(this.response.message){
         if(this.response.message == 'overcapacity'){ //If requested capacity is over the available capacity
           title = 'Overcapacity';
-          message = 'Sorry, but this timeslot only has '+this.response.remainder+' seats left.';
+          message = 'Sorry, but this timeslot only has '+this.response.remaining+' seats left.';
         }
 
         if(this.response.message == 'user exists'){ //If the email address belongs to a registered account
           title = 'Email Address Taken';
           message = 'This email address belongs to a registered account. Please login or use a different email.';
+          this.presentAlertWithLogin(title, message);
         }
 
         if(this.response.message == 'booking limit'){ //If the user has reached the booking limit
@@ -254,17 +287,54 @@ export class ConfirmBookingPage {
 
         this.log.sendEvent('Create Booking: Response', 'Confirm Booking', 'Response Message: '+this.response.message);
 
-        this.presentAlert(title, message);
+        if(this.response.message != 'user exists') //If user exists we use presentAlertWithLogin
+          this.presentAlert(title, message);
       }
       else{
+        // var timeOfBooking = moment(); //Get the time the create booking function is processed
+        // var dateTimeReservation = new Date(this.date); //Get the time for the reservation
+        // var timeOfReservation = this.timeslot.time; //Get the time of the reservation
+        //
+        // if(timeOfBooking.dates()==dateTimeReservation.getDate()){ //Check if reservation was made same day
+        //   if((timeOfReservation-timeOfBooking.hours())>1){//If same day, check if greater than an hour
+        //     //If the time of reservation is 10 minutes to the next hour, and the reservation is the next hour,
+        //     //it sends a notification at 5 mins rather than an hour (eg. 2:56pm reservation for 4pm)
+        //     if(timeOfBooking.minutes()>50 && timeOfReservation-timeOfBooking.hours()==2){
+        //       this.localnotifications.schedule({
+        //         text: "Your reservation for " + this.restaurant + " is in 5 minutes!",
+        //         trigger: {at: (moment().startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
+        //       });
+        //     }
+        //     else{ //More than an hour, and not close to the hour mark
+        //     this.localnotifications.schedule({
+        //       text: "Your reservation for " + this.restaurant + " is in an hour!",
+        //       trigger: {at: (((moment().startOf('day').add(this.timeslot.time-1, 'hours')).toDate()))}
+        //     });
+        //   }
+        // }
+        //   else{ //Less than an hour
+        //     this.localnotifications.schedule({
+        //       text: "Your reservation for " + this.restaurant + " is in 5 minutes!",
+        //       trigger: {at: (moment().startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
+        //     });
+        //   }
+        // }
+        //
+        // else{ //Reservation not made for the same day, so send the notification that day an hour before
+        //   this.localnotifications.schedule({
+        //     text: "Your reservation for " + this.restaurant + " is in an hour!",
+        //     trigger: {at: (((moment().startOf('day').add(this.timeslot.time-1, 'hours')).add(dateTimeReservation.getDate()-timeOfBooking.dates(), 'days').toDate()))}
+        //   });
+        // }
+
         this.storage.get('eatiblUser').then((val) => {
           if(val){
             this.user = decode(val);
-            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+this.user || "none");
+            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(this.user) || "none");
           }
           else{
             this.storage.set('eatiblUser', this.response.token)
-            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+decode(this.response.token) || "none");
+            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(decode(this.response.token)) || "none");
           }
         });
         if(this.response.booking.people > 1){
@@ -305,6 +375,27 @@ export class ConfirmBookingPage {
       title: title,
       message: message,
       buttons: ['Dismiss']
+    });
+    alert.present();
+  }
+
+  //Error alert for booking errors
+  presentAlertWithLogin(title, message){
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      buttons: [
+        {
+          text: 'Dismiss'
+        },
+        {
+          text: 'Login',
+          handler: data => {
+            this.log.sendEvent('Login: Initiated', 'Confirm Booking', 'User pressed login button');
+            this.navCtrl.push('LoginPage');
+          }
+        }
+      ]
     });
     alert.present();
   }

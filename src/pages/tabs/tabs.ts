@@ -9,7 +9,7 @@ import { ActivityLoggerProvider } from "../../providers/activity-logger/activity
 })
 export class TabsPage {
 
-  @ViewChild('tabz') tabRef: Tabs;
+  @ViewChild('tabs') tabRef: Tabs;
 
   tab1Root = 'HomePage';
   tab2Root = 'SearchPage';
@@ -21,9 +21,20 @@ export class TabsPage {
     public events: Events,
     private log: ActivityLoggerProvider
   ) {
+    //Hide tabs when map is open
     events.subscribe('view:positionMap', (mapOpen) => {
       this.hideTabs = mapOpen;
     });
+
+    events.subscribe('request:changeTab', (tab) => {
+      console.log(tab)
+      this.changeTab(tab);
+    })
+  }
+
+  changeTab(tab){
+    console.log(tab)
+    this.tabRef.select(tab)
   }
 
   logTabChange(){

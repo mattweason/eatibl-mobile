@@ -75,7 +75,7 @@ export class InviteModalPage {
     this.booking = navParams.get('booking');
     this.restaurant = navParams.get('restaurant');
 
-    this.log.sendEvent('Invite Modal: Initiated', 'Invite Modal', 'Type: ' +this.type + ' booking: ' +this.booking || "none" +' Restaurant:' +this.restaurant.name || "none");
+    this.log.sendEvent('Invite Modal: Initiated', 'Invite Modal', 'Type: ' +this.type + ' booking: ' +JSON.stringify(this.booking) || "none" +' Restaurant:' +this.restaurant.name || "none");
 
     if(this.booking){
       this.buildDateObject();
