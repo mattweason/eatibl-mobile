@@ -132,8 +132,13 @@ export class MyApp {
         else if(platform.is('ios'))
           this.locationPermissionIos();
       }
-      else //Only for ionic lab
-        this.geolocateUser(false);
+      else {
+        //**********************ONLY FOR IONIC LAB********************************//
+        //Hardcode location and send it so we don't have to wait for geolocation
+        //while developing. Coordinates are set to Palmerston office.
+        this.location = {coords: [43.655922, - 79.410125]};
+        this.sendGeolocationEvent();
+      }
 
     });
 
@@ -459,11 +464,9 @@ export class MyApp {
   //Push event every time the users geolocation is created or updated
   sendGeolocationEvent() {
     this.storage.get('eatiblLocation').then((val) => {
-      if(this.location && !val) { //Only send location back if you have it and there is no custom location
-        if (this.location.coords) { //Only send location if it has coordinates
+      if(this.location && !val) //Only send location back if you have it and there is no custom location
+        if (this.location.coords) //Only send location if it has coordinates
           this.events.publish('user:geolocated', [this.location.coords.latitude, this.location.coords.longitude], Date.now());
-        }
-      }
     });
   }
 }

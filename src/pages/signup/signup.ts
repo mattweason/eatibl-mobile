@@ -41,8 +41,7 @@ export class SignupPage {
     this.signupForm = this.formBuilder.group({
       name: [
         '', Validators.compose([
-          Validators.required,
-          Validators.pattern('[a-zA-Z][a-zA-Z ]+')
+          Validators.required
         ])
       ],
       phone: [
@@ -165,6 +164,12 @@ export class SignupPage {
       ]
     });
     alert.present();
+  }
+
+  //Trim the trailing spaces from form input values
+  cleanValue(field){
+    if(/\s+$/.test(this.signupForm.value[field]))
+      this.signupForm.controls[field].setValue(this.signupForm.value[field].trim());
   }
 
   //Make the api call to submit the registration

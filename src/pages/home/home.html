@@ -46,7 +46,8 @@
       <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
     <div class="load-more">
-      <button *ngIf="loadMorePressed < 2" ion-button block color="light" (tap)="loadMore()">Show More Restaurants</button>
+      <button class="blue-text" *ngIf="loadMorePressed < 2" ion-button icon-start block color="white" (tap)="loadMore()"><ion-icon name="arrow-dropdown-circle"></ion-icon>Show More Restaurants</button>
+      <span class="search-more" *ngIf="loadMorePressed >= 2">Hungry for more?<button ion-button small color="secondary" (tap)="goToSearch()">Search</button></span>
     </div>
   </div>
   <div *ngIf="view == 'map'" [ngClass]="{'hideMap' : hideMap}" class="map-container">

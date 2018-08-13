@@ -68,8 +68,7 @@ export class ConfirmBookingPage {
     this.bookingForm = this.formBuilder.group({
       name: [
         '', Validators.compose([
-          Validators.required,
-          Validators.pattern('[a-zA-Z][a-zA-Z ]+')
+          Validators.required
         ])
       ],
       phone: [
@@ -141,6 +140,12 @@ export class ConfirmBookingPage {
     this.dateObject.month = month;
     this.dateObject.date = date;
     this.dateObject.day = day;
+  }
+
+  //Trim the trailing spaces from form input values
+  cleanValue(field){
+    if(/\s+$/.test(this.bookingForm.value[field]))
+      this.bookingForm.controls['email'].setValue(this.bookingForm.value.email.trim());
   }
 
   confirm(){
@@ -325,11 +330,11 @@ export class ConfirmBookingPage {
         this.storage.get('eatiblUser').then((val) => {
           if(val){
             this.user = decode(val);
-            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+this.user || "none");
+            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(this.user) || "none");
           }
           else{
             this.storage.set('eatiblUser', this.response.token)
-            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+decode(this.response.token) || "none");
+            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(decode(this.response.token)) || "none");
           }
         });
         if(this.response.booking.people > 1){

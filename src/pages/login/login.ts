@@ -90,11 +90,18 @@ export class LoginPage {
     }
   }
 
+  //Trim the trailing spaces from form input values
+  cleanValue(field){
+    if(/\s+$/.test(this.loginForm.value[field]))
+      this.loginForm.controls[field].setValue(this.loginForm.value[field].trim());
+  }
+
   ionViewDidLoad() {
     console.log('ionViewDidLoad LoginPage');
   }
 
   resetPassword(){
+    this.log.sendEvent('Password Reset Button Pressed', 'Login Page', 'Email: '+this.loginForm.value.email || '');
     let alert = this.alertCtrl.create({
       title: 'Reset Password',
       message: 'Please enter the email address associated with your Eatibl account.',
@@ -115,6 +122,7 @@ export class LoginPage {
           text: 'Reset',
           handler: data => {
             this.API.makePost('user/passwordReset', data).subscribe(response => {
+              this.log.sendEvent('Password Reset Request Success', 'Login Page', 'Email: '+this.loginForm.value.email || '' + '| Response: '+JSON.stringify(response));
               this.presentAlert('', 'An email has been sent to your address with further instructions.');
             });
           }

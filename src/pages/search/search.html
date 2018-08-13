@@ -46,7 +46,7 @@
 </ion-header>
 
 
-<ion-content [ngClass]="{'grey-background' : !restaurantList?.length}">
+<ion-content class="grey-background">
   <div *ngIf="!restaurantList" class="no-results">
     <ion-grid>
       <ion-row>
@@ -65,7 +65,7 @@
     <ion-refresher-content>
     </ion-refresher-content>
   </ion-refresher>
-  <ion-list class="grey-background">
+  <ion-list>
     <restaurant-card *ngFor = "let restaurant of restaurantList" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
   </ion-list>
   <ion-grid>
@@ -77,10 +77,10 @@
     <ion-row>
       <ion-col>
         <div *ngIf="restaurantList?.length" class="load-more">
-          <button *ngIf="batch == 1" ion-button block color="light" (tap)="nextBatch()">Next 10 Results</button>
-          <button *ngIf="batch > 1 && !allResults" ion-button color="light" (tap)="prevBatch()">Prev 10 Results</button>
-          <button *ngIf="batch > 1 && !allResults" ion-button color="light" (tap)="nextBatch()">Next 10 Results</button>
-          <button *ngIf="batch > 0 && allResults" ion-button block color="light" (tap)="prevBatch()">Prev 10 Results</button>
+          <button class="blue-text" *ngIf="batch == 1" ion-button block color="white" icon-end (tap)="nextBatch()">Next 10 Results<ion-icon name="arrow-dropright-circle"></ion-icon></button>
+          <button class="blue-text" *ngIf="batch > 1 && !allResults" ion-button color="white" icon-start (tap)="prevBatch()"><ion-icon name="arrow-dropleft-circle"></ion-icon>Prev 10 Results</button>
+          <button class="blue-text" *ngIf="batch > 1 && !allResults" ion-button icon-end color="white" (tap)="nextBatch()">Next 10 Results<ion-icon name="arrow-dropright-circle"></ion-icon></button>
+          <button class="blue-text" *ngIf="batch > 0 && allResults" ion-button icon-start block color="white" (tap)="prevBatch()"><ion-icon name="arrow-dropleft-circle"></ion-icon>Prev 10 Results</button>
         </div>
       </ion-col>
     </ion-row>

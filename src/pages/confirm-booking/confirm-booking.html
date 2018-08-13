@@ -60,14 +60,17 @@
               </ion-item>
               <ion-item class="border-bottom">
                 <ion-label fixed><ion-icon name="mail" [ngClass]="{'invalid': !bookingForm.controls.email.valid && (bookingForm.controls.email.dirty || bookingForm.controls.email.touched)}"></ion-icon></ion-label>
-                <ion-input placeholder="Email" [formControl]="bookingForm.controls['email']" [disabled]="user.active == 1"></ion-input>
+                <ion-input placeholder="Email" [formControl]="bookingForm.controls['email']" [disabled]="user.active == 1" (blur)="cleanValue('email')"></ion-input>
               </ion-item>
               <div class="form-error" *ngIf="(bookingForm.controls.name.hasError('required') && bookingForm.controls.name.touched) || (bookingForm.controls.phone.hasError('required') && bookingForm.controls.phone.touched) || (bookingForm.controls.email.hasError('required') && bookingForm.controls.email.touched)">
                 <span>Please fill in all the fields.</span>
               </div>
-              <div class="form-error" *ngIf="(bookingForm.controls.name.hasError('pattern') && bookingForm.controls.name.touched ) || (bookingForm.controls.phone.hasError('pattern') && bookingForm.controls.phone.touched) || (bookingForm.controls.email.hasError('pattern') && bookingForm.controls.email.touched)">
-                <span>There is an error in the form.</span>
-              </div><div class="button-row">
+              <div class="form-error" *ngIf="(bookingForm.controls.email.hasError('email') && bookingForm.controls.email.touched)">
+                <span>Please enter a valid email.</span>
+              </div>
+              <div class="form-error" *ngIf="(bookingForm.controls.phone.hasError('pattern') && bookingForm.controls.phone.touched)">
+                <span>Please enter a valid phone number.</span>
+              </div>
                 <button ion-button block color="danger" type="button" (click)="cancel()">Cancel</button>
                 <button ion-button block color="secondary" type="submit">Confirm</button>
               </div>

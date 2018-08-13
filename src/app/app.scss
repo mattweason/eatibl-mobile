@@ -228,6 +228,17 @@ ion-tabs{
   justify-content: center;
   margin-bottom: 60px;
   margin-top: -8px;
+  .blue-text{
+    color: color($colors, secondary);
+  }
+  .search-more{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button{
+      margin-left: 6px;
+    }
+  }
 }
 
 //Help Fab styling

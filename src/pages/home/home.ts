@@ -60,6 +60,7 @@ export class HomePage {
   ) {
     //Update location when user geolocated event is recieved
     events.subscribe('user:geolocated', (location, time) => {
+      console.log('receiving geolocaiton')
       this.userCoords = location;
 
       //Only request the geolocated restaurant list the first time this event is received
@@ -426,6 +427,11 @@ export class HomePage {
     }
     //capture restaurants displayed in this batch and send to log
     this.restaurantDisplayLog(currentBatch, limit - this.loadMoreCount);
+  }
+
+  //Navigate to search page
+  goToSearch(){
+    this.events.publish('request:changeTab', 1); //Get tabs page to set opacity to 1
   }
 
   setNow(initialCall){
