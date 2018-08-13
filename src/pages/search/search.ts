@@ -190,6 +190,7 @@ export class SearchPage {
     for(var cat in countedCats){
       sortableCats.push([cat, countedCats[cat]])
     }
+    sortableCats.push(['*Everything*', 999999]); //Add everything category and ensure it is always at the top of the list
     this.searchCategories = _.sortBy(sortableCats, function(cat){ //Sorted the categories by occurrences descending
       return cat[1]
     }).reverse();
@@ -283,23 +284,26 @@ export class SearchPage {
     }
 
     //filter list
-    this.restaurantFiltered = _.filter(this.restaurantAll, function(resto){
-      for (var i = 0; i < search.length; i++) {
-        if (resto.name.toLowerCase().indexOf(search[i]) > -1 && !category) //Category is true if we are doing a category search
-          return true;
+    if(searchInput == '*Everything*' && category) //If someone clicks the everything category, show everything
+      this.restaurantFiltered = this.restaurantAll;
+    else
+      this.restaurantFiltered = _.filter(this.restaurantAll, function(resto){
+        for (var i = 0; i < search.length; i++) {
+          if (resto.name.toLowerCase().indexOf(search[i]) > -1 && !category) //Category is true if we are doing a category search
+            return true;
 
-        //if restaurant has categories
-        if(resto.categories)
-          for(var x = 0; x < resto.categories.length; x++){
-            if (resto.categories[x].toLowerCase().indexOf(search[i]) > -1 && !category)
-              return true;
-            else if(resto.categories[x].toLowerCase() == searchInput.toLowerCase() && category) //If we are doing category search, look for exact matches
-              return true;
-          }
-      }
-      //if nothing matches, you're outttaa heeerreee!
-      return false;
-    });
+          //if restaurant has categories
+          if(resto.categories)
+            for(var x = 0; x < resto.categories.length; x++){
+              if (resto.categories[x].toLowerCase().indexOf(search[i]) > -1 && !category)
+                return true;
+              else if(resto.categories[x].toLowerCase() == searchInput.toLowerCase() && category) //If we are doing category search, look for exact matches
+                return true;
+            }
+        }
+        //if nothing matches, you're outttaa heeerreee!
+        return false;
+      });
 
     this.log.sendEvent('Restaurant Search: Completed', 'Search', 'Results came back, with a total restaurant count of: '+this.restaurantFiltered.length);
 
