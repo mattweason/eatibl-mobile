@@ -313,6 +313,8 @@ export class SearchPage {
       this.allResults = true; //If the first search results are less than 10, don't show buttons
     else
       this.batch++; //Only increment batch if there are more results
+
+    this.content.scrollToTop(0);
   }
 
   //Call next batch of 10 restaurants
