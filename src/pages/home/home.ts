@@ -361,7 +361,7 @@ export class HomePage {
 
       //BIG PENALTY IN RANKING FOR NO DISCOUNTS FOR TODAY
       if(timeslots.length == 0)
-        rank = rank - 30;
+        rank = rank - 50;
 
       else //add to rank points based on discount (+1 per 10% discount at max available discount);
         rank = rank + restaurantList[i].maxTimeslot.discount / 10; //add 1pt for each 10% discount
@@ -373,10 +373,10 @@ export class HomePage {
       //bonus and penalty for distance
       if(restaurantList[i].distance <= 2)
         rank = rank + 2/restaurantList[i].distance;
-      else if(restaurantList[i].distance > 2 && restaurantList[i].distance <= 5)
-        rank = rank - restaurantList[i].distance/2;
-      else if(restaurantList[i].distance > 5)
-        rank = rank - 6;
+      else if(restaurantList[i].distance > 2 && restaurantList[i].distance <= 6)
+        rank = rank - 0.5*restaurantList[i].distance + 2;
+      else if(restaurantList[i].distance > 6)
+        rank = rank - restaurantList[i].distance + 2;
 
       restaurantList[i].rank = rank; //SET RANKING
     }
