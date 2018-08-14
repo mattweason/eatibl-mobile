@@ -97,7 +97,7 @@
   <ion-grid no-padding>
     <ion-row no-padding>
       <ion-col col-8>
-        <button class="button-wrapper" (tap)="navigateTo('best-deal', restaurant.maxTimeslot._id)" ion-item detail-none>
+        <button class="button-wrapper" (tap)="navigateTo('top-pick', restaurant.maxTimeslot._id)" ion-item detail-none>
           <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
           <div *ngIf="distance" class="distance">
             <p>{{distance}}</p>

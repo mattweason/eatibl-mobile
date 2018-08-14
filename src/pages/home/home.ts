@@ -285,6 +285,11 @@ export class HomePage {
     }
   }
 
+  topPickSlider(direction){
+    this.log.sendEvent('Browse through Top Picks', 'Home', 'User went: '+direction);
+  }
+
+
   ionViewDidEnter(){
     //Call geolocation from app.component
     this.events.publish('view:map', (this.view == 'map')); //Pop help button into correct position
@@ -324,6 +329,8 @@ export class HomePage {
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
     var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
+
+    this.restaurantPicks = []; //reset restaurantPicks each time we start ranking (to update list based on new locations)
 
     for (var i = 0; i < restaurantList.length; i++){
       var rank = 100; //start with default value
@@ -389,9 +396,11 @@ export class HomePage {
        if(this.restaurantPicks.length < 5 && this.restaurantAll[i].maxTimeslot.discount > 15)
           this.restaurantPicks.push(this.restaurantAll[i]);
     }
+    //Log the top 5 results for the today's top picks
+    this.restaurantDisplayLog(this.restaurantPicks, 0, true);
 
     //Send first batch of restaurants to backend for logging
-    this.restaurantDisplayLog(this.restaurantList, 0);
+    this.restaurantDisplayLog(this.restaurantList, 0, false);
 
     //When you've selected a restaurant and changed the date, update the restaurant data
     if(this.view == 'map' && this.selectedResto){
@@ -426,7 +435,7 @@ export class HomePage {
       currentBatch.push(this.restaurantAll[i]);
     }
     //capture restaurants displayed in this batch and send to log
-    this.restaurantDisplayLog(currentBatch, limit - this.loadMoreCount);
+    this.restaurantDisplayLog(currentBatch, limit - this.loadMoreCount, false);
   }
 
   //Navigate to search page
@@ -459,7 +468,7 @@ export class HomePage {
   }
 
   //take a specific chunk of restaurants and log them to backend (revealing what is shown to specific users)
-  restaurantDisplayLog(restoList, currentIndex){
+  restaurantDisplayLog(restoList, currentIndex, isTopPicks){
     var formattedList = [];
     //format restoList before sending it over
     for (var i = 0; i < restoList.length; i++){
@@ -470,7 +479,7 @@ export class HomePage {
       var selectedTime = Math.round((parseInt(currentHour) + parseInt(currentMinute)/60) * 100) / 100;
 
       formattedList.push({
-        page: 'nearby',
+        page: isTopPicks ? 'topPicks' : 'nearby',
         deviceId: this.device.uuid,
         restaurant_fid: restoList[i]._id,
         restaurantName: restoList[i].name,
