@@ -111,7 +111,7 @@ export class HomePage {
     });
   }
 
-  //Modal for letting the user select their location manually
+  //Modal for letting users select their location manually
   openMap(){
     this.log.sendEvent('Location Modal: Open', 'Home', 'Clicked set location button at bottom section');
     this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
