@@ -71,6 +71,7 @@
               <div class="form-error" *ngIf="(bookingForm.controls.phone.hasError('pattern') && bookingForm.controls.phone.touched)">
                 <span>Please enter a valid phone number.</span>
               </div>
+              <div class="button-row">
                 <button ion-button block color="danger" type="button" (click)="cancel()">Cancel</button>
                 <button ion-button block color="secondary" type="submit">Confirm</button>
               </div>
