@@ -240,6 +240,15 @@ ion-tabs{
     }
   }
 }
+.platform-ios{
+  .load-more{
+    .blue-text{
+      -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+  }
+}
+
 
 //Help Fab styling
 .help-tab{

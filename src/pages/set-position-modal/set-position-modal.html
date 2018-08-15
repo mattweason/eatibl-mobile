@@ -13,17 +13,15 @@
     </ion-buttons>
   </ion-navbar>
 
+  <ion-toolbar color="light">
+    <p>Where would you like to search for deals?</p>
+  </ion-toolbar>
 
 </ion-header>
 
 
 <ion-content>
   <div id="setPositionMap"></div>
-  <ion-card>
-    <ion-card-content>
-      <h3>Where would you like to search for deals?</h3>
-    </ion-card-content>
-  </ion-card>
   <div class="set-position-button">
     <button class="auto-locate" ion-button block color="tertiary" (tap)="autoLocate()" [disabled]="disableButtons">Auto Locate</button>
     <button class="set-locate" ion-button block color="secondary" (tap)="setPosition()" [disabled]="disableButtons">Set Location</button>

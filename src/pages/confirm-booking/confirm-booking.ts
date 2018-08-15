@@ -119,8 +119,8 @@ export class ConfirmBookingPage {
     this.buildDateObject();
     this.storage.get('eatiblUser').then((val) => {
       if(val){
-        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
         this.user = decode(val);
+        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
         this.bookingForm.controls['name'].setValue(this.user.name);
         this.bookingForm.controls['phone'].setValue(this.user.phone);
         this.bookingForm.controls['email'].setValue(this.user.email);
