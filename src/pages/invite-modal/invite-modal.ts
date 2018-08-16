@@ -75,7 +75,7 @@ export class InviteModalPage {
     this.booking = navParams.get('booking');
     this.restaurant = navParams.get('restaurant');
 
-    this.log.sendEvent('Invite Modal: Initiated', 'Invite Modal', 'Type: ' +this.type + ' booking: ' +this.booking || "none" +' Restaurant:' +this.restaurant.name || "none");
+    this.log.sendEvent('Invite Modal: Initiated', 'Invite Modal', 'Type: ' +this.type + ' booking: ' +JSON.stringify(this.booking) || "none" +' Restaurant:' +this.restaurant.name || "none");
 
     if(this.booking){
       this.buildDateObject();
@@ -235,7 +235,7 @@ export class InviteModalPage {
         var current = this;
         (function(phoneNumber, message){
           current.sms.send(phoneNumber, message, {replaceLineBreaks: true}).then((result) => {
-            this.log.sendEvent('Invite Modal: SMS Sent', 'Invite Modal', phoneNumber);
+            current.log.sendEvent('Invite Modal: SMS Sent', 'Invite Modal', phoneNumber);
             var postValues = {
               ref_phone: phoneNumber,
               message: message,

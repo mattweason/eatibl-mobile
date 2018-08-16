@@ -25,10 +25,14 @@
   }
 }
 restaurant-card, page-restaurant, .map-resto-card {
+  ion-card {
+    border-radius: 0 !important;
+  }
+}
+restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
   ion-card{
     margin: 0 0 20px 0 !important;
     width: 100% !important;
-    border-radius: 0 !important;
   }
   h2{
     font-weight: 700 !important;
@@ -217,6 +221,34 @@ ion-tabs{
     }
   }
 }
+
+//Load more button
+.load-more{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 60px;
+  margin-top: -8px;
+  .blue-text{
+    color: color($colors, secondary);
+  }
+  .search-more{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button{
+      margin-left: 6px;
+    }
+  }
+}
+.platform-ios{
+  .load-more{
+    .blue-text{
+      -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+  }
+}
+
 
 //Help Fab styling
 .help-tab{

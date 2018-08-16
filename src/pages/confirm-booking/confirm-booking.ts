@@ -69,8 +69,7 @@ export class ConfirmBookingPage {
     this.bookingForm = this.formBuilder.group({
       name: [
         '', Validators.compose([
-          Validators.required,
-          Validators.pattern('[a-zA-Z][a-zA-Z ]+')
+          Validators.required
         ])
       ],
       phone: [
@@ -121,8 +120,8 @@ export class ConfirmBookingPage {
     this.buildDateObject();
     this.storage.get('eatiblUser').then((val) => {
       if(val){
-        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
         this.user = decode(val);
+        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
         this.bookingForm.controls['name'].setValue(this.user.name);
         this.bookingForm.controls['phone'].setValue(this.user.phone);
         this.bookingForm.controls['email'].setValue(this.user.email);
@@ -142,6 +141,12 @@ export class ConfirmBookingPage {
     this.dateObject.month = month;
     this.dateObject.date = date;
     this.dateObject.day = day;
+  }
+
+  //Trim the trailing spaces from form input values
+  cleanValue(field){
+    if(/\s+$/.test(this.bookingForm.value[field]))
+      this.bookingForm.controls['email'].setValue(this.bookingForm.value.email.trim());
   }
 
   confirm(){
@@ -257,7 +262,7 @@ export class ConfirmBookingPage {
       if(this.response.message){
         if(this.response.message == 'overcapacity'){ //If requested capacity is over the available capacity
           title = 'Overcapacity';
-          message = 'Sorry, but this timeslot only has '+this.response.remainder+' seats left.';
+          message = 'Sorry, but this timeslot only has '+this.response.remaining+' seats left.';
         }
 
         if(this.response.message == 'user exists'){ //If the email address belongs to a registered account
@@ -350,11 +355,11 @@ export class ConfirmBookingPage {
         this.storage.get('eatiblUser').then((val) => {
           if(val){
             this.user = decode(val);
-            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+this.user || "none");
+            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(this.user) || "none");
           }
           else{
             this.storage.set('eatiblUser', this.response.token)
-            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+decode(this.response.token) || "none");
+            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(decode(this.response.token)) || "none");
           }
         });
         if(this.response.booking.people > 1){

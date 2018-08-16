@@ -10,6 +10,43 @@ page-home {
       }
     }
   }
+  .section-header{
+    h4{
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+    &.top-picks{
+      background-color: #222;
+      h4{
+        color: #fff;
+      }
+    }
+    &.deals-nearby{
+      h4{
+        margin-bottom: 6px;
+      }
+    }
+  }
+  .top-pick-slider{
+    padding: 3px 0 0 0;
+    background-color: #222;
+    .swiper-wrapper{
+      padding-bottom: 40px;
+    }
+    .swiper-pagination{
+      .swiper-pagination-bullet{
+        background-color: #fff;
+        opacity: 0.4;
+        &.swiper-pagination-bullet-active{
+          background-color: #007aff;
+          opacity: 1;
+        }
+      }
+    }
+    .top-pick-slide{
+      padding: 0 10px;
+    }
+  }
   .toolbar-title-ios{
     .nearby-wrapper{
       justify-content: center;

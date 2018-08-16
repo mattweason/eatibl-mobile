@@ -20,7 +20,7 @@
   <form [formGroup]="loginForm" (ngSubmit)="login()">
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon [ngClass]="{'invalid': !loginForm.controls.email.valid && (loginForm.controls.email.dirty || submitAttempt)}" name="mail"></ion-icon></ion-label>
-      <ion-input class="light-placeholder" placeholder="Email" [formControl]="loginForm.controls['email']"></ion-input>
+      <ion-input class="light-placeholder" placeholder="Email" [formControl]="loginForm.controls['email']"  (blur)="cleanValue('email')"></ion-input>
     </ion-item>
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon [ngClass]="{'invalid': !loginForm.controls.password.valid && (loginForm.controls.password.dirty || submitAttempt)}" name="lock"></ion-icon></ion-label>
@@ -29,7 +29,7 @@
     <div class="form-error" *ngIf="(loginForm.controls.email.hasError('required') && submitAttempt) || (loginForm.controls.password.hasError('required') && submitAttempt)">
       <span>Please fill in all the fields.</span>
     </div>
-    <div class="form-error" *ngIf="(loginForm.controls.email.hasError('pattern') && submitAttempt)">
+    <div class="form-error" *ngIf="(loginForm.controls.email.hasError('email') && submitAttempt)">
       <span>Please enter a valid email.</span>
     </div>
     <div class="form-error" *ngIf="badInput">

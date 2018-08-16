@@ -22,6 +22,7 @@ export class HomePage {
 
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
+  restaurantPicks = []; //List of restaraunt of today's top picks (total of 5)
   selectedResto = {} as any; //Restaurant data of the selected marker
   timeslotsLength: any; //Used to see if restaurant has discounts for a day
   businessHours = [];
@@ -38,9 +39,11 @@ export class HomePage {
   userCoords: any;
   firstCall = true;
   batch = 0; //Represents the batch number
-  allResults = false; //Becomes true when we've retrieved all of the restaurants.
   hideMap = false;
   customLocation = false;
+  loadMorePressed: number = 0; //Increments by one each time load more is pressed
+  loadMoreCount: number = 10; //Number of additional nearby restaurants loaded when load more is pressed
+  initLoadCount: number = 5; //Number of nearby restaurants loaded initially
 
   map: GoogleMap;
 
@@ -57,6 +60,7 @@ export class HomePage {
   ) {
     //Update location when user geolocated event is recieved
     events.subscribe('user:geolocated', (location, time) => {
+      console.log('receiving geolocaiton')
       this.userCoords = location;
 
       //Only request the geolocated restaurant list the first time this event is received
@@ -107,7 +111,7 @@ export class HomePage {
     });
   }
 
-  //Modal for letting the user select their location manually
+  //Modal for letting users select their location manually
   openMap(){
     this.log.sendEvent('Location Modal: Open', 'Home', 'Clicked set location button at bottom section');
     this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
@@ -281,6 +285,11 @@ export class HomePage {
     }
   }
 
+  topPickSlider(direction){
+    this.log.sendEvent('Browse through Top Picks', 'Home', 'User went: '+direction);
+  }
+
+
   ionViewDidEnter(){
     //Call geolocation from app.component
     this.events.publish('view:map', (this.view == 'map')); //Pop help button into correct position
@@ -321,6 +330,8 @@ export class HomePage {
     var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
 
+    this.restaurantPicks = []; //reset restaurantPicks each time we start ranking (to update list based on new locations)
+
     for (var i = 0; i < restaurantList.length; i++){
       var rank = 100; //start with default value
       var timeslots = _.filter(restaurantList[i].timeslots, function(timeslot){
@@ -329,7 +340,6 @@ export class HomePage {
           return timeslot.day == day && timeslot.time >= hour + 0.25; //Add a quarter hour to comparison to prevent bookings within 15 minutes of a booking time;
         else //for other days, show all available timeslots
           return timeslot.day == day;
-
       });
 
       //Make sure it's sorted by time ascending
@@ -351,7 +361,7 @@ export class HomePage {
 
       //BIG PENALTY IN RANKING FOR NO DISCOUNTS FOR TODAY
       if(timeslots.length == 0)
-        rank = rank - 30;
+        rank = rank - 50;
 
       else //add to rank points based on discount (+1 per 10% discount at max available discount);
         rank = rank + restaurantList[i].maxTimeslot.discount / 10; //add 1pt for each 10% discount
@@ -363,10 +373,10 @@ export class HomePage {
       //bonus and penalty for distance
       if(restaurantList[i].distance <= 2)
         rank = rank + 2/restaurantList[i].distance;
-      else if(restaurantList[i].distance > 2 && restaurantList[i].distance <= 5)
-        rank = rank - restaurantList[i].distance/2;
-      else if(restaurantList[i].distance > 5)
-        rank = rank - 6;
+      else if(restaurantList[i].distance > 2 && restaurantList[i].distance <= 6)
+        rank = rank - 0.5*restaurantList[i].distance + 2;
+      else if(restaurantList[i].distance > 6)
+        rank = rank - restaurantList[i].distance + 2;
 
       restaurantList[i].rank = rank; //SET RANKING
     }
@@ -376,12 +386,21 @@ export class HomePage {
       return -resto.rank;
     });
 
-    this.restaurantList = restaurantList.slice(0,10); //load first 10
+    this.restaurantList = restaurantList.slice(0,this.initLoadCount); //load first 5
     this.restaurantAll = restaurantList; //store all restos
     this.batch++;
 
+    //Get top picks based on current ranking
+    for (var i = 0; i < this.restaurantAll.length; i++){
+      if(this.restaurantAll[i].maxTimeslot) //make sure all our entries have some discount (will never happen but Matt insisted on it)
+       if(this.restaurantPicks.length < 5 && this.restaurantAll[i].maxTimeslot.discount > 15)
+          this.restaurantPicks.push(this.restaurantAll[i]);
+    }
+    //Log the top 5 results for the today's top picks
+    this.restaurantDisplayLog(this.restaurantPicks, 0, true);
+
     //Send first batch of restaurants to backend for logging
-    this.restaurantDisplayLog(this.restaurantList, 0);
+    this.restaurantDisplayLog(this.restaurantList, 0, false);
 
     //When you've selected a restaurant and changed the date, update the restaurant data
     if(this.view == 'map' && this.selectedResto){
@@ -396,39 +415,32 @@ export class HomePage {
     this.log.sendEvent('List View: Refreshed', 'Home', 'User refreshed the restaurant list');
     this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
-      this.allResults = false;
+      this.loadMorePressed = 0;
       this.batch = 0;
       this.rankRestaurants(data);
       refresher.complete();
     });
   }
 
-  //Call next batch of 10 restaurants when you reach the bottom of the page
-  getNextBatch(infiniteScroll){
-    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Home', 'User scrolled down until next batch was populated, batch #: '+this.batch);
+  //Load 10 more restaurants, but not more than 25
+  loadMore(){
+    this.log.sendEvent('Load More: Pressed', 'Home', 'User requested to load more restaurants: ' + (this.loadMorePressed == 0 ? 'first time' : 'second time'));
 
-    var limit = Math.min(this.batch*10+10, this.restaurantAll.length);
+    this.loadMorePressed++;
+    var limit = this.initLoadCount + this.loadMorePressed * this.loadMoreCount;
     var currentBatch = []; //for display log
 
-    for(var i = this.batch*10; i < limit; i++){
+    for(var i = this.restaurantList.length; i < limit; i++) {
       this.restaurantList.push(this.restaurantAll[i]); //add restaurant to the current display list
       currentBatch.push(this.restaurantAll[i]);
     }
     //capture restaurants displayed in this batch and send to log
-    this.restaurantDisplayLog(currentBatch, this.batch);
-
-    this.batch++;
-
-    if(this.restaurantList.length == this.restaurantAll.length)
-      this.allResults = true;
-
-    infiniteScroll.complete();
+    this.restaurantDisplayLog(currentBatch, limit - this.loadMoreCount, false);
   }
 
-
-  toggleToolbar(){
-    this.showToolbar = !this.showToolbar;
-    this.content.resize();
+  //Navigate to search page
+  goToSearch(){
+    this.events.publish('request:changeTab', 1); //Get tabs page to set opacity to 1
   }
 
   setNow(initialCall){
@@ -456,9 +468,7 @@ export class HomePage {
   }
 
   //take a specific chunk of restaurants and log them to backend (revealing what is shown to specific users)
-  restaurantDisplayLog(restoList, batchNumber){
-    console.log(this.time);
-    console.log(this.date);
+  restaurantDisplayLog(restoList, currentIndex, isTopPicks){
     var formattedList = [];
     //format restoList before sending it over
     for (var i = 0; i < restoList.length; i++){
@@ -469,13 +479,14 @@ export class HomePage {
       var selectedTime = Math.round((parseInt(currentHour) + parseInt(currentMinute)/60) * 100) / 100;
 
       formattedList.push({
+        page: isTopPicks ? 'topPicks' : 'nearby',
         deviceId: this.device.uuid,
         restaurant_fid: restoList[i]._id,
         restaurantName: restoList[i].name,
         selectedDay: this.date,
         selectedTime: selectedTime,
         bestDeal: restoList[i].maxTimeslot.discount,
-        rank: i + (batchNumber * 10),
+        rank: currentIndex + i,
         location: this.userCoords,
         distance: Math.round(restoList[i].distance * 100) / 100
       });

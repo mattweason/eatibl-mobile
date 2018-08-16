@@ -41,8 +41,7 @@ export class SignupPage {
     this.signupForm = this.formBuilder.group({
       name: [
         '', Validators.compose([
-          Validators.required,
-          Validators.pattern('[a-zA-Z][a-zA-Z ]+')
+          Validators.required
         ])
       ],
       phone: [
@@ -167,6 +166,12 @@ export class SignupPage {
     alert.present();
   }
 
+  //Trim the trailing spaces from form input values
+  cleanValue(field){
+    if(/\s+$/.test(this.signupForm.value[field]))
+      this.signupForm.controls[field].setValue(this.signupForm.value[field].trim());
+  }
+
   //Make the api call to submit the registration
   submitRegistration(){
 
@@ -211,7 +216,7 @@ export class SignupPage {
     let alert = this.alertCtrl.create({
       title: title,
       message: message,
-      buttons: ['Dismiss']
+      buttons: ['Ok']
     });
     alert.present();
   }
@@ -220,7 +225,7 @@ export class SignupPage {
     let alert = this.alertCtrl.create({
       title: title,
       message: message,
-      buttons: ['Dismiss']
+      buttons: ['Ok']
     });
     alert.present();
     alert.onDidDismiss(() => {
