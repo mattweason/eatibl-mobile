@@ -12,6 +12,7 @@ import moment from 'moment';
 import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
+import { ClickBlock } from '../../../node_modules/ionic-angular/umd/components/app/click-block';
 
 /**
  * Generated class for the ConfirmBookingPage page.
@@ -291,41 +292,65 @@ export class ConfirmBookingPage {
           this.presentAlert(title, message);
       }
       else{
-         var timeOfBooking = moment(); //Get the time the create booking function is processed
-         var dateTimeReservation = new Date(this.date); //Get the time for the reservation
-         var timeOfReservation = this.timeslot.time; //Get the time of the reservation
+        var timeOfBooking = moment(); //Get the time the create booking function is processed
+        var dateTimeReservation = new Date(this.date); //Get the date for the reservation
+        var timeOfReservation = this.timeslot.time; //Get the time for the reservation
 
-         if(timeOfBooking.dates()==dateTimeReservation.getDate()){ //Check if reservation was made same day
-           if((timeOfReservation-timeOfBooking.hours())>1){//If same day, check if greater than an hour
-             //If the time of reservation is 10 minutes to the next hour, and the reservation is the next hour,
-             //it sends a notification at 5 mins rather than an hour (eg. 2:56pm reservation for 4pm)
-             if(timeOfBooking.minutes()>50 && timeOfReservation-timeOfBooking.hours()==2){
-               this.localnotifications.schedule({
-                 text: "Your reservation for " + this.restaurant + " is in 5 minutes!",
-                 trigger: {at: (moment().startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
-               });
-             }
-             else{ //More than an hour, and not close to the hour mark
-             this.localnotifications.schedule({
-               text: "Your reservation for " + this.restaurant + " is in an hour!",
-               trigger: {at: (((moment().startOf('day').add(this.timeslot.time-1, 'hours')).toDate()))}
-             });
-           }
-         }
-           else{ //Less than an hour
-             this.localnotifications.schedule({
-               text: "Your reservation for " + this.restaurant + " is in 5 minutes!",
-               trigger: {at: (moment().startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
-             });
-           }
-         }
+        if(timeOfBooking.dates()==dateTimeReservation.getDate()){ //Check if reservation was made same day
+          if((timeOfReservation-timeOfBooking.hours())>1){//If same day, check if greater than an hour
+            if(timeOfBooking.minutes()>50 && timeOfReservation-timeOfBooking.hours()==2){ 
+              //If the time of reservation is 10 minutes to the next hour, and the reservation is the next hour,
+            //it sends a notification at 5 mins rather than an hour (eg. 2:56pm reservation for 4pm)
+              this.localnotifications.schedule({
+                id: 4,
+                text: "Your reservation for " + this.restaurant.name + " is in 5 minutes!",
+                trigger: {at: (timeOfBooking.startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
+              });
+            }
+            else{ //More than an hour, and not close to the hour mark
+            this.localnotifications.schedule({
+              text: "Your reservation for " + this.restaurant.name + " is in an hour!",
+              trigger: {at: (((timeOfBooking.startOf('day').add(this.timeslot.time-1, 'hours')).toDate()))}
+            });
+          }
+          //Give the user actions to respond to whether give feedback
+          this.localnotifications.addActions('yes-no', [
+            {id: 'yes', title: "Sure!"},
+            {id: 'no', title: "I'm good."}
+          ]);
 
-         else{ //Reservation not made for the same day, so send the notification that day an hour before
-           this.localnotifications.schedule({
-             text: "Your reservation for " + this.restaurant + " is in an hour!",
-             trigger: {at: (((moment().startOf('day').add(this.timeslot.time-1, 'hours')).add(dateTimeReservation.getDate()-timeOfBooking.dates(), 'days').toDate()))}
-           });
-         }
+
+          this.localnotifications.schedule({ //Send notification for feedback 
+            id: 2,
+            trigger: {at: (timeOfBooking.startOf('day').add(this.timeslot.time + 3, 'hours').toDate())},
+            text: "Thanks for making a booking! Would you mind giving us some feedback?", //TODO: Make message better
+            actions: 'yes-no',
+            data: {"restaurant": this.restaurant, "booking": this.response.booking} //Send information to navigate to booking confirmed page
+          });
+
+          //When a user presses yes to respond to feedback, send them to feedback page
+          this.localnotifications.on('yes').subscribe(notification=>{
+            this.navCtrl.push("BookingConfirmedPage", {
+              booking: notification.data["booking"],
+              restaurant: notification.data['restaurant']
+            });
+          });
+
+        }
+          else{ //Less than an hour
+            this.localnotifications.schedule({
+              text: "Your reservation for " + this.restaurant.name + " is in 5 minutes!",
+              trigger: {at: (timeOfBooking.startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
+            });
+          }
+        }
+
+        else{ //Reservation not made for the same day, so send the notification that day an hour before
+          this.localnotifications.schedule({
+            text: "Your reservation for " + this.restaurant + " is in an hour!",
+            trigger: {at: (((timeOfBooking.startOf('day').add(this.timeslot.time-1, 'hours')).add(dateTimeReservation.getDate()-timeOfBooking.dates(), 'days').toDate()))}
+          });
+        }
 
         this.storage.get('eatiblUser').then((val) => {
           if(val){

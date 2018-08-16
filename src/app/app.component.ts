@@ -14,6 +14,7 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import * as moment from 'moment';
 import * as decode from 'jwt-decode';
+import { LocalNotifications } from '../../node_modules/@ionic-native/local-notifications';
 
 
 @Component({
@@ -51,15 +52,39 @@ export class MyApp {
     private firebase: Firebase,
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
-    private locationAccuracy: LocationAccuracy
+    private locationAccuracy: LocationAccuracy,
+    public localNotification: LocalNotifications
   ) {
 
     platform.ready().then(() => {
       console.log(Date.now() + ' platform ready')
+      var dateToday = new Date;
+      var dateMoment = moment(dateToday);
+      
       this.rootPage = 'TabsPage';
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
+
+      //If user has logged in before this, notification was already scheduled, need to cancel and schedule one for next week
+      if(this.localNotification.isPresent(1)){
+        console.log("already had one")
+        this.localNotification.cancel(1)
+        this.localNotification.schedule({
+          id:1,
+          trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()}, //Right now, add 7 days, set hours:11, minutes:30
+          text: "We've missed you... Come check out our latest deals!"
+        });
+      }
+      else{ //First time user has opened app since this was added, add a notification for next week
+        console.log("first one")
+        this.localNotification.schedule({
+          id: 1,
+          trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()},
+          text: "We've missed you... Come check out our latest deals!"
+        });
+      }
+
 
       //Only do native stuff in android or ios
       if (platform.is('cordova')){

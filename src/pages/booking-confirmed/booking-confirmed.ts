@@ -34,6 +34,8 @@ export class BookingConfirmedPage {
   distance: any;
   canRedeem = false;
   mapUrl: any;
+  showfeedback = false;
+  feedback = {};
 
   constructor(
     public navCtrl: NavController,
@@ -43,14 +45,16 @@ export class BookingConfirmedPage {
     public alertCtrl: AlertController,
     private launchNavigator: LaunchNavigator,
     public events: Events,
-    private log: ActivityLoggerProvider
+    private log: ActivityLoggerProvider,
+    public modalCtrl: ModalController
     ) {
       //Collect nav parameters
       this.restaurant = navParams.get('restaurant');
       this.booking = navParams.get('booking');
+      
 
       this.buildDateObject();
-
+ 
       //Subscribe to geolocation events from app.component
       events.subscribe('user:geolocated', (location, time) => {
         this.location = location;
@@ -72,6 +76,7 @@ export class BookingConfirmedPage {
     this.events.publish('get:geolocation', Date.now());
     if(this.booking.redeemed)
       this.redeemed = true;
+    this.showFeedback()
   }
 
   buildDateObject(){
@@ -234,4 +239,38 @@ export class BookingConfirmedPage {
     this.withinTime = (moment().add(30, 'minutes').isAfter(datetime) && moment().isBefore(moment(datetime).add(4, 'hours')));
   }
 
+  showFeedback(){
+    var baseMoment = moment();
+    var timeOfBooking = baseMoment.startOf('day').add(this.booking.time, 'hours');
+    var dateOfBooking = moment(moment(this.booking.date).format("LL")); //Find a way to fix ugly datetime->moment converting
+    var bookingDateTime = dateOfBooking.hours(timeOfBooking.hours()).minutes(timeOfBooking.minutes())
+
+    this.showfeedback = bookingDateTime.isBefore(moment().add(1, 'hour'))
+  }
+
+  sendFeedback(){
+    //Define variables for the feedback model
+    var user_id = this.booking.user_fid;
+    var restaurant_id = this.booking.restaurant_fid;
+    var rating = this.feedback['rating']
+    var comments = this.feedback['comments']
+
+    //Define Model
+      let feedback = {
+        rating: rating,
+        restaurant_fid: restaurant_id,
+        user_fid: user_id,
+        comment: comments
+    }
+
+    this.API.makePost('user/feedback',feedback).subscribe(() => {});  
+
+    let thankyoumodal = this.alertCtrl.create({
+      title: "Feedback Sent!",
+      subTitle: "Thanks for taking the time to send us some feedback.",
+      buttons: ['dismiss']
+    })
+
+    thankyoumodal.present()
+  }
 }
