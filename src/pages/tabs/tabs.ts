@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
-import {IonicPage, Events, Tabs} from 'ionic-angular';
+import {IonicPage, Events, Tabs, NavController} from 'ionic-angular';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
+import {LocalNotifications} from "@ionic-native/local-notifications";
 
 @IonicPage()
 @Component({
@@ -19,7 +20,9 @@ export class TabsPage {
 
   constructor(
     public events: Events,
-    private log: ActivityLoggerProvider
+    private log: ActivityLoggerProvider,
+    public navCtrl: NavController,
+    public localNotifications: LocalNotifications
   ) {
     //Hide tabs when map is open
     events.subscribe('view:positionMap', (mapOpen) => {
@@ -30,6 +33,18 @@ export class TabsPage {
       console.log(tab)
       this.changeTab(tab);
     })
+
+    //Do action if we came into app via localNotification
+    // this.localNotifications.on('click').subscribe(notification => {
+    //   console.log(notification)
+    //   console.log('notification clicked')
+    //   console.log(notification.data.type == 'Reminder')
+    //   if(notification.data.type == 'Reminder') //The notification is a booking reminder
+    //     this.navCtrl.push('BookingConfirmedPage', {
+    //       booking: notification.data.details,
+    //       restaurant: notification.data.details.restaurant_fid
+    //     });
+    // })
   }
 
   changeTab(tab){

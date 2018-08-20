@@ -24,6 +24,7 @@
         <ion-row class="border-bottom">
           <ion-col>
             <p class="restaurant">{{restaurant.name}}</p>
+            <p class="vicinity">{{restaurant.vicinity}}</p>
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom extra-padding">
@@ -45,7 +46,7 @@
           </ion-col>
         </ion-row>
         <div *ngIf="showfeedback">
-          <ion-label>How would you rate your experience with Eatibl?</ion-label>  
+          <ion-label>How would you rate your experience with Eatibl?</ion-label>
           <rating [(ngModel)]='feedback.rating'></rating> <!-- @Matt, You can put emptyStarIconName="link/to/image" and starIconName='link/to/image' to make the stars look prettier-->
           <ion-item>
               <ion-label color="primary" floating>Type any comments here!</ion-label>

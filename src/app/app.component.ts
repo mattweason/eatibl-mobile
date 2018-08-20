@@ -6,7 +6,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
 import { ApiServiceProvider } from "../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../providers/activity-logger/activity-logger";
-import { AlertController, ModalController, Platform, Events } from 'ionic-angular';
+import {AlertController, ModalController, Platform, Events} from 'ionic-angular';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
@@ -53,42 +53,41 @@ export class MyApp {
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
     private locationAccuracy: LocationAccuracy,
-    public localNotification: LocalNotifications
+    public localNotifications: LocalNotifications
   ) {
 
     platform.ready().then(() => {
       console.log(Date.now() + ' platform ready')
       var dateToday = new Date;
       var dateMoment = moment(dateToday);
-      
+
       this.rootPage = 'TabsPage';
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
 
-      //If user has logged in before this, notification was already scheduled, need to cancel and schedule one for next week
-      if(this.localNotification.isPresent(1)){
-        console.log("already had one")
-        this.localNotification.cancel(1)
-        this.localNotification.schedule({
-          id:1,
-          trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()}, //Right now, add 7 days, set hours:11, minutes:30
-          text: "We've missed you... Come check out our latest deals!"
-        });
-      }
-      else{ //First time user has opened app since this was added, add a notification for next week
-        console.log("first one")
-        this.localNotification.schedule({
-          id: 1,
-          trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()},
-          text: "We've missed you... Come check out our latest deals!"
-        });
-      }
-
 
       //Only do native stuff in android or ios
       if (platform.is('cordova')){
         this.log.sendEvent('App Start', 'runTime', '');
+
+        // //Do action if we came into app via localNotification
+        // this.localNotifications.on('click').subscribe(notification => {
+        //   console.log(notification)
+        //   console.log('notification clicked')
+        //   console.log(notification.data.type == 'Reminder')
+        // })
+        //
+        // //Check if we already have a re-engage notification and cancel it if we do
+        // if(this.localNotifications.isPresent(1)){
+        //   this.localNotifications.cancel(1)
+        // }
+        // //Schedule a new notification for first-timers and regular users
+        // this.localNotifications.schedule({
+        //   id: 1,
+        //   trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()},
+        //   text: "We've missed you... Come check out our latest deals!"
+        // });
 
         this.diagnostic.getLocationAuthorizationStatus().then((status) => {
           if(status == 'not_determined') //track cases where users are required to provide permission
@@ -161,9 +160,9 @@ export class MyApp {
         //**********************ONLY FOR IONIC LAB********************************//
         //Hardcode location and send it so we don't have to wait for geolocation
         //while developing. Coordinates are set to Palmerston office.
-        this.geolocateUser(true);
-        //this.location = {coords: [43.655922, - 79.410125]};
-        //this.sendGeolocationEvent();
+        // this.geolocateUser(true);
+        this.location = {coords: [43.655922, - 79.410125]};
+        this.sendGeolocationEvent();
       }
 
     });
