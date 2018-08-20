@@ -12,7 +12,6 @@ import moment from 'moment';
 import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
-import { ClickBlock } from '../../../node_modules/ionic-angular/umd/components/app/click-block';
 
 /**
  * Generated class for the ConfirmBookingPage page.
