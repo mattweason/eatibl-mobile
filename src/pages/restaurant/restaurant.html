@@ -32,7 +32,7 @@
 <ion-content>
   <ion-card *ngIf="isLoaded">
     <div *ngIf="distance" class="distance">
-      <p>{{distance}}</p>
+      <p>{{restaurant.vicinity}} - {{distance}}</p>
     </div>
     <div class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"
          *ngIf="!restaurant?.featuredImage"></div>
