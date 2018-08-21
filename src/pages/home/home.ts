@@ -58,6 +58,7 @@ export class HomePage {
     private storage: Storage,
     private log: ActivityLoggerProvider
   ) {
+
     //Update location when user geolocated event is recieved
     events.subscribe('user:geolocated', (location, time) => {
       console.log('receiving geolocaiton')
@@ -105,6 +106,7 @@ export class HomePage {
 
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
       this.events.publish('reveal:restaurants');
+
       this.dataCache = data;
       this.setNow(true); //rankRestaurants runs inside here
       this.cdRef.detectChanges();

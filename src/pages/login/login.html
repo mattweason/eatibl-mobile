@@ -20,7 +20,7 @@
   <form [formGroup]="loginForm" (ngSubmit)="login()">
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon [ngClass]="{'invalid': !loginForm.controls.email.valid && (loginForm.controls.email.dirty || submitAttempt)}" name="mail"></ion-icon></ion-label>
-      <ion-input class="light-placeholder" placeholder="Email" [formControl]="loginForm.controls['email']"  (blur)="cleanValue('email')"></ion-input>
+      <ion-input class="light-placeholder" placeholder="Email" [formControl]="loginForm.controls['email']"  (ionBlur)="cleanValue('email')"></ion-input>
     </ion-item>
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon [ngClass]="{'invalid': !loginForm.controls.password.valid && (loginForm.controls.password.dirty || submitAttempt)}" name="lock"></ion-icon></ion-label>

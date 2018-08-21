@@ -76,6 +76,7 @@ export class MyApp {
         //   console.log(notification)
         //   console.log('notification clicked')
         //   console.log(notification.data.type == 'Reminder')
+        //   this.storage.set('eatiblReminder', notification.data);
         // })
         //
         // //Check if we already have a re-engage notification and cancel it if we do
@@ -86,7 +87,9 @@ export class MyApp {
         // this.localNotifications.schedule({
         //   id: 1,
         //   trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()},
-        //   text: "We've missed you... Come check out our latest deals!"
+        //   text: "We're getting new deals everyday, come check out our latest offerings!",
+        //   title: "We've missed you...",
+        //   icon: 'https://eatibl.com/assets/images/notification-icon.png'
         // });
 
         this.diagnostic.getLocationAuthorizationStatus().then((status) => {

@@ -310,39 +310,37 @@ export class ConfirmBookingPage {
 
         if(this.platform.is('cordova')) { //Don't run in ionic lab, causes error
 
-          // //TEST TEST TEST... 123 TESTING
-          // this.localnotifications.schedule({
-          //   id: 50, //a number from 0 to 10000
-          //   text: "Your booking for " + this.restaurant.name + " is in an hour!",
-          //   data: {type: "Reminder", details: this.response.booking} //Send information to navigate to booking confirmed page
-          // });
-          //
-          // //REMINDER: When booking is made with less than 2hr lead time
-          // if(timeDiff < 2){
-          //   this.localnotifications.schedule({
-          //     id: this.postObject.localNotifications.reminderId, //a number from 0 to 10000
-          //     text: "Your booking for " + this.restaurant.name + " is in 15 minutes!",
-          //     trigger: {at: (bookingDate.subtract(15, 'minutes')).toDate()},
-          //     data: {type: "Reminder", details: this.response.booking} //Send information to navigate to booking confirmed page
-          //   });
-          // }
-          //
-          // //REMINDER: When booking is more than 2hr lead time
-          // if(timeDiff >= 2){
-          //   this.localnotifications.schedule({
-          //     id: this.postObject.localNotifications.reminderId, //a number from 0 to 10000
-          //     text: "Your booking for " + this.restaurant.name + " is in an hour!",
-          //     trigger: {at: (bookingDate.subtract(60, 'minutes')).toDate()},
-          //     data: {type: "Reminder", details: this.response.booking} //Send information to navigate to booking confirmed page
-          //   });
-          // }
-          //
-          // //FEEDBACK: 3hrs after the booking is complete
-          // this.localnotifications.schedule({
+          //REMINDER: When booking is made with less than 2hr lead time
+          if(timeDiff < 2){
+            this.localNotifications.schedule({
+              id: this.postObject.localNotifications.reminderId, //a number from 0 to 10000
+              title: "Reminder",
+              text: "Your booking for " + this.restaurant.name + " is in 15 minutes!",
+              trigger: {at: (bookingDate.subtract(15, 'minutes')).toDate()},
+              data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
+              icon: 'file://assets/imgs/notification-icon.png'
+            });
+          }
+
+          //REMINDER: When booking is more than 2hr lead time
+          if(timeDiff >= 2){
+            this.localNotifications.schedule({
+              id: this.postObject.localNotifications.reminderId, //a number from 0 to 10000
+              title: "Reminder",
+              text: "Your booking for " + this.restaurant.name + " is in an hour!",
+              trigger: {at: (bookingDate.subtract(60, 'minutes')).toDate()},
+              data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
+              icon: 'file://assets/imgs/notification-icon.png'
+            });
+          }
+
+          //FEEDBACK: 3hrs after the booking is complete
+          // this.localNotifications.schedule({
           //   id: this.postObject.localNotifications.feedbackId, //a number from 0 to 10000
           //   text: "How was your experience using Eatibl at" + this.restaurant.name + "?",
           //   trigger: {at: (bookingDate.add(180, 'minutes')).toDate()},
-          //   data: {type: "Feedback", details: this.response.booking} //Send information to navigate to booking confirmed page
+          //   data: {type: "Feedback", details: this.response.booking}, //Send information to navigate to booking confirmed page
+          //   icon: 'https://eatibl.com/assets/images/notification-icon.png'
           // });
 
         }
