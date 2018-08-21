@@ -156,8 +156,12 @@ export class MyApp {
         //Check for both permissions and if location services are enabled
         if(platform.is('android'))
           this.locationPermissionAndroid();
-        else if(platform.is('ios'))
+        else if(platform.is('ios')){
           this.locationPermissionIos();
+          firebase.grantPermission().then(() => {
+            console.log('granted')
+          });
+        }
       }
       else {
         //**********************ONLY FOR IONIC LAB********************************//
