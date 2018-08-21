@@ -235,7 +235,7 @@ export class InviteModalPage {
         var current = this;
         (function(phoneNumber, message){
           current.sms.send(phoneNumber, message, {replaceLineBreaks: true}).then((result) => {
-            this.log.sendEvent('Invite Modal: SMS Sent', 'Invite Modal', phoneNumber);
+            current.log.sendEvent('Invite Modal: SMS Sent', 'Invite Modal', phoneNumber);
             var postValues = {
               ref_phone: phoneNumber,
               message: message,

@@ -19,7 +19,8 @@
       <ion-grid>
         <ion-row class="border-bottom">
           <ion-col align-self-center>
-            <h2>{{restaurant.name}}</h2>
+            <h2 class="restaurant">{{restaurant.name}}</h2>
+            <p class="vicinity">{{restaurant.vicinity}}</p>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -71,6 +72,7 @@
               <div class="form-error" *ngIf="(bookingForm.controls.phone.hasError('pattern') && bookingForm.controls.phone.touched)">
                 <span>Please enter a valid phone number.</span>
               </div>
+              <div class="button-row">
                 <button ion-button block color="danger" type="button" (click)="cancel()">Cancel</button>
                 <button ion-button block color="secondary" type="submit">Confirm</button>
               </div>

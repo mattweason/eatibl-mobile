@@ -63,6 +63,14 @@ page-booking-confirmed {
     font-weight: 700;
     margin: 0;
   }
+  .vicinity{
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    margin: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
   .field-title, .address{
     color: lighten(color($colors, dark), 60%);
     margin: 0;

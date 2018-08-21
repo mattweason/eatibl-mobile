@@ -74,10 +74,10 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <div *ngIf="user.email" class="logout-button">
+            <div *ngIf="user.active" class="logout-button">
               <button ion-button color="danger" small (tap)="logout()">Log Out</button>
             </div>
-            <div *ngIf="!user.email" class="button-row">
+            <div *ngIf="!user.active" class="button-row">
               <button ion-button color="primary" block (tap)="signUp()">Sign Up</button>
               <button ion-button color="secondary" block (tap)="login()">Log In</button>
             </div>

@@ -30,7 +30,7 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <ion-slides class="top-pick-slider" spaceBetween="-15" pager="true">
+    <ion-slides class="top-pick-slider" spaceBetween="-15" pager="true" (ionSlideNextStart)="topPickSlider('next')" (ionSlidePrevStart)="topPickSlider('previous')">
       <ion-slide class="top-pick-slide" *ngFor="let restaurant of restaurantPicks">
         <restaurant-card [cardType]="'top-pick'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
       </ion-slide>

@@ -1,5 +1,5 @@
 import { Component, OnInit, trigger } from '@angular/core';
-import {IonicPage, NavController, NavParams, AlertController, ModalController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, AlertController, ModalController, Platform} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
@@ -47,6 +47,7 @@ export class ConfirmBookingPage {
   postObject = {} as any;
 
   constructor(
+    private platform: Platform,
     public navCtrl: NavController,
     public navParams: NavParams,
     private functions: FunctionsProvider,
@@ -57,7 +58,7 @@ export class ConfirmBookingPage {
     private storage: Storage,
     private modal: ModalController,
     private log: ActivityLoggerProvider,
-    public localnotifications: LocalNotifications
+    public localNotifications: LocalNotifications
   ) {
     this.restaurant = navParams.get('restaurant');
     this.timeslot = navParams.get('timeslot');
@@ -119,8 +120,8 @@ export class ConfirmBookingPage {
     this.buildDateObject();
     this.storage.get('eatiblUser').then((val) => {
       if(val){
-        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
         this.user = decode(val);
+        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
         this.bookingForm.controls['name'].setValue(this.user.name);
         this.bookingForm.controls['phone'].setValue(this.user.phone);
         this.bookingForm.controls['email'].setValue(this.user.email);
@@ -166,7 +167,11 @@ export class ConfirmBookingPage {
         people: this.people,
         timeslot: this.timeslot,
         date: this.date,
-        deviceId: this.device.uuid
+        deviceId: this.device.uuid,
+        localNotifications: { //storing IDs of local notification, in case we cancel booking -> cancel notifications
+          reminderId: Math.ceil(Math.random()*100000),
+          feedbackId: Math.ceil(Math.random()*100000)
+        }
       };
 
       //Create post object for verify check with deviceid
@@ -290,42 +295,57 @@ export class ConfirmBookingPage {
         if(this.response.message != 'user exists') //If user exists we use presentAlertWithLogin
           this.presentAlert(title, message);
       }
-      else{
-        // var timeOfBooking = moment(); //Get the time the create booking function is processed
-        // var dateTimeReservation = new Date(this.date); //Get the time for the reservation
-        // var timeOfReservation = this.timeslot.time; //Get the time of the reservation
-        //
-        // if(timeOfBooking.dates()==dateTimeReservation.getDate()){ //Check if reservation was made same day
-        //   if((timeOfReservation-timeOfBooking.hours())>1){//If same day, check if greater than an hour
-        //     //If the time of reservation is 10 minutes to the next hour, and the reservation is the next hour,
-        //     //it sends a notification at 5 mins rather than an hour (eg. 2:56pm reservation for 4pm)
-        //     if(timeOfBooking.minutes()>50 && timeOfReservation-timeOfBooking.hours()==2){
-        //       this.localnotifications.schedule({
-        //         text: "Your reservation for " + this.restaurant + " is in 5 minutes!",
-        //         trigger: {at: (moment().startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
-        //       });
-        //     }
-        //     else{ //More than an hour, and not close to the hour mark
-        //     this.localnotifications.schedule({
-        //       text: "Your reservation for " + this.restaurant + " is in an hour!",
-        //       trigger: {at: (((moment().startOf('day').add(this.timeslot.time-1, 'hours')).toDate()))}
-        //     });
-        //   }
-        // }
-        //   else{ //Less than an hour
-        //     this.localnotifications.schedule({
-        //       text: "Your reservation for " + this.restaurant + " is in 5 minutes!",
-        //       trigger: {at: (moment().startOf('day').add(this.timeslot.time, 'hours').subtract(5,'minutes')).toDate()}
-        //     });
-        //   }
-        // }
-        //
-        // else{ //Reservation not made for the same day, so send the notification that day an hour before
-        //   this.localnotifications.schedule({
-        //     text: "Your reservation for " + this.restaurant + " is in an hour!",
-        //     trigger: {at: (((moment().startOf('day').add(this.timeslot.time-1, 'hours')).add(dateTimeReservation.getDate()-timeOfBooking.dates(), 'days').toDate()))}
-        //   });
-        // }
+      else{ //no response message means successful booking
+
+        var currentDate = moment();
+        var bookingDate = moment(this.date);
+
+        //add booking time to the booking date (by default booking date only tracks the calendar days)
+        var minute = this.timeslot.time % 1 * 60;
+        var hour = minute ? this.timeslot.time - 0.5 : this.timeslot.time; //if we have 30 minutes, remove 0.5 from timeslot value
+        bookingDate.set({h: hour, m: minute, s:0});
+
+        //calculate the number of hours between now and booking
+        var timeDiff = bookingDate.diff(currentDate, 'minutes')/60;
+
+        if(this.platform.is('cordova')) { //Don't run in ionic lab, causes error
+
+          // //TEST TEST TEST... 123 TESTING
+          // this.localnotifications.schedule({
+          //   id: 50, //a number from 0 to 10000
+          //   text: "Your booking for " + this.restaurant.name + " is in an hour!",
+          //   data: {type: "Reminder", details: this.response.booking} //Send information to navigate to booking confirmed page
+          // });
+          //
+          // //REMINDER: When booking is made with less than 2hr lead time
+          // if(timeDiff < 2){
+          //   this.localnotifications.schedule({
+          //     id: this.postObject.localNotifications.reminderId, //a number from 0 to 10000
+          //     text: "Your booking for " + this.restaurant.name + " is in 15 minutes!",
+          //     trigger: {at: (bookingDate.subtract(15, 'minutes')).toDate()},
+          //     data: {type: "Reminder", details: this.response.booking} //Send information to navigate to booking confirmed page
+          //   });
+          // }
+          //
+          // //REMINDER: When booking is more than 2hr lead time
+          // if(timeDiff >= 2){
+          //   this.localnotifications.schedule({
+          //     id: this.postObject.localNotifications.reminderId, //a number from 0 to 10000
+          //     text: "Your booking for " + this.restaurant.name + " is in an hour!",
+          //     trigger: {at: (bookingDate.subtract(60, 'minutes')).toDate()},
+          //     data: {type: "Reminder", details: this.response.booking} //Send information to navigate to booking confirmed page
+          //   });
+          // }
+          //
+          // //FEEDBACK: 3hrs after the booking is complete
+          // this.localnotifications.schedule({
+          //   id: this.postObject.localNotifications.feedbackId, //a number from 0 to 10000
+          //   text: "How was your experience using Eatibl at" + this.restaurant.name + "?",
+          //   trigger: {at: (bookingDate.add(180, 'minutes')).toDate()},
+          //   data: {type: "Feedback", details: this.response.booking} //Send information to navigate to booking confirmed page
+          // });
+
+        }
 
         this.storage.get('eatiblUser').then((val) => {
           if(val){

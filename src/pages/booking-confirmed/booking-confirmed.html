@@ -5,11 +5,9 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
   <ion-navbar color="primary">
     <ion-title>Booking</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 
@@ -26,6 +24,7 @@
         <ion-row class="border-bottom">
           <ion-col>
             <p class="restaurant">{{restaurant.name}}</p>
+            <p class="vicinity">{{restaurant.vicinity}}</p>
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom extra-padding">
@@ -46,6 +45,17 @@
             <p class="people">{{booking.people}}</p>
           </ion-col>
         </ion-row>
+        <!--<div *ngIf="showfeedback">-->
+          <!--<ion-label>How would you rate your experience with Eatibl?</ion-label>-->
+          <!--<rating [(ngModel)]='feedback.rating'></rating> &lt;!&ndash; @Matt, You can put emptyStarIconName="link/to/image" and starIconName='link/to/image' to make the stars look prettier&ndash;&gt;-->
+          <!--<ion-item>-->
+              <!--<ion-label color="primary" floating>Type any comments here!</ion-label>-->
+              <!--<ion-input [(ngModel)]="feedback.comments"></ion-input>-->
+            <!--</ion-item>-->
+          <!--<ion-row>-->
+            <!--<button ion-button color="secondary" (click)="sendFeedback()"> Send!</button>-->
+          <!--</ion-row>-->
+        <!--</div>-->
         <ion-row class="border-bottom">
           <ion-col class="redeem">
             <div class="redeem-wrapper">

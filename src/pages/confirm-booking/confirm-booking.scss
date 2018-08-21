@@ -43,6 +43,20 @@ page-confirm-booking {
       color: color($colors, secondary);
     }
   }
+  .restaurant{
+    color: color($colors, primary);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .vicinity{
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    margin: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
   .required-alert{
     width: 100%;
     text-align: center;

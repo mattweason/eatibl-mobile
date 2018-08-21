@@ -6,7 +6,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
 import { ApiServiceProvider } from "../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../providers/activity-logger/activity-logger";
-import { AlertController, ModalController, Platform, Events } from 'ionic-angular';
+import {AlertController, ModalController, Platform, Events} from 'ionic-angular';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
@@ -14,6 +14,7 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import * as moment from 'moment';
 import * as decode from 'jwt-decode';
+import { LocalNotifications } from '../../node_modules/@ionic-native/local-notifications';
 
 
 @Component({
@@ -51,19 +52,42 @@ export class MyApp {
     private firebase: Firebase,
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
-    private locationAccuracy: LocationAccuracy
+    private locationAccuracy: LocationAccuracy,
+    public localNotifications: LocalNotifications
   ) {
 
     platform.ready().then(() => {
       console.log(Date.now() + ' platform ready')
+      var dateToday = new Date;
+      var dateMoment = moment(dateToday);
+
       this.rootPage = 'TabsPage';
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
 
+
       //Only do native stuff in android or ios
       if (platform.is('cordova')){
         this.log.sendEvent('App Start', 'runTime', '');
+
+        // //Do action if we came into app via localNotification
+        // this.localNotifications.on('click').subscribe(notification => {
+        //   console.log(notification)
+        //   console.log('notification clicked')
+        //   console.log(notification.data.type == 'Reminder')
+        // })
+        //
+        // //Check if we already have a re-engage notification and cancel it if we do
+        // if(this.localNotifications.isPresent(1)){
+        //   this.localNotifications.cancel(1)
+        // }
+        // //Schedule a new notification for first-timers and regular users
+        // this.localNotifications.schedule({
+        //   id: 1,
+        //   trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()},
+        //   text: "We've missed you... Come check out our latest deals!"
+        // });
 
         this.diagnostic.getLocationAuthorizationStatus().then((status) => {
           if(status == 'not_determined') //track cases where users are required to provide permission
@@ -136,8 +160,9 @@ export class MyApp {
         //**********************ONLY FOR IONIC LAB********************************//
         //Hardcode location and send it so we don't have to wait for geolocation
         //while developing. Coordinates are set to Palmerston office.
-        this.location = {coords: [43.655922, - 79.410125]};
-        this.sendGeolocationEvent();
+        this.geolocateUser(true);
+        // this.location = {coords: [43.655922, - 79.410125]};
+        // this.sendGeolocationEvent();
       }
 
     });
