@@ -311,13 +311,13 @@ export class ConfirmBookingPage {
         if(this.platform.is('cordova')) { //Don't run in ionic lab, causes error
 
           //TEST TEST TEST... 123 TESTING
-          this.localNotifications.schedule({
-            id: 50, //a number from 0 to 10000
-            title: "This is a test",
-            text: "Your booking for " + this.restaurant.name + " is in an hour!",
-            data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
-            icon: 'file://assets/imgs/notification-icon.png'
-          });
+          // this.localNotifications.schedule({
+          //   id: 50, //a number from 0 to 10000
+          //   title: "This is a test",
+          //   text: "Your booking for " + this.restaurant.name + " is in an hour!",
+          //   data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
+          //   icon: 'file://assets/imgs/notification-icon.png'
+          // });
 
           //REMINDER: When booking is made with less than 2hr lead time
           if(timeDiff < 2){
