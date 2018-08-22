@@ -20,9 +20,7 @@ export class ActivityLoggerProvider {
     private API: ApiServiceProvider,
     private storage: Storage,
     private device: Device
-  ) {
-    console.log('Hello ActivityLoggerProvider Provider');
-  }
+  ) {}
 
   sendEvent(event, page, notes){
     this.storage.get('eatiblUser').then((val) => {

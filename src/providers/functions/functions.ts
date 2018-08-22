@@ -11,9 +11,7 @@ import * as moment from 'moment';
 @Injectable()
 export class FunctionsProvider {
 
-  constructor(public http: HttpClient) {
-    console.log('Hello FunctionsProvider Provider');
-  }
+  constructor(public http: HttpClient) {}
 
   //Format a raw time to clocktime. Full is true if we want minutes
   formatClockTime(value, full){

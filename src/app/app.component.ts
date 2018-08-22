@@ -72,12 +72,9 @@ export class MyApp {
         this.log.sendEvent('App Start', 'runTime', '');
 
         // //Do action if we came into app via localNotification
-        // this.localNotifications.on('click').subscribe(notification => {
-        //   console.log(notification)
-        //   console.log('notification clicked')
-        //   console.log(notification.data.type == 'Reminder')
-        //   this.storage.set('eatiblReminder', notification.data);
-        // })
+        this.localNotifications.on('click').subscribe(notification => {
+          this.storage.set('eatiblReminder', notification.data);
+        })
         //
         // //Check if we already have a re-engage notification and cancel it if we do
         // if(this.localNotifications.isPresent(1)){
@@ -122,6 +119,7 @@ export class MyApp {
 
         platform.resume.subscribe(() => {
           this.log.sendEvent('App Instance Resumed', 'unknown', 'The user brought the app into the foreground');
+          this.events.publish('platform:resumed');
           // this.forceUpdate(); //Resume runs first time app opens as well as resume events
         });
 
@@ -260,7 +258,6 @@ export class MyApp {
   forceUpdate(){
     var self = this;
     this.appVersion.getVersionNumber().then(function(version_code){
-      console.log(version_code);
       // self.API.makePost('versionCheck', {vers`ion: version_code}).subscribe(data => {
       var storeLink, version;
       if(self.platform.is('android')){ //Set up link and version numbers for android
@@ -272,7 +269,6 @@ export class MyApp {
         version = '0.1.20';
       }
       if(version_code == version){
-        console.log(storeLink)
         let alert = self.alertCtrl.create({
           title: 'New Version Available',
           subTitle: 'There is a required update for Eatibl. Please update and reopen the app.',

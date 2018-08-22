@@ -1,7 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
-import {IonicPage, Events, Tabs, NavController} from 'ionic-angular';
+import {IonicPage, Events, Tabs, NavController, Platform} from 'ionic-angular';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import {LocalNotifications} from "@ionic-native/local-notifications";
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -22,6 +23,8 @@ export class TabsPage {
     public events: Events,
     private log: ActivityLoggerProvider,
     public navCtrl: NavController,
+    private storage: Storage,
+    private platform: Platform,
     public localNotifications: LocalNotifications
   ) {
     //Hide tabs when map is open
@@ -29,26 +32,32 @@ export class TabsPage {
       this.hideTabs = mapOpen;
     });
 
+    //Programmatically change tab via request from something other than a tab button
     events.subscribe('request:changeTab', (tab) => {
-      console.log(tab)
       this.changeTab(tab);
     })
 
-    //Do action if we came into app via localNotification
-    // this.localNotifications.on('click').subscribe(notification => {
-    //   console.log(notification)
-    //   console.log('notification clicked')
-    //   console.log(notification.data.type == 'Reminder')
-    //   if(notification.data.type == 'Reminder') //The notification is a booking reminder
-    //     this.navCtrl.push('BookingConfirmedPage', {
-    //       booking: notification.data.details,
-    //       restaurant: notification.data.details.restaurant_fid
-    //     });
-    // })
+    //Capture if we need to do something for a reminder
+    this.checkReminder(); //For first load
+    events.subscribe('platform:resumed', () => {
+      this.checkReminder(); //For when app is in background
+    })
+  }
+
+  checkReminder(){
+    //Find out if we have a reminder lined up
+    this.storage.get('eatiblReminder').then((val) => {
+      if(val) { //If custom location, show card about custom location
+        this.navCtrl.push('BookingConfirmedPage', {
+          booking: val['details'],
+          restaurant: val['details']['restaurant_fid'] //Contains all restaurant information
+        });
+        this.storage.remove('eatiblReminder');
+      }
+    });
   }
 
   changeTab(tab){
-    console.log(tab)
     this.tabRef.select(tab)
   }
 

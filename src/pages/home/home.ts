@@ -61,7 +61,6 @@ export class HomePage {
 
     //Update location when user geolocated event is recieved
     events.subscribe('user:geolocated', (location, time) => {
-      console.log('receiving geolocaiton')
       this.userCoords = location;
 
       //Only request the geolocated restaurant list the first time this event is received
@@ -99,7 +98,6 @@ export class HomePage {
     //This is the final endpoint of the geolocation/custom location process
     //Here is where we need to check if we need to show the intro slides or not
     this.storage.get('eatiblShowSlides').then((val) => {
-      console.log('eatibl show slides: ' + val)
       if(val) //If custom location, show card about custom location
         this.presentIntroModal();
     });
