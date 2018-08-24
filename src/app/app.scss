@@ -254,6 +254,9 @@ ion-tabs{
 .help-tab{
   position: absolute;
   left: 4px;
+  &.map-view{
+    display: none;
+  }
   button{
     height: 40px;
     width: 50px;
@@ -268,10 +271,6 @@ ion-tabs{
   .help-tab{ //Support fab
     bottom: 52px;
     top: auto;
-    &.map-view{
-      top: 130px;
-      bottom: auto;
-    }
   }
   .locate-tab{ //Set location tab
     bottom: 52px;
@@ -296,10 +295,6 @@ ion-tabs{
   .help-tab{ //Support fab
     bottom: 60px;
     top: auto;
-    &.map-view{
-      top: 126px;
-      bottom: auto;
-    }
   }
   .locate-tab{ //Set location tab
     bottom: 60px;
@@ -426,18 +421,26 @@ ion-grid{
       margin-right: 0 !important;
       min-width: 15% !important;
       max-width: 15% !important;
+      ion-icon{
+        color: lighten(color($colors, dark), 20%);
+      }
     }
+  }
+  .show-all-toggle{
+    background-color: transparent;
   }
   .button-ios{
     margin: 0;
   }
 }
 
-ion-label[fixed]{
-  min-width: 10% !important;
-  max-width: 10% !important;
-  ion-icon{
-    color: lighten(color($colors, dark), 20%);
+form{
+  ion-label[fixed]{
+    min-width: 10% !important;
+    max-width: 10% !important;
+    ion-icon{
+      color: lighten(color($colors, dark), 20%);
+    }
   }
 }
 

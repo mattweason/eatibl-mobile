@@ -4,13 +4,17 @@ import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { Device } from '@ionic-native/device';
+import { Diagnostic } from '@ionic-native/diagnostic';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
 
-import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
+import {
+  GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker,
+  BaseArrayClass, MarkerIcon
+} from '@ionic-native/google-maps';
 
 @IonicPage()
 @Component({
@@ -44,6 +48,10 @@ export class HomePage {
   loadMorePressed: number = 0; //Increments by one each time load more is pressed
   loadMoreCount: number = 10; //Number of additional nearby restaurants loaded when load more is pressed
   initLoadCount: number = 5; //Number of nearby restaurants loaded initially
+  lastOpenMarkerIndex: any;
+  showNoDeals = true;
+  allMarkers: any;
+  cacheDate: any; //Cache the select date from the map view
 
   map: GoogleMap;
 
@@ -56,6 +64,7 @@ export class HomePage {
     private device: Device,
     public events: Events,
     private storage: Storage,
+    private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider
   ) {
 
@@ -143,13 +152,23 @@ export class HomePage {
 
   loadMap() {
     //Zoom and center to user location
+    let startingPoint = [43.655413, -79.392229];
+    let myStyles =[
+      {
+        featureType: "poi",
+        elementType: "labels",
+        stylers: [
+          { visibility: "off" }
+        ]
+      }
+    ];
     let mapOptions: GoogleMapOptions = {
       camera: {
         target: {
-          lat: this.userCoords[0],
-          lng: this.userCoords[1]
+          lat: startingPoint[0],
+          lng: startingPoint[1]
         },
-        zoom: 12
+        zoom: 13
       },
       gestures: {
         tilt: false,
@@ -158,47 +177,157 @@ export class HomePage {
       preferences: {
         zoom: {
           minZoom: 8,
-          maxZoom: 16
+          maxZoom: 18
         }
-      }
+      },
+      styles: myStyles
     };
 
     // Create a map after the view is ready and the native platform is ready.
     this.map = GoogleMaps.create('mapCanvas', mapOptions);
 
+    //Enable location for map if we have access to device location
+    this.diagnostic.isLocationAvailable().then((state) => {
+      this.map.setMyLocationEnabled(state)
+    }).catch(() => {
+      console.log('failed')
+    })
+
     //Add all restaurants as markers
-    var counter = 0; //For re-enabling the toggle button
+    var restoDeals: any[] = [];
+    var minute = parseInt(moment(this.date).format('m')) / 60;
+    var hour = parseInt(moment(this.date).format('k')) + minute + 0.25;
+    var day = hour < 6 ? moment(this.date).subtract(1, 'days').format('dddd') : moment(this.date).format('dddd'); //If before 6am, still considered day before
+    hour = hour < 6 ? hour + 24 : hour; //Convert hour to 6 to 30 format
+
     for(var i = 0; i < this.restaurantAll.length; i++){
       var resto = this.restaurantAll[i]; //Cache this iteration of restaurantList
-      var current = this;
 
-      (function(resto, current) { //Self invoking to enclose each individual resto data
-        current.map.addMarker({
+      if(resto.timeslots.length){
+        var current = this;
+        resto['timeslotsToday'] = _.filter(resto.timeslots, function(timeslot){
+          if(moment(current.date).isSame(moment(), 'day'))
+            return timeslot.day == day && timeslot.time >= hour;
+          else
+            return timeslot.day == day;
+        });
+
+        restoDeals.push({
           title: resto.name,
-          icon: resto.timeslots.length ? 'https://eatibl.com/assets/images/eatibl-pin-red.png' : 'https://eatibl.com/assets/images/eatibl-pin-grey.png',
+          icon: {
+            url: resto['timeslotsToday'].length ? 'https://eatibl.com/assets/images/eatibl-pin-red.png' : 'https://eatibl.com/assets/images/eatibl-pin-grey.png',
+            size:{
+              width: 24,
+              height: 38
+            }
+          },
           position: {
             lat: resto.latitude,
             lng: resto.longitude
           },
           test: resto._id,
-          disableAutoPan: true
-        }).then((marker: Marker) => {
-          counter++;
-          marker['metadata'] = {id: resto._id};
-          marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-            current.selectResto(marker['metadata'].id);
-          });
-          if(counter == current.restaurantAll.length)
-            current.togglingView = false;
-        }).catch();
-      }(resto, current));
+          disableAutoPan: true,
+          visible: this.showNoDeals ? true : (resto['timeslotsToday'].length ? true : false),
+          metadata: {
+            id: resto._id,
+            originalIcon: resto['timeslotsToday'].length ? 'https://eatibl.com/assets/images/eatibl-pin-red.png' : 'https://eatibl.com/assets/images/eatibl-pin-grey.png',
+            visible: resto['timeslotsToday'].length ? true : false
+          }
+        })
+      }
     }
+
+    //Add markers to map in parallel (add marker is async)
+    let baseArray: BaseArrayClass<any> = new BaseArrayClass<any>(restoDeals);
+    baseArray.mapAsync((mOption: any, callback: (marker: Marker) => void) => {
+      this.map.addMarker(mOption).then(callback);
+    }).then((markers: Marker[]) => {
+      this.allMarkers = markers; //Cache all markers
+
+      // Listen the MARKER_CLICK event on all markers
+      markers.forEach((marker: Marker, index) => {
+        marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe((params: any[]) => {
+          let marker: Marker = params.pop();
+          let icon: MarkerIcon = {
+            url: 'https://eatibl.com/assets/images/eatibl-pin-blue.png',
+            size:{
+              width: 24,
+              height: 38
+            }
+          };
+
+          marker.setIcon(icon); //Change marker color on click
+
+          //Change last marker back to original icon
+          if(this.lastOpenMarkerIndex !== undefined)
+            this.changeLastMarkerToInactive(markers, this.lastOpenMarkerIndex);
+
+          this.lastOpenMarkerIndex = index; //Cache current marker index
+
+          //Display restaurant box
+          this.selectResto(marker.get('metadata').id);
+        });
+      });
+
+      this.togglingView = false;
+    });
+
+    //Zoom into user's location
+    this.map.on(GoogleMapsEvent.MAP_READY).subscribe(() => {
+      this.map.animateCamera({
+        target: {lat: this.userCoords[0], lng: this.userCoords[1]},
+        zoom: 14,
+        duration: 1500
+      });
+    });
 
     //HACK SOLUTION: allow toggle view after 4 seconds
     setTimeout(function () {
       if(this.togglingView)
         this.togglingView = false;
     }, 4000);
+  }
+
+  //Update markers when date has changed
+  updateMarkers(){
+    // Listen the MARKER_CLICK event on all markers
+    this.allMarkers.forEach((marker: Marker, index) => {
+      var resto = _.find(this.restaurantAll, function(resto){
+        return resto._id == marker.get('metadata').id;
+      });
+
+      var minute = parseInt(moment(this.date).format('m')) / 60;
+      var hour = parseInt(moment(this.date).format('k')) + minute + 0.25;
+      var day = hour < 6 ? moment(this.date).subtract(1, 'days').format('dddd') : moment(this.date).format('dddd'); //If before 6am, still considered day before
+      hour = hour < 6 ? hour + 24 : hour; //Convert hour to 6 to 30 format
+
+      console.log(resto)
+
+      if(resto.timeslots.length) {
+        var current = this;
+        resto['timeslotsToday'] = _.filter(resto.timeslots, function (timeslot) {
+          if (moment(current.date).isSame(moment(), 'day'))
+            return timeslot.day == day && timeslot.time >= hour;
+          else
+            return timeslot.day == day;
+        });
+
+        let icon: MarkerIcon = {
+          url: resto['timeslotsToday'].length ? 'https://eatibl.com/assets/images/eatibl-pin-red.png' : 'https://eatibl.com/assets/images/eatibl-pin-grey.png',
+          size:{
+            width: 24,
+            height: 38
+          }
+        };
+
+        marker.setIcon(icon); //Change marker color on click
+      }
+    });
+  }
+
+  changeLastMarkerToInactive(markers, index) {
+    let icon: MarkerIcon = {url: markers[index].get('metadata').originalIcon};
+    markers[index].setIcon(icon);
   }
 
   //Populate the selected restaurant from the tapped marker
@@ -289,7 +418,6 @@ export class HomePage {
     this.log.sendEvent('Browse through Top Picks', 'Home', 'User went: '+direction);
   }
 
-
   ionViewDidEnter(){
     //Call geolocation from app.component
     this.events.publish('view:map', (this.view == 'map')); //Pop help button into correct position
@@ -304,19 +432,24 @@ export class HomePage {
   //Toggles between list and map view
   toggleView(){
     this.togglingView = true;
-    if(this.view == 'list'){
+    if(this.view == 'list'){ //If view is currently list
       this.log.sendEvent('Map View: Loaded', 'Home', 'User switched from list view to map view');
       this.view = 'map';
       this.events.publish('view:map', true);
       this.selectedResto = {};
       this.loadMap();
     }
-    else if(this.view == 'map'){
+    else if(this.view == 'map'){ //If view is currently map
       this.log.sendEvent('List View: Loaded', 'Home', 'User switched from map view to list view');
       this.view = 'list';
       this.events.publish('view:map', false);
       this.togglingView = false;
       const nodeList = document.querySelectorAll('._gmaps_cdv_');
+
+      if(!moment(this.date).isSame(moment(), 'day')) { //Only cache date and rerank restos if selected date is not today
+        this.date = moment().format(); //Change date back to now for nearby list
+        this.rankRestaurants(this.restaurantAll);
+      }
 
       for (let k = 0; k < nodeList.length; ++k) {
         nodeList.item(k).classList.remove('_gmaps_cdv_');
@@ -403,9 +536,13 @@ export class HomePage {
     this.restaurantDisplayLog(this.restaurantList, 0, false);
 
     //When you've selected a restaurant and changed the date, update the restaurant data
-    if(this.view == 'map' && this.selectedResto){
-      this.processBusinessHours();
-      this.processTimeslots();
+    console.log(this.selectedResto)
+    if(this.view == 'map'){
+      if(this.selectedResto._id){
+        this.processBusinessHours();
+        this.processTimeslots();
+      }
+      this.updateMarkers();
     }
     this.cdRef.detectChanges();
   }
