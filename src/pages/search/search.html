@@ -53,7 +53,7 @@
       <ion-spinner color="white"></ion-spinner>
     </div>
   </div>
-  <div *ngIf="!restaurantList" class="no-results">
+  <div *ngIf="!restaurantList && !loadingRestaurants" class="no-results">
     <ion-grid>
       <ion-row>
         <ion-col class="align-center icon">

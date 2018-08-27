@@ -162,12 +162,12 @@ export class SearchPage {
   //Search for restaurants with the selected category
   searchCategory(category) {
     this.searchInput = category; //Pop the category into the search bar
-    this.loadingRestaurants = true;
     this.log.sendEvent('Category List Item Clicked', 'Search', category);
     var current = this;
     if(this.restaurantAll)
       doFilter();
     else{
+      this.loadingRestaurants = true;
       this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
         this.dataCache = data;
         this.rankRestaurants(this.dataCache);
