@@ -167,6 +167,34 @@ restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
   }
 }
 
+//Loading screens
+.loading-restaurants{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0,0,0,0.4);
+  .loading-spinner-box{
+    padding: 12px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: color($colors, primary);
+    span{
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      margin-right: 6px;
+    }
+    ion-spinner{
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
+
 //Hiding tabs and help button when map is open
 ion-tabs{
   &.hideTabs{

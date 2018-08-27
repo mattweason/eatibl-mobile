@@ -29,6 +29,7 @@ export class SearchPage {
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
   restaurantFiltered: any; //filtered search results
+  loadingRestaurants = false;
   dataCache: any; //Cache the api return
   bookings = [];
   date: string;
@@ -61,6 +62,15 @@ export class SearchPage {
     private log: ActivityLoggerProvider,
     private platform: Platform
   ) {
+
+    //Get list of categories
+    this.API.makeCall('category/search/all').subscribe(data => {
+      var current = this;
+      setTimeout(function(){ //Push this to end of stack so it doesn't fire too early
+        current.processCategories(data)
+      }, 0)
+    })
+
     events.subscribe('user:geolocated', (location, time) => {
       this.userCoords = location;
 
@@ -70,7 +80,6 @@ export class SearchPage {
         this.setNow(true);
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
           this.dataCache = data;
-          this.processCategories();
           this.rankRestaurants(this.dataCache);
           this.cdRef.detectChanges();
         });
@@ -84,7 +93,6 @@ export class SearchPage {
         this.setNow(true);
         this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
           this.dataCache = data;
-          this.processCategories();
           this.rankRestaurants(this.dataCache);
           this.cdRef.detectChanges();
         });
@@ -95,6 +103,15 @@ export class SearchPage {
     this.backButtonPressed = platform.registerBackButtonAction(() => {
       this.hideCategoryList(false);
     }, 101);
+  }
+
+  //Get restaurants returns a promise for search functions to wait for
+  getRestaurants(){
+    this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+      this.dataCache = data;
+      this.rankRestaurants(this.dataCache);
+      this.cdRef.detectChanges();
+    });
   }
 
   ionViewDidLoad() {
@@ -144,13 +161,43 @@ export class SearchPage {
 
   //Search for restaurants with the selected category
   searchCategory(category) {
-    this.log.sendEvent('Category List Item Clicked', 'Search', category);
-    this.filterRestaurants('', category, true); //Filter the restaurants
     this.searchInput = category; //Pop the category into the search bar
-    var current = this; //Cache this for setTimeout
-    setTimeout(function () { //Allow the click event animation to occur
-      current.hideCategoryList(false);
-    }, 500);
+    this.loadingRestaurants = true;
+    this.log.sendEvent('Category List Item Clicked', 'Search', category);
+    var current = this;
+    if(this.restaurantAll)
+      doFilter();
+    else{
+      this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+        this.dataCache = data;
+        this.rankRestaurants(this.dataCache);
+        this.cdRef.detectChanges();
+        doFilter();
+        this.loadingRestaurants = false;
+      });
+    }
+
+    function doFilter(){
+      current.filterRestaurants(category, true); //Filter the restaurants
+      setTimeout(function () { //Allow the click event animation to occur
+        current.hideCategoryList(false);
+      }, 500);
+    }
+  }
+
+  searchRestaurants(searchinput){
+    if(this.restaurantAll)
+      this.filterRestaurants(searchinput, false); //Filter the restaurants
+    else{
+      this.loadingRestaurants = true;
+      this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+        this.dataCache = data;
+        this.rankRestaurants(this.dataCache);
+        this.cdRef.detectChanges();
+        this.filterRestaurants(searchinput, false); //Filter the restaurants
+        this.loadingRestaurants = false;
+      });
+    }
   }
 
   //hide category list
@@ -176,24 +223,11 @@ export class SearchPage {
   }
 
   //Gather and sort tags
-  processCategories(){
-    this.searchbar._searchbarInput.nativeElement.blur(); //Blur on search (causing the keyboard to hide)
-    var rawCats = []; //Every existing category goes here to be sorted and counted
-    for(var i = 0; i < this.dataCache.length; i++){
-      if(this.dataCache[i].categories) //Don't loop through categories if there are none
-        for(var x = 0; x < this.dataCache[i].categories.length; x++){
-          rawCats.push(this.dataCache[i].categories[x])
-        }
+  processCategories(data){
+    this.searchCategories.push(['*Everything*', 999999]); //Add everything to top of category list
+    for(var i = 0; i < data.categories.length; i++){
+      this.searchCategories.push([data.categories[i].name, data.categories[i].count])
     }
-    var countedCats = _.countBy(rawCats); //Count category occurrences and split the resulting objects into an arrays of key value pairs
-    var sortableCats = [];
-    for(var cat in countedCats){
-      sortableCats.push([cat, countedCats[cat]])
-    }
-    sortableCats.push(['*Everything*', 999999]); //Add everything category and ensure it is always at the top of the list
-    this.searchCategories = _.sortBy(sortableCats, function(cat){ //Sorted the categories by occurrences descending
-      return cat[1]
-    }).reverse();
     this.searchCategoriesCache = JSON.parse(JSON.stringify(this.searchCategories)); //Cache the categories so we can always go back to full list. Parse and stringify to clone
     this.searchbar._searchbarInput.nativeElement.focus(); //Auto focus on the searchbar after the categories have sorted
   }
@@ -270,7 +304,7 @@ export class SearchPage {
   }
 
   //Currently filters based on restaurant name and categories
-  filterRestaurants(event, searchInput, category){
+  filterRestaurants(searchInput, category){
     this.searchCache = this.searchInput; //Update search cache
     this.searchbar._searchbarInput.nativeElement.blur(); //Blur on search (causing the keyboard to hide)
     this.log.sendEvent('Restaurant Search: Initiated', 'Search', 'User filtered restaurant based on search criteria. Search input: ' + searchInput);
@@ -356,7 +390,7 @@ export class SearchPage {
       this.allResults = false;
       this.batch = 0;
       this.rankRestaurants(data);
-      this.filterRestaurants('', this.searchInput, false);
+      this.filterRestaurants(this.searchInput, false);
       refresher.complete();
     });
   }

@@ -301,8 +301,6 @@ export class HomePage {
       var day = hour < 6 ? moment(this.date).subtract(1, 'days').format('dddd') : moment(this.date).format('dddd'); //If before 6am, still considered day before
       hour = hour < 6 ? hour + 24 : hour; //Convert hour to 6 to 30 format
 
-      console.log(resto)
-
       if(resto.timeslots.length) {
         var current = this;
         resto['timeslotsToday'] = _.filter(resto.timeslots, function (timeslot) {
@@ -536,7 +534,6 @@ export class HomePage {
     this.restaurantDisplayLog(this.restaurantList, 0, false);
 
     //When you've selected a restaurant and changed the date, update the restaurant data
-    console.log(this.selectedResto)
     if(this.view == 'map'){
       if(this.selectedResto._id){
         this.processBusinessHours();
