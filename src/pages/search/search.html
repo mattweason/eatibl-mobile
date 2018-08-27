@@ -71,10 +71,10 @@
     <ion-refresher-content>
     </ion-refresher-content>
   </ion-refresher>
-  <ion-list>
+  <ion-list *ngIf="!loadingRestaurants">
     <restaurant-card *ngFor = "let restaurant of restaurantList" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
   </ion-list>
-  <ion-grid>
+  <ion-grid *ngIf="!loadingRestaurants">
     <ion-row *ngIf="allResults && restaurantList?.length">
       <ion-col>
         <p class="align-center all-results">That's all she's got, Captain.</p>
