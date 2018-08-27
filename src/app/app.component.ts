@@ -66,6 +66,18 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
 
+      firebase.onNotificationOpen()
+        .subscribe(res => {
+          if(res.tap) {
+            // background mode
+            console.log("background");
+            console.log(res);
+          } else if (!res.tap) {
+            // foreground mode
+            console.log("foreground");
+            console.log(res);
+          }
+        });
 
       //Only do native stuff in android or ios
       if (platform.is('cordova')){
