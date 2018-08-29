@@ -34,6 +34,10 @@
       <ion-label fixed><ion-icon [ngClass]="{'invalid': !signupForm.controls.password.valid && (signupForm.controls.password.dirty || signupForm.controls.password.touched)}" name="lock"></ion-icon></ion-label>
       <ion-input class="light-placeholder" placeholder="Password" type="password" [formControl]="signupForm.controls['password']"></ion-input>
     </ion-item>
+    <ion-item class="border-bottom">
+      <ion-label fixed><ion-icon name="pricetag" [ngClass]="{'invalid': !signupForm.controls.promoCode.valid}" ></ion-icon></ion-label>
+      <ion-input class="light-placeholder" placeholder="Promo Code (Optional)" type="text" [formControl]="signupForm.controls['promoCode']" (blur)="cleanValue('promoCode')"></ion-input>
+    </ion-item>
 
 
     <div class="form-error" *ngIf="(signupForm.controls.name.hasError('required') && signupForm.controls.name.touched) || (signupForm.controls.phone.hasError('required') && signupForm.controls.phone.touched) || (signupForm.controls.email.hasError('required') && signupForm.controls.email.touched) || (signupForm.controls.password.hasError('required') && signupForm.controls.password.touched) && submitAttempt">
@@ -44,6 +48,9 @@
     </div>
     <div class="form-error" *ngIf="(signupForm.controls.password.hasError('minlength') && submitAttempt)">
       <span>Your password is too short.</span>
+    </div>
+    <div class="form-error" *ngIf="(!signupForm.controls.promoCode.valid)">
+      <span>Invalid promo code.</span>
     </div>
     <button ion-button block color="secondary" type="submit">Confirm</button>
     <p class="terms">By logging in, you agree to eatibl's terms and conditions and privacy policy.</p>

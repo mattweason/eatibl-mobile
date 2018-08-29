@@ -25,6 +25,8 @@ export class AccountPage {
   user = {} as any;
   bookingUpcoming = [];
   bookingHistory = [];
+  promoCode: string;
+  promoRes = '';
 
   constructor(
     public navCtrl: NavController,
@@ -65,6 +67,35 @@ export class AccountPage {
     const inviteModal = this.modal.create('InviteModalPage', { type: 'referral' });
 
     inviteModal.present();
+  }
+
+  submitCode() {
+    var postObj = {
+      userId: this.user._id,
+      promoCode: this.promoCode
+    };
+
+    if(this.promoCode){
+      this.promoCode = this.promoCode.trim();
+      this.API.makePost('user/addPromoCode', postObj).subscribe(res => {
+        if(res['message'] == 'Invalid Code')
+          this.promoRes = 'Invalid promo code.';
+        else if(res['message'] == 'Redundant Code')
+          this.promoRes = 'Promo code already applied.';
+        else if(res['message'] == 'Updated'){
+          this.promoCode = '';
+          let message = "You've successfully applied the "+res['code']['promotion']+" to your account!",
+              title = 'Promo Code Applied';
+          this.presentAlert(title, message);
+        }
+      });
+    }
+
+  }
+
+  //Clear promocode input error
+  clearError(){
+    this.promoRes = '';
   }
 
   sortBookings(data){
@@ -110,6 +141,16 @@ export class AccountPage {
           }
         }
       ]
+    });
+    alert.present();
+  }
+
+  //Generic alert box
+  presentAlert(title, message){
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      buttons: ['Ok']
     });
     alert.present();
   }

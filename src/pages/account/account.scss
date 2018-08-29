@@ -1,9 +1,28 @@
 #account-card{
   margin: 10px 0 10px 0 !important;
   width: 100% !important;
+  .form-error{
+    margin-left: 8px;
+    margin-top: 6px;
+    text-align: center;
+    color: color($colors, danger);
+  }
   .user-icon{
     font-size: 60px;
     color: #ccc;
+  }
+  .promocode-area{
+    display: flex;
+    ion-input{
+      height: 35px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      input{
+        height: 100%;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
   }
   .account-header{
     .placeholders{

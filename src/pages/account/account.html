@@ -72,6 +72,20 @@
             </div>
           </ion-col>
         </ion-row>
+        <ion-row *ngIf="user.active">
+          <ion-col>
+            <h2>Promo Codes</h2>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="user.active" class="border-bottom">
+          <ion-col>
+            <div class="promocode-area">
+              <ion-input [(ngModel)]="promoCode" name="promoCode" placeholder="Text Input" (ionChange)="clearError()"></ion-input>
+              <button ion-button color="primary" small (tap)="submitCode()">Submit</button>
+            </div>
+            <span class="form-error" *ngIf="promoRes">{{promoRes}}</span>
+          </ion-col>
+        </ion-row>
         <ion-row>
           <ion-col>
             <div *ngIf="user.active" class="logout-button">

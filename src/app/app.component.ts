@@ -165,9 +165,9 @@ export class MyApp {
         //**********************ONLY FOR IONIC LAB********************************//
         //Hardcode location and send it so we don't have to wait for geolocation
         //while developing. Coordinates are set to Palmerston office.
-        this.geolocateUser(true);
-        // this.location = {coords: [43.655922, - 79.410125]};
-        // this.sendGeolocationEvent();
+        // this.geolocateUser(true);
+        this.location = {coords: [43.655922, - 79.410125]};
+        this.sendGeolocationEvent();
       }
 
     });
