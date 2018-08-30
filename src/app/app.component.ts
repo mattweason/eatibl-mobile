@@ -516,8 +516,6 @@ export class MyApp {
   }
 
   ngOnInit(){
-    const loadingModal = this.modal.create('InitialLoadModalPage');
-    loadingModal.present();
   }
 
   //Function to log geolocation every 5 minutes

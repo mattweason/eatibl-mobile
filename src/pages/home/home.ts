@@ -52,6 +52,7 @@ export class HomePage {
   showNoDeals = true;
   allMarkers: any;
   cacheDate: any; //Cache the select date from the map view
+  loadingRestaurants = true;
 
   map: GoogleMap;
 
@@ -104,6 +105,7 @@ export class HomePage {
 
   //Get restaurant list
   getRestaurants(){
+    this.loadingRestaurants = true;
     //This is the final endpoint of the geolocation/custom location process
     //Here is where we need to check if we need to show the intro slides or not
     this.storage.get('eatiblShowSlides').then((val) => {
@@ -113,7 +115,7 @@ export class HomePage {
 
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
       this.events.publish('reveal:restaurants');
-
+      this.loadingRestaurants = false;
       this.dataCache = data;
       this.setNow(true); //rankRestaurants runs inside here
       this.cdRef.detectChanges();

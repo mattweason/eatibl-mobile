@@ -29,7 +29,13 @@
 </ion-header>
 
 <ion-content [ngClass]="{'grey-background': view == 'list'}">
-  <ion-refresher *ngIf="view == 'list'" (ionRefresh)="doRefresh($event)">
+  <div *ngIf="loadingRestaurants" class="loading-restaurants">
+    <div class="loading-spinner-box">
+      <span>Finding Restaurants</span>
+      <ion-spinner color="white"></ion-spinner>
+    </div>
+  </div>
+  <ion-refresher *ngIf="view == 'list' && restaurantList?.length" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content>
     </ion-refresher-content>
   </ion-refresher>
