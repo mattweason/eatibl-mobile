@@ -58,11 +58,14 @@ export class TabsPage {
   }
 
   changeTab(tab){
-    this.tabRef.select(tab)
+    this.tabRef.select(tab);
+    this.logTabChange();
   }
 
   logTabChange(){
     var data = this.tabRef.getSelected();
+    console.log(data)
+    this.events.publish('currenttab', data.tabTitle);
     this.log.sendEvent('Tab Changed to: '+data.tabTitle, 'Tabs', '');
   }
 }

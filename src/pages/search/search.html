@@ -7,10 +7,13 @@
 <ion-header>
 
   <ion-navbar color="primary" class="align-toolbar">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
     <ion-searchbar #searchbar [(ngModel)]="searchInput" [showCancelButton]="true" (ionCancel)="hideCategoryList(false)" (ionInput)="filterCategories(searchInput)" (search)="searchRestaurants(searchInput); hideCategoryList(false)" (ionBlur)="hideCategoryList(true)" (ionFocus)="toggleCategorySelect($event, true)"></ion-searchbar>
     <ion-buttons end>
-      <button (tap)="searchRestaurants(searchInput); hideCategoryList(false)" ion-button>
-        Search
+      <button (tap)="searchRestaurants(searchInput); hideCategoryList(false)" icon-only ion-button>
+        <ion-icon name="arrow-round-forward"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>

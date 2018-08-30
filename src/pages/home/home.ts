@@ -120,30 +120,6 @@ export class HomePage {
     });
   }
 
-  //Modal for letting users select their location manually
-  openMap(){
-    this.log.sendEvent('Location Modal: Open', 'Home', 'Clicked set location button at bottom section');
-    this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
-    const mapModal = this.modal.create('SetPositionModalPage', {location: this.userCoords});
-    mapModal.onDidDismiss((locationUpdated) => {
-      this.events.publish('view:positionMap', false); //Get tabs page to set opacity to 1
-
-      if(locationUpdated) //Did user update the location in the modal
-        this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
-          if(val) { //Custom location has been set, set userCoords to custom value
-            this.userCoords = val;
-            this.customLocation = true;
-            this.log.sendEvent('Custom Location: Set', 'Set Position Modal', 'User successfully set a custom location');
-          } else {
-            this.customLocation = false;
-            this.log.sendEvent('Custom Location: Unchanged', 'Set Position Modal', 'User did not make changes to their location data');
-          }
-          this.getRestaurants(); //Whether we have an updated custom location, or changed to auto locate, get new list of restaurants
-        });
-    });
-    mapModal.present();
-  }
-
   //Fires when the home page tab is selected and is already active
   ionSelected() {
     this.log.sendEvent('Scroll to Top', 'Home', '');
@@ -574,7 +550,7 @@ export class HomePage {
 
   //Navigate to search page
   goToSearch(){
-    this.events.publish('request:changeTab', 1); //Get tabs page to set opacity to 1
+    this.events.publish('request:changeTab', 1);
   }
 
   setNow(initialCall){

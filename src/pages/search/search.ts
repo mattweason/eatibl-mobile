@@ -156,7 +156,6 @@ export class SearchPage {
   //Toggle category select
   toggleCategorySelect(event, condition){
     this.showCategories = condition;
-    this.events.publish('hideshow:helptab', condition);
   }
 
   //Search for restaurants with the selected category
@@ -208,7 +207,6 @@ export class SearchPage {
     } else {
       this.showCategories = false;
     }
-    this.events.publish('hideshow:helptab', false);
   }
 
   filterCategories(searchInput) {

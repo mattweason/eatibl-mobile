@@ -1,6 +1,67 @@
-<ion-nav [root]="rootPage"></ion-nav>
-<div class="help-tab" [ngClass]="{'map-view' : mapView}">
-  <button [ngClass]="{'hideHelp' : hideHelp}" ion-button color="secondary" (click)="supportModal()"><ion-icon name="help-circle"></ion-icon></button>
-</div>
+<ion-menu [content]="mycontent">
+  <ion-content>
+    <ion-list>
+      <ion-item-group>
+        <ion-item>
+          <ion-grid>
+            <ion-row class="account-header">
+              <ion-col col-3 class="align-center icon">
+                <ion-icon class="user-icon" [ngClass]="{'logged-in' : user.active}" name="contact"></ion-icon>
+              </ion-col>
+              <ion-col col-9>
+                <div *ngIf="user.email">
+                  <p>{{user.name}}</p>
+                </div>
+                <div class="placeholders" *ngIf="!user.email">
+                  <div class="grey-box big"></div>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <div *ngIf="user.active" class="user-buttons">
+                  <button ion-button color="danger" small (tap)="logout()">Log Out</button>
+                </div>
+                <div *ngIf="!user.active" class="user-buttons">
+                  <button ion-button color="primary" small (tap)="signUp()">Sign Up</button>
+                  <button ion-button color="secondary" small (tap)="login()">Log In</button>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+      </ion-item-group>
+      <ion-item-group>
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Nearby'}" ion-item (tap)="setTab(0)">
+          <ion-icon name="navigate" item-start></ion-icon>
+          Nearby
+        </button>
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Search'}" ion-item (tap)="setTab(1)">
+          <ion-icon name="search" item-start></ion-icon>
+          Search
+        </button>
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Account'}" ion-item (tap)="setTab(2)">
+          <ion-icon name="contact" item-start></ion-icon>
+          Account
+        </button>
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Bookings'}" ion-item (tap)="setTab(3)">
+          <ion-icon name="restaurant" item-start></ion-icon>
+          Bookings
+        </button>
+      </ion-item-group>
+      <ion-item-group>
+        <button class="menu-item" ion-item (click)="supportModal()">
+          <ion-icon name="help-circle" item-start></ion-icon>
+          FAQs
+        </button>
+        <button class="menu-item" ion-item (tap)="presentLocationModal()">
+          <ion-icon  name="pin" item-start></ion-icon>
+          Set Location
+        </button>
+      </ion-item-group>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<ion-nav #mycontent [root]="rootPage"></ion-nav>
 
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, AlertController } from 'ionic-angular';
+import {IonicPage, NavController, AlertController, Events} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
@@ -32,6 +32,7 @@ export class LoginPage {
     public alertCtrl: AlertController,
     private formBuilder: FormBuilder,
     private storage: Storage,
+    public events: Events,
     private log: ActivityLoggerProvider
   ) {
 
@@ -76,6 +77,7 @@ export class LoginPage {
         else{
           this.log.sendEvent('Login: Successful', 'Login', this.loginForm.value.email || "");
           this.storage.set('eatiblUser',response);
+          this.events.publish('user:statuschanged');
           this.navCtrl.pop();
         }
 

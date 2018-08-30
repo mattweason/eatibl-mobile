@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, AlertController } from 'ionic-angular';
+import {IonicPage, NavController, AlertController, Events} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
@@ -34,6 +34,7 @@ export class SignupPage {
     private formBuilder: FormBuilder,
     private device: Device,
     private storage: Storage,
+    public events: Events,
     private log: ActivityLoggerProvider
   ) {
 
@@ -204,6 +205,7 @@ export class SignupPage {
           title = 'Account created';
           message = 'Your account has been created!';
           this.presentSuccessAlert(title, message);
+          this.events.publish('user:statuschanged');
         });
       }
       if(this.response.message == 'email taken'){

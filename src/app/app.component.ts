@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -6,7 +6,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
 import { ApiServiceProvider } from "../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../providers/activity-logger/activity-logger";
-import {AlertController, ModalController, Platform, Events} from 'ionic-angular';
+import {AlertController, ModalController, Platform, Events, Nav, MenuController} from 'ionic-angular';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
@@ -21,16 +21,24 @@ import { LocalNotifications } from '../../node_modules/@ionic-native/local-notif
   templateUrl: 'app.html'
 })
 export class MyApp {
+  @ViewChild(Nav) navCtrl: Nav;
+
   rootPage:any;
   location: any;
   mapView = false;
-  hideHelp = true;
   watch: any; //Holds watch position subscription
   _autoLocateSub: (location:any, time:any) => void;
   blacklisted = false;
   locationCachedTime: any; //Used to send mark the last time geolocation data was sent to the backend
-  user: any;
+  user = {
+    _id: '',
+    email: '',
+    name: '',
+    phone: '',
+    type: ''
+  };
   forcedUpdateAlertOpen = false;
+  currentTab = 'HomePage';
 
   //Used for android permissions
   hasPermission = false;
@@ -53,7 +61,8 @@ export class MyApp {
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
     private locationAccuracy: LocationAccuracy,
-    public localNotifications: LocalNotifications
+    public localNotifications: LocalNotifications,
+    public menuCtrl: MenuController
   ) {
 
     platform.ready().then(() => {
@@ -66,18 +75,18 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
 
-      firebase.onNotificationOpen()
-        .subscribe(res => {
-          if(res.tap) {
-            // background mode
-            console.log("background");
-            console.log(res);
-          } else if (!res.tap) {
-            // foreground mode
-            console.log("foreground");
-            console.log(res);
-          }
-        });
+      // firebase.onNotificationOpen()
+      //   .subscribe(res => {
+      //     if(res.tap) {
+      //       // background mode
+      //       console.log("background");
+      //       console.log(res);
+      //     } else if (!res.tap) {
+      //       // foreground mode
+      //       console.log("foreground");
+      //       console.log(res);
+      //     }
+      //   });
 
       //Only do native stuff in android or ios
       if (platform.is('cordova')){
@@ -119,7 +128,6 @@ export class MyApp {
           }
           else
             this.log.sendEvent('Loaded: Unregistered User', 'runTime', "User isn't logged in");
-
         });
 
         //Run force update
@@ -135,16 +143,16 @@ export class MyApp {
           // this.forceUpdate(); //Resume runs first time app opens as well as resume events
         });
 
-        //Show the help button when the loading modal closes
-        events.subscribe('reveal:restaurants', () => {
-          this.hideHelp = false;
+        //Reset this.user object when login or logout is performed by other components
+        events.subscribe('user:statuschanged', () => {
+          this.checkUser();
         });
 
-        //Hide and show modal when search is focused
-        events.subscribe('hideshow:helptab', (condition) => {
-          this.hideHelp = condition;
+        //Update active tab in menu
+        events.subscribe('currenttab', (data) => {
+          console.log(data)
+          this.currentTab = data;
         });
-
 
         this.firebase.getToken()
           .then(token => {
@@ -180,13 +188,15 @@ export class MyApp {
         // this.geolocateUser(true);
         this.location = {coords: [43.655922, - 79.410125]};
         this.sendGeolocationEvent();
+
+        //check if user is logged in
+        this.storage.get('eatiblUser').then((val) => {
+          console.log('getting user')
+          if (val)
+            this.user = decode(val);
+        });
       }
 
-    });
-
-    //If the set position map is open hide the help button
-    events.subscribe('view:positionMap', (mapOpen) => {
-      this.hideHelp = mapOpen;
     });
 
     //Sends the users location to a child component when requested
@@ -266,6 +276,73 @@ export class MyApp {
     });
   }
 
+  //Change tab from menu
+  setTab(index){
+    this.menuCtrl.close();
+    this.events.publish('request:changeTab', index);
+  }
+
+  //Check whether a user is logged in
+  checkUser(){
+    this.storage.get('eatiblUser').then((val) => {
+      console.log('getting user')
+      if (val){
+        console.log('got user')
+        this.user = decode(val);
+        console.log(this.user)
+      }
+      else{
+        console.log('no user')
+        this.user = {
+          _id: '',
+          email: '',
+          name: '',
+          phone: '',
+          type: ''
+        }
+      }
+    });
+  }
+
+  logout(){
+    let alert = this.alertCtrl.create({
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Logout',
+          handler: data => {
+            this.log.sendEvent('Logout', 'Menu', '');
+            this.storage.remove('eatiblUser');
+            this.user = {
+              _id: '',
+              email: '',
+              name: '',
+              phone: '',
+              type: ''
+            };
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+  signUp(){
+    this.menuCtrl.close();
+    this.log.sendEvent('Signup: Initiated', 'Menu', 'User pressed signup button');
+    this.navCtrl.push('SignupPage');
+  }
+
+  login(){
+    this.menuCtrl.close();
+    this.log.sendEvent('Login: Initiated', 'Menu', 'User pressed login button');
+    this.navCtrl.push('LoginPage');
+  }
+
   //Force the user to update if they have an unacceptable older version
   forceUpdate(){
     var self = this;
@@ -329,6 +406,7 @@ export class MyApp {
 
   //Open the support modal
   supportModal(){
+    this.menuCtrl.close();
     const supportModal = this.modal.create('SupportModalPage');
     this.log.sendEvent('Support Modal', 'unknown', 'Modal can be called from anywhere in the app');
     supportModal.present();
@@ -421,6 +499,7 @@ export class MyApp {
 
   //Preset custom location modal
   presentLocationModal(){
+    this.menuCtrl.close();
     this.log.sendEvent('Location Modal', 'runTime', ''); //log each time modal is opened
     this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
     const mapModal = this.modal.create('SetPositionModalPage', {location: ['43.656347', '-79.380890']});
