@@ -84,7 +84,7 @@ export class AccountPage {
           this.promoRes = 'Promo code already applied.';
         else if(res['message'] == 'Updated'){
           this.promoCode = '';
-          let message = "You've successfully applied the "+res['code']['promotion']+" to your account!",
+          let message = "You've successfully applied the "+res['code']['promotion']+" promo code to your account!",
               title = 'Promo Code Applied';
           this.presentAlert(title, message);
         }
