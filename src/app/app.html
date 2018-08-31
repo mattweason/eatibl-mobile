@@ -1,4 +1,4 @@
-<ion-menu [content]="mycontent">
+<ion-menu [content]="mycontent" (ionOpen)="logMenu('Opened')" (ionClose)="logMenu('Closed')">
   <ion-content>
     <ion-list>
       <ion-item-group>

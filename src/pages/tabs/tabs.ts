@@ -57,6 +57,10 @@ export class TabsPage {
     });
   }
 
+  tabPressed(tab){
+    this.log.sendEvent('Tab Changed to: '+tab, 'Tabs', '');
+  }
+
   changeTab(tab){
     this.tabRef.select(tab);
     this.logTabChange();
@@ -64,8 +68,6 @@ export class TabsPage {
 
   logTabChange(){
     var data = this.tabRef.getSelected();
-    console.log(data)
     this.events.publish('currenttab', data.tabTitle);
-    this.log.sendEvent('Tab Changed to: '+data.tabTitle, 'Tabs', '');
   }
 }

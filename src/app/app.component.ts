@@ -95,6 +95,7 @@ export class MyApp {
         // //Do action if we came into app via localNotification
         this.localNotifications.on('click').subscribe(notification => {
           this.storage.set('eatiblReminder', notification.data);
+          this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification.data));
         })
         //
         // //Check if we already have a re-engage notification and cancel it if we do
@@ -279,6 +280,8 @@ export class MyApp {
   //Change tab from menu
   setTab(index){
     this.menuCtrl.close();
+    var tabs = ['Nearby','Search','Account','Bookings'];
+    this.log.sendEvent('Tab Changed to: '+tabs[index], 'Menu', ''); //log each time modal is opened
     this.events.publish('request:changeTab', index);
   }
 
@@ -500,7 +503,7 @@ export class MyApp {
   //Preset custom location modal
   presentLocationModal(){
     this.menuCtrl.close();
-    this.log.sendEvent('Location Modal', 'runTime', ''); //log each time modal is opened
+    this.log.sendEvent('Location Modal', 'Menu', ''); //log each time modal is opened
     this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
     const mapModal = this.modal.create('SetPositionModalPage', {location: ['43.656347', '-79.380890']});
     mapModal.onDidDismiss((locationUpdated) => {
@@ -576,6 +579,11 @@ export class MyApp {
       });
       alert.present();
     });
+  }
+
+  //Send analytics log when menu is opened or close
+  logMenu(cond){
+    this.log.sendEvent('Menu '+cond, 'unknown', '');
   }
 
   //Push event every time the users geolocation is created or updated

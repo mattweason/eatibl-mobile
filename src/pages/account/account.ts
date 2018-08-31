@@ -70,6 +70,7 @@ export class AccountPage {
   }
 
   submitCode() {
+    this.log.sendEvent('PromoCode: Initiated', 'Account', 'User pressed promocode button');
     var postObj = {
       userId: this.user._id,
       promoCode: this.promoCode
@@ -87,6 +88,7 @@ export class AccountPage {
           let message = "You've successfully applied the "+res['code']['promotion']+" promo code to your account!",
               title = 'Promo Code Applied';
           this.presentAlert(title, message);
+          this.log.sendEvent('PromoCode: Success', 'Account', 'User applied promocode to account');
         }
       });
     }

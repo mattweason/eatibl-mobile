@@ -59,6 +59,7 @@
     "cordova-plugin-datepicker": "0.9.3",
     "cordova-plugin-device": "2.0.2",
     "cordova-plugin-dialogs": "2.0.1",
+    "cordova-plugin-facebook4": "^2.3.0",
     "cordova-plugin-firebase": "1.0.5",
     "cordova-plugin-geolocation": "4.0.1",
     "cordova-plugin-googlemaps": "2.3.6",
@@ -142,7 +143,12 @@
       "ionic-plugin-keyboard": {},
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-market": {},
-      "cordova-plugin-network-information": {}
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-facebook4": {
+        "APP_ID": "292705491326515",
+        "APP_NAME": "Eatibl",
+        "ANDROID_SDK_VERSION": "4.+"
+      }
     },
     "platforms": [
       "ios",

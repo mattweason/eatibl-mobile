@@ -552,6 +552,7 @@ export class HomePage {
 
   //Navigate to search page
   goToSearch(){
+    this.log.sendEvent('Tab Changed to: Search', 'Home', '');
     this.events.publish('request:changeTab', 1);
   }
 

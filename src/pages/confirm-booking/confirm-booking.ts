@@ -329,6 +329,7 @@ export class ConfirmBookingPage {
               data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
               icon: 'file://assets/imgs/notification-icon.png'
             });
+            this.log.sendEvent('Reminder Notification Scheduled', 'Confirm Booking', 'User booked with less than 2hr lead time');
           }
 
           //REMINDER: When booking is more than 2hr lead time
@@ -341,6 +342,7 @@ export class ConfirmBookingPage {
               data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
               icon: 'file://assets/imgs/notification-icon.png'
             });
+            this.log.sendEvent('Reminder Notification Scheduled', 'Confirm Booking', 'User booked with greater than 2hr lead time');
           }
 
           //FEEDBACK: 3hrs after the booking is complete
