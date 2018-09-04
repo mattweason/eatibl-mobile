@@ -529,7 +529,7 @@ export class MyApp {
       lng: data.coords.longitude
     };
 
-    if(this.user) //Only add user_fid if a user object exists
+    if(this.user._id.length) //Only add user_fid if a user object exists
       postObject['user_fid'] = this.user._id;
 
     if(moment().isAfter(moment(this.locationCachedTime).add(5, 'm')) || !this.locationCachedTime){ //Check if locationCachedTime is not set or is over 5 minutes old
