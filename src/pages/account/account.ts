@@ -92,7 +92,6 @@ export class AccountPage {
         }
       });
     }
-
   }
 
   //Clear promocode input error

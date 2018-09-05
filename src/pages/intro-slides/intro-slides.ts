@@ -18,6 +18,7 @@ export class IntroSlidesPage {
   @ViewChild(Slides) slides: Slides;
 
   currentIndex = 0;
+  firstLoad = true;
 
   constructor(
     public navCtrl: NavController,
@@ -32,6 +33,7 @@ export class IntroSlidesPage {
   }
 
   slideChanged(){
+    this.firstLoad = false;
     this.currentIndex = this.slides.getActiveIndex();
     console.log(this.currentIndex)
   }
@@ -58,5 +60,7 @@ export class IntroSlidesPage {
     supportModal.present();
     this.viewCtrl.dismiss();
   }
+
+
 
 }

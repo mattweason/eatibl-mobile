@@ -1,4 +1,15 @@
 page-intro-slides {
+  position: relative;
+  .close-button{
+    position: absolute;
+    background: transparent;
+    border: 0;
+    right: 10px;
+    top: 10px;
+    color: #fff;
+    z-index: 15;
+    font-size: 22px;
+  }
   ion-toolbar{
     .toolbar-background{
       background-color: transparent;
@@ -8,11 +19,14 @@ page-intro-slides {
     .slide-zoom{
       .intro-slide-liner{
         padding: 0 5%;
-        height: 60%;
+        height: 65%;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        p{
+          font-size: 20px;
+        }
       }
     }
   }
@@ -78,15 +92,40 @@ page-intro-slides {
       }
     }
   }
+  .email-submit{
+    margin-top: 20px;
+    .email-submit-header{
+      font-weight: 500;
+      font-size: 22px;
+      color: color($colors, primary);
+    }
+    .email-submit-liner {
+      display: flex;
+      ion-input {
+        margin: 0.4rem 0.2rem;
+        height: 50px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        input {
+          height: 100%;
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+      }
+      button{
+        height: 50px;
+      }
+    }
+  }
   .logo-area{
     background-color: color($colors, primary);
     padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 40%;
+    height: 35%;
     img{
-      width: 100%;
+      width: auto;
     }
   }
   .swiper-pagination{

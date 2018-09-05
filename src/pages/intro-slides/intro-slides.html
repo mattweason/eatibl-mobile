@@ -5,7 +5,7 @@
   Ionic pages and navigation.
 -->
 <ion-content>
-
+  <button *ngIf="currentIndex > 0" class="close-button" (tap)="closeModal('pass')"><ion-icon name="close"></ion-icon></button>
   <ion-slides paginationType="bullets" pager="true" (ionSlideNextStart)="slideChanged()" (ionSlidePrevStart)="slideChanged()">
     <ion-slide class="intro-slide">
       <div class="logo-area">
@@ -13,10 +13,15 @@
       </div>
       <div class="intro-slide-liner">
         <p>Use Eatibl to make discounted bookings for your next meal!</p>
-        <p>Before you get started, let's do a quick tour of our app.</p>
-        <div class="button-area">
-          <button ion-button color="light" (tap)="closeModal('pass')">I'll Pass</button>
-          <button ion-button color="secondary" (tap)="nextSlide('start')">Let's Go!</button>
+        <div class="email-submit">
+          <span class="email-submit-header">Keep up with the latest deals!</span>
+          <div class="email-submit-liner">
+            <ion-input [(ngModel)]="email" name="email" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>
+            <button ion-button color="secondary" (tap)="submitEmail()">Submit</button>
+            <div class="error-message">
+              <span class="form-error" *ngIf="emailRes">{{emailRes}}</span>
+            </div>
+          </div>
         </div>
       </div>
     </ion-slide>
@@ -26,7 +31,7 @@
       </div>
       <div class="info-area">
         <h2>Get Started</h2>
-        <p>Browse through 150+ restaurants and check out their time-based discounts (ranging from 10% - 50% off).</p>
+        <p>Browse through 200+ restaurants and check out their time-based discounts (ranging from 10% - 50% off).</p>
       </div>
     </ion-slide>
     <ion-slide class="screenshot-slide">
@@ -71,7 +76,7 @@
         <button [disabled]="currentIndex == 0" ion-button color="secondary" icon-start (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon>Back</button>
       </ion-buttons>
       <ion-buttons right>
-        <button [disabled]="currentIndex == 4" ion-button color="secondary" icon-end (tap)="nextSlide('standard')">Next<ion-icon name="arrow-forward"></ion-icon></button>
+        <button [disabled]="currentIndex == 4" ion-button color="secondary" icon-end (tap)="nextSlide('standard')"><span *ngIf="firstLoad">Skip</span><span *ngIf="!firstLoad">Next</span><ion-icon name="arrow-forward"></ion-icon></button>
       </ion-buttons>
     </ion-toolbar>
   </ion-footer>
