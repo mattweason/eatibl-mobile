@@ -309,3 +309,33 @@
     }
   }
 }
+.email-submit{
+  margin: 20px auto !important;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .email-submit-header{
+    font-weight: 500;
+    font-size: 20px;
+    color: color($colors, secondary);
+  }
+  .email-submit-liner {
+    display: flex;
+    ion-input {
+      margin: 0.4rem 0.2rem;
+      height: 40px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      input {
+        height: 100%;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
+    button{
+      height: 40px;
+    }
+  }
+}

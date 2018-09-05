@@ -66,7 +66,7 @@
       </ion-row>
     </ion-grid>
     <ion-list>
-      <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+      <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [index]="i" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
     <div class="load-more">
       <button class="blue-text" *ngIf="loadMorePressed < 2" ion-button icon-start block color="white" (tap)="loadMore()"><ion-icon name="arrow-dropdown-circle"></ion-icon>Show More Restaurants</button>

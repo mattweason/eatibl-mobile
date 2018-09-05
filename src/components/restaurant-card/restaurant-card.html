@@ -118,6 +118,16 @@
     </ion-row>
   </ion-grid>
 </ion-card>
+<ion-card *ngIf="index == 1" class="email-submit">
+  <span class="email-submit-header">Keep up with the latest deals!</span>
+  <div class="email-submit-liner">
+    <ion-input [(ngModel)]="email" name="email" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>
+    <button ion-button color="secondary" (tap)="submitEmail()">Submit</button>
+    <div class="error-message">
+      <span class="form-error" *ngIf="emailRes">{{emailRes}}</span>
+    </div>
+  </div>
+</ion-card>
 <div class="loading" *ngIf="!isLoaded">
   <ion-spinner></ion-spinner>
 </div>

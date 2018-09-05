@@ -44,6 +44,7 @@ export class RestaurantCardComponent implements OnChanges {
   @Input() date: string;
   @Input() time: string;
   @Input() cardType: string;
+  @Input() index: number; //TODO: add if to card for whether we have email
 
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     if(changes.hasOwnProperty('location'))
@@ -80,6 +81,7 @@ export class RestaurantCardComponent implements OnChanges {
     private log: ActivityLoggerProvider,
     public events: Events
   ) {
+    console.log(this.index)
     //Sends the users location to a child component when requested
     events.subscribe('loaded:restaurant', () => {
       if(this.slides)

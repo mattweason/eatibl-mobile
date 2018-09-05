@@ -75,7 +75,7 @@
     </ion-refresher-content>
   </ion-refresher>
   <ion-list *ngIf="!loadingRestaurants">
-    <restaurant-card *ngFor = "let restaurant of restaurantList" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+    <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [index]="i" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
   </ion-list>
   <ion-grid *ngIf="!loadingRestaurants">
     <ion-row *ngIf="allResults && restaurantList?.length">
