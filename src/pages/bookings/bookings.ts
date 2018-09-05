@@ -46,10 +46,10 @@ export class BookingsPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        this.content.resize(); //Handle the show/hide behavior of the tabs toolbar
-        this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
-          this.filterAndSortBookings(data);
-        });
+        if(this.user.phone.length)
+          this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+            this.filterAndSortBookings(data);
+          });
       }
       else{
         this.user = {}; //If not user exists in the localstorage, clear the user object

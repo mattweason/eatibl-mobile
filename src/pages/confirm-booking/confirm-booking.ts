@@ -94,39 +94,27 @@ export class ConfirmBookingPage {
   }
 
   ionViewDidEnter(){
-    this.storage.get('eatiblUser').then((val) => {
-      if(val){
-        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
-        this.user = decode(val);
-        this.bookingForm.controls['name'].setValue(this.user.name);
-        this.bookingForm.controls['phone'].setValue(this.user.phone);
-        this.bookingForm.controls['email'].setValue(this.user.email);
-        this.bookingForm.controls['active'].setValue(this.user.active);
-        this.bookingForm.controls['_id'].setValue(this.user._id);
-      } else { //
-        this.user = {
-          _id: '',
-          email: '',
-          name: '',
-          phone: '',
-          type: '',
-          active: 0
-        }
-      }
-    });
+    this.getUserInfo();
   }
 
   ngOnInit(){
     this.buildDateObject();
+    this.getUserInfo();
+  }
+
+  //Gather user information from local storage
+  getUserInfo(){
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
-        this.bookingForm.controls['name'].setValue(this.user.name);
-        this.bookingForm.controls['phone'].setValue(this.user.phone);
-        this.bookingForm.controls['email'].setValue(this.user.email);
-        this.bookingForm.controls['active'].setValue(this.user.active);
-        this.bookingForm.controls['_id'].setValue(this.user._id);
+        if(this.user.phone){
+          this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
+          this.bookingForm.controls['name'].setValue(this.user.name);
+          this.bookingForm.controls['phone'].setValue(this.user.phone);
+          this.bookingForm.controls['email'].setValue(this.user.email);
+          this.bookingForm.controls['active'].setValue(this.user.active);
+          this.bookingForm.controls['_id'].setValue(this.user._id);
+        }
       }
     });
   }

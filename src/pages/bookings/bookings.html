@@ -27,7 +27,7 @@
 
 
 <ion-content class="grey-background">
-  <ion-card class="secure-prompt" *ngIf="user && user?.active == 0">
+  <ion-card class="secure-prompt" *ngIf="user.phone && user?.active == 0">
     <ion-card-content>
       <p>Bookings made with <span class="bold">{{user.email}}</span> are unsecured. Click below to create your account and secure your bookings.</p>
       <button ion-button color="secondary" small (tap)="signUp()">Secure</button>

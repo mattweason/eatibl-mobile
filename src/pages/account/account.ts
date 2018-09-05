@@ -48,9 +48,10 @@ export class AccountPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
-          this.sortBookings(data);
-        });
+        if(this.user.phone.length) //make sure it is not an email only user
+          this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+            this.sortBookings(data);
+          });
       }
       else
         this.user = {
