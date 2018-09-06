@@ -1,5 +1,8 @@
 page-intro-slides {
   position: relative;
+  ion-content > div {
+    padding: 0 !important;
+  }
   .close-button{
     position: absolute;
     background: transparent;

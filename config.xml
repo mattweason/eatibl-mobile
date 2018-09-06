@@ -3,7 +3,7 @@
     <name>Eatibl</name>
     <description>Save when you crave at off-peak hours.</description>
     <author email="matt@eatibl.com" href="https://eatibl.com/">Eatibl Inc.</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.1.103:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -145,6 +145,7 @@
         <variable name="APP_NAME" value="Eatibl" />
         <variable name="ANDROID_SDK_VERSION" value="4.+" />
     </plugin>
+    <allow-navigation href="http://192.168.1.103:8100" />
     <engine name="ios" spec="4.5.4" />
     <engine name="browser" spec="5.0.3" />
     <engine name="android" spec="7.0.0" />
