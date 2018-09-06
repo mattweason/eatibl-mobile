@@ -148,6 +148,6 @@ export class LoginPage {
     this.navCtrl.push('SignupPage').then(() => {
       var index = this.navCtrl.getActive().index;
       this.navCtrl.remove(index-1);
-    });;
+    });
   }
 }

@@ -338,4 +338,9 @@
       height: 40px;
     }
   }
+  .form-error{
+    margin-top: 6px;
+    text-align: center;
+    color: color($colors, danger);
+  }
 }

@@ -1,7 +1,9 @@
 import { Component, Input, OnInit, OnChanges, SimpleChange, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import {NavController, Slides, Events} from 'ionic-angular';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { Storage } from '@ionic/storage';
 import * as _ from 'underscore';
 import * as moment from 'moment';
 import { FunctionsProvider } from '../../providers/functions/functions';
@@ -44,7 +46,7 @@ export class RestaurantCardComponent implements OnChanges {
   @Input() date: string;
   @Input() time: string;
   @Input() cardType: string;
-  @Input() index: number; //TODO: add if to card for whether we have email
+  @Input() index: number;
 
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     if(changes.hasOwnProperty('location'))
@@ -71,6 +73,11 @@ export class RestaurantCardComponent implements OnChanges {
   restaurantTapped = false;
   timeslotTapped = '';
   distance: any;
+  emailCaptureIndex = 1; //Index of card we want email capture to appear under
+  emailCaptured = false; //Show the success message after email capture
+  submitted = false; //To show form errors in email capture form
+  haveUser = false; //For displaying email capture form
+  emailCapture: FormGroup;
 
   constructor(
     public navCtrl: NavController,
@@ -78,10 +85,21 @@ export class RestaurantCardComponent implements OnChanges {
     private functions: FunctionsProvider,
     private cdRef:ChangeDetectorRef,
     private sanitizer: DomSanitizer,
+    private formBuilder: FormBuilder,
+    private storage: Storage,
     private log: ActivityLoggerProvider,
     public events: Events
   ) {
-    console.log(this.index)
+    //Form controls and validation
+    this.emailCapture = this.formBuilder.group({
+      email: [
+        '', Validators.compose([
+          Validators.required,
+          Validators.email
+        ])
+      ]
+    });
+
     //Sends the users location to a child component when requested
     events.subscribe('loaded:restaurant', () => {
       if(this.slides)
@@ -89,6 +107,20 @@ export class RestaurantCardComponent implements OnChanges {
       this.processBusinessHours(); //Update business hours to latest when this view is entered
       this.processTimeslots(); //Update timeslots to latest when this view is entered
     });
+
+    //If email capture elsewhere, don't show email capture card
+    events.subscribe('email:captured', () => { //onMap is true if the user is on the map view
+      this.haveUser = true;
+    });
+  }
+
+  ngAfterViewInit(){
+    //If we have user on initial load don't show email capture card
+    if(this.emailCaptureIndex == this.index) //Only check local store on card that has email capture form
+      this.storage.get('eatiblUser').then((val) => {
+        if(val)
+          this.haveUser = true;
+      });
   }
 
   ngOnInit(){
@@ -309,5 +341,31 @@ export class RestaurantCardComponent implements OnChanges {
       var distance = this.functions.getDistanceFromLatLonInKm(this.location[0], this.location[1], this.restaurant.latitude, this.restaurant.longitude);
       this.distance = this.functions.roundDistances(distance);
     }
+  }
+
+  submitEmail(){
+    console.log('submitted')
+    this.submitted = true;
+    if(this.emailCapture.valid) {
+      console.log('valid')
+      //Run the check to see if this user has been verified
+      this.API.makePost('register/emailOnly', this.emailCapture.value).subscribe(res => {
+        if(res['message'] == 'success' || res['message'] == 'existing') {
+          this.log.sendEvent('Email Capture: ' +res['message'], 'Intro Slides Modal', JSON.stringify(this.emailCapture.value));
+          this.emailCaptured = true;
+          var current = this;
+          setTimeout(function () {
+            current.storage.set('eatiblUser', res['token']);
+            current.haveUser = true;
+          }, 2000);
+        } else {
+          this.log.sendEvent('Email Capture: Failed', 'Intro Slides Modal', '');
+        }
+      });
+    }
+  }
+
+  clearError(){
+    this.submitted = false;
   }
 }

@@ -116,6 +116,11 @@ page-intro-slides {
         height: 50px;
       }
     }
+    .form-error{
+      margin-top: 6px;
+      text-align: center;
+      color: color($colors, danger);
+    }
   }
   .logo-area{
     background-color: color($colors, primary);

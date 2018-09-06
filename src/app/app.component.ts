@@ -151,7 +151,6 @@ export class MyApp {
 
         //Update active tab in menu
         events.subscribe('currenttab', (data) => {
-          console.log(data)
           this.currentTab = data;
         });
 
@@ -192,7 +191,6 @@ export class MyApp {
 
         //check if user is logged in
         this.storage.get('eatiblUser').then((val) => {
-          console.log('getting user')
           if (val)
             this.user = decode(val);
         });
@@ -288,14 +286,10 @@ export class MyApp {
   //Check whether a user is logged in
   checkUser(){
     this.storage.get('eatiblUser').then((val) => {
-      console.log('getting user')
       if (val){
-        console.log('got user')
         this.user = decode(val);
-        console.log(this.user)
       }
       else{
-        console.log('no user')
         this.user = {
           _id: '',
           email: '',

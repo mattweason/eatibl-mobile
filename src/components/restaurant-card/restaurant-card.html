@@ -118,15 +118,18 @@
     </ion-row>
   </ion-grid>
 </ion-card>
-<ion-card *ngIf="index == 1" class="email-submit">
+<ion-card *ngIf="index == emailCaptureIndex && !haveUser" class="email-submit">
   <span class="email-submit-header">Keep up with the latest deals!</span>
-  <div class="email-submit-liner">
-    <ion-input [(ngModel)]="email" name="email" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>
-    <button ion-button color="secondary" (tap)="submitEmail()">Submit</button>
-    <div class="error-message">
-      <span class="form-error" *ngIf="emailRes">{{emailRes}}</span>
+  <form [formGroup]="emailCapture" (ngSubmit)="submitEmail()">
+    <div class="email-submit-liner">
+      <ion-input [formControl]="emailCapture.controls['email']" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>
+      <button *ngIf="!emailCaptured" ion-button color="secondary" type="submit">Submit</button>
+      <button *ngIf="emailCaptured" ion-button color="tertiary" type="button">Success!</button>
     </div>
-  </div>
+    <div class="form-error" *ngIf="((emailCapture.controls.email.hasError('email') || emailCapture.controls.email.hasError('required')) && submitted)">
+      <span>Please enter a valid email.</span>
+    </div>
+  </form>
 </ion-card>
 <div class="loading" *ngIf="!isLoaded">
   <ion-spinner></ion-spinner>
