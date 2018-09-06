@@ -71,9 +71,11 @@ export class SignupPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        this.signupForm.controls['name'].setValue(this.user.name);
-        this.signupForm.controls['phone'].setValue(this.user.phone);
-        this.signupForm.controls['email'].setValue(this.user.email);
+        if(this.user.phone){
+          this.signupForm.controls['name'].setValue(this.user.name);
+          this.signupForm.controls['phone'].setValue(this.user.phone);
+          this.signupForm.controls['email'].setValue(this.user.email);
+        }
       }
     });
   }
@@ -206,6 +208,7 @@ export class SignupPage {
           message = 'Your account has been created!';
           this.presentSuccessAlert(title, message);
           this.events.publish('user:statuschanged');
+          this.events.publish('email:captured');
         });
       }
       if(this.response.message == 'email taken'){

@@ -78,6 +78,7 @@ export class LoginPage {
           this.log.sendEvent('Login: Successful', 'Login', this.loginForm.value.email || "");
           this.storage.set('eatiblUser',response);
           this.events.publish('user:statuschanged');
+          this.events.publish('email:captured');
           this.navCtrl.pop();
         }
 
