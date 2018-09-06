@@ -323,6 +323,9 @@ ion-tabs{
     top: 20px;
     right: 0;
   }
+  .ios-input-padding{ //add padding-left to inputs with borders on ios
+    padding-left: 12px;
+  }
 }
 .platform-android{
   .help-tab{ //Support fab
