@@ -162,13 +162,10 @@ export class MyApp {
             this.userInfo('err');
           });
 
-        //TODO: Find out what the hell this does
-        // this.firebase.onTokenRefresh()
-        //   .subscribe((token: string) => {
-        //     console.log(token);
-        //     console.log('token refreshed')
-        //     this.userInfo(token);
-        // });
+        this.firebase.onTokenRefresh()
+          .subscribe((token: string) => {
+            this.userInfo(token);
+        });
 
 
         //Check for both permissions and if location services are enabled
