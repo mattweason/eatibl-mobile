@@ -52,7 +52,9 @@ export class BookingsPage {
           });
       }
       else{
-        this.user = {}; //If not user exists in the localstorage, clear the user object
+        this.user = {}; //If no user exists in the localstorage, clear the user object
+        this.bookingUpcoming = [];
+        this.bookingHistory = [];
         this.content.resize(); //Handle the show/hide behavior of the tabs toolbar
       }
     });
