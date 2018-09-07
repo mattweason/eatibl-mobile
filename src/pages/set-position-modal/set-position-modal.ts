@@ -133,7 +133,6 @@ export class SetPositionModalPage {
   //Autolocate handler
   autolocateHandler:any = (location, time) => {
     this.events.unsubscribe('user:geolocated', this.autolocateHandler);
-    console.log('test');
     this.userCoords = location;
     this.locationUpdated = true;
 

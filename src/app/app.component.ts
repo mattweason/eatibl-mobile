@@ -162,13 +162,10 @@ export class MyApp {
             this.userInfo('err');
           });
 
-        //TODO: Find out what the hell this does
-        // this.firebase.onTokenRefresh()
-        //   .subscribe((token: string) => {
-        //     console.log(token);
-        //     console.log('token refreshed')
-        //     this.userInfo(token);
-        // });
+        this.firebase.onTokenRefresh()
+          .subscribe((token: string) => {
+            this.userInfo(token);
+        });
 
 
         //Check for both permissions and if location services are enabled
@@ -505,8 +502,10 @@ export class MyApp {
 
       if(locationUpdated) //Did user update the location in the modal
         this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
-          if(val)  //Custom location has been set, set userCoords to custom value
+          if(val) {  //Custom location has been set, set userCoords to custom value
             this.events.publish('user:geolocated', val, Date.now());
+          }
+          this.events.publish('user:newLocation'); //Tell nearby page to get restaurants with new location
         });
     });
     mapModal.present();

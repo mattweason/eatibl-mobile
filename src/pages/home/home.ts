@@ -80,6 +80,11 @@ export class HomePage {
       }
     });
 
+    //Update location when user geolocated event is recieved
+    events.subscribe('user:newLocation', () => {
+      this.getRestaurants();
+    });
+
     //Find out if we have a custom location
     this.storage.get('eatiblLocation').then((val) => {
       if(val) //If custom location, show card about custom location
