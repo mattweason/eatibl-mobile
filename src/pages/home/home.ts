@@ -82,7 +82,6 @@ export class HomePage {
 
     //Update location when user geolocated event is recieved
     events.subscribe('user:newLocation', () => {
-      console.log('lets do it')
       this.getRestaurants();
     });
 
