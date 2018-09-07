@@ -498,6 +498,10 @@ h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title,
   font-family: "Quicksand";
 }
 
+.has-refresher  .scroll-content {
+  border-top: 0 !important;
+}
+
 .item-inner{
   border-bottom: none !important;
   box-shadow: none !important;
