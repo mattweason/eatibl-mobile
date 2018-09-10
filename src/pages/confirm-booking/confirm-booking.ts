@@ -348,6 +348,8 @@ export class ConfirmBookingPage {
           if(val){
             this.user = decode(val);
             this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(this.user) || "none");
+            if(!this.user.phone)
+              this.storage.set('eatiblUser', this.response.token)
           }
           else{
             this.storage.set('eatiblUser', this.response.token)
