@@ -318,6 +318,14 @@ ion-tabs{
     top: 72px;
     height: calc(100vh - 72px);
   }
+  .close-button{ //close button in intro slide modal
+    font-size: 30px;
+    top: 20px;
+    right: 0;
+  }
+  .ios-input-padding{ //add padding-left to inputs with borders on ios
+    padding-left: 12px;
+  }
 }
 .platform-android{
   .help-tab{ //Support fab

@@ -83,7 +83,7 @@
         <ion-row *ngIf="user.active" class="border-bottom">
           <ion-col>
             <div class="promocode-area">
-              <ion-input [(ngModel)]="promoCode" name="promoCode" placeholder="Enter promo code" (ionChange)="clearError()"></ion-input>
+              <ion-input class="ios-input-padding" [(ngModel)]="promoCode" name="promoCode" placeholder="Enter promo code" (ionChange)="clearError()"></ion-input>
               <button ion-button color="primary" small (tap)="submitCode()">Submit</button>
             </div>
             <span class="form-error" *ngIf="promoRes">{{promoRes}}</span>

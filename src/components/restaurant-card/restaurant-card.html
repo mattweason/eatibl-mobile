@@ -122,7 +122,7 @@
   <span class="email-submit-header">Keep up with the latest deals!</span>
   <form [formGroup]="emailCapture" (ngSubmit)="submitEmail()">
     <div class="email-submit-liner">
-      <ion-input [formControl]="emailCapture.controls['email']" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>
+      <ion-input class="ios-input-padding" [formControl]="emailCapture.controls['email']" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>
       <button *ngIf="!emailCaptured" ion-button color="secondary" type="submit">Submit</button>
       <button *ngIf="emailCaptured" ion-button color="tertiary" type="button">Success!</button>
     </div>
