@@ -22,6 +22,7 @@ import { SMS } from '@ionic-native/sms';
 import { LocalNotifications } from '@ionic-native/local-notifications';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
+import { Facebook } from '@ionic-native/facebook';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -62,6 +63,7 @@ import { ActivityLoggerProvider } from '../providers/activity-logger/activity-lo
     Events,
     AppVersion,
     Firebase,
+    Facebook,
     Device,
     Contacts,
     SMS,

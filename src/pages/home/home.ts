@@ -5,6 +5,7 @@ import { ActivityLoggerProvider } from "../../providers/activity-logger/activity
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { Device } from '@ionic-native/device';
 import { Diagnostic } from '@ionic-native/diagnostic';
+import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
@@ -66,7 +67,8 @@ export class HomePage {
     public events: Events,
     private storage: Storage,
     private diagnostic: Diagnostic,
-    private log: ActivityLoggerProvider
+    private log: ActivityLoggerProvider,
+    private fb: Facebook
   ) {
 
     //Update location when user geolocated event is recieved
@@ -241,6 +243,8 @@ export class HomePage {
 
           marker.setIcon(icon); //Change marker color on click
 
+          this.logClickedMapMarkerEvent('Clicked Map Marker', marker.get('metadata').id);
+
           //Change last marker back to original icon
           if(this.lastOpenMarkerIndex !== undefined)
             this.changeLastMarkerToInactive(markers, this.lastOpenMarkerIndex);
@@ -269,6 +273,13 @@ export class HomePage {
       if(this.togglingView)
         this.togglingView = false;
     }, 4000);
+  }
+
+  //send facebook event
+  logClickedMapMarkerEvent(eventName, restaurantID) {
+    var params = {};
+    params['RestaurantID'] = restaurantID;
+    this.fb.logEvent(eventName, params, null);
   }
 
   //Update markers when date has changed
