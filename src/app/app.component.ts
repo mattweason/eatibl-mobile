@@ -511,6 +511,14 @@ export class MyApp {
     mapModal.present();
   }
 
+  //Prompt terms of use / privacy policy modal
+  termsModal(){
+    this.menuCtrl.close();
+    const termsModal = this.modal.create('TermsModalPage');
+
+    termsModal.present();
+  }
+
   ngOnInit(){
   }
 

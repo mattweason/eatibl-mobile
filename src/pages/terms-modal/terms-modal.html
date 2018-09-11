@@ -8,6 +8,9 @@
 
   <ion-navbar color="primary">
     <ion-title>Terms of Use</ion-title>
+    <ion-buttons right>
+      <button ion-button icon-only color="white" (tap)="dismiss()"><ion-icon name="close"></ion-icon></button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
@@ -56,7 +59,7 @@
   <p>We reserve the right to disclose any of your information as it may be necessary to comply with a legal process or requirement, to prevent fraud or assess and manage a security risk, to investigate and enforce any violations of this Agreement, for a user support request, to provide our rights and services, and for any other similar purpose.</p>
   <p>Additionally, your access of third party services from our website via the selection of links and advertisements provided by third parties may result in the sharing of your information with third parties.  In such circumstances, we are not responsible for the collection of your information by the third parties, and you are wholly responsible and bound by their terms and conditions, and privacy policies.</p>
   <h3>Use of Information</h3>
-  <p>Our collection of your information is to provide and facilitate your access of our services, identity verification, prevent, reduce and manage fraud, security risks and illegal activities, improvement of our services, provide marketing and promotion offers, and other such services.</p>
+  <p>Our collection of your information is to provide and facilitate your access of our services, identity verification, prevent, reduce and manage fraud, security risks and illegal activities, improvement of our services, provide marketing and promotion offers, and other such services. This information may be used as implied and express consent to receive commercial electronic messages from Eatibl.</p>
   <h3>Protection and Storage of your information</h3>
   <p>We store and process your information on our computers in North America, as well as on servers hosted by third parties (e.g. Amazon Web Services Data Center).  We ensure that your personal information on our computers is protected and safeguarded by technical, physical and administrative means to mitigate loss, corruption, alteration and unauthorized use and access of the information.  Such measures include the use of firewalls, data authentication, encryption, web browser automatic sign-offs, alarm and secured access controls of the computers, and various other measures.  Nevertheless, we cannot guarantee the security of your information, and unauthorized access or use, failure of certain measures and other factors may comprise the security of your information at any time.</p>
   <p>Servers hosted by third parties that store and process your information are subject to the terms and conditions, and privacy policy set forth by the third-party hosting company.</p>
@@ -87,10 +90,3 @@
   <p>No waiver of any covenant, agreement or obligation in this Agreement shall be construed as a waiver of any succeeding breach thereof or of any other covenant, agreement or obligation in this Agreement, and no delay or omission on the part of any party to exercise any right acquired through the default of any other shall be construed as a waiver of or shall impair such right.</p>
 
 </ion-content>
-<ion-footer>
-  <ion-toolbar>
-    <ion-buttons right>
-      <button ion-button icon-start block color="secondary" (tap)="dismiss()"><ion-icon name="close"></ion-icon>Dismiss</button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-footer>

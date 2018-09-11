@@ -50,13 +50,17 @@
         </button>
       </ion-item-group>
       <ion-item-group>
+        <button class="menu-item" ion-item (tap)="presentLocationModal()">
+          <ion-icon  name="pin" item-start></ion-icon>
+          Set Location
+        </button>
         <button class="menu-item" ion-item (click)="supportModal()">
           <ion-icon name="help-circle" item-start></ion-icon>
           FAQs
         </button>
-        <button class="menu-item" ion-item (tap)="presentLocationModal()">
-          <ion-icon  name="pin" item-start></ion-icon>
-          Set Location
+        <button class="menu-item" ion-item (tap)="termsModal()">
+          <ion-icon  name="paper" item-start></ion-icon>
+          Terms of Use
         </button>
       </ion-item-group>
     </ion-list>
