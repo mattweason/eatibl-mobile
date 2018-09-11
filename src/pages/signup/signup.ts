@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, AlertController, Events} from 'ionic-angular';
+import {IonicPage, NavController, AlertController, Events, ModalController} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
@@ -35,6 +35,7 @@ export class SignupPage {
     private device: Device,
     private storage: Storage,
     public events: Events,
+    private modal: ModalController,
     private log: ActivityLoggerProvider
   ) {
 
@@ -257,6 +258,13 @@ export class SignupPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad LoginPage');
+  }
+
+  //Prompt terms of use / privacy policy modal
+  openTermsModal(){
+    const termsModal = this.modal.create('TermsModalPage');
+
+    termsModal.present();
   }
 
 }

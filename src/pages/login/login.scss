@@ -30,4 +30,9 @@ page-login {
       color: color($colors, danger) !important;
     }
   }
+  .terms{
+    span{
+      color: color($colors, secondary);
+    }
+  }
 }
