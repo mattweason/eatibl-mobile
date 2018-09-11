@@ -26,6 +26,7 @@ export class SignupPage {
   submitAttempt = false;
   user: any;
   postObject= {} as any;
+  promoCode = {} as any;
 
   constructor(
     public navCtrl: NavController,
@@ -96,7 +97,8 @@ export class SignupPage {
           if(res['message'] == 'invalid'){
             this.signupForm.controls['promoCode'].setErrors({'incorrect': true});
           } else {
-            this.validateUser(res['code'])
+            this.promoCode = res['promoCode'];
+            this.validateUser(res['promoCode']['code']);
           }
         });
       else
@@ -206,7 +208,10 @@ export class SignupPage {
         this.log.sendEvent('Signup: Success', 'Sign up', JSON.stringify(newObj));
         this.storage.set('eatiblUser',this.response.token).then((val) => {
           title = 'Account created';
-          message = 'Your account has been created!';
+          if(this.promoCode.code)
+            message = "Your account has been created and the "+this.promoCode['promotion']+" promo code has been applied to your account!";
+          else
+            message = 'Your account has been created!';
           this.presentSuccessAlert(title, message);
           this.events.publish('user:statuschanged');
           this.events.publish('email:captured');
