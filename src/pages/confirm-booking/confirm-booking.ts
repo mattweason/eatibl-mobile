@@ -356,6 +356,9 @@ export class ConfirmBookingPage {
             this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(decode(this.response.token)) || "none");
           }
         });
+
+        this.logFacebookEvent('Booking', this.restaurant._id);
+
         if(this.response.booking.people > 1){
           const inviteModal = this.modal.create('InviteModalPage', { type: 'reminder', booking: this.response.booking, restaurant: this.restaurant });
           inviteModal.onDidDismiss(() => {
@@ -386,6 +389,13 @@ export class ConfirmBookingPage {
   //Don't make the booking and go back to the restaurant page
   cancel(){
     this.navCtrl.pop();
+  }
+
+  //send facebook event
+  logFacebookEvent(eventName, restaurantID) {
+    var params = {};
+    params['RestaurantID'] = restaurantID;
+    this.fb.logEvent(eventName, params, null);
   }
 
   //Error alert for booking errors
