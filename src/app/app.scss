@@ -350,6 +350,10 @@ ion-tabs{
     top: 58px;
     height: calc(100vh - 98px);
   }
+  .resto-details{ //Menu and phone number on restaurant page
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+  }
 }
 
 //Sign Up Prompt
@@ -502,7 +506,7 @@ ion-navbar.align-toolbar{
 }
 
 //General Styling
-h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title, ion-textarea {
+h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title, ion-textarea, ion-label {
   font-family: "Quicksand";
 }
 

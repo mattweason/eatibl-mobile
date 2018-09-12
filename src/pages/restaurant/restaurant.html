@@ -134,6 +134,20 @@
             </ion-col>
           </ion-row>
           <ion-row>
+            <ion-col>
+              <ion-list class="resto-details">
+                <button ion-item (click)="callNumber('+1-647-989-0355')">
+                  <ion-icon name="call" item-start color="medium"></ion-icon>
+                  <ion-label>Phone: <span>{{restaurant.phone}}</span></ion-label>
+                </button>
+                <button ion-item (click)="openMenu('http://beiruti.ca/restaurantmenu')">
+                  <ion-icon name="restaurant" item-start color="medium"></ion-icon>
+                  <ion-label>Menu: <span>www.someplace.com/menu</span></ion-label>
+                </button>
+              </ion-list>
+            </ion-col>
+          </ion-row>
+          <ion-row>
             <ion-col col-3>
               <p class="header">Hours:</p>
             </ion-col>

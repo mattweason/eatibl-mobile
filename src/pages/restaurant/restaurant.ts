@@ -436,4 +436,13 @@ export class RestaurantPage implements OnInit {
     if(action =='cancelled')
       this.log.sendEvent('TimePicker: Cancelled', 'Restaurant', JSON.stringify(data));
   }
+
+  callNumber(number){
+    number = encodeURIComponent(number);
+    window.location = "tel:"+number;
+  }
+
+  openMenu(link){
+    window.open('link', '_system', 'location=yes');
+  }
 }
