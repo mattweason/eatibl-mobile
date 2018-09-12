@@ -157,4 +157,27 @@ export class AccountPage {
     alert.present();
   }
 
+  viewPromoCodes(){
+    this.log.sendEvent('View Promo Codes', 'Account', 'User requested to view applied promo codes.');
+    this.API.makePost('user/viewPromoCode', this.user).subscribe(res => {
+      console.log(res)
+      var message = '';
+      if(res['codes']){
+        var promos = '';
+        for(var i = 0; i < res['codes'].length; i++){
+          promos = promos+'<li>'+res['codes'][i]+'</li>';
+        }
+        message = '<p>The following promo codes are applied to your account:</p>'+promos;
+      } else
+        message = '<p>You have no promo codes applied to your account.</p>';
+      let alert = this.alertCtrl.create({
+        title: 'Applied Promo Codes',
+        message: message,
+        buttons: ['Ok']
+      });
+      alert.present();
+    });
+
+  }
+
 }
