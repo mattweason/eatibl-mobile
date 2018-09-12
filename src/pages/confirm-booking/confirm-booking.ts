@@ -12,6 +12,7 @@ import moment from 'moment';
 import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
+import {Facebook} from "@ionic-native/facebook";
 
 /**
  * Generated class for the ConfirmBookingPage page.
@@ -58,7 +59,8 @@ export class ConfirmBookingPage {
     private storage: Storage,
     private modal: ModalController,
     private log: ActivityLoggerProvider,
-    public localNotifications: LocalNotifications
+    public localNotifications: LocalNotifications,
+    private fb: Facebook
   ) {
     this.restaurant = navParams.get('restaurant');
     this.timeslot = navParams.get('timeslot');
