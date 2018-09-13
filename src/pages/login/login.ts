@@ -3,6 +3,7 @@ import {IonicPage, NavController, AlertController, Events, ModalController} from
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
+import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 
@@ -33,6 +34,7 @@ export class LoginPage {
     private formBuilder: FormBuilder,
     private storage: Storage,
     public events: Events,
+    private fb: Facebook,
     private modal: ModalController,
     private log: ActivityLoggerProvider
   ) {
@@ -158,5 +160,45 @@ export class LoginPage {
     const termsModal = this.modal.create('TermsModalPage');
 
     termsModal.present();
+  }
+
+  //Facebook login
+  loginFacebook(){
+    this.fb.login(['public_profile', 'email'])
+      .then( (res: FacebookLoginResponse) => {
+        // The connection was successful
+        if(res.status == "connected") {
+
+          // Get user ID and Token
+          var fb_id = res.authResponse.userID;
+          var fb_token = res.authResponse.accessToken;
+
+          // Get user infos from the API
+          this.fb.api("/me?fields=name,email", []).then((user) => {
+
+            // Get the connected user details
+            var name      = user['name'];
+            var email     = user['email'];
+
+            console.log("=== USER INFOS ===");
+            console.log("Name : " + name);
+            console.log("Email : " + email);
+
+            // => Open user session and redirect to the next page
+
+          });
+
+        }
+        // An error occurred while loging-in
+        else {
+
+          console.log("An error occurred...");
+
+        }
+
+      })
+      .catch((e) => {
+        console.log('Error logging into Facebook', e);
+      });
   }
 }

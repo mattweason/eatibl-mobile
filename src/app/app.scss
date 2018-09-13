@@ -501,6 +501,28 @@ ion-navbar.align-toolbar{
   box-shadow: none;
 }
 
+//Social media login
+.social-login{
+  .separator{
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    span{
+      margin: 0 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #ccc;
+    }
+    .line{
+      margin: 0;
+      height: 0;
+      width: 40%;
+      border-top: 1px solid #ccc;
+    }
+  }
+}
+
 //General Styling
 h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title, ion-textarea {
   font-family: "Quicksand";
