@@ -1,5 +1,5 @@
 import { Component, OnInit, trigger } from '@angular/core';
-import {IonicPage, NavController, NavParams, AlertController, ModalController, Platform} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, AlertController, ModalController, Platform, Events} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
@@ -60,7 +60,8 @@ export class ConfirmBookingPage {
     private modal: ModalController,
     private log: ActivityLoggerProvider,
     public localNotifications: LocalNotifications,
-    private fb: Facebook
+    private fb: Facebook,
+    public events: Events
   ) {
     this.restaurant = navParams.get('restaurant');
     this.timeslot = navParams.get('timeslot');
@@ -355,6 +356,7 @@ export class ConfirmBookingPage {
           }
           else{
             this.storage.set('eatiblUser', this.response.token)
+            this.events.publish('email:captured');
             this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(decode(this.response.token)) || "none");
           }
         });
