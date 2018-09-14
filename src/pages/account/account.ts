@@ -46,8 +46,10 @@ export class AccountPage {
 
   ionViewDidEnter() {
     this.storage.get('eatiblUser').then((val) => {
+      console.log(val)
       if(val){
         this.user = decode(val);
+        console.log(this.user)
         if(this.user.phone.length) //make sure it is not an email only user
           this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
             this.sortBookings(data);

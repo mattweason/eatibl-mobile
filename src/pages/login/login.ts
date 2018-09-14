@@ -4,6 +4,7 @@ import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
+import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 
@@ -35,6 +36,7 @@ export class LoginPage {
     private storage: Storage,
     public events: Events,
     private fb: Facebook,
+    private device: Device,
     private modal: ModalController,
     private log: ActivityLoggerProvider
   ) {
@@ -175,14 +177,18 @@ export class LoginPage {
 
           // Get user infos from the API
           this.fb.api("/me?fields=name,email", []).then((user) => {
+            console.log(user)
 
-            // Get the connected user details
-            var name      = user['name'];
-            var email     = user['email'];
+            //Add device id to user object
+            user['deviceId'] = this.device.uuid;
 
-            console.log("=== USER INFOS ===");
-            console.log("Name : " + name);
-            console.log("Email : " + email);
+            this.API.makePost('register/facebook', user).subscribe(response => {
+              console.log(response)
+              this.storage.set('eatiblUser',response['token']);
+              this.events.publish('user:statuschanged');
+              this.events.publish('email:captured');
+              this.navCtrl.pop();
+            });
 
             // => Open user session and redirect to the next page
 

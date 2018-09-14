@@ -30,13 +30,13 @@
           <ion-col col-3 class="align-center icon">
             <ion-icon class="user-icon" name="contact"></ion-icon>
           </ion-col>
-          <ion-col col-9>
-            <div *ngIf="user.phone">
+          <ion-col col-9 class="user-info">
+            <div *ngIf="user.phone || user.facebook_id">
               <p>{{user.name}}</p>
               <p>{{user.email}}</p>
-              <p>{{user.phone}}</p>
+              <p *ngIf="user.phone">{{user.phone}}</p>
             </div>
-            <div class="placeholders" *ngIf="!user.phone">
+            <div class="placeholders" *ngIf="!user.phone && !user.facebook_id">
               <div class="grey-box"></div>
               <div class="grey-box big"></div>
               <div class="grey-box"></div>

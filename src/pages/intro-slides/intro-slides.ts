@@ -1,6 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {IonicPage, NavController, NavParams, Slides, ViewController, ModalController, Events} from 'ionic-angular';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
+import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -34,6 +35,7 @@ export class IntroSlidesPage {
     private modal: ModalController,
     private device: Device,
     public events: Events,
+    private fb: Facebook,
     public navParams: NavParams,
     private formBuilder: FormBuilder,
     private storage: Storage,
@@ -116,6 +118,50 @@ export class IntroSlidesPage {
 
   clearError(){
     this.submitted = false;
+  }
+
+  //Facebook login
+  loginFacebook(){
+    this.fb.login(['public_profile', 'email'])
+      .then( (res: FacebookLoginResponse) => {
+        // The connection was successful
+        if(res.status == "connected") {
+
+          // Get user ID and Token
+          var fb_id = res.authResponse.userID;
+          var fb_token = res.authResponse.accessToken;
+
+          // Get user infos from the API
+          this.fb.api("/me?fields=name,email", []).then((user) => {
+            console.log(user)
+
+            //Add device id to user object
+            user['deviceId'] = this.device.uuid;
+
+            this.API.makePost('register/facebook', user).subscribe(response => {
+              console.log(response)
+              this.storage.set('eatiblUser',response['token']);
+              this.events.publish('user:statuschanged');
+              this.events.publish('email:captured');
+              this.nextSlide();
+            });
+
+            // => Open user session and redirect to the next page
+
+          });
+
+        }
+        // An error occurred while loging-in
+        else {
+
+          console.log("An error occurred...");
+
+        }
+
+      })
+      .catch((e) => {
+        console.log('Error logging into Facebook', e);
+      });
   }
 
 }

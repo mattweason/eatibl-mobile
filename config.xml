@@ -3,7 +3,7 @@
     <name>Eatibl</name>
     <description>Save when you crave at off-peak hours.</description>
     <author email="matt@eatibl.com" href="https://eatibl.com/">Eatibl Inc.</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.1.102:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />

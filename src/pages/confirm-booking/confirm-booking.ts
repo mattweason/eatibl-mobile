@@ -35,6 +35,7 @@ export class ConfirmBookingPage {
     name: '',
     phone: '',
     type: '',
+    facebook_id: '',
     active: 0
   };
   restaurant: any;
@@ -87,6 +88,7 @@ export class ConfirmBookingPage {
         ])
       ],
       active: [0],
+      facebook_id: [''],
       _id: ['']
     });
   }
@@ -109,13 +111,19 @@ export class ConfirmBookingPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        if(this.user.phone){
+        console.log(this.user.active == 1 && this.user.phone.length)
+        console.log(this.user.active == 1 ? true : false)
+        console.log(this.user.phone ? true : false)
+        if(this.user.phone || this.user.facebook_id){
           this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
           this.bookingForm.controls['name'].setValue(this.user.name);
-          this.bookingForm.controls['phone'].setValue(this.user.phone);
+          if(this.user.phone)
+            this.bookingForm.controls['phone'].setValue(this.user.phone);
           this.bookingForm.controls['email'].setValue(this.user.email);
           this.bookingForm.controls['active'].setValue(this.user.active);
           this.bookingForm.controls['_id'].setValue(this.user._id);
+          if(this.user.facebook_id)
+            this.bookingForm.controls['facebook_id'].setValue(this.user.facebook_id);
         }
       }
     });
@@ -173,22 +181,25 @@ export class ConfirmBookingPage {
       };
 
       //Run the check to see if this user has been verified
-      this.API.makePost('user/verify/check', postObj).subscribe(response => {
-        this.log.sendEvent('Confirm Booking: Try Validate', 'Confirm Booking', JSON.stringify(postObj));
-        if(response['err']){ //Twilio says invalid phone number
-          let title = 'Invalid Phone Number',
-            message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
-          this.presentAlert(title, message);
+      if(!this.user.facebook_id)
+        this.API.makePost('user/verify/check', postObj).subscribe(response => {
+          this.log.sendEvent('Confirm Booking: Try Validate', 'Confirm Booking', JSON.stringify(postObj));
+          if(response['err']){ //Twilio says invalid phone number
+            let title = 'Invalid Phone Number',
+              message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
+            this.presentAlert(title, message);
 
-        } else { //Phone number is good
-          if (response['verify']) //Has not been verified
-            this.verifyAlert(false);
+          } else { //Phone number is good
+            if (response['verify']) //Has not been verified
+              this.verifyAlert(false);
 
-          else
-            this.createBooking(); //Good to go
-        }
+            else
+              this.createBooking(); //Good to go
+          }
 
-      });
+        });
+      else
+        this.createBooking();
     }
   }
 
