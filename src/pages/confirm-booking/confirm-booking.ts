@@ -141,9 +141,9 @@ export class ConfirmBookingPage {
   }
 
   confirm(){
-    this.log.sendEvent('Confirm Booking: Initiated', 'Confirm Booking', JSON.stringify(this.bookingForm.value));
+    this.log.sendRestoEvent('Confirm Booking: Initiated', 'Confirm Booking', JSON.stringify(this.bookingForm.value), this.restaurant._id);
     if(!this.bookingForm.valid) {
-      this.log.sendEvent('Confirm Booking: Invalid', 'Confirm Booking', JSON.stringify(this.bookingForm.value));
+      this.log.sendRestoEvent('Confirm Booking: Invalid', 'Confirm Booking', JSON.stringify(this.bookingForm.value), this.restaurant._id);
       Object.keys(this.bookingForm.controls).forEach(field => { // {1}
         const control = this.bookingForm.get(field);            // {2}
         control.markAsTouched({onlySelf: true});       // {3}
@@ -175,7 +175,7 @@ export class ConfirmBookingPage {
 
       //Run the check to see if this user has been verified
       this.API.makePost('user/verify/check', postObj).subscribe(response => {
-        this.log.sendEvent('Confirm Booking: Try Validate', 'Confirm Booking', JSON.stringify(postObj));
+        this.log.sendRestoEvent('Confirm Booking: Try Validate', 'Confirm Booking', JSON.stringify(postObj), this.restaurant._id);
         if(response['err']){ //Twilio says invalid phone number
           let title = 'Invalid Phone Number',
             message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
@@ -195,7 +195,7 @@ export class ConfirmBookingPage {
 
   //Verification code alert
   verifyAlert(reverify){ //If reverify is true, the user entered a bad code and must reverify
-    this.log.sendEvent('Confirm Booking: Verification Requested', 'Confirm Booking', 'Reverify: '+reverify);
+    this.log.sendRestoEvent('Confirm Booking: Verification Requested', 'Confirm Booking', 'Reverify: '+reverify, this.restaurant._id);
     let title = 'Verify Phone Number',
       message = "We've texted you a verification code. Please enter the code below to complete the booking.";
     if(reverify){
@@ -230,7 +230,7 @@ export class ConfirmBookingPage {
               };
               this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
 
-                this.log.sendEvent('Confirm Booking: Verification Success', 'Confirm Booking', JSON.stringify(postObj));
+                this.log.sendRestoEvent('Confirm Booking: Verification Success', 'Confirm Booking', JSON.stringify(postObj), this.restaurant._id);
                 if(response['confirmed']) //Code is good :)
                   this.createBooking();
 
@@ -248,7 +248,7 @@ export class ConfirmBookingPage {
 
   //Create the booking
   createBooking(){
-    this.log.sendEvent('Create Booking: Initiated', 'Confirm Booking', JSON.stringify(this.postObject));
+    this.log.sendRestoEvent('Create Booking: Initiated', 'Confirm Booking', JSON.stringify(this.postObject), this.restaurant._id);
     this.API.makePost('booking/' + this.restaurant._id + '/create', this.postObject).subscribe(response => {
       var title; //Used for error alerts
       var message; //Used for error alerts
@@ -281,7 +281,7 @@ export class ConfirmBookingPage {
           message = 'You must create your booking 15 minutes or more before the booking time.';
         }
 
-        this.log.sendEvent('Create Booking: Response', 'Confirm Booking', 'Response Message: '+this.response.message);
+        this.log.sendRestoEvent('Create Booking: Response', 'Confirm Booking', 'Response Message: '+this.response.message, this.restaurant._id);
 
         if(this.response.message != 'user exists') //If user exists we use presentAlertWithLogin
           this.presentAlert(title, message);
@@ -320,7 +320,7 @@ export class ConfirmBookingPage {
               data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
               icon: 'file://assets/imgs/notification-icon.png'
             });
-            this.log.sendEvent('Reminder Notification Scheduled', 'Confirm Booking', 'User booked with less than 2hr lead time');
+            this.log.sendRestoEvent('Reminder Notification Scheduled', 'Confirm Booking', 'User booked with less than 2hr lead time', this.restaurant._id);
           }
 
           //REMINDER: When booking is more than 2hr lead time
@@ -333,7 +333,7 @@ export class ConfirmBookingPage {
               data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
               icon: 'file://assets/imgs/notification-icon.png'
             });
-            this.log.sendEvent('Reminder Notification Scheduled', 'Confirm Booking', 'User booked with greater than 2hr lead time');
+            this.log.sendRestoEvent('Reminder Notification Scheduled', 'Confirm Booking', 'User booked with greater than 2hr lead time', this.restaurant._id);
           }
 
           //FEEDBACK: 3hrs after the booking is complete
@@ -350,14 +350,14 @@ export class ConfirmBookingPage {
         this.storage.get('eatiblUser').then((val) => {
           if(val){
             this.user = decode(val);
-            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(this.user) || "none");
+            this.log.sendRestoEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(this.user) || "none", this.restaurant._id);
             if(!this.user.phone)
               this.storage.set('eatiblUser', this.response.token)
           }
           else{
             this.storage.set('eatiblUser', this.response.token)
             this.events.publish('email:captured');
-            this.log.sendEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(decode(this.response.token)) || "none");
+            this.log.sendRestoEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(decode(this.response.token)) || "none", this.restaurant._id);
           }
         });
 

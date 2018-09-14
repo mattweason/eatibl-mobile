@@ -330,7 +330,7 @@ export class HomePage {
         this.selectedResto = resto;
         this.processTimeslots();
         this.processBusinessHours();
-        this.log.sendEvent('Restaurant Marker: Selected', 'Map view', 'User clicked on the marker for: '+resto.name);
+        this.log.sendRestoEvent('Restaurant Marker: Selected', 'Map view', 'User clicked on the marker for: '+resto.name, resto._id);
       }
     }
     this.cdRef.detectChanges();
@@ -393,7 +393,7 @@ export class HomePage {
 
   navigateTo(event, timeslotId){
     if(this.selectedResto.timeslots.length){
-      this.log.sendEvent('Navigate to Restaurant', 'Home || Map view', 'User clicked into restaurant: '+this.selectedResto.name);
+      this.log.sendRestoEvent('Navigate to Restaurant', 'Map view', 'User clicked into restaurant: '+this.selectedResto.name, this.selectedResto._id);
       this.navCtrl.push('RestaurantPage', {
         restaurant: JSON.stringify(this.selectedResto),
         timeslotsData: JSON.stringify(this.selectedResto.timeslots),

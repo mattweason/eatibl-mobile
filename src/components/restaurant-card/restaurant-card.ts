@@ -141,9 +141,9 @@ export class RestaurantCardComponent implements OnChanges {
 
   navigateTo(target, timeslotId){
     if(target != 'top-pick')
-      this.log.sendEvent('Restaurant Card Clicked', 'Restaurant Card', 'User clicked on '+target);
+      this.log.sendRestoEvent('Restaurant Card Clicked', 'Restaurant Card', 'User clicked on '+target, this.restaurant._id);
     else
-      this.log.sendEvent('Top Pick Card Clicked', 'Restaurant Card', 'User clicked on '+target);
+      this.log.sendRestoEvent('Top Pick Card Clicked', 'Restaurant Card', 'User clicked on '+target, this.restaurant._id);
 
 
     if(this.timeslotsData.length){

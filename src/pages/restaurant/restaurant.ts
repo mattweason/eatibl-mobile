@@ -87,8 +87,6 @@ export class RestaurantPage implements OnInit {
     this.date = navParams.get('date');
     this.time = navParams.get('time');
 
-    this.log.sendEvent('Visit Restaurant', 'Restaurant', 'Visited: ' + this.restaurant.name);
-
   //Since we aren't doing setnow, make sure to initialize
     this.today = moment().format();
     this.maxDate = moment().add(30, 'day').format();

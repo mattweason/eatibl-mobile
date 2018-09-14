@@ -38,4 +38,21 @@ export class ActivityLoggerProvider {
     });
   }
 
+  sendRestoEvent(event, page, notes, restoId){
+    this.storage.get('eatiblUser').then((val) => {
+      if(val){
+        var user = decode(val);
+        this.userId = user._id;
+      }
+      this.API.makePost('log/trackUserActivity', {
+        event: event,
+        page: page,
+        deviceId: this.device.uuid,
+        userId: this.userId,
+        notes: notes,
+        restaurant_fid: restoId
+      }).subscribe(() => {});
+    });
+  }
+
 }
