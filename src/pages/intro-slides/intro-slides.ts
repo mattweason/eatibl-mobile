@@ -92,10 +92,8 @@ export class IntroSlidesPage {
   }
 
   submitEmail(){
-    console.log('submitted')
     this.submitted = true;
     if(this.emailCapture.valid) {
-      console.log('valid')
       //Run the check to see if this user has been verified
       this.API.makePost('register/emailOnly', this.emailCapture.value).subscribe(res => {
         if(res['message'] == 'success' || res['message'] == 'existing') {
@@ -105,6 +103,7 @@ export class IntroSlidesPage {
           setTimeout(function () {
             current.events.publish('email:captured');
             current.nextSlide();
+            current.haveEmail = true;
             if(res['message'] == 'success')
               current.storage.set('eatiblUser', res['token']);
           }, 1000);
@@ -133,17 +132,17 @@ export class IntroSlidesPage {
 
           // Get user infos from the API
           this.fb.api("/me?fields=name,email", []).then((user) => {
-            console.log(user)
 
             //Add device id to user object
             user['deviceId'] = this.device.uuid;
 
             this.API.makePost('register/facebook', user).subscribe(response => {
-              console.log(response)
               this.storage.set('eatiblUser',response['token']);
+              this.storage.set('eatiblFBToken',fb_token);
               this.events.publish('user:statuschanged');
               this.events.publish('email:captured');
               this.nextSlide();
+              this.haveEmail = true;
             });
 
             // => Open user session and redirect to the next page

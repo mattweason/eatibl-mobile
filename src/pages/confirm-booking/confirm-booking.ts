@@ -111,9 +111,7 @@ export class ConfirmBookingPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        console.log(this.user.active == 1 && this.user.phone.length)
-        console.log(this.user.active == 1 ? true : false)
-        console.log(this.user.phone ? true : false)
+        console.log(this.user)
         if(this.user.phone || this.user.facebook_id){
           this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
           this.bookingForm.controls['name'].setValue(this.user.name);
@@ -125,6 +123,7 @@ export class ConfirmBookingPage {
           if(this.user.facebook_id)
             this.bookingForm.controls['facebook_id'].setValue(this.user.facebook_id);
         }
+        console.log(this.bookingForm.value)
       }
     });
   }

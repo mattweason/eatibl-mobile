@@ -287,14 +287,13 @@ export class SignupPage {
 
           // Get user infos from the API
           this.fb.api("/me?fields=name,email", []).then((user) => {
-            console.log(user)
 
             //Add device id to user object
             user['deviceId'] = this.device.uuid;
 
             this.API.makePost('register/facebook', user).subscribe(response => {
-              console.log(response)
               this.storage.set('eatiblUser',response['token']);
+              this.storage.set('eatiblFBToken',fb_token);
               this.events.publish('user:statuschanged');
               this.events.publish('email:captured');
               this.navCtrl.pop();
