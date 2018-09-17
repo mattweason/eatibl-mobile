@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ModalController, AlertController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ModalController, AlertController, Events} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Storage } from '@ionic/storage';
@@ -36,6 +36,7 @@ export class AccountPage {
     public alertCtrl: AlertController,
     private functions: FunctionsProvider,
     private modal: ModalController,
+    public events: Events,
     private log: ActivityLoggerProvider
   ) {
   }
@@ -137,6 +138,7 @@ export class AccountPage {
           handler: data => {
             this.log.sendEvent('Logout', 'Account', '');
             this.storage.remove('eatiblUser');
+            this.events.publish('user:statuschanged');
             this.bookingUpcoming = [];
             this.bookingHistory = [];
             this.user = {};
@@ -160,7 +162,6 @@ export class AccountPage {
   viewPromoCodes(){
     this.log.sendEvent('View Promo Codes', 'Account', 'User requested to view applied promo codes.');
     this.API.makePost('user/viewPromoCode', this.user).subscribe(res => {
-      console.log(res)
       var message = '';
       if(res['codes']){
         var promos = '';

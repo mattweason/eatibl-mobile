@@ -14,9 +14,6 @@
 
 
 <ion-content padding>
-  <div class="eatibl-logo">
-    <img src="assets/imgs/red-with-text.png">
-  </div>
   <form [formGroup]="loginForm" (ngSubmit)="login()">
     <ion-item class="border-bottom">
       <ion-label fixed><ion-icon [ngClass]="{'invalid': !loginForm.controls.email.valid && (loginForm.controls.email.dirty || submitAttempt)}" name="mail"></ion-icon></ion-label>
@@ -37,8 +34,16 @@
     </div>
     <button ion-button block color="secondary" type="submit">Confirm</button>
     <button ion-button small clear color="secondary" type="button" (tap)="resetPassword()">Forgot password?</button>
-    <p class="terms">By logging in, you agree to Eatibl's <span (tap)="openTermsModal()">Terms of Use and Privacy Policy.</span></p>
   </form>
+  <div class="social-login">
+    <div class="separator">
+      <span class="line"></span>
+      <span>OR</span>
+      <span class="line"></span>
+    </div>
+    <button ion-button block color="facebook" icon-start (tap)="loginFacebook()"><ion-icon name="logo-facebook"></ion-icon>Login with Facebook</button>
+  </div>
+  <p class="terms">By logging in, you agree to Eatibl's <span (tap)="openTermsModal()">Terms of Use and Privacy Policy.</span></p>
   <div class="no-account">
     <p>Don't have an account?</p>
     <button ion-button color="primary" small (click)="signUp()">Sign Up</button>
