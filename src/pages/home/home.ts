@@ -54,6 +54,7 @@ export class HomePage {
   allMarkers: any;
   cacheDate: any; //Cache the select date from the map view
   loadingRestaurants = true;
+  loadingNextBatch = false; //Used for the show more restaurants button loading spinner
 
   map: GoogleMap;
 
@@ -550,20 +551,30 @@ export class HomePage {
     });
   }
 
+  //Toggle shore more loading animation
+  toggleLoadingNextBatch(cond){
+    this.loadingNextBatch = cond;
+  }
+
   //Load 10 more restaurants, but not more than 25
   loadMore(){
-    this.log.sendEvent('Load More: Pressed', 'Home', 'User requested to load more restaurants: ' + (this.loadMorePressed == 0 ? 'first time' : 'second time'));
+    this.loadingNextBatch = true;
+    var current = this;
+    setTimeout(function() {
+      current.log.sendEvent('Load More: Pressed', 'Home', 'User requested to load more restaurants: ' + (current.loadMorePressed == 0 ? 'first time' : 'second time'));
 
-    this.loadMorePressed++;
-    var limit = this.initLoadCount + this.loadMorePressed * this.loadMoreCount;
-    var currentBatch = []; //for display log
+      current.loadMorePressed++;
+      var limit = current.initLoadCount + current.loadMorePressed * current.loadMoreCount;
+      var currentBatch = []; //for display log
 
-    for(var i = this.restaurantList.length; i < limit; i++) {
-      this.restaurantList.push(this.restaurantAll[i]); //add restaurant to the current display list
-      currentBatch.push(this.restaurantAll[i]);
-    }
-    //capture restaurants displayed in this batch and send to log
-    this.restaurantDisplayLog(currentBatch, limit - this.loadMoreCount, false);
+      for(var i = current.restaurantList.length; i < limit; i++) {
+        current.restaurantList.push(current.restaurantAll[i]); //add restaurant to the current display list
+        currentBatch.push(current.restaurantAll[i]);
+      }
+      //capture restaurants displayed in this batch and send to log
+      current.restaurantDisplayLog(currentBatch, limit - current.loadMoreCount, false);
+      current.loadingNextBatch = false;
+    }, 0);
   }
 
   //Navigate to search page

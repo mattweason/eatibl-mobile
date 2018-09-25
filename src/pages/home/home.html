@@ -69,7 +69,7 @@
       <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [index]="i" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
     <div class="load-more">
-      <button class="blue-text" *ngIf="loadMorePressed < 4" ion-button icon-start block color="white" (tap)="loadMore()"><ion-icon name="arrow-dropdown-circle"></ion-icon>Show More Restaurants</button>
+      <button class="blue-text" *ngIf="loadMorePressed < 4" ion-button icon-start block color="white" (tap)="loadMore()"><span *ngIf="loadingNextBatch" class="loading"><ion-spinner></ion-spinner></span><ion-icon name="arrow-dropdown-circle"></ion-icon>Show More Restaurants</button>
       <span class="search-more" *ngIf="loadMorePressed >= 4">Hungry for more?<button ion-button small color="secondary" (tap)="goToSearch()">Search</button></span>
     </div>
   </div>

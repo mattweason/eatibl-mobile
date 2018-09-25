@@ -47,6 +47,8 @@ export class SearchPage {
   searchCategoriesCache = []; //Cache of full list of search categories
   showCategories = false; //Show category list if true
   backButtonPressed: any;
+  loadingNextBatch = false;
+  loadingPrevBatch = false;
 
 
   constructor(
@@ -351,33 +353,43 @@ export class SearchPage {
 
   //Call next batch of 10 restaurants
   nextBatch(){
-    this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User pressed the next 10 results button, batch #: '+this.batch);
-    var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
+    this.loadingNextBatch = true;
+    var current = this;
+    setTimeout(function(){
+      current.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User pressed the next 10 results button, batch #: '+current.batch);
+      var limit = Math.min(current.batch*10+10, current.restaurantFiltered.length);
 
-    this.restaurantList = this.restaurantFiltered.slice(this.batch*10, limit); //Replace current list of restos with next 10
+      current.restaurantList = current.restaurantFiltered.slice(current.batch*10, limit); //Replace current list of restos with next 10
 
-    //capture restaurants displayed in this batch and send to log
-    this.restaurantDisplayLog(this.restaurantList, this.batch*10);
+      //capture restaurants displayed in this batch and send to log
+      current.restaurantDisplayLog(current.restaurantList, current.batch*10);
 
-    this.batch++;
-    if(this.batch*10 >= this.restaurantFiltered.length)
-      this.allResults = true;
-    this.content.scrollToTop(0);
+      current.batch++;
+      if(current.batch*10 >= current.restaurantFiltered.length)
+        current.allResults = true;
+      current.content.scrollToTop(0);
+      current.loadingNextBatch = false;
+    }, 0);
   }
 
   //Call prev batch of 10 restaurants
   prevBatch(){
-    this.batch--;
-    this.allResults = false;
-    this.log.sendEvent('Infinite Scroll: Loaded Previous Batch', 'Search', 'User pressed the prev 10 results button, batch #: '+this.batch);
-    var limit = Math.min(this.batch*10, this.restaurantFiltered.length);
+    this.loadingPrevBatch = true;
+    var current = this;
+    setTimeout(function(){
+      current.batch--;
+      current.allResults = false;
+      current.log.sendEvent('Infinite Scroll: Loaded Previous Batch', 'Search', 'User pressed the prev 10 results button, batch #: '+current.batch);
+      var limit = Math.min(current.batch*10, current.restaurantFiltered.length);
 
-    this.restaurantList = this.restaurantFiltered.slice(this.batch*10 - 10, limit); //Replace current list of restos with prev 10
+      current.restaurantList = current.restaurantFiltered.slice(current.batch*10 - 10, limit); //Replace current list of restos with prev 10
 
-    //capture restaurants displayed in this batch and send to log
-    this.restaurantDisplayLog(this.restaurantList, this.batch*10 - 10);
+      //capture restaurants displayed in this batch and send to log
+      current.restaurantDisplayLog(current.restaurantList, current.batch*10 - 10);
 
-    this.content.scrollToTop(0);
+      current.content.scrollToTop(0);
+      current.loadingPrevBatch = false;
+    }, 0);
   }
 
   //Pull down to refresh the restaurant list

@@ -86,10 +86,10 @@
     <ion-row>
       <ion-col>
         <div *ngIf="restaurantList?.length" class="load-more">
-          <button class="blue-text" *ngIf="batch == 1" ion-button block color="white" icon-end (tap)="nextBatch()">Next 10 Results<ion-icon name="arrow-dropright-circle"></ion-icon></button>
-          <button class="blue-text" *ngIf="batch > 1 && !allResults" ion-button color="white" icon-start (tap)="prevBatch()"><ion-icon name="arrow-dropleft-circle"></ion-icon>Prev 10 Results</button>
-          <button class="blue-text" *ngIf="batch > 1 && !allResults" ion-button icon-end color="white" (tap)="nextBatch()">Next 10 Results<ion-icon name="arrow-dropright-circle"></ion-icon></button>
-          <button class="blue-text" *ngIf="batch > 0 && allResults" ion-button icon-start block color="white" (tap)="prevBatch()"><ion-icon name="arrow-dropleft-circle"></ion-icon>Prev 10 Results</button>
+          <button class="blue-text" *ngIf="batch == 1" ion-button block color="white" icon-end (tap)="nextBatch()"><span *ngIf="loadingNextBatch" class="loading"><ion-spinner></ion-spinner></span>Next 10 Results<ion-icon name="arrow-dropright-circle"></ion-icon></button>
+          <button class="blue-text" *ngIf="batch > 1 && !allResults" ion-button color="white" icon-start (tap)="prevBatch()"><span *ngIf="loadingPrevBatch" class="loading"><ion-spinner></ion-spinner></span><ion-icon name="arrow-dropleft-circle"></ion-icon>Prev 10 Results</button>
+          <button class="blue-text" *ngIf="batch > 1 && !allResults" ion-button icon-end color="white" (tap)="nextBatch()"><span *ngIf="loadingNextBatch" class="loading"><ion-spinner></ion-spinner></span>Next 10 Results<ion-icon name="arrow-dropright-circle"></ion-icon></button>
+          <button class="blue-text" *ngIf="batch > 0 && allResults" ion-button icon-start block color="white" (tap)="prevBatch()"><span *ngIf="loadingPrevBatch" class="loading"><ion-spinner></ion-spinner></span><ion-icon name="arrow-dropleft-circle"></ion-icon>Prev 10 Results</button>
         </div>
       </ion-col>
     </ion-row>
