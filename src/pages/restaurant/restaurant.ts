@@ -393,7 +393,7 @@ export class RestaurantPage implements OnInit {
 
   //Navigate to confirm booking page
   bookNow(event, restaurant, timeslot, people, date){
-    this.log.sendEvent('Booking: Initiated', 'Restaurant', 'At time: '+timeslot.time+' At discount: '+timeslot.discount+ ' For party size: '+people+ ' At date: '+date+ ' At restaurant: '+restaurant.name);
+    this.log.sendRestoEvent('Booking: Initiated', 'Restaurant', 'At time: '+timeslot.time+' At discount: '+timeslot.discount+ ' For party size: '+people+ ' At date: '+date+ ' At restaurant: '+restaurant.name, this.restaurant._id);
     this.navCtrl.push('ConfirmBookingPage', {
       restaurant: restaurant,
       timeslot: timeslot,
