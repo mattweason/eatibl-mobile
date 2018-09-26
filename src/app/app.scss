@@ -174,7 +174,7 @@ restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(0,0,0,0.1);
   .loading-spinner-box{
     padding: 12px;
     border-radius: 5px;
@@ -191,6 +191,30 @@ restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
     ion-spinner{
       width: 30px;
       height: 30px;
+    }
+  }
+}
+
+.loading-overlay{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(150,150,150,0.4);
+  .loading-spinner-box{
+    padding: 12px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    ion-spinner *{
+      width: 30px;
+      height: 30px;
+      stroke: color($colors, primary);
     }
   }
 }

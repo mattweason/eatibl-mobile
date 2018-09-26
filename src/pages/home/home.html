@@ -29,6 +29,11 @@
 </ion-header>
 
 <ion-content [ngClass]="{'grey-background': view == 'list'}">
+  <div *ngIf="loadingGeneral" class="loading-overlay">
+    <div class="loading-spinner-box">
+      <ion-spinner></ion-spinner>
+    </div>
+  </div>
   <div *ngIf="loadingRestaurants" class="loading-restaurants">
     <div class="loading-spinner-box">
       <span>Finding Restaurants</span>

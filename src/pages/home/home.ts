@@ -55,6 +55,7 @@ export class HomePage {
   cacheDate: any; //Cache the select date from the map view
   loadingRestaurants = true;
   loadingNextBatch = false; //Used for the show more restaurants button loading spinner
+  loadingGeneral = false; //For general loading overlay
 
   map: GoogleMap;
 
@@ -424,30 +425,37 @@ export class HomePage {
 
   //Toggles between list and map view
   toggleView(){
-    this.togglingView = true;
-    if(this.view == 'list'){ //If view is currently list
-      this.log.sendEvent('Map View: Loaded', 'Home', 'User switched from list view to map view');
-      this.view = 'map';
-      this.events.publish('view:map', true);
-      this.selectedResto = {};
-      this.loadMap();
-    }
-    else if(this.view == 'map'){ //If view is currently map
-      this.log.sendEvent('List View: Loaded', 'Home', 'User switched from map view to list view');
-      this.view = 'list';
-      this.events.publish('view:map', false);
-      this.togglingView = false;
-      const nodeList = document.querySelectorAll('._gmaps_cdv_');
-
-      if(!moment(this.date).isSame(moment(), 'day')) { //Only cache date and rerank restos if selected date is not today
-        this.date = moment().format(); //Change date back to now for nearby list
-        this.rankRestaurants(this.restaurantAll);
+    this.loadingGeneral = true;
+    var current = this;
+    setTimeout(function(){
+      current.togglingView = true;
+      if(current.view == 'list'){ //If view is currently list
+        current.log.sendEvent('Map View: Loaded', 'Home', 'User switched from list view to map view');
+        current.view = 'map';
+        current.events.publish('view:map', true);
+        current.selectedResto = {};
+        current.loadMap();
+        current.loadingGeneral = false;
+        console.log(current.loadingGeneral)
       }
+      else if(current.view == 'map'){ //If view is currently map
+        current.log.sendEvent('List View: Loaded', 'Home', 'User switched from map view to list view');
+        current.view = 'list';
+        current.events.publish('view:map', false);
+        current.togglingView = false;
+        const nodeList = document.querySelectorAll('._gmaps_cdv_');
 
-      for (let k = 0; k < nodeList.length; ++k) {
-        nodeList.item(k).classList.remove('_gmaps_cdv_');
+        if(!moment(this.date).isSame(moment(), 'day')) { //Only cache date and rerank restos if selected date is not today
+          current.date = moment().format(); //Change date back to now for nearby list
+          current.rankRestaurants(current.restaurantAll);
+        }
+
+        for (let k = 0; k < nodeList.length; ++k) {
+          nodeList.item(k).classList.remove('_gmaps_cdv_');
+        }
+        current.loadingGeneral = false;
       }
-    }
+    }, 0);
   }
 
   //Ranking system to dictate order of display

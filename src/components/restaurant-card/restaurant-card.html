@@ -9,8 +9,8 @@
     <button class="button-wrapper" (tap)="navigateTo('restaurant-image', '')" ion-item detail-none>
       <div *ngIf="!restaurant?.featuredImage" class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"></div>
       <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
-      <div *ngIf="distance" class="distance">
-        <p>{{restaurant.vicinity}} - {{distance}}</p>
+      <div *ngIf="restaurant.vicinity || distance" class="distance">
+        <p>{{restaurant.vicinity}} <span *ngIf="restaurant.vicinity && distance">-</span> {{distance}}</p>
       </div>
       <div class="coming-soon" *ngIf="!timeslotsData.length">
         <p>COMING SOON</p>
@@ -96,8 +96,8 @@
       <ion-col col-8>
         <button class="button-wrapper" (tap)="navigateTo('top-pick', restaurant.maxTimeslot._id)" ion-item detail-none>
           <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
-          <div *ngIf="distance" class="distance">
-            <p>{{restaurant.vicinity}} - {{distance}}</p>
+          <div *ngIf="restaurant.vicinity || distance" class="distance">
+            <p>{{restaurant.vicinity}} <span *ngIf="restaurant.vicinity && distance">-</span> {{distance}}</p>
           </div>
           <div class="title-box">
             <h3>{{restaurant.name}}</h3>
