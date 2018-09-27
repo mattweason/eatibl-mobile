@@ -301,18 +301,21 @@ export class SignupPage {
 
             // => Open user session and redirect to the next page
 
+          }).catch((e) => {
+            this.log.sendErrorEvent('Facebook API call', 'Signup', JSON.stringify(e), 'Failed to get info from facebook');
           });
 
         }
         // An error occurred while loging-in
         else {
-
+          this.log.sendErrorEvent('Facebook Login', 'Signup', JSON.stringify(res), 'Facebook login connection was not successful');
           console.log("An error occurred...");
 
         }
 
       })
       .catch((e) => {
+        this.log.sendErrorEvent('Facebook Login', 'Signup', JSON.stringify(e), 'Failed to log in to facebook');
         console.log('Error logging into Facebook', e);
       });
   }

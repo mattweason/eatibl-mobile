@@ -55,4 +55,21 @@ export class ActivityLoggerProvider {
     });
   }
 
+  sendErrorEvent(task, page, error, notes){
+    this.storage.get('eatiblUser').then((val) => {
+      if(val){
+        var user = decode(val);
+        this.userId = user._id;
+      }
+      this.API.makePost('log/trackUserActivity', {
+        task: task,
+        page: page,
+        deviceId: this.device.uuid,
+        userId: this.userId,
+        notes: notes,
+        error: error
+      }).subscribe(() => {});
+    });
+  }
+
 }

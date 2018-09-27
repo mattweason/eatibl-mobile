@@ -191,18 +191,20 @@ export class LoginPage {
 
             // => Open user session and redirect to the next page
 
-          });
+          }).catch((e) => {
+              this.log.sendErrorEvent('Facebook API call', 'Login', JSON.stringify(e), 'Failed to get info from facebook');
+            });
 
         }
         // An error occurred while loging-in
         else {
-
+          this.log.sendErrorEvent('Facebook Login', 'Login', JSON.stringify(res), 'Facebook login connection was not successful');
           console.log("An error occurred...");
 
         }
 
-      })
-      .catch((e) => {
+      }).catch((e) => {
+        this.log.sendErrorEvent('Facebook Login', 'Login', JSON.stringify(e), 'Failed to log in to facebook');
         console.log('Error logging into Facebook', e);
       });
   }
