@@ -62,6 +62,7 @@ export class RestaurantPage implements OnInit {
   orderedImgArray = []; //for displaying the image slides in the right order
   location: any;
   distance: any;
+  bookText: string;
 
   mapUrl: string;
 
@@ -102,6 +103,11 @@ export class RestaurantPage implements OnInit {
         this.setDistance();
       }
     });
+
+    this.storage.get('eatiblABValue').then((val) => {
+      if(val)
+        this.bookText = val > 50 ? 'Claim Deal' : 'Book Now';
+    })
 
     this.processBusinessHours();
     this.processTimeslots();

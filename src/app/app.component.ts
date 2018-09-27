@@ -390,6 +390,9 @@ export class MyApp {
         else
           current.log.sendEvent('Device: Existing', 'runTime', "This device has accessed the app before");
 
+        //Save ab test value to local storage
+        current.storage.set('eatiblABValue', result['test']);
+
         if (result['blacklisted'])
           current.blacklisted = true;
         if (!result['hideSlides'])
