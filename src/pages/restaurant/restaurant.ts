@@ -1,12 +1,14 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { IonicPage, NavController, NavParams, Slides, Events, Select } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, Events, Select, AlertController } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { Storage } from '@ionic/storage';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+
 import * as _ from 'underscore';
 import moment from 'moment';
 import { ENV } from '@app/env';
@@ -77,7 +79,9 @@ export class RestaurantPage implements OnInit {
     private launchNavigator: LaunchNavigator,
     public events: Events,
     private log: ActivityLoggerProvider,
-    private storage: Storage
+    private storage: Storage,
+    private iab: InAppBrowser,
+    private alertCtrl: AlertController
   ) {
 
     this.restaurant = JSON.parse(navParams.get('restaurant'));
@@ -203,7 +207,7 @@ export class RestaurantPage implements OnInit {
 
     this.open = {
       open: openStatus,
-      index: index
+      index: index //Index of current day
     }
   }
 
@@ -308,6 +312,7 @@ export class RestaurantPage implements OnInit {
           this.businessHours[a] = this.businessHoursData[i]['hours'];
         }
       }
+      console.log(this.businessHours)
   }
 
   //When time changes or date changes, set slide to selected time
@@ -439,5 +444,33 @@ export class RestaurantPage implements OnInit {
       this.log.sendEvent('TimePicker: Updated', 'Restaurant', JSON.stringify(data));
     if(action =='cancelled')
       this.log.sendEvent('TimePicker: Cancelled', 'Restaurant', JSON.stringify(data));
+  }
+
+  callNumber(number){
+    number = encodeURIComponent(number);
+    window.location.href = "tel:"+number;
+  }
+
+  openMenu(link){
+    this.iab.create(link, '_self', 'toolbarcolor=#d8354d');
+  }
+
+  openHours(){
+    var message = '';
+    for (var i = 0; i < this.businessHours.length; i++){
+      if(this.businessHours[i][0] == this.businessHours[i][1])
+          message += '<div class="hours-row"><p class="day-col '+(this.open.index == i ? "bold" : "")+'">'+this.businessDays[i][1]+':</p><p class="hours-col '+(this.open.index == i ? "bold" : "")+'">Closed</p></div>';
+      else
+        message += '<div class="hours-row"><p class="day-col '+(this.open.index == i ? "bold" : "")+'">'+this.businessDays[i][1]+':</p><p class="hours-col '+(this.open.index == i ? "bold" : "")+'">'+this.functions.formatClockTime(this.businessHours[i][0], true)+' - '+this.functions.formatClockTime(this.businessHours[i][0], true)+(this.businessHours[i].length == 4 ? "," : "")+'</p></div>';
+      if(this.businessHours[i].length == 4)
+        message += '<div class="hours-row extra"><p class="day-col"></p><p class="hours-col '+(this.open.index == i ? "bold" : "")+'">'+this.functions.formatClockTime(this.businessHours[i][2], true)+' - '+this.functions.formatClockTime(this.businessHours[i][3], true)+'</p></div>'
+    }
+    let alert = this.alertCtrl.create({
+      title: 'Business Hours',
+      message: message,
+      buttons: ['Close'],
+      cssClass: 'hours-alert'
+    });
+    alert.present();
   }
 }

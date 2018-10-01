@@ -134,17 +134,22 @@
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-col col-3>
-              <p class="header">Hours:</p>
-            </ion-col>
-            <ion-col col-2>
-              <p class="day" *ngFor="let day of businessDays; let i = index">{{day[1]}}:<span *ngIf="businessHours[i].length == 4"><br><div></div></span></p>
-            </ion-col>
-            <ion-col col-7>
-              <p class="hours" *ngFor="let day of businessHours;">
-                <span *ngIf="day[0] != day[1]">{{functions.formatClockTime(day[0], true)}} - {{functions.formatClockTime(day[1], true)}}<span *ngIf="day.length == 4">,<br>{{functions.formatClockTime(day[2], true)}} - {{functions.formatClockTime(day[3], true)}}</span></span>
-                <span *ngIf="day[0] == day[1]">Closed</span>
-              </p>
+            <ion-col>
+              <ion-list class="resto-details">
+                <button ion-item (click)="callNumber('+1-647-989-0355')">
+                  <ion-icon name="call" item-start color="medium"></ion-icon>
+                  <ion-label>Phone: <span>{{restaurant.phone}}</span></ion-label>
+                </button>
+                <button ion-item (click)="openMenu('http://beiruti.ca/restaurantmenu')">
+                  <ion-icon name="restaurant" item-start color="medium"></ion-icon>
+                  <ion-label>Menu: <span>www.someplace.com/menu</span></ion-label>
+                </button>
+                <button ion-item (click)="openHours()">
+                  <ion-icon name="time" item-start color="medium"></ion-icon>
+                  <ion-label>Hours: <span *ngIf="open?.open == 'open'" class="open"> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></span>
+                    <span *ngIf="open?.open == 'willOpen' || open?.open == 'closed'" class="closed"> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></span><span *ngIf="open?.open == 'closedToday'" class="closed"><span class="prefix">Closed Today</span></span></ion-label>
+                </button>
+              </ion-list>
             </ion-col>
           </ion-row>
         </ion-grid>

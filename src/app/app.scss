@@ -294,6 +294,25 @@ ion-tabs{
   }
 }
 
+//Hours alert styling
+.hours-alert{
+  .alert-wrapper{
+    .hours-row{
+      display: flex;
+      flex-wrap: nowrap;
+      .day-col, .hours-col{
+        margin: 3px 0;
+      }
+      .day-col{
+        width: 25%;
+      }
+      .hours-col{
+        width: 75%;
+      }
+    }
+  }
+}
+
 //Load more button
 .load-more{
   display: flex;
@@ -406,6 +425,10 @@ ion-tabs{
   .category-list{ //Search category drop down
     top: 58px;
     height: calc(100vh - 98px);
+  }
+  .resto-details{ //Menu and phone number on restaurant page
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
   }
 }
 
@@ -581,7 +604,7 @@ ion-navbar.align-toolbar{
 }
 
 //General Styling
-h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title, ion-textarea {
+h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title, ion-textarea, ion-label {
   font-family: "Quicksand";
 }
 

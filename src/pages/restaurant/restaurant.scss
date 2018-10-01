@@ -50,4 +50,22 @@ page-restaurant{
       margin-left: 3px;
     }
   }
+  .resto-details{
+    border-bottom: none !important;
+    button:not(:last-child){
+      .item-inner{
+        border-bottom: 1px solid #ccc !important;
+      }
+    }
+    button:last-child{
+      border-bottom: none !important;
+    }
+    ion-label{
+      font-size: 14px;
+      font-weight: 500;
+      span{
+        font-weight: 300;
+      }
+    }
+  }
 }
