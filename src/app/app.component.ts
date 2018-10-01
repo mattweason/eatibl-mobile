@@ -191,6 +191,9 @@ export class MyApp {
           if (val)
             this.user = decode(val);
         });
+
+        //Set AB test value for Ionic Lab
+        this.storage.set('eatiblABValue', 40);
       }
 
     });
