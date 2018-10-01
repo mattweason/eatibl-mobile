@@ -23,6 +23,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Facebook } from '@ionic-native/facebook';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -67,6 +68,7 @@ import { ActivityLoggerProvider } from '../providers/activity-logger/activity-lo
     Device,
     Contacts,
     SMS,
+    InAppBrowser,
     LocalNotifications,
     Diagnostic,
     LocationAccuracy,

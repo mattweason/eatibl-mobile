@@ -250,6 +250,25 @@ ion-tabs{
   }
 }
 
+//Hours alert styling
+.hours-alert{
+  .alert-wrapper{
+    .hours-row{
+      display: flex;
+      flex-wrap: nowrap;
+      .day-col, .hours-col{
+        margin: 3px 0;
+      }
+      .day-col{
+        width: 25%;
+      }
+      .hours-col{
+        width: 75%;
+      }
+    }
+  }
+}
+
 //Load more button
 .load-more{
   display: flex;

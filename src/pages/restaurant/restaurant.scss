@@ -51,10 +51,14 @@ page-restaurant{
     }
   }
   .resto-details{
-    button:first-of-type{
+    border-bottom: none !important;
+    button:not(:last-child){
       .item-inner{
         border-bottom: 1px solid #ccc !important;
       }
+    }
+    button:last-child{
+      border-bottom: none !important;
     }
     ion-label{
       font-size: 14px;
