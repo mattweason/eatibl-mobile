@@ -136,13 +136,13 @@
           <ion-row>
             <ion-col>
               <ion-list class="resto-details">
-                <button ion-item (click)="callNumber('+1-647-989-0355')">
+                <button ion-item (click)="callNumber(restaurant.phone)">
                   <ion-icon name="call" item-start color="medium"></ion-icon>
                   <ion-label>Phone: <span>{{restaurant.phone}}</span></ion-label>
                 </button>
-                <button ion-item (click)="openMenu('http://beiruti.ca/restaurantmenu')">
+                <button ion-item (click)="openMenu(restaurant.menu)">
                   <ion-icon name="restaurant" item-start color="medium"></ion-icon>
-                  <ion-label>Menu: <span>www.someplace.com/menu</span></ion-label>
+                  <ion-label>Menu: <span>{{restaurant.menu}}</span></ion-label>
                 </button>
                 <button ion-item (click)="openHours()">
                   <ion-icon name="time" item-start color="medium"></ion-icon>

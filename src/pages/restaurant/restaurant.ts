@@ -452,7 +452,12 @@ export class RestaurantPage implements OnInit {
   }
 
   openMenu(link){
-    this.iab.create(link, '_self', 'toolbarcolor=#d8354d');
+    var target = '_self',
+        ext = link.split(/\#|\?/)[0].split('.').pop().trim();
+
+    if(ext == 'pdf')
+      target = '_system';
+    this.iab.create(link, target, 'toolbarcolor=#d8354d');
   }
 
   openHours(){
