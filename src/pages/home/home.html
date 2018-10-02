@@ -5,7 +5,7 @@
     </button>
     <ion-title><div class="nearby-wrapper"><img src="assets/imgs/logo-header.svg"></div></ion-title>
     <ion-buttons end>
-      <button ion-button icon-start large [disabled]="togglingView || loadingRestaurants" (touchend)="toggleView()"><ion-icon *ngIf="view == 'list'" name="map"></ion-icon><ion-icon *ngIf="view == 'map'" name="list"></ion-icon><span *ngIf="view == 'list'">Map</span><span *ngIf="view == 'map'">List</span></button>
+      <button ion-button icon-start large [disabled]="togglingView || loadingRestaurants" (tap)="toggleView()"><ion-icon *ngIf="view == 'list'" name="map"></ion-icon><ion-icon *ngIf="view == 'map'" name="list"></ion-icon><span *ngIf="view == 'list'">Map</span><span *ngIf="view == 'map'">List</span></button>
     <!--<button ion-button clear class="options-button" (click)="toggleToolbar()">-->
         <!--<span *ngIf="showToolbar">Hide</span>-->
         <!--<span *ngIf="!showToolbar">Show</span>-->

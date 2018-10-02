@@ -216,7 +216,7 @@ restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
 }
 
 .loading-overlay{
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 100%;
   z-index: 10;
