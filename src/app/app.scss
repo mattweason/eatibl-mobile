@@ -432,6 +432,70 @@ ion-tabs{
   }
 }
 
+//Review Modal
+.review-modal {
+  ion-backdrop {
+    visibility: visible;
+  }
+  .modal-wrapper {
+    width: 80%;
+    height: 75%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto auto;
+    position: absolute;
+    border-radius: 13px;
+    overflow: hidden;
+
+    .review-header{
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .review-author{
+        display: flex;
+        align-items: center;
+        img{
+          height: 35px;
+          width: 35px;
+          margin-right: 5px;
+        }
+        p{
+          font-weight: 700;
+        }
+      }
+      .rating{
+        font-size: 18px;
+        color: color($colors, primary);
+        span{
+          font-size: 18px;
+          &.na{
+            font-size: 16px;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+    .review-body{
+      p{
+        margin: 0;
+        line-height: 20px;
+      }
+      overflow: hidden;
+    }
+    .review-footer{
+      padding: 0 12px;
+      .review-date{
+        font-size: 12px;
+        color: color($colors, medium);
+      }
+    }
+
+  }
+}
+
 //Sign Up Prompt
 #signUpPrompt {
   ion-card-content{

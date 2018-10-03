@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { IonicPage, NavController, NavParams, Slides, Events, Select, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, Events, Select, AlertController, ModalController } from 'ionic-angular';
 import { DatePicker } from '@ionic-native/date-picker';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
@@ -81,7 +81,8 @@ export class RestaurantPage implements OnInit {
     private log: ActivityLoggerProvider,
     private storage: Storage,
     private iab: InAppBrowser,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    public modalCtrl: ModalController
   ) {
 
     this.restaurant = JSON.parse(navParams.get('restaurant'));
@@ -477,5 +478,10 @@ export class RestaurantPage implements OnInit {
       cssClass: 'hours-alert'
     });
     alert.present();
+  }
+
+  expandReview(review){
+    let reviewModal = this.modalCtrl.create('ReviewModalPage', { review: review }, { cssClass: 'review-modal'});
+    reviewModal.present();
   }
 }

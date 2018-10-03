@@ -1,7 +1,6 @@
 page-restaurant{
   ion-card{
     position: relative;
-    margin-bottom: 60px !important;
     .distance{
       z-index: 10000;
       position: absolute;
@@ -65,6 +64,45 @@ page-restaurant{
       font-weight: 500;
       span{
         font-weight: 300;
+      }
+    }
+  }
+  .review {
+    &:not(:nth-last-child(1)){
+      .input-wrapper {
+        border-bottom: 1px solid #ccc !important;
+      }
+    }
+    .review-header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .review-author{
+        display: flex;
+        align-items: center;
+        img{
+          height: 35px;
+          width: 35px;
+          margin-right: 5px;
+        }
+        p{
+          font-weight: 700;
+        }
+      }
+    }
+    .review-body{
+      padding-top: 12px;
+      p{
+        margin: 0;
+        line-height: 20px;
+      }
+      overflow: hidden;
+    }
+    .review-footer{
+      padding-top: 12px;
+      .review-date{
+        font-size: 12px;
+        color: color($colors, medium);
       }
     }
   }

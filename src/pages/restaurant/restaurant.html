@@ -114,13 +114,16 @@
           <ion-segment-button value="about">
             About
           </ion-segment-button>
+          <ion-segment-button value="reviews">
+            Reviews
+          </ion-segment-button>
           <ion-segment-button *ngIf="restaurant.recommendedItems.length" value="menu">
             Recommended
           </ion-segment-button>
         </ion-segment>
       </div>
       <div [ngSwitch]="type">
-        <ion-grid class="border-bottom" *ngSwitchCase="'about'">
+        <ion-grid *ngSwitchCase="'about'">
           <ion-row *ngIf="restaurant.discountDetails">
             <ion-col>
               <p class="header">Discount Details</p>
@@ -133,7 +136,7 @@
               <p>{{restaurant?.description}}</p>
             </ion-col>
           </ion-row>
-          <ion-row>
+          <ion-row class="border-bottom">
             <ion-col>
               <ion-list class="resto-details">
                 <button ion-item (click)="callNumber(restaurant.phone)">
@@ -152,6 +155,51 @@
               </ion-list>
             </ion-col>
           </ion-row>
+          <ion-row class="border-bottom no-padding-row mapRow">
+            <figure class="map-figure">
+              <img class="map" src="{{mapUrl}}" alt="">
+            </figure>
+          </ion-row>
+          <ion-row class="mapRow">
+            <ion-col col-8>
+              <div class="address">
+                <p>{{restaurant?.address}}</p>
+                <p>{{restaurant?.city}}, {{restaurant?.state}}, {{restaurant?.zipcode}}</p>
+              </div>
+            </ion-col>
+            <ion-col col-4 class="navigate-button">
+              <div>
+                <button (tap)="openMaps()" ion-fab color="secondary">
+                  <ion-icon name="navigate"></ion-icon>
+                </button>
+                <p>Directions</p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <ion-grid class="border-bottom reviews" *ngSwitchCase="'reviews'">
+          <div class="review" *ngFor="let review of restaurant.rating.reviews">
+            <button *ngIf="review.rating > 2" ion-item text-wrap (tap)="expandReview(review)">
+              <ion-row>
+                <ion-col>
+                  <div class="review-header">
+                    <div class="review-author">
+                      <img src="{{review?.profile_photo_url}}">
+                      <p>{{review.author_name}}</p>
+                    </div>
+                    <p class="rating"><ion-icon name="star"></ion-icon>{{review.rating}}</p>
+                  </div>
+                  <div class="review-body">
+                    <p>{{(review.text.length > 160)? (review.text | slice: 0 : 160)+'...':(review.text) }}</p>
+                  </div>
+                  <div class="review-footer">
+                    <p class="review-date"><span class="bold">Review on: </span>{{review.time * 1000 | date:'mediumDate'}}</p>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </button>
+          </div>
         </ion-grid>
 
         <ion-grid class="border-bottom" *ngSwitchCase="'menu'">
@@ -168,29 +216,6 @@
           </ion-row>
         </ion-grid>
       </div>
-      <ion-grid>
-        <ion-row class="border-bottom no-padding-row mapRow">
-          <figure class="map-figure">
-            <img class="map" src="{{mapUrl}}" alt="">
-          </figure>
-        </ion-row>
-        <ion-row class="mapRow">
-          <ion-col col-8>
-            <div class="address">
-              <p>{{restaurant?.address}}</p>
-              <p>{{restaurant?.city}}, {{restaurant?.state}}, {{restaurant?.zipcode}}</p>
-            </div>
-          </ion-col>
-          <ion-col col-4 class="navigate-button">
-            <div>
-              <button (tap)="openMaps()" ion-fab color="secondary">
-                <ion-icon name="navigate"></ion-icon>
-              </button>
-              <p>Directions</p>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
     </ion-card-content>
   </ion-card>
 

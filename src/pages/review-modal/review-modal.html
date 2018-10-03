@@ -1,0 +1,27 @@
+<!--
+  Generated template for the ReviewModalPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <div class="review-header">
+    <div class="review-author">
+      <img src="{{review.profile_photo_url}}">
+      <p>{{review.author_name}}</p>
+    </div>
+    <p class="rating"><ion-icon name="star"></ion-icon>{{review.rating}}</p>
+  </div>
+</ion-header>
+
+<ion-content padding>
+      <div class="review-body">
+        <p>{{review.text}}</p>
+      </div>
+</ion-content>
+
+<ion-footer>
+  <div class="review-footer">
+    <p class="review-date"><span class="bold">Review on: </span>{{review.time * 1000 | date:'mediumDate'}}</p>
+  </div>
+</ion-footer>
