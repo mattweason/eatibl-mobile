@@ -179,8 +179,8 @@
         </ion-grid>
 
         <ion-grid class="border-bottom reviews" *ngSwitchCase="'reviews'">
-          <div class="review" *ngFor="let review of restaurant.rating.reviews">
-            <button *ngIf="review.rating > 2" ion-item text-wrap (tap)="expandReview(review)">
+          <div class="review" *ngFor="let review of reviews">
+            <button ion-item text-wrap (tap)="expandReview(review)">
               <ion-row>
                 <ion-col>
                   <div class="review-header">

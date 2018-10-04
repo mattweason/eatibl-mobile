@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
 /**
  * Generated class for the ReviewModalPage page.
@@ -17,7 +17,9 @@ export class ReviewModalPage {
 
   constructor(
     public navCtrl: NavController,
-    public navParams: NavParams)
+    public navParams: NavParams,
+    public viewCtrl: ViewController
+  )
   {
     this.review = this.navParams.get('review');
   }
@@ -26,6 +28,10 @@ export class ReviewModalPage {
 
   ionViewDidLoad() {
     console.log(this.review)
+  }
+
+  dismiss() {
+    this.viewCtrl.dismiss();
   }
 
 }

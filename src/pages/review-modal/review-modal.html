@@ -21,7 +21,12 @@
 </ion-content>
 
 <ion-footer>
-  <div class="review-footer">
-    <p class="review-date"><span class="bold">Review on: </span>{{review.time * 1000 | date:'mediumDate'}}</p>
-  </div>
+  <ion-toolbar>
+    <div class="review-footer">
+      <p class="review-date"><span class="bold">Review on: </span>{{review.time * 1000 | date:'mediumDate'}}</p>
+    </div>
+    <ion-buttons right>
+      <button ion-button color="secondary" (tap)="dismiss()">Close</button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-footer>

@@ -65,6 +65,7 @@ export class RestaurantPage implements OnInit {
   location: any;
   distance: any;
   bookText: string;
+  reviews = [] as any;
 
   mapUrl: string;
 
@@ -116,6 +117,7 @@ export class RestaurantPage implements OnInit {
 
     this.processBusinessHours();
     this.processTimeslots();
+    this.processReviews();
     this.isOpen();
     this.buildMap();
 
@@ -161,6 +163,20 @@ export class RestaurantPage implements OnInit {
   }
 
   ngOnInit(){
+  }
+
+  //Remove all but one 1 star review
+  processReviews(){
+    var haveReview = false; //True when we get one 1 star review
+    if(this.restaurant.rating)
+      if(this.restaurant.rating.reviews)
+        for(var i = 0; i < this.restaurant.rating.reviews.length; i++){
+          if(this.restaurant.rating.reviews[i].rating == 1 && !haveReview) {
+            this.reviews.push(this.restaurant.rating.reviews[i]);
+            haveReview = true;
+          } else
+            this.reviews.push(this.restaurant.rating.reviews[i]);
+        }
   }
 
   //To establish open now or closed in view
