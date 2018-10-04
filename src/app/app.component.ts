@@ -112,15 +112,15 @@ export class MyApp {
         //   smallIcon: "res://my_notification_icon"
         // });
 
-        this.localNotifications.schedule({
-          id: 1,
-          trigger: {at: new Date(new Date().getTime() + 15)},
-          text: "We're getting new deals everyday, come check out our latest offerings!",
-          title: "We've missed you...",
-          icon: 'res://notification_app_icon',
-          smallIcon: "res://my_notification_icon",
-          color: "#d8354d"
-        });
+        // this.localNotifications.schedule({
+        //   id: 1,
+        //   trigger: {at: new Date(new Date().getTime() + 15)},
+        //   text: "We're getting new deals everyday, come check out our latest offerings!",
+        //   title: "We've missed you...",
+        //   icon: 'res://notification_app_icon',
+        //   smallIcon: "res://my_notification_icon",
+        //   color: "#d8354d"
+        // });
 
         this.diagnostic.getLocationAuthorizationStatus().then((status) => {
           if(status == 'not_determined') //track cases where users are required to provide permission
