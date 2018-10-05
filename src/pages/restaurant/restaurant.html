@@ -85,7 +85,7 @@
               <ion-slide *ngFor="let timeslot of timeslots">
                 <div class="timeslot">
                   <p class="timeslot-time" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id && activeTimeslot?.quantity >= people}">{{functions.formatClockTime(timeslot.time, true)}}</p>
-                  <button ion-button color="primary" [disabled]="timeslot?.quantity == 0" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot)">-{{timeslot?.discount}}%<span class="sold-out" *ngIf="timeslot.quantity == 0"><span>SOLD</span><span>OUT</span></span><span class="sold-out" *ngIf="timeslot.quantity < people && timeslot.quantity != 0"><ion-icon name="people"></ion-icon></span></button>
+                  <button ion-button color="primary" [disabled]="timeslot?.quantity <= 0" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot)">-{{timeslot?.discount}}%<span class="sold-out" *ngIf="timeslot.quantity <= 0"><span>SOLD</span><span>OUT</span></span><span class="sold-out" *ngIf="timeslot.quantity < people && timeslot.quantity > 0"><ion-icon name="people"></ion-icon></span></button>
                 </div>
               </ion-slide>
               <ion-slide *ngFor="let fillerslot of fillerslots">

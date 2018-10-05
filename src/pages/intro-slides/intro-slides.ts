@@ -28,6 +28,7 @@ export class IntroSlidesPage {
   emailCapture: FormGroup;
   emailCaptured = false;
   haveEmail = false;
+  type: any;
 
   constructor(
     public navCtrl: NavController,
@@ -42,6 +43,8 @@ export class IntroSlidesPage {
     private API: ApiServiceProvider,
     private log: ActivityLoggerProvider
   ) {
+    //Two types, introduction slides and how it works slides
+    this.type = navParams.get('type');
 
     //Form controls and validation
     this.emailCapture = this.formBuilder.group({

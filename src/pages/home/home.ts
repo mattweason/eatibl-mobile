@@ -8,6 +8,7 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
+import * as decode from 'jwt-decode';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
@@ -56,6 +57,8 @@ export class HomePage {
   loadingRestaurants = true;
   loadingNextBatch = false; //Used for the show more restaurants button loading spinner
   loadingGeneral = false; //For general loading overlay
+  user: any;
+  userHasBookings = false;
 
   map: GoogleMap;
 
@@ -101,10 +104,35 @@ export class HomePage {
     });
   }
 
+  ionViewDidEnter(){
+    //Call geolocation from app.component
+    this.events.publish('view:map', (this.view == 'map')); //Pop help button into correct position
+    this.events.publish('get:geolocation', Date.now());
+    this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
+
+    this.storage.get('eatiblUser').then((val) => {
+      if(val){
+        this.user = decode(val);
+        if(this.user.phone.length)
+          this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+            if(data)
+              this.userHasBookings = true;
+          });
+      }
+      else{
+        this.user = {}; //If no user exists in the localstorage, clear the user object
+      }
+    });
+  }
+
+  ionViewWillLeave(){
+    this.events.publish('view:map', false); //Pop help button into correct position
+  }
+
   //Open intro slides
-  presentIntroModal(){
+  presentIntroModal(type){
     this.log.sendEvent('Intro Slides', 'Home', 'Default Intro slides for first time users');
-    const introModal = this.modal.create('IntroSlidesPage');
+    const introModal = this.modal.create('IntroSlidesPage', {type: type});
     introModal.onDidDismiss(() => {
       this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
       this.storage.remove('eatiblShowSlides');
@@ -119,7 +147,7 @@ export class HomePage {
     //Here is where we need to check if we need to show the intro slides or not
     this.storage.get('eatiblShowSlides').then((val) => {
       if(val) //If custom location, show card about custom location
-        this.presentIntroModal();
+        this.presentIntroModal('intro');
     });
 
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
@@ -410,17 +438,6 @@ export class HomePage {
 
   topPickSlider(direction){
     this.log.sendEvent('Browse through Top Picks', 'Home', 'User went: '+direction);
-  }
-
-  ionViewDidEnter(){
-    //Call geolocation from app.component
-    this.events.publish('view:map', (this.view == 'map')); //Pop help button into correct position
-    this.events.publish('get:geolocation', Date.now());
-    this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
-  }
-
-  ionViewWillLeave(){
-    this.events.publish('view:map', false); //Pop help button into correct position
   }
 
   //Toggles between list and map view

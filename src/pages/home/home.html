@@ -51,18 +51,25 @@
         <p>Not using your device's location.</p>
       </ion-card-content>
     </ion-card>
-    <ion-grid class="section-header top-picks">
+    <!--<ion-grid class="section-header top-picks">-->
+      <!--<ion-row>-->
+        <!--<ion-col>-->
+          <!--<h4>Today's Top 5 Picks</h4>-->
+        <!--</ion-col>-->
+      <!--</ion-row>-->
+    <!--</ion-grid>-->
+    <!--<ion-slides class="top-pick-slider" spaceBetween="-15" pager="true" (ionSlideNextStart)="topPickSlider('next')" (ionSlidePrevStart)="topPickSlider('previous')">-->
+      <!--<ion-slide class="top-pick-slide" *ngFor="let restaurant of restaurantPicks">-->
+        <!--<restaurant-card [cardType]="'top-pick'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>-->
+      <!--</ion-slide>-->
+    <!--</ion-slides>-->
+    <ion-grid *ngIf="!userHasBookings">
       <ion-row>
         <ion-col>
-          <h4>Today's Top 5 Picks</h4>
+          <button ion-button color="secondary" (tap)="presentIntroModal('howTo')">How Does Eatibl Work?</button>
         </ion-col>
       </ion-row>
     </ion-grid>
-    <ion-slides class="top-pick-slider" spaceBetween="-15" pager="true" (ionSlideNextStart)="topPickSlider('next')" (ionSlidePrevStart)="topPickSlider('previous')">
-      <ion-slide class="top-pick-slide" *ngFor="let restaurant of restaurantPicks">
-        <restaurant-card [cardType]="'top-pick'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
-      </ion-slide>
-    </ion-slides>
     <ion-grid class="section-header deals-nearby">
       <ion-row>
         <ion-col>

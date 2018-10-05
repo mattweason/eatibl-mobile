@@ -5,9 +5,9 @@
   Ionic pages and navigation.
 -->
 <ion-content>
-  <button *ngIf="currentIndex > 0" class="close-button" (tap)="closeModal('x')"><ion-icon name="close"></ion-icon></button>
+  <button *ngIf="type == 'howTo' || currentIndex > 0" class="close-button" (tap)="closeModal('x')"><ion-icon name="close"></ion-icon></button>
   <ion-slides paginationType="bullets" pager="true" (ionSlideNextStart)="slideChanged()" (ionSlidePrevStart)="slideChanged()">
-    <ion-slide class="intro-slide">
+    <ion-slide *ngIf="type == 'intro'" class="intro-slide">
       <div class="logo-area">
         <img src="assets/imgs/welcome.png">
       </div>
@@ -41,8 +41,17 @@
         <img src="assets/imgs/intro-slide-1.png">
       </div>
       <div class="info-area">
-        <h2>Get Started</h2>
+        <h2>Getting Started</h2>
         <p>Browse through 200+ restaurants and check out their time-based discounts (ranging from 10% - 50% off).</p>
+      </div>
+    </ion-slide>
+    <ion-slide class="screenshot-slide">
+      <div class="screenshot-area">
+        <img src="assets/imgs/intro-slide-1.png">
+      </div>
+      <div class="info-area">
+        <h2>Weekly Schedule</h2>
+        <p>The discounts are on a weekly schedule with limited quantities, so if a discount is sold out check the same time next week!</p>
       </div>
     </ion-slide>
     <ion-slide class="screenshot-slide">

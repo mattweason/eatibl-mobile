@@ -130,8 +130,8 @@ export class SupportModalPage {
   }
 
   //Open the intro slides
-  viewIntro(){
-    const introModal = this.modal.create('IntroSlidesPage');
+  viewIntro(type){
+    const introModal = this.modal.create('IntroSlidesPage', {type: type});
     this.log.sendEvent('Intro slides', 'FAQ', 'Pressed Intro slides button from within Modal');
     introModal.onDidDismiss(() => {});
     introModal.present();
