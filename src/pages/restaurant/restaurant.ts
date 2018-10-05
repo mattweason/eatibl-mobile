@@ -464,11 +464,13 @@ export class RestaurantPage implements OnInit {
   }
 
   callNumber(number){
+    this.log.sendEvent('Restaurant Phone Number Clicked', 'Restaurant', '');
     number = encodeURIComponent(number);
     window.location.href = "tel:"+number;
   }
 
   openMenu(link){
+    this.log.sendEvent('Restaurant Menu Opened', 'Restaurant', '');
     var target = '_self',
         ext = link.split(/\#|\?/)[0].split('.').pop().trim();
 
@@ -478,6 +480,7 @@ export class RestaurantPage implements OnInit {
   }
 
   openHours(){
+    this.log.sendEvent('Business Hours Expanded', 'Restaurant', '');
     var message = '';
     for (var i = 0; i < this.businessHours.length; i++){
       if(this.businessHours[i][0] == this.businessHours[i][1])
@@ -497,6 +500,7 @@ export class RestaurantPage implements OnInit {
   }
 
   expandReview(review){
+    this.log.sendEvent('Review Expanded', 'Restaurant', JSON.stringify(review));
     let reviewModal = this.modalCtrl.create('ReviewModalPage', { review: review }, { cssClass: 'review-modal'});
     reviewModal.present();
   }

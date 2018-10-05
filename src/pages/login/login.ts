@@ -166,6 +166,7 @@ export class LoginPage {
 
   //Facebook login
   loginFacebook(){
+    this.log.sendEvent('Facebook Login Initiated', 'Login', '');
     this.fb.login(['public_profile', 'email'])
       .then( (res: FacebookLoginResponse) => {
         // The connection was successful
@@ -177,6 +178,7 @@ export class LoginPage {
 
           // Get user infos from the API
           this.fb.api("/me?fields=name,email", []).then((user) => {
+            this.log.sendEvent('Facebook API Call Successful', 'Login', JSON.stringify(user));
 
             //Add device id to user object
             user['deviceId'] = this.device.uuid;
@@ -186,6 +188,7 @@ export class LoginPage {
               this.storage.set('eatiblFBToken',fb_token);
               this.events.publish('user:statuschanged');
               this.events.publish('email:captured');
+              this.log.sendEvent('Facebook Login Successful', 'Login', JSON.stringify(response));
               this.navCtrl.pop();
             });
 

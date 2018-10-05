@@ -128,6 +128,7 @@ export class IntroSlidesPage {
 
   //Facebook login
   loginFacebook(){
+    this.log.sendEvent('Facebook Login Initiated', 'Intro Slides Modal', '');
     this.fb.login(['public_profile', 'email'])
       .then( (res: FacebookLoginResponse) => {
         // The connection was successful
@@ -139,6 +140,7 @@ export class IntroSlidesPage {
 
           // Get user infos from the API
           this.fb.api("/me?fields=name,email", []).then((user) => {
+            this.log.sendEvent('Facebook API Call Successful', 'Intro Slides Modal', JSON.stringify(user));
 
             //Add device id to user object
             user['deviceId'] = this.device.uuid;
@@ -148,6 +150,7 @@ export class IntroSlidesPage {
               this.storage.set('eatiblFBToken',fb_token);
               this.events.publish('user:statuschanged');
               this.events.publish('email:captured');
+              this.log.sendEvent('Facebook Login Successful', 'Intro Slides Modal', JSON.stringify(response));
               this.nextSlide();
               this.haveEmail = true;
             });

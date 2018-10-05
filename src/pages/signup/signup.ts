@@ -276,6 +276,7 @@ export class SignupPage {
 
   //Facebook login
   loginFacebook(){
+    this.log.sendEvent('Facebook Login Initiated', 'Signup', '');
     this.fb.login(['public_profile', 'email'])
       .then( (res: FacebookLoginResponse) => {
         // The connection was successful
@@ -287,6 +288,7 @@ export class SignupPage {
 
           // Get user infos from the API
           this.fb.api("/me?fields=name,email", []).then((user) => {
+            this.log.sendEvent('Facebook API Call Successful', 'Signup', JSON.stringify(user));
 
             //Add device id to user object
             user['deviceId'] = this.device.uuid;
@@ -296,6 +298,7 @@ export class SignupPage {
               this.storage.set('eatiblFBToken',fb_token);
               this.events.publish('user:statuschanged');
               this.events.publish('email:captured');
+              this.log.sendEvent('Facebook Login Successful', 'Signup', JSON.stringify(response));
               this.navCtrl.pop();
             });
 
