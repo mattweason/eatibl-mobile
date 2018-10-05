@@ -108,15 +108,6 @@ export class MyApp {
         //   trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()},
         //   text: "We're getting new deals everyday, come check out our latest offerings!",
         //   title: "We've missed you...",
-        //   icon: 'https://eatibl.com/assets/images/notification-icon.png',
-        //   smallIcon: "res://my_notification_icon"
-        // });
-
-        // this.localNotifications.schedule({
-        //   id: 1,
-        //   trigger: {at: new Date(new Date().getTime() + 15)},
-        //   text: "We're getting new deals everyday, come check out our latest offerings!",
-        //   title: "We've missed you...",
         //   icon: 'res://notification_app_icon',
         //   smallIcon: "res://my_notification_icon",
         //   color: "#d8354d"
