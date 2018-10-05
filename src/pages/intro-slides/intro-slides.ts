@@ -96,9 +96,13 @@ export class IntroSlidesPage {
 
   submitEmail(){
     this.submitted = true;
+    var postObj = {
+      email: this.emailCapture.value.email,
+      deviceId: this.device.uuid
+    }
     if(this.emailCapture.valid) {
       //Run the check to see if this user has been verified
-      this.API.makePost('register/emailOnly', this.emailCapture.value).subscribe(res => {
+      this.API.makePost('register/emailOnly', postObj).subscribe(res => {
         if(res['message'] == 'success' || res['message'] == 'existing') {
           this.log.sendEvent('Email Capture: ' +res['message'], 'Intro Slides Modal', JSON.stringify(this.emailCapture.value));
           this.emailCaptured = true;
