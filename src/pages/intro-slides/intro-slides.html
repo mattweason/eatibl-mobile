@@ -14,17 +14,18 @@
       <div class="intro-slide-liner">
         <p>Use Eatibl to make discounted bookings for your next meal!</p>
         <div class="email-submit" *ngIf="!haveEmail">
-          <span class="email-submit-header">Keep up with the latest deals!</span>
-          <form [formGroup]="emailCapture" (ngSubmit)="submitEmail()">
-            <div class="email-submit-liner">
-                <ion-input class="ios-input-padding" [formControl]="emailCapture.controls['email']" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>
-                <button *ngIf="!emailCaptured" ion-button color="secondary" type="submit">Submit</button>
-                <button *ngIf="emailCaptured" ion-button color="tertiary" type="button">Success!</button>
-            </div>
-            <div class="form-error" *ngIf="((emailCapture.controls.email.hasError('email') || emailCapture.controls.email.hasError('required')) && submitted)">
-              <span>Please enter a valid email.</span>
-            </div>
-          </form>
+          <span class="email-submit-header">Sign Up to Continue</span>
+          <button ion-button block color="primary" icon-start (tap)="signup()">Sign Up with Email</button>
+          <!--<form [formGroup]="emailCapture" (ngSubmit)="submitEmail()">-->
+            <!--<div class="email-submit-liner">-->
+                <!--<ion-input class="ios-input-padding" [formControl]="emailCapture.controls['email']" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>-->
+                <!--<button *ngIf="!emailCaptured" ion-button color="secondary" type="submit">Submit</button>-->
+                <!--<button *ngIf="emailCaptured" ion-button color="tertiary" type="button">Success!</button>-->
+            <!--</div>-->
+            <!--<div class="form-error" *ngIf="((emailCapture.controls.email.hasError('email') || emailCapture.controls.email.hasError('required')) && submitted)">-->
+              <!--<span>Please enter a valid email.</span>-->
+            <!--</div>-->
+          <!--</form>-->
           <div class="social-login">
             <div class="separator">
               <span class="line"></span>
@@ -96,7 +97,7 @@
         <button [disabled]="currentIndex == 0" ion-button color="secondary" icon-start (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon>Back</button>
       </ion-buttons>
       <ion-buttons right>
-        <button [disabled]="currentIndex == 4" ion-button color="secondary" icon-end (tap)="nextSlide()"><span *ngIf="firstLoad">Skip</span><span *ngIf="!firstLoad">Next</span><ion-icon name="arrow-forward"></ion-icon></button>
+        <button [disabled]="currentIndex == 4 || !allowSwiping" ion-button color="secondary" icon-end (tap)="nextSlide()">Next<ion-icon name="arrow-forward"></ion-icon></button>
       </ion-buttons>
     </ion-toolbar>
   </ion-footer>

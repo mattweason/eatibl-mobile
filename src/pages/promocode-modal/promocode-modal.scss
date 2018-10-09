@@ -1,0 +1,21 @@
+page-promocode-modal {
+  .promocode-area{
+    display: flex;
+    ion-input{
+      height: 35px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      input{
+        height: 100%;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
+  }
+  .form-error{
+    margin-left: 8px;
+    margin-top: 6px;
+    text-align: center;
+    color: color($colors, danger);
+  }
+}

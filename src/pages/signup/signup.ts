@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, AlertController, Events, ModalController} from 'ionic-angular';
+import {IonicPage, NavController, AlertController, Events, ModalController, NavParams} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
@@ -28,6 +28,8 @@ export class SignupPage {
   user: any;
   postObject= {} as any;
   promoCode = {} as any;
+  intro = false;
+  callback: any;
 
   constructor(
     public navCtrl: NavController,
@@ -39,7 +41,8 @@ export class SignupPage {
     private fb: Facebook,
     public events: Events,
     private modal: ModalController,
-    private log: ActivityLoggerProvider
+    private log: ActivityLoggerProvider,
+    private navParams: NavParams
   ) {
 
     //Form controls and validation
@@ -259,6 +262,7 @@ export class SignupPage {
     });
     alert.present();
     alert.onDidDismiss(() => {
+      this.events.publish('newuser:signedup');
       this.navCtrl.pop();
     });
   }
@@ -321,6 +325,14 @@ export class SignupPage {
         this.log.sendErrorEvent('Facebook Login', 'Signup', JSON.stringify(e), 'Failed to log in to facebook');
         console.log('Error logging into Facebook', e);
       });
+  }
+
+  login(){
+    this.log.sendEvent('Login: Initiated', 'Sign Up', 'User pressed login button');
+    this.navCtrl.push('LoginPage').then(() => {
+      var index = this.navCtrl.getActive().index;
+      this.navCtrl.remove(index-1);
+    });
   }
 
 }

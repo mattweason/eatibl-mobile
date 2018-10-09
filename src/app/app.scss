@@ -402,6 +402,10 @@ ion-tabs{
   .ios-input-padding{ //add padding-left to inputs with borders on ios
     padding-left: 12px;
   }
+  .sold-out{ //Make sure sold out and over capacity timeslot underlays are centered
+    top: 0;
+    left: 0;
+  }
 }
 .platform-android{
   .help-tab{ //Support fab
@@ -494,6 +498,26 @@ ion-tabs{
       }
     }
 
+  }
+}
+
+//Promo Code Modal
+.promocode-modal {
+  ion-backdrop {
+    visibility: visible;
+  }
+  .modal-wrapper {
+    width: 80%;
+    height: auto;
+    max-height: 200px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto auto;
+    position: absolute;
+    border-radius: 13px;
+    overflow: hidden;
   }
 }
 

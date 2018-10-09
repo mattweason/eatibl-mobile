@@ -6,6 +6,7 @@ import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ApiServiceProvider} from "../../providers/api-service/api-service";
+import * as decode from 'jwt-decode';
 
 /**
  * Generated class for the IntroSlidesPage page.
@@ -29,6 +30,8 @@ export class IntroSlidesPage {
   emailCaptured = false;
   haveEmail = false;
   type: any;
+  newUser = false;
+  allowSwiping = true;
 
   constructor(
     public navCtrl: NavController,
@@ -55,15 +58,36 @@ export class IntroSlidesPage {
         ])
       ]
     });
+
+    //Listen to when a new user has signed up on the sign up page
+    events.subscribe('newuser:signedup', () => {
+      this.nextSlide();
+      this.slides.lockSwipes(false);
+      this.allowSwiping = true;
+      this.haveEmail = true;
+    });
+
+    //Listen to when a new user has signed up on the sign up page
+    events.subscribe('olduser:loggedin', () => {
+      this.nextSlide();
+      this.slides.lockSwipes(false);
+      this.allowSwiping = true;
+      this.haveEmail = true;
+    });
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad IntroSlidesPage');
     this.storage.get('eatiblUser').then((val) => {
-      console.log(val)
       if(val)
         this.haveEmail = true;
     });
+
+    if(this.navParams.get('newUser')){ //If runtime open, don't allow swiping
+      this.slides.lockSwipes(true);
+      this.allowSwiping = false;
+      console.log(this.allowSwiping)
+    }
   }
 
   slideChanged(){
@@ -94,32 +118,37 @@ export class IntroSlidesPage {
     this.viewCtrl.dismiss();
   }
 
-  submitEmail(){
-    this.submitted = true;
-    var postObj = {
-      email: this.emailCapture.value.email,
-      deviceId: this.device.uuid
-    }
-    if(this.emailCapture.valid) {
-      //Run the check to see if this user has been verified
-      this.API.makePost('register/emailOnly', postObj).subscribe(res => {
-        if(res['message'] == 'success' || res['message'] == 'existing') {
-          this.log.sendEvent('Email Capture: ' +res['message'], 'Intro Slides Modal', JSON.stringify(this.emailCapture.value));
-          this.emailCaptured = true;
-          var current = this;
-          setTimeout(function () {
-            current.events.publish('email:captured');
-            current.nextSlide();
-            current.haveEmail = true;
-            if(res['message'] == 'success')
-              current.storage.set('eatiblUser', res['token']);
-          }, 1000);
-        } else {
-          this.nextSlide();
-          this.log.sendEvent('Email Capture: Failed', 'Intro Slides Modal', '');
-        }
-      });
-    }
+  // submitEmail(){
+  //   this.submitted = true;
+  //   var postObj = {
+  //     email: this.emailCapture.value.email,
+  //     deviceId: this.device.uuid
+  //   }
+  //   if(this.emailCapture.valid) {
+  //     //Run the check to see if this user has been verified
+  //     this.API.makePost('register/emailOnly', postObj).subscribe(res => {
+  //       if(res['message'] == 'success' || res['message'] == 'existing') {
+  //         this.log.sendEvent('Email Capture: ' +res['message'], 'Intro Slides Modal', JSON.stringify(this.emailCapture.value));
+  //         this.emailCaptured = true;
+  //         var current = this;
+  //         setTimeout(function () {
+  //           current.events.publish('email:captured');
+  //           current.nextSlide();
+  //           current.haveEmail = true;
+  //           if(res['message'] == 'success')
+  //             current.storage.set('eatiblUser', res['token']);
+  //         }, 1000);
+  //       } else {
+  //         this.nextSlide();
+  //         this.log.sendEvent('Email Capture: Failed', 'Intro Slides Modal', '');
+  //       }
+  //     });
+  //   }
+  // }
+
+  signup(){
+    this.log.sendEvent('Signup Button Clicked', 'Intro Slides Modal', '');
+    this.navCtrl.push('SignupPage');
   }
 
   clearError(){
@@ -151,8 +180,15 @@ export class IntroSlidesPage {
               this.events.publish('user:statuschanged');
               this.events.publish('email:captured');
               this.log.sendEvent('Facebook Login Successful', 'Intro Slides Modal', JSON.stringify(response));
-              this.nextSlide();
-              this.haveEmail = true;
+
+              let promocodeModal = this.modal.create('PromocodeModalPage', { user: response }, { cssClass: 'promocode-modal'});
+              promocodeModal.onDidDismiss(() => {
+                this.slides.lockSwipes(false);
+                this.allowSwiping = true;
+                this.nextSlide();
+                this.haveEmail = true;
+              });
+              promocodeModal.present();
             });
 
             // => Open user session and redirect to the next page

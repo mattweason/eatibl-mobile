@@ -132,7 +132,7 @@ export class HomePage {
   //Open intro slides
   presentIntroModal(type){
     this.log.sendEvent('Intro Slides', 'Home', 'Default Intro slides for first time users');
-    const introModal = this.modal.create('IntroSlidesPage', {type: type});
+    const introModal = this.modal.create('IntroSlidesPage', {type: type, newUser: true});
     introModal.onDidDismiss(() => {
       this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
       this.storage.remove('eatiblShowSlides');

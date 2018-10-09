@@ -51,7 +51,7 @@
     </div>
     <button ion-button block color="secondary" type="submit">Confirm</button>
   </form>
-  <div class="social-login">
+  <div *ngIf="!intro" class="social-login">
     <div class="separator">
       <span class="line"></span>
       <span>OR</span>
@@ -60,5 +60,9 @@
     <button ion-button block color="facebook" icon-start (tap)="loginFacebook()"><ion-icon name="logo-facebook"></ion-icon>Sign Up with Facebook</button>
   </div>
   <p class="terms">By signing up, you agree to Eatibl's <span (tap)="openTermsModal()">Terms of Use and Privacy Policy.</span></p>
+  <div class="no-account">
+    <p>Already have an account?</p>
+    <button ion-button color="primary" small (click)="login()">Log In</button>
+  </div>
 </ion-content>
 
