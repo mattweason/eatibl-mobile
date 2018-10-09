@@ -4,6 +4,7 @@ import { ApiServiceProvider } from "../api-service/api-service";
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
+import { Mixpanel } from '@ionic-native/mixpanel';
 
 /*
   Generated class for the ActivityLoggerProvider provider.
@@ -19,6 +20,7 @@ export class ActivityLoggerProvider {
     public http: HttpClient,
     private API: ApiServiceProvider,
     private storage: Storage,
+    private mixpanel: Mixpanel,
     private device: Device
   ) {}
 
@@ -35,6 +37,7 @@ export class ActivityLoggerProvider {
         userId: this.userId,
         notes: notes
       }).subscribe(() => {});
+      this.mixpanel.track(event, {page: page, notes: notes})
     });
   }
 
@@ -52,6 +55,7 @@ export class ActivityLoggerProvider {
         notes: notes,
         restaurant_fid: restoId
       }).subscribe(() => {});
+      this.mixpanel.track(event, {page: page, notes: notes, restoId: restoId})
     });
   }
 
@@ -69,6 +73,7 @@ export class ActivityLoggerProvider {
         notes: notes,
         error: error
       }).subscribe(() => {});
+      this.mixpanel.track(task, {page: page, error: error, notes: notes})
     });
   }
 

@@ -24,6 +24,7 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Facebook } from '@ionic-native/facebook';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { Mixpanel } from '@ionic-native/mixpanel';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -69,6 +70,7 @@ import { ActivityLoggerProvider } from '../providers/activity-logger/activity-lo
     Contacts,
     SMS,
     InAppBrowser,
+    Mixpanel,
     LocalNotifications,
     Diagnostic,
     LocationAccuracy,

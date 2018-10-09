@@ -15,6 +15,7 @@ import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import * as moment from 'moment';
 import * as decode from 'jwt-decode';
 import { LocalNotifications } from '../../node_modules/@ionic-native/local-notifications';
+import { Mixpanel } from '@ionic-native/mixpanel';
 
 
 @Component({
@@ -62,7 +63,8 @@ export class MyApp {
     private log: ActivityLoggerProvider,
     private locationAccuracy: LocationAccuracy,
     public localNotifications: LocalNotifications,
-    public menuCtrl: MenuController
+    public menuCtrl: MenuController,
+    private mixpanel: Mixpanel
   ) {
 
     platform.ready().then(() => {
@@ -91,6 +93,15 @@ export class MyApp {
       //Only do native stuff in android or ios
       if (platform.is('cordova')){
         this.log.sendEvent('App Start', 'runTime', '');
+
+        //Init mixpanel
+        this.mixpanel.init('7b6185b1254ff128594ee76928b5847e')
+          .then((res) => {
+            this.log.sendEvent('Mixpanel Initialized', 'runTime', JSON.stringify(res));
+          })
+          .catch((err) => {
+            this.log.sendErrorEvent('Mixpanel Initialization Failed', 'runtime', JSON.stringify(err), '');
+          });
 
         // //Do action if we came into app via localNotification
         this.localNotifications.on('click').subscribe(notification => {

@@ -70,13 +70,13 @@
         <!--</ion-col>-->
       <!--</ion-row>-->
     <!--</ion-grid>-->
-    <ion-grid class="section-header deals-nearby">
-      <ion-row>
-        <ion-col>
-          <h4>Deals Nearby</h4>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <!--<ion-grid class="section-header deals-nearby">-->
+      <!--<ion-row>-->
+        <!--<ion-col>-->
+          <!--<h4>Deals Nearby</h4>-->
+        <!--</ion-col>-->
+      <!--</ion-row>-->
+    <!--</ion-grid>-->
     <ion-list>
       <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [index]="i" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
