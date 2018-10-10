@@ -1,8 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {
-  IonicPage, NavController, NavParams, Slides, ViewController, ModalController, Events,
-  Platform
-} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, Slides, ViewController, ModalController, Events, Platform} from 'ionic-angular';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { Device } from '@ionic-native/device';
@@ -36,6 +33,7 @@ export class IntroSlidesPage {
   type: any;
   newUser = false;
   allowSwiping = true;
+  userProfile: any = null;
 
   constructor(
     public navCtrl: NavController,

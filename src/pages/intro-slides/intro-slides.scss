@@ -141,5 +141,11 @@ page-intro-slides {
   }
   .social-login{
     width: 100%;
+    .google-login{
+      img{
+        height: 22px;
+        margin-right: 3px;
+      }
+    }
   }
 }
