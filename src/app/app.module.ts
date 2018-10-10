@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 //Native Plugins
 import { GoogleMaps } from '@ionic-native/google-maps';
+import { GooglePlus } from '@ionic-native/google-plus';
 import { DatePicker } from '@ionic-native/date-picker';
 import { Geolocation } from '@ionic-native/geolocation';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -55,6 +56,7 @@ import { ActivityLoggerProvider } from '../providers/activity-logger/activity-lo
     DatePicker,
     SplashScreen,
     GoogleMaps,
+    GooglePlus,
     Geolocation,
     LaunchNavigator,
     AndroidPermissions,

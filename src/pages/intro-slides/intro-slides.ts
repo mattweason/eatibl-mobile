@@ -1,12 +1,15 @@
 import {Component, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, Slides, ViewController, ModalController, Events} from 'ionic-angular';
+import {
+  IonicPage, NavController, NavParams, Slides, ViewController, ModalController, Events,
+  Platform
+} from 'ionic-angular';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ApiServiceProvider} from "../../providers/api-service/api-service";
-import * as decode from 'jwt-decode';
+import { GooglePlus } from '@ionic-native/google-plus';
 
 /**
  * Generated class for the IntroSlidesPage page.
@@ -23,6 +26,7 @@ import * as decode from 'jwt-decode';
 export class IntroSlidesPage {
   @ViewChild(Slides) slides: Slides;
 
+  private backButtonUnregister: any;
   currentIndex = 0;
   firstLoad = true;
   submitted = false;
@@ -38,12 +42,14 @@ export class IntroSlidesPage {
     public viewCtrl: ViewController,
     private modal: ModalController,
     private device: Device,
+    private platform: Platform,
     public events: Events,
     private fb: Facebook,
     public navParams: NavParams,
     private formBuilder: FormBuilder,
     private storage: Storage,
     private API: ApiServiceProvider,
+    private googlePlus: GooglePlus,
     private log: ActivityLoggerProvider
   ) {
     //Two types, introduction slides and how it works slides
@@ -86,8 +92,14 @@ export class IntroSlidesPage {
     if(this.navParams.get('newUser')){ //If runtime open, don't allow swiping
       this.slides.lockSwipes(true);
       this.allowSwiping = false;
-      console.log(this.allowSwiping)
+
+      //Disable back button dismiss on android
+      this.backButtonUnregister = this.platform.registerBackButtonAction(() => {});
     }
+  }
+
+  ionViewWillLeave(){
+    this.backButtonUnregister();
   }
 
   slideChanged(){
@@ -153,6 +165,22 @@ export class IntroSlidesPage {
 
   clearError(){
     this.submitted = false;
+  }
+
+  //Google Plus login
+  loginGoogle(){
+    console.log('login google')
+    this.log.sendEvent('Google Login Initiated', 'Intro Slides Modal', '');
+    this.googlePlus.login({
+      webClientId: '518520693304-r2vlho0nfei8obat0eui5g196oiav98r.apps.googleusercontent.com',
+      offline: true
+    }).then(res => {
+      console.log('anything')
+      console.log(res)
+    }).catch(err => {
+      console.log('wrong?')
+      console.log(err)
+    })
   }
 
   //Facebook login
