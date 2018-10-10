@@ -34,6 +34,7 @@ export class IntroSlidesPage {
   newUser = false;
   allowSwiping = true;
   userProfile: any = null;
+  testObject: any;
 
   constructor(
     public navCtrl: NavController,
@@ -173,8 +174,7 @@ export class IntroSlidesPage {
       webClientId: '518520693304-r2vlho0nfei8obat0eui5g196oiav98r.apps.googleusercontent.com',
       offline: true
     }).then(res => {
-      console.log('anything')
-      console.log(res)
+      this.testObject = JSON.stringify(res);
     }).catch(err => {
       console.log('wrong?')
       console.log(err)
