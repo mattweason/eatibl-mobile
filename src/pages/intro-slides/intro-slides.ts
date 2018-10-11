@@ -168,16 +168,31 @@ export class IntroSlidesPage {
 
   //Google Plus login
   loginGoogle(){
-    console.log('login google')
     this.log.sendEvent('Google Login Initiated', 'Intro Slides Modal', '');
     this.googlePlus.login({
       webClientId: '518520693304-r2vlho0nfei8obat0eui5g196oiav98r.apps.googleusercontent.com',
       offline: true
-    }).then(res => {
-      this.testObject = JSON.stringify(res);
+    }).then(user => {
+      //Add device id to user object
+      user['deviceId'] = this.device.uuid;
+
+      this.API.makePost('register/google', user).subscribe(response => {
+        this.storage.set('eatiblUser',response['token']);
+        this.events.publish('user:statuschanged');
+        this.events.publish('email:captured');
+        this.log.sendEvent('Google Login Successful', 'Intro Slides Modal', JSON.stringify(response));
+
+        let promocodeModal = this.modal.create('PromocodeModalPage', { user: response }, { cssClass: 'promocode-modal'});
+        promocodeModal.onDidDismiss(() => {
+          this.slides.lockSwipes(false);
+          this.allowSwiping = true;
+          this.nextSlide();
+          this.haveEmail = true;
+        });
+        promocodeModal.present();
+      });
     }).catch(err => {
-      console.log('wrong?')
-      console.log(err)
+      this.log.sendErrorEvent('Google Login', 'Intro Slides', JSON.stringify(err), 'Google login was unsuccessful');
     })
   }
 
