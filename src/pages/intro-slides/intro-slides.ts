@@ -35,6 +35,7 @@ export class IntroSlidesPage {
   allowSwiping = true;
   userProfile: any = null;
   testObject: any;
+  mobilePlatform: any;
 
   constructor(
     public navCtrl: NavController,
@@ -51,6 +52,12 @@ export class IntroSlidesPage {
     private googlePlus: GooglePlus,
     private log: ActivityLoggerProvider
   ) {
+    //What platform is this?
+    if(platform.is('ios'))
+      this.mobilePlatform = 'ios';
+    if(platform.is('android'))
+      this.mobilePlatform = 'android';
+
     //Two types, introduction slides and how it works slides
     this.type = navParams.get('type');
 
@@ -175,7 +182,6 @@ export class IntroSlidesPage {
     }).then(user => {
       //Add device id to user object
       user['deviceId'] = this.device.uuid;
-
       this.API.makePost('register/google', user).subscribe(response => {
         this.storage.set('eatiblUser',response['token']);
         this.events.publish('user:statuschanged');
