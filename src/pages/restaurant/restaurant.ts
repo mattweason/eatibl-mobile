@@ -172,9 +172,9 @@ export class RestaurantPage implements OnInit {
       if(this.restaurant.rating.reviews)
         for(var i = 0; i < this.restaurant.rating.reviews.length; i++){
           if(this.restaurant.rating.reviews[i].rating == 1 && !haveReview) {
-            this.reviews.push(this.restaurant.rating.reviews[i]);
             haveReview = true;
-          } else
+            this.reviews.push(this.restaurant.rating.reviews[i]);
+          } else if (this.restaurant.rating.reviews[i].rating > 1)
             this.reviews.push(this.restaurant.rating.reviews[i]);
         }
   }

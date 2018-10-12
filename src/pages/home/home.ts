@@ -472,7 +472,7 @@ export class HomePage {
         }
         current.loadingGeneral = false;
       }
-    }, 0);
+    }, 100);
   }
 
   //Ranking system to dictate order of display
@@ -599,7 +599,7 @@ export class HomePage {
       //capture restaurants displayed in this batch and send to log
       current.restaurantDisplayLog(currentBatch, limit - current.loadMoreCount, false);
       current.loadingNextBatch = false;
-    }, 0);
+    }, 100);
   }
 
   //Navigate to search page

@@ -369,7 +369,7 @@ export class SearchPage {
         current.allResults = true;
       current.content.scrollToTop(0);
       current.loadingNextBatch = false;
-    }, 0);
+    }, 200);
   }
 
   //Call prev batch of 10 restaurants
@@ -389,7 +389,7 @@ export class SearchPage {
 
       current.content.scrollToTop(0);
       current.loadingPrevBatch = false;
-    }, 0);
+    }, 200);
   }
 
   //Pull down to refresh the restaurant list
