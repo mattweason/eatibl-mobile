@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.eatibl" version="0.1.25" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.eatibl" version="0.1.27" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Eatibl</name>
     <description>Save when you crave at off-peak hours.</description>
     <author email="matt@eatibl.com" href="https://eatibl.com/">Eatibl Inc.</author>
@@ -155,6 +155,9 @@
         <variable name="WEB_APPLICATION_CLIENT_ID" value="518520693304-r2vlho0nfei8obat0eui5g196oiav98r.apps.googleusercontent.com" />
     </plugin>
     <allow-navigation href="http://192.168.1.147:8100" />
+    <plugin name="cordova-plugin-mixpanel" spec="^4.5.0">
+        <variable name="PLAY_SERVICES_VERSION" value="+" />
+    </plugin>
     <engine name="ios" spec="4.5.4" />
     <engine name="browser" spec="5.0.3" />
     <engine name="android" spec="7.0.0" />

@@ -76,6 +76,7 @@
     "cordova-plugin-ionic-webview": "1.2.1",
     "cordova-plugin-local-notification": "0.9.0-beta.2",
     "cordova-plugin-market": "^1.2.0",
+    "cordova-plugin-mixpanel": "^4.5.0",
     "cordova-plugin-nativegeocoder": "3.1.1",
     "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-request-location-accuracy": "2.2.3",
@@ -161,6 +162,9 @@
       "cordova-plugin-googleplus": {
         "REVERSED_CLIENT_ID": "com.googleusercontent.apps.518520693304-56p482udd2th2cqsgtfvd69a3d5ojni1",
         "WEB_APPLICATION_CLIENT_ID": "518520693304-56p482udd2th2cqsgtfvd69a3d5ojni1.apps.googleusercontent.com"
+      },
+      "cordova-plugin-mixpanel": {
+        "PLAY_SERVICES_VERSION": "+"
       }
     },
     "platforms": [
