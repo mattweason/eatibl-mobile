@@ -486,7 +486,7 @@ export class RestaurantPage implements OnInit {
       if(this.businessHours[i][0] == this.businessHours[i][1])
           message += '<div class="hours-row"><p class="day-col '+(this.open.index == i ? "bold" : "")+'">'+this.businessDays[i][1]+':</p><p class="hours-col '+(this.open.index == i ? "bold" : "")+'">Closed</p></div>';
       else
-        message += '<div class="hours-row"><p class="day-col '+(this.open.index == i ? "bold" : "")+'">'+this.businessDays[i][1]+':</p><p class="hours-col '+(this.open.index == i ? "bold" : "")+'">'+this.functions.formatClockTime(this.businessHours[i][0], true)+' - '+this.functions.formatClockTime(this.businessHours[i][0], true)+(this.businessHours[i].length == 4 ? "," : "")+'</p></div>';
+        message += '<div class="hours-row"><p class="day-col '+(this.open.index == i ? "bold" : "")+'">'+this.businessDays[i][1]+':</p><p class="hours-col '+(this.open.index == i ? "bold" : "")+'">'+this.functions.formatClockTime(this.businessHours[i][0], true)+' - '+this.functions.formatClockTime(this.businessHours[i][1], true)+(this.businessHours[i].length == 4 ? "," : "")+'</p></div>';
       if(this.businessHours[i].length == 4)
         message += '<div class="hours-row extra"><p class="day-col"></p><p class="hours-col '+(this.open.index == i ? "bold" : "")+'">'+this.functions.formatClockTime(this.businessHours[i][2], true)+' - '+this.functions.formatClockTime(this.businessHours[i][3], true)+'</p></div>'
     }
