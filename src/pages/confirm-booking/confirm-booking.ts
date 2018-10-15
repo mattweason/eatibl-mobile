@@ -40,6 +40,7 @@ export class ConfirmBookingPage {
   };
   restaurant: any;
   timeslot: any;
+  notificationData: any;
   people: any;
   timeOfBooking: any;
   dateObject = {} as any;
@@ -68,6 +69,7 @@ export class ConfirmBookingPage {
     this.timeslot = navParams.get('timeslot');
     this.people = navParams.get('people');
     this.date = navParams.get('date');
+    this.notificationData = navParams.get('notificationData');
 
     //Form controls and validation
     this.bookingForm = this.formBuilder.group({
@@ -92,6 +94,26 @@ export class ConfirmBookingPage {
       facebook_id: [''],
       _id: ['']
     });
+
+    //Schedule notification
+    // this.localNotifications.schedule({
+    //   id: 1337,
+    //   trigger: {at: new Date(new Date().getTime() + 1)},
+    //   text: "Check out "+this.restaurant.name+" again",
+    //   title: "Get 30% off at 3pm at "+this.restaurant.name,
+    //   icon: 'res://notification_app_icon',
+    //   smallIcon: "res://my_notification_icon",
+    //   color: "#d8354d",
+    //   data: {
+    //     type: 'incomplete booking',
+    //     restaurant: this.restaurant,
+    //     timeslots: this.notificationData.allTimeslots,
+    //     businessHours: this.notificationData.businessHours,
+    //     date: this.notificationData.date,
+    //     time: this.notificationData.time,
+    //     distance: this.notificationData.distance
+    //   }
+    // });
   }
 
   ionViewDidLoad() {
@@ -105,6 +127,11 @@ export class ConfirmBookingPage {
   ngOnInit(){
     this.buildDateObject();
     this.getUserInfo();
+  }
+
+  //Provide a recommended timeslot for the incomplete booking notification
+  recommendTimeslot(){
+
   }
 
   //Gather user information from local storage

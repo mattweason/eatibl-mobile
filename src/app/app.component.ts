@@ -105,15 +105,19 @@ export class MyApp {
 
         // //Do action if we came into app via localNotification
         this.localNotifications.on('click').subscribe(notification => {
-          this.storage.set('eatiblReminder', notification.data);
+          // this.storage.set('eatiblReminder', notification.data); //TODO: what is this?
           this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification.data));
+
+          if(notification.data.type == 'incomplete booking'){
+            this.navigateTo('', notification.data);
+          }
         })
-        //
+        // //
         // //Check if we already have a re-engage notification and cancel it if we do
         // if(this.localNotifications.isPresent(1)){
         //   this.localNotifications.cancel(1)
         // }
-        //Schedule a new notification for first-timers and regular users
+        // // Schedule a new notification for first-timers and regular users
         // this.localNotifications.schedule({
         //   id: 1,
         //   trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()},
@@ -290,6 +294,16 @@ export class MyApp {
       this.mapView = onMap;
     });
   }
+
+  navigateTo(timeslotId, postObject){
+    this.navCtrl.push('RestaurantPage', {
+      restaurant: JSON.stringify(postObject.restaurant),
+      timeslotsData: JSON.stringify(postObject.timeslots),
+      businessHoursData: JSON.stringify(postObject.businessHours),
+      timeslotId: timeslotId
+    }).then(() => {});
+  }
+
 
   //Change tab from menu
   setTab(index){

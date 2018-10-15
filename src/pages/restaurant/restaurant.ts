@@ -185,7 +185,7 @@ export class RestaurantPage implements OnInit {
 
     //For finding index of businessHours today
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var day = date.getDay();
+    var day = moment().day();
 
     //Get current time to compare to open close hours for day
     var hour = date.getHours() >= 6 ? date.getHours() : +date.getHours + 24;
@@ -263,7 +263,7 @@ export class RestaurantPage implements OnInit {
     //For finding index of businessHours today
     var dateNow = new Date(this.date);
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var day = dateNow.getDay();
+    var day = moment().day();
     var index = _.findIndex(this.businessDays, function(businessDay){
       return businessDay[0] == days[day];
     });
@@ -329,7 +329,6 @@ export class RestaurantPage implements OnInit {
           this.businessHours[a] = this.businessHoursData[i]['hours'];
         }
       }
-      console.log(this.businessHours)
   }
 
   //When time changes or date changes, set slide to selected time
@@ -426,7 +425,14 @@ export class RestaurantPage implements OnInit {
       restaurant: restaurant,
       timeslot: timeslot,
       people: people,
-      date: date
+      date: date,
+      notificationData: {
+        allTimeslots: this.timeslotsData,
+        businessHours: this.businessHoursData,
+        distance: this.distance,
+        time: this.time,
+        date: this.date
+      }
     });
   }
 
