@@ -58,6 +58,8 @@
       <span class="line"></span>
     </div>
     <button ion-button block color="facebook" icon-start (tap)="loginFacebook()"><ion-icon name="logo-facebook"></ion-icon>Sign Up with Facebook</button>
+    <button *ngIf="mobilePlatform == 'ios'" class="google-login" outline ion-button block color="googleplus" icon-start (tap)="loginGoogle()"><img src="assets/imgs/google-icon.svg">Login with Google</button>
+    <button *ngIf="mobilePlatform == 'android'" class="google-login" ion-button block color="white" icon-start (tap)="loginGoogle()"><img src="assets/imgs/google-icon.svg">Login with Google</button>
   </div>
   <p class="terms">By signing up, you agree to Eatibl's <span (tap)="openTermsModal()">Terms of Use and Privacy Policy.</span></p>
   <div class="no-account">

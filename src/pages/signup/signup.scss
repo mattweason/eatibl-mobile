@@ -35,4 +35,12 @@ page-signup {
       color: color($colors, secondary);
     }
   }
+  .google-login{
+    margin-top: 12px;
+    color: #4d4d4d;
+    img{
+      height: 22px;
+      margin-right: 3px;
+    }
+  }
 }

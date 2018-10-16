@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, AlertController, Events, ModalController, NavParams} from 'ionic-angular';
+import {IonicPage, NavController, AlertController, Events, ModalController, NavParams, Platform} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
+import { GooglePlus } from '@ionic-native/google-plus';
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
@@ -30,6 +31,7 @@ export class SignupPage {
   promoCode = {} as any;
   intro = false;
   callback: any;
+  mobilePlatform: any;
 
   constructor(
     public navCtrl: NavController,
@@ -42,8 +44,15 @@ export class SignupPage {
     public events: Events,
     private modal: ModalController,
     private log: ActivityLoggerProvider,
-    private navParams: NavParams
+    private navParams: NavParams,
+    private platform: Platform,
+    private googlePlus: GooglePlus
   ) {
+    //What platform is this?
+    if(platform.is('ios'))
+      this.mobilePlatform = 'ios';
+    if(platform.is('android'))
+      this.mobilePlatform = 'android';
 
     //Form controls and validation
     this.signupForm = this.formBuilder.group({
@@ -276,6 +285,27 @@ export class SignupPage {
     const termsModal = this.modal.create('TermsModalPage');
 
     termsModal.present();
+  }
+
+  //Google Plus login
+  loginGoogle(){
+    this.log.sendEvent('Google Login Initiated', 'Intro Slides Modal', '');
+    this.googlePlus.login({
+      webClientId: '518520693304-r2vlho0nfei8obat0eui5g196oiav98r.apps.googleusercontent.com',
+      offline: true
+    }).then(user => {
+      //Add device id to user object
+      user['deviceId'] = this.device.uuid;
+      this.API.makePost('register/google', user).subscribe(response => {
+        this.storage.set('eatiblUser',response['token']);
+        this.events.publish('user:statuschanged');
+        this.events.publish('email:captured');
+        this.log.sendEvent('Google Login Successful', 'Intro Slides Modal', JSON.stringify(response));
+        this.navCtrl.pop();
+      });
+    }).catch(err => {
+      this.log.sendErrorEvent('Google Login', 'Intro Slides', JSON.stringify(err), 'Google login was unsuccessful');
+    })
   }
 
   //Facebook login
