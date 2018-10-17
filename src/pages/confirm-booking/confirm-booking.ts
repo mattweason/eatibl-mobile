@@ -158,7 +158,7 @@ export class ConfirmBookingPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        if(this.user.phone || this.user.facebook_id || this.user.google_id){
+        if(this.user.phone || this.user.active){
           this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
           this.bookingForm.controls['name'].setValue(this.user.name);
           if(this.user.phone)
