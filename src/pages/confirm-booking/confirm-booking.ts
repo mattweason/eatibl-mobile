@@ -3,6 +3,7 @@ import {IonicPage, NavController, NavParams, AlertController, ModalController, P
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
+import { FunctionsProvider } from '../../providers/functions/functions';
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
@@ -11,7 +12,6 @@ import moment from 'moment';
 
 import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
 
-import { FunctionsProvider } from '../../providers/functions/functions';
 import {Facebook} from "@ionic-native/facebook";
 
 /**
@@ -48,6 +48,7 @@ export class ConfirmBookingPage {
   response: any;
   bookingForm: FormGroup;
   postObject = {} as any;
+  notificationId = Math.floor(1000 + Math.random() * 9000);
 
   constructor(
     private platform: Platform,
@@ -95,25 +96,7 @@ export class ConfirmBookingPage {
       _id: ['']
     });
 
-    //Schedule notification
-    // this.localNotifications.schedule({
-    //   id: 1337,
-    //   trigger: {at: new Date(new Date().getTime() + 1)},
-    //   text: "Check out "+this.restaurant.name+" again",
-    //   title: "Get 30% off at 3pm at "+this.restaurant.name,
-    //   icon: 'res://notification_app_icon',
-    //   smallIcon: "res://my_notification_icon",
-    //   color: "#d8354d",
-    //   data: {
-    //     type: 'incomplete booking',
-    //     restaurant: this.restaurant,
-    //     timeslots: this.notificationData.allTimeslots,
-    //     businessHours: this.notificationData.businessHours,
-    //     date: this.notificationData.date,
-    //     time: this.notificationData.time,
-    //     distance: this.notificationData.distance
-    //   }
-    // });
+    // this.scheduleNotification();
   }
 
   ionViewDidLoad() {
@@ -129,9 +112,43 @@ export class ConfirmBookingPage {
     this.getUserInfo();
   }
 
-  //Provide a recommended timeslot for the incomplete booking notification
-  recommendTimeslot(){
+  //Schedule a notification for tomorrow if the user doesn't complete the booking
+  scheduleNotification(){
+    var tomorrow = moment(this.date).add(1, 'days').format('dddd'),
+        triggerTime = moment(this.date).add(1, 'days').hour(11).minute(0).second(0),
+        recommendedTimeslot = {} as any;
 
+    //Get timeslot next day with highest discount
+    for(var i = 0; i < this.notificationData.allTimeslots.length; i++){
+
+      //If no recommended timeslots yet, set to the first one from tomorrow
+      if(!recommendedTimeslot.hasOwnProperty('discount') && this.notificationData.allTimeslots[i].day == tomorrow)
+        recommendedTimeslot = this.notificationData.allTimeslots[i];
+
+      //Replace current recommended timeslot with one with highest discount
+      if(this.notificationData.allTimeslots[i].day == tomorrow && this.notificationData.allTimeslots[i].discount > recommendedTimeslot['discount'])
+        recommendedTimeslot = this.notificationData.allTimeslots[i];
+    }
+
+    //Schedule notification
+    this.localNotifications.schedule({
+      id: this.notificationId,
+      trigger: {at: new Date(moment(triggerTime).format())},
+      text: "We noticed you were interested in trying out "+this.restaurant.name+". If you book today you can get up to "+recommendedTimeslot.discount+"% off dine in or take out!",
+      title: "Get "+recommendedTimeslot.discount+"% off today at "+this.restaurant.name+"!",
+      icon: 'res://notification_app_icon',
+      smallIcon: "res://my_notification_icon",
+      color: "#d8354d",
+      data: {
+        type: 'incomplete booking',
+        restaurant: this.restaurant,
+        timeslots: this.notificationData.allTimeslots,
+        businessHours: this.notificationData.businessHours,
+        date: moment(this.date).add(1, 'days').format(),
+        time: moment(triggerTime).format(),
+        distance: this.notificationData.distance
+      }
+    });
   }
 
   //Gather user information from local storage

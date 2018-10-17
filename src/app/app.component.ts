@@ -300,7 +300,9 @@ export class MyApp {
       restaurant: JSON.stringify(postObject.restaurant),
       timeslotsData: JSON.stringify(postObject.timeslots),
       businessHoursData: JSON.stringify(postObject.businessHours),
-      timeslotId: timeslotId
+      timeslotId: timeslotId,
+      date: postObject.date,
+      time: postObject.time
     }).then(() => {});
   }
 
