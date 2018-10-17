@@ -36,6 +36,7 @@ export class ConfirmBookingPage {
     phone: '',
     type: '',
     facebook_id: '',
+    google_id: '',
     active: 0
   };
   restaurant: any;
@@ -93,6 +94,7 @@ export class ConfirmBookingPage {
       ],
       active: [0],
       facebook_id: [''],
+      google_id: [''],
       _id: ['']
     });
 
@@ -156,7 +158,7 @@ export class ConfirmBookingPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        if(this.user.phone || this.user.facebook_id){
+        if(this.user.phone || this.user.facebook_id || this.user.google_id){
           this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
           this.bookingForm.controls['name'].setValue(this.user.name);
           if(this.user.phone)
@@ -166,6 +168,8 @@ export class ConfirmBookingPage {
           this.bookingForm.controls['_id'].setValue(this.user._id);
           if(this.user.facebook_id)
             this.bookingForm.controls['facebook_id'].setValue(this.user.facebook_id);
+          if(this.user.google_id)
+            this.bookingForm.controls['google_id'].setValue(this.user.google_id);
         }
       }
     });
@@ -223,7 +227,7 @@ export class ConfirmBookingPage {
       };
 
       //Run the check to see if this user has been verified
-      if(!this.user.facebook_id)
+      if(!this.user.facebook_id || !this.user.google_id)
         this.API.makePost('user/verify/check', postObj).subscribe(response => {
           this.log.sendEvent('Confirm Booking: Try Validate', 'Confirm Booking', JSON.stringify(postObj));
           if(response['err']){ //Twilio says invalid phone number
