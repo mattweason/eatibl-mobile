@@ -204,8 +204,7 @@ export class ConfirmBookingPage {
     }
     else{
       //Clean up phone number
-      this.bookingForm.value.phone = this.bookingForm.value.phone.replace(/\D/g,''); //Strip all non digits
-      this.bookingForm.value.phone = this.bookingForm.value.phone.replace(/^1/, ''); //Strip the leading 1
+      this.postObject.phone = this.postObject.phone.replace(/[^\d+]/g, ''); //Strip all non digits
       this.postObject = {
         user: this.bookingForm.value,
         people: this.people,

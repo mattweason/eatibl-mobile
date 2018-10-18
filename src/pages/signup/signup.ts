@@ -131,26 +131,25 @@ export class SignupPage {
     //   delete this.postObject.promoCode;
 
     //Clean up phone number
-    this.postObject.phone = this.postObject.phone.replace(/\D/g, ''); //Strip all non digits
-    this.postObject.phone = this.postObject.phone.replace(/^1/, ''); //Strip the leading 1
+    this.postObject.phone = this.postObject.phone.replace(/[^\d+]/g, ''); //Strip all non digits
 
-    this.API.makePost('user/verify/check', this.postObject).subscribe(response => {
-      if (response['err']) { //Twilio says invalid phone number
-        let title = 'Invalid Phone Number',
-          message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
-        this.presentAlert(title, message);
-
-      } else { //Phone number is good
-        var newObj = JSON.parse(JSON.stringify(this.postObject));
-        delete newObj.password; //remove password and save data to log
-        this.log.sendEvent('Signup: Verification Sent', 'Sign up', 'System has sent SMS to user for verification. Post Object: ' + JSON.stringify(newObj));
-        if (response['verify']) //Account needs verification, SMS has been sent
-          this.verifyAlert(false);
-
-        else //Account already verified, proceed
-          this.submitRegistration();
-      }
-    });
+    // this.API.makePost('user/verify/check', this.postObject).subscribe(response => {
+    //   if (response['err']) { //Twilio says invalid phone number
+    //     let title = 'Invalid Phone Number',
+    //       message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
+    //     this.presentAlert(title, message);
+    //
+    //   } else { //Phone number is good
+    //     var newObj = JSON.parse(JSON.stringify(this.postObject));
+    //     delete newObj.password; //remove password and save data to log
+    //     this.log.sendEvent('Signup: Verification Sent', 'Sign up', 'System has sent SMS to user for verification. Post Object: ' + JSON.stringify(newObj));
+    //     if (response['verify']) //Account needs verification, SMS has been sent
+    //       this.verifyAlert(false);
+    //
+    //     else //Account already verified, proceed
+    //       this.submitRegistration();
+    //   }
+    // });
   }
 
   //Verification code alert
