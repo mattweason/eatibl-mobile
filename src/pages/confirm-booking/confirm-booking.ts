@@ -231,7 +231,7 @@ export class ConfirmBookingPage {
           this.log.sendEvent('Confirm Booking: Try Validate', 'Confirm Booking', JSON.stringify(postObj));
           if(response['err']){ //Twilio says invalid phone number
             let title = 'Invalid Phone Number',
-              message = 'The number you have entered is incorrect. Please ensure you have entered an accurate, North American phone number.';
+              message = 'The number you have entered is invalid. If you have an international number, please make sure to add a "+" and your country code.';
             this.presentAlert(title, message);
 
           } else { //Phone number is good
