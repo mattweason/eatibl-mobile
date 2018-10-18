@@ -1,0 +1,112 @@
+page-how-it-works-modal {
+  position: relative;
+  ion-content > div {
+    padding: 0 !important;
+  }
+  .close-button{
+    position: absolute;
+    background: transparent;
+    border: 0;
+    right: 10px;
+    top: 10px;
+    color: #fff;
+    z-index: 15;
+    font-size: 22px;
+  }
+  ion-toolbar{
+    .toolbar-background{
+      background-color: transparent;
+    }
+  }
+  .intro-slide{
+    .slide-zoom{
+      .intro-slide-liner{
+        padding: 0 5%;
+        height: 65%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        p{
+          font-size: 20px;
+        }
+      }
+    }
+  }
+  .screenshot-slide{
+    .slide-zoom{
+      .screenshot-area{
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        height: 60%;
+        padding-top: 20px;
+        background-color: color($colors, primary);
+        img{
+          height:100%;
+          width: auto;
+        }
+      }
+      .info-area{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 40%;
+        padding: 0 5%;
+      }
+    }
+  }
+  .final-slide{
+    .slide-zoom{
+      position: relative;
+      background-color: color($colors, primary);
+      .final-slide-liner{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        .slide-graphic{
+          position: absolute;
+          width: 40%;
+        }
+        .top-left{
+          top: 0;
+          left: 0;
+        }
+        .top-right{
+          top: 0;
+          right: 0;
+        }
+        .bottom-left{
+          bottom: 0;
+          left: 0;
+        }
+        .bottom-right{
+          bottom: 0;
+          right: 0;
+        }
+        h2, p{
+          color: #fff;
+          &.list{
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+  .logo-area{
+    background-color: color($colors, primary);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35%;
+    img{
+      width: auto;
+    }
+  }
+  .swiper-pagination{
+    bottom: 20px !important;
+  }
+}
