@@ -39,6 +39,10 @@ export class AccountPage {
     public events: Events,
     private log: ActivityLoggerProvider
   ) {
+    //Reset this.user object when login or logout is performed by other components
+    events.subscribe('user:statuschanged', () => {
+      this.checkUser();
+    });
   }
 
   ionViewDidLoad() {
@@ -46,6 +50,10 @@ export class AccountPage {
   }
 
   ionViewDidEnter() {
+    this.checkUser();
+  }
+
+  checkUser(){
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);

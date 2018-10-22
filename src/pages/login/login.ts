@@ -79,6 +79,7 @@ export class LoginPage {
     else{
       //make API call to get token if successful, or status 401 if login failed
       this.API.makePost('token', this.loginForm.value).subscribe(response => {
+        console.log(response)
         var title;
         var message;
         this.response = response;
@@ -87,8 +88,19 @@ export class LoginPage {
           title = 'Incorrect Credentials';
           message = 'Email and password combination not found.';
           this.presentAlert(title, message);
+        } else if (this.response.message == 'facebook user'){
+          this.log.sendEvent('Login: Unsuccessful', 'Login', this.loginForm.value.email || "");
+          title = 'Incorrect Credentials';
+          message = 'This email is associated with a Facebook account. Please use the Facebook login to continue.';
+          this.presentAlert(title, message);
+        } else if (this.response.message == 'google user'){
+          this.log.sendEvent('Login: Unsuccessful', 'Login', this.loginForm.value.email || "");
+          title = 'Incorrect Credentials';
+          message = 'This email is associated with a Google account. Please use the Google login to continue.';
+          this.presentAlert(title, message);
         }
         else{
+          console.log('logged in beginning')
           this.log.sendEvent('Login: Successful', 'Login', this.loginForm.value.email || "");
           this.storage.set('eatiblUser',response);
           this.events.publish('user:statuschanged');
@@ -204,6 +216,7 @@ export class LoginPage {
         if(res.status == "connected") {
 
           // Get user ID and Token
+
           var fb_id = res.authResponse.userID;
           var fb_token = res.authResponse.accessToken;
 
