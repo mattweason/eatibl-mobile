@@ -51,8 +51,14 @@
         <p>Not using your device's location.</p>
       </ion-card-content>
     </ion-card>
-    <ion-card>
-      <button ion-button color="secondary" (tap)="presentHIWModal()">Get Started</button>
+    <ion-card tappable="true" (tap)="presentHIWModal()" class="how-it-works">
+        <div class="body">
+          <h4>Not sure how Eatibl works?</h4>
+          <p>Tap here to learn more.</p>
+        </div>
+        <div class="arrow">
+          <ion-icon ios="ios-arrow-forward" md="ios-arrow-forward"></ion-icon>
+        </div>
     </ion-card>
     <ion-list>
       <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [index]="i" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>

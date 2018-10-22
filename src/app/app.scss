@@ -379,7 +379,7 @@ ion-tabs{
   .locate-tab{ //Set location tab
     bottom: 52px;
   }
-  page-intro-slides{ //Intro modal
+  page-intro-slides, page-how-it-works-modal{ //Intro modal
     .intro-slide, .signup-slide, .screenshot-slide, .final-slide {
       .slide-zoom {
         height: calc(100vh - 44px);
@@ -415,7 +415,7 @@ ion-tabs{
   .locate-tab{ //Set location tab
     bottom: 60px;
   }
-  page-intro-slides{ //Intro modal
+  page-intro-slides, page-how-it-works-modal{ //Intro modal
     .intro-slide, .signup-slide, .screenshot-slide, .final-slide {
       .slide-zoom {
         height: calc(100vh - 56px);

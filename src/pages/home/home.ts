@@ -105,8 +105,6 @@ export class HomePage {
   }
 
   ionViewDidEnter(){
-    const introModal = this.modal.create('IntroSlidesPage', {newUser: true});
-    introModal.present();
     //Call geolocation from app.component
     this.events.publish('view:map', (this.view == 'map')); //Pop help button into correct position
     this.events.publish('get:geolocation', Date.now());

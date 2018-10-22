@@ -63,12 +63,12 @@ export class SupportModalPage {
     this.faqs = [
       {
         question: '1. What is Eatibl?',
-        answer: 'Eatibl is a discounted restaurant booking platform offering real-time savings of up to 50% off the whole food bill for every restaurant any time of the day, everyday! ',
+        answer: 'Eatibl is a discounted restaurant booking platform offering real-time savings of up to 50% off the whole food bill for every restaurant any time of the day, everyday! Available for dine-in and takeout.',
         open: false
       },
       {
         question: '2. Is Eatibl Free to Use?',
-        answer: 'Yep! There are absolutely no costs to using our services, and we’ll never ask for your credit card information. The only thing you pay for is your *discounted* bill at the restaurant.',
+        answer: 'All of our early supporters (who join our app in 2018) and create a booking within the first 3 days will enjoy Eatibl free forever!',
         open: false
       },
       {
@@ -93,7 +93,7 @@ export class SupportModalPage {
       },
       {
         question: '7. How long in advance can I make a booking?',
-        answer: 'You can reserve a table up to 1 month in advance!',
+        answer: 'Up to 7 days.',
         open: false
       },
       {
@@ -107,8 +107,8 @@ export class SupportModalPage {
         open: false
       },
       {
-        question: '10. What happens if a time-slot is not available?',
-        answer: 'If a time-slot is not available it could mean either the restaurant is not servicing during those hours or that all the tables have been booked already. If the tables have already been booked, don’t worry! You can always keep checking as there are cancellations that happen last minute.',
+        question: '10. Why do some time-slots say \'sold out?\'',
+        answer: 'All our time-based deals on Eatibl have limited seats. Once all the seats have been claimed, that specific deal is sold out! You can always check back for the same time and place next week and claim your spots first.',
         open: false
       },
       {
