@@ -7,6 +7,7 @@ import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import { GooglePlus } from '@ionic-native/google-plus';
+import { FunctionsProvider } from '../../providers/functions/functions';
 import * as decode from 'jwt-decode';
 
 import { SignupPage } from '../../pages/signup/signup';
@@ -37,6 +38,7 @@ export class LoginPage {
     private formBuilder: FormBuilder,
     private storage: Storage,
     public events: Events,
+    public functions: FunctionsProvider,
     private fb: Facebook,
     private device: Device,
     private modal: ModalController,
@@ -196,6 +198,8 @@ export class LoginPage {
       //Add device id to user object
       user['deviceId'] = this.device.uuid;
       this.API.makePost('register/google', user).subscribe(response => {
+        if(response['newUser'])
+          this.functions.scheduleCountdownNotifications();
         this.storage.set('eatiblUser',response['token']);
         this.events.publish('user:statuschanged');
         this.events.publish('email:captured');
@@ -228,6 +232,8 @@ export class LoginPage {
             user['deviceId'] = this.device.uuid;
 
             this.API.makePost('register/facebook', user).subscribe(response => {
+              if(response['newUser'])
+                this.functions.scheduleCountdownNotifications();
               this.storage.set('eatiblUser',response['token']);
               this.storage.set('eatiblFBToken',fb_token);
               this.events.publish('user:statuschanged');

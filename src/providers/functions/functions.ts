@@ -60,6 +60,40 @@ export class FunctionsProvider {
     })
   }
 
+  //Schedule the FOMO notificatiosn about making a booking
+  scheduleCountdownNotifications(){
+    var triggerTime24 = moment().add(2, 'days'),
+        triggerTime1 = moment().add(2, 'days').add(23, 'hours'),
+        countdown24 = Math.floor(10000 + Math.random() * 90000),
+        countdown1 = Math.floor(10000 + Math.random() * 90000);
+
+
+    this.localNotifications.schedule({
+      id: countdown24, //a number from 0 to 10000
+      title: "🔥 24 hours left! ⏱",
+      text: "⏱ There is only one day left to secure your free, premium account by making a booking. Don't miss out!",
+      trigger: {at: new Date(moment(triggerTime24).format())},
+      data: {type: "Countdown24"}, //Send information to navigate to booking confirmed page
+      icon: 'res://notification_app_icon',
+      smallIcon: "res://my_notification_icon",
+      color: "#d8354d",
+    });
+
+    this.localNotifications.schedule({
+      id: countdown1, //a number from 0 to 10000
+      title: "🔥 One hour left! ⏱",
+      text: "⏱ Make a booking in the next hour and enjoy Eatibl as a free service forever.",
+      trigger: {at: new Date(moment(triggerTime1).format())},
+      data: {type: "Countdown1"}, //Send information to navigate to booking confirmed page
+      icon: 'res://notification_app_icon',
+      smallIcon: "res://my_notification_icon",
+      color: "#d8354d",
+    });
+
+    this.addNotification(countdown24, 'Countdown');
+    this.addNotification(countdown1, 'Countdown');
+  }
+
   //Format a raw time to clocktime. Full is true if we want minutes
   formatClockTime(value, full){
     var clockTime;

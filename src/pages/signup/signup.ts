@@ -6,6 +6,7 @@ import { ActivityLoggerProvider } from "../../providers/activity-logger/activity
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { Storage } from '@ionic/storage';
+import { FunctionsProvider } from '../../providers/functions/functions';
 import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
 
@@ -40,6 +41,7 @@ export class SignupPage {
     private formBuilder: FormBuilder,
     private device: Device,
     private storage: Storage,
+    public functions: FunctionsProvider,
     private fb: Facebook,
     public events: Events,
     private modal: ModalController,
@@ -226,6 +228,7 @@ export class SignupPage {
           else
             message = 'Your account has been created!';
           this.presentSuccessAlert(title, message);
+          this.functions.scheduleCountdownNotifications();
           this.events.publish('user:statuschanged');
           this.events.publish('email:captured');
         });
@@ -296,6 +299,8 @@ export class SignupPage {
       //Add device id to user object
       user['deviceId'] = this.device.uuid;
       this.API.makePost('register/google', user).subscribe(response => {
+        if(response['newUser'])
+          this.functions.scheduleCountdownNotifications();
         this.storage.set('eatiblUser',response['token']);
         this.events.publish('user:statuschanged');
         this.events.publish('email:captured');
@@ -327,6 +332,8 @@ export class SignupPage {
             user['deviceId'] = this.device.uuid;
 
             this.API.makePost('register/facebook', user).subscribe(response => {
+              if(response['newUser'])
+                this.functions.scheduleCountdownNotifications();
               this.storage.set('eatiblUser',response['token']);
               this.storage.set('eatiblFBToken',fb_token);
               this.events.publish('user:statuschanged');

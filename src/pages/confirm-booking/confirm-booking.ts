@@ -376,7 +376,7 @@ export class ConfirmBookingPage {
               title: "🍴 Eatibl Booking Reminder",
               text: "⏱ Your booking for " + this.restaurant.name + " is in 15 minutes!",
               trigger: {at: (bookingDate.subtract(15, 'minutes')).toDate()},
-              data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
+              data: {type: "Reminder", booking: this.response.booking, restaurant: this.restaurant}, //Send information to navigate to booking confirmed page
               icon: 'res://notification_app_icon',
               smallIcon: "res://my_notification_icon",
               color: "#d8354d",
@@ -392,7 +392,7 @@ export class ConfirmBookingPage {
               title: "🍴 Eatibl Booking Reminder",
               text: "⏱ Your booking for " + this.restaurant.name + " is in an hour!",
               trigger: {at: (bookingDate.subtract(60, 'minutes')).toDate()},
-              data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
+              data: {type: "Reminder", booking: this.response.booking, restaurant: this.restaurant}, //Send information to navigate to booking confirmed page
               icon: 'res://notification_app_icon',
               smallIcon: "res://my_notification_icon",
               color: "#d8354d",

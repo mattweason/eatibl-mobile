@@ -5,6 +5,7 @@ import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import { FunctionsProvider } from '../../providers/functions/functions';
 import {ApiServiceProvider} from "../../providers/api-service/api-service";
 import { GooglePlus } from '@ionic-native/google-plus';
 
@@ -43,6 +44,7 @@ export class IntroSlidesPage {
     private device: Device,
     private platform: Platform,
     public events: Events,
+    public functions: FunctionsProvider,
     private fb: Facebook,
     public navParams: NavParams,
     private formBuilder: FormBuilder,
@@ -177,6 +179,8 @@ export class IntroSlidesPage {
       //Add device id to user object
       user['deviceId'] = this.device.uuid;
       this.API.makePost('register/google', user).subscribe(response => {
+        if(response['newUser'])
+          this.functions.scheduleCountdownNotifications();
         this.storage.set('eatiblUser',response['token']);
         this.events.publish('user:statuschanged');
         this.events.publish('email:captured');
@@ -213,6 +217,8 @@ export class IntroSlidesPage {
             user['deviceId'] = this.device.uuid;
 
             this.API.makePost('register/facebook', user).subscribe(response => {
+              if(response['newUser'])
+                this.functions.scheduleCountdownNotifications();
               this.storage.set('eatiblUser',response['token']);
               this.storage.set('eatiblFBToken',fb_token);
               this.events.publish('user:statuschanged');

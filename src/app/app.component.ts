@@ -107,10 +107,32 @@ export class MyApp {
         this.localNotifications.on('click').subscribe(notification => {
           this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification.data));
 
-          if(notification.data.type == 'incomplete booking'){
+          if(notification.data.type == 'incomplete booking')
             this.navigateTo('', notification.data);
+          else if (notification.data.type == 'Reminder')
+            this.navCtrl.push('BookingConfirmedPage', {
+              booking: notification.data.booking,
+              restaurant: notification.data.restaurant,
+              inviteModal: true
+            });
+          else if (notification.data.type.indexOf('Countdown') > -1 ){
+            var title,
+                message;
+            if(notification.data.type == 'Coundown24'){
+              title = 'Less than 24 hours remaining';
+              message = 'Thanks for being an early supporter! Create a booking in order to gain free, lifetime access to Eatibl.'
+            } else if(notification.data.type == 'Coundown24'){
+              title = 'Less than 1 hour remaining';
+            }
+            let alert = this.alertCtrl.create({
+              title: title,
+              subTitle: message,
+              enableBackdropDismiss: false,
+              buttons: ['Got It']
+            });
+            alert.present();
           }
-        })
+        });
         // //
         // //Check if we already have a re-engage notification and cancel it if we do
         // if(this.localNotifications.isPresent(1)){
