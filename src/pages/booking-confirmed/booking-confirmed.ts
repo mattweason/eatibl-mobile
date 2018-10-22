@@ -111,6 +111,7 @@ export class BookingConfirmedPage {
             handler: () => {
               this.API.makeCall('booking/'+this.booking._id+'/disable').subscribe(response => {
                 this.log.sendEvent('Cancel Booking: Success', 'Booking Confirmed', JSON.stringify(this.booking));
+                this.functions.cancelNotification(this.restaurant.name+': Reminder');
 
                 this.response = response;
                 if(this.response.message == 'error')

@@ -105,7 +105,6 @@ export class MyApp {
 
         // //Do action if we came into app via localNotification
         this.localNotifications.on('click').subscribe(notification => {
-          // this.storage.set('eatiblReminder', notification.data); //TODO: what is this?
           this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification.data));
 
           if(notification.data.type == 'incomplete booking'){

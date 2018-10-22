@@ -49,7 +49,6 @@ export class ConfirmBookingPage {
   response: any;
   bookingForm: FormGroup;
   postObject = {} as any;
-  notificationId = Math.floor(1000 + Math.random() * 9000);
 
   constructor(
     private platform: Platform,
@@ -98,7 +97,7 @@ export class ConfirmBookingPage {
       _id: ['']
     });
 
-    // this.scheduleNotification();
+    this.scheduleNotification();
   }
 
   ionViewDidLoad() {
@@ -132,12 +131,14 @@ export class ConfirmBookingPage {
         recommendedTimeslot = this.notificationData.allTimeslots[i];
     }
 
+    var notificationId = Math.floor(10000 + Math.random() * 90000);
+
     //Schedule notification
     this.localNotifications.schedule({
-      id: this.notificationId,
+      id: notificationId,
       trigger: {at: new Date(moment(triggerTime).format())},
-      text: "We noticed you were interested in trying out "+this.restaurant.name+". If you book today you can get up to "+recommendedTimeslot.discount+"% off dine in or take out!",
-      title: "Get "+recommendedTimeslot.discount+"% off today at "+this.restaurant.name+"!",
+      text: "🍴 We noticed you were interested in trying out "+this.restaurant.name+". If you book today you can get up to "+recommendedTimeslot.discount+"% off dine in or take out!",
+      title: "🔥 Get "+recommendedTimeslot.discount+"% off today at "+this.restaurant.name+"!",
       icon: 'res://notification_app_icon',
       smallIcon: "res://my_notification_icon",
       color: "#d8354d",
@@ -151,6 +152,8 @@ export class ConfirmBookingPage {
         distance: this.notificationData.distance
       }
     });
+
+    this.functions.addNotification(notificationId, this.restaurant.name+': Booking Abandoned');
   }
 
   //Gather user information from local storage
@@ -366,29 +369,36 @@ export class ConfirmBookingPage {
           // });
 
           //REMINDER: When booking is made with less than 2hr lead time
+          var triggerTime = moment(this.date).add(30, 'seconds');
           if(timeDiff < 2){
             this.localNotifications.schedule({
               id: this.postObject.localNotifications.reminderId, //a number from 0 to 10000
-              title: "Reminder",
-              text: "Your booking for " + this.restaurant.name + " is in 15 minutes!",
+              title: "🍴 Eatibl Booking Reminder",
+              text: "⏱ Your booking for " + this.restaurant.name + " is in 15 minutes!",
               trigger: {at: (bookingDate.subtract(15, 'minutes')).toDate()},
               data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
-              icon: 'file://assets/imgs/notification-icon.png'
+              icon: 'res://notification_app_icon',
+              smallIcon: "res://my_notification_icon",
+              color: "#d8354d",
             });
             this.log.sendRestoEvent('Reminder Notification Scheduled', 'Confirm Booking', 'User booked with less than 2hr lead time', this.restaurant._id);
+            this.functions.addNotification(this.postObject.localNotifications.reminderId, this.restaurant.name+': Reminder');
           }
 
           //REMINDER: When booking is more than 2hr lead time
           if(timeDiff >= 2){
             this.localNotifications.schedule({
               id: this.postObject.localNotifications.reminderId, //a number from 0 to 10000
-              title: "Reminder",
-              text: "Your booking for " + this.restaurant.name + " is in an hour!",
+              title: "🍴 Eatibl Booking Reminder",
+              text: "⏱ Your booking for " + this.restaurant.name + " is in an hour!",
               trigger: {at: (bookingDate.subtract(60, 'minutes')).toDate()},
               data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
-              icon: 'file://assets/imgs/notification-icon.png'
+              icon: 'res://notification_app_icon',
+              smallIcon: "res://my_notification_icon",
+              color: "#d8354d",
             });
             this.log.sendRestoEvent('Reminder Notification Scheduled', 'Confirm Booking', 'User booked with greater than 2hr lead time', this.restaurant._id);
+            this.functions.addNotification(this.postObject.localNotifications.reminderId, this.restaurant.name+': Reminder');
           }
 
           //FEEDBACK: 3hrs after the booking is complete
@@ -399,6 +409,8 @@ export class ConfirmBookingPage {
           //   data: {type: "Feedback", details: this.response.booking}, //Send information to navigate to booking confirmed page
           //   icon: 'https://eatibl.com/assets/images/notification-icon.png'
           // });
+
+          this.functions.cancelNotification(this.restaurant.name+': Booking Abandoned');
 
         }
 

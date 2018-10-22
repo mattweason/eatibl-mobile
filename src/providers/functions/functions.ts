@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Storage } from '@ionic/storage';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 import * as moment from 'moment';
 
 /*
@@ -11,7 +13,52 @@ import * as moment from 'moment';
 @Injectable()
 export class FunctionsProvider {
 
-  constructor(public http: HttpClient) {}
+  constructor(
+    public http: HttpClient,
+    public storage: Storage,
+    private localNotifications: LocalNotifications
+  ) {}
+
+  //Add notification to notification storage object
+  addNotification(id, name){
+    var allNotifications = [];
+    var notification = {
+      id: id,
+      name: name
+    };
+
+    this.storage.get('eatiblNotifications').then((val) => {
+      if(val){ //Make sure to capture existing notifications and not overwrite them
+        allNotifications = val['notifications'];
+      }
+      allNotifications.push(notification);
+      this.storage.set('eatiblNotiication', {notifications: allNotifications});
+    })
+  }
+
+  //Cancel specific notifications
+  cancelNotification(name){
+    var allNotifications = [];
+    var cancelIds = [];
+
+    this.storage.get('eatiblNotifications').then((val) => {
+      if(val){ //Make sure to capture existing notifications and not overwrite them
+        allNotifications = val['notifications'];
+
+        //Capture ids of notifications that match the name, remove them from storage and cancel them
+        for(var i = allNotifications.length; i > 0; i--){
+          if(allNotifications[i].name == name){
+            cancelIds.push(allNotifications[i].id);
+            allNotifications.splice(i, 1);
+          }
+        }
+
+        this.storage.set('eatiblNotiication', {notifications: allNotifications});
+
+        this.localNotifications.cancel(cancelIds); //Cancel collected notifications
+      }
+    })
+  }
 
   //Format a raw time to clocktime. Full is true if we want minutes
   formatClockTime(value, full){
