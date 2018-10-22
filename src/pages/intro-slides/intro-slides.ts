@@ -32,7 +32,6 @@ export class IntroSlidesPage {
   haveEmail = false;
   type: any;
   newUser = false;
-  allowSwiping = true;
   userProfile: any = null;
   testObject: any;
   mobilePlatform: any;
@@ -74,16 +73,12 @@ export class IntroSlidesPage {
     //Listen to when a new user has signed up on the sign up page
     events.subscribe('newuser:signedup', () => {
       this.nextSlide();
-      this.slides.lockSwipes(false);
-      this.allowSwiping = true;
       this.haveEmail = true;
     });
 
     //Listen to when a new user has signed up on the sign up page
     events.subscribe('olduser:loggedin', () => {
       this.nextSlide();
-      this.slides.lockSwipes(false);
-      this.allowSwiping = true;
       this.haveEmail = true;
     });
   }
@@ -96,8 +91,6 @@ export class IntroSlidesPage {
     });
 
     if(this.navParams.get('newUser')){ //If runtime open, don't allow swiping
-      this.slides.lockSwipes(true);
-      this.allowSwiping = false;
 
       //Disable back button dismiss on android
       this.backButtonUnregister = this.platform.registerBackButtonAction(() => {});
@@ -105,7 +98,8 @@ export class IntroSlidesPage {
   }
 
   ionViewWillLeave(){
-    this.backButtonUnregister();
+    if(this.navParams.get('newUser')) //If runtime open, don't allow swiping
+      this.backButtonUnregister();
   }
 
   slideChanged(){
@@ -190,9 +184,6 @@ export class IntroSlidesPage {
 
         let promocodeModal = this.modal.create('PromocodeModalPage', { user: response }, { cssClass: 'promocode-modal'});
         promocodeModal.onDidDismiss(() => {
-          this.slides.lockSwipes(false);
-          this.allowSwiping = true;
-          this.nextSlide();
           this.haveEmail = true;
         });
         promocodeModal.present();
@@ -230,9 +221,6 @@ export class IntroSlidesPage {
 
               let promocodeModal = this.modal.create('PromocodeModalPage', { user: response }, { cssClass: 'promocode-modal'});
               promocodeModal.onDidDismiss(() => {
-                this.slides.lockSwipes(false);
-                this.allowSwiping = true;
-                this.nextSlide();
                 this.haveEmail = true;
               });
               promocodeModal.present();

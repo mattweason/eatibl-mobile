@@ -20,40 +20,84 @@ page-intro-slides {
   }
   .intro-slide{
     .slide-zoom{
+      background-color: color($colors, primary);
       .intro-slide-liner{
+        position: relative;
+        color: #fff;
         padding: 0 5%;
-        height: 65%;
+        height: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
+        padding-bottom: 30%;
+        img{
+          padding-top: 20%;
+          width: 80%;
+        }
         p{
-          font-size: 20px;
+          font-size: 18px;
+          color: #eee;
+          .emphasis{
+            font-weight: 700;
+            color: #fff;
+          }
+        }
+        h2{
+          font-size: 28px;
+          margin-bottom: 6px;
+        }
+        h4{
+          margin-top: 0;
+          font-size: 18px;
+          text-transform: uppercase;
+          color: color($colors, yellow);
         }
       }
     }
   }
-  .screenshot-slide{
-    .slide-zoom{
-      .screenshot-area{
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-        height: 60%;
-        padding-top: 20px;
-        background-color: color($colors, primary);
-        img{
-          height:100%;
-          width: auto;
+  .signup-slide{
+    .slide-zoom {
+      position: relative;
+      background-color: color($colors, primary);
+      .email-submit{
+        height: 100%;
+        padding: 0 10% 60px 10%;
+        margin-top: 20px;
+        p{
+          color: #fff;
         }
-      }
-      .info-area{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 40%;
-        padding: 0 5%;
+        .signup-email{
+          color: color($colors, primary) !important;
+        }
+         .email-submit-header{
+           font-weight: 500;
+           font-size: 22px;
+           color: color($colors, white);
+           margin-bottom: 20px;
+         }
+         .email-submit-liner {
+           display: flex;
+           ion-input {
+             margin: 0.4rem 0.2rem;
+             height: 50px;
+             border-radius: 5px;
+             border: 1px solid #ccc;
+             input {
+               height: 100%;
+               margin-top: 0;
+               margin-bottom: 0;
+             }
+           }
+           button{
+             height: 50px;
+           }
+         }
+         .form-error{
+           margin-top: 6px;
+           text-align: center;
+           color: color($colors, danger);
+         }
       }
     }
   }
@@ -62,78 +106,36 @@ page-intro-slides {
       position: relative;
       background-color: color($colors, primary);
       .final-slide-liner{
+        padding-bottom: 30px;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        .slide-graphic{
-          position: absolute;
-          width: 40%;
-        }
-        .top-left{
-          top: 0;
-          left: 0;
-        }
-        .top-right{
-          top: 0;
-          right: 0;
-        }
-        .bottom-left{
-          bottom: 0;
-          left: 0;
-        }
-        .bottom-right{
-          bottom: 0;
-          right: 0;
+        align-items: center;
+        h2{
+          margin-bottom: 20px;
         }
         h2, p{
           color: #fff;
-          &.list{
-            margin: 0;
-          }
+        }
+        .line-separator{
+          height: 6px;
+          width: 6px;
+          background-color: #fff;
+          border-radius: 6px;
+          margin: 16px 0;
+        }
+        .list{
+          margin: 0 20px;
+          font-weight: 300;
+          text-align: center;
+        }
+        img{
+          height: 20px;
+          width: 20px;
+          margin: 10px auto;
         }
       }
-    }
-  }
-  .email-submit{
-    margin-top: 20px;
-    .email-submit-header{
-      font-weight: 500;
-      font-size: 22px;
-      color: color($colors, primary);
-    }
-    .email-submit-liner {
-      display: flex;
-      ion-input {
-        margin: 0.4rem 0.2rem;
-        height: 50px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        input {
-          height: 100%;
-          margin-top: 0;
-          margin-bottom: 0;
-        }
-      }
-      button{
-        height: 50px;
-      }
-    }
-    .form-error{
-      margin-top: 6px;
-      text-align: center;
-      color: color($colors, danger);
-    }
-  }
-  .logo-area{
-    background-color: color($colors, primary);
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 35%;
-    img{
-      width: auto;
     }
   }
   .swiper-pagination{
@@ -148,6 +150,50 @@ page-intro-slides {
         height: 22px;
         margin-right: 3px;
       }
+    }
+  }
+  .social-login{
+    .separator{
+      margin: 20px 0;
+      span{
+        color: #fff;
+      }
+    }
+  }
+  .footnote{
+    padding: 0 10%;
+    color: #f4f4f4;
+    position: absolute;
+    bottom: 35px;
+    font-size: 12px;
+  }
+
+  .graphic{
+    bottom: 0;
+    position: absolute;
+    display: flex;
+    height: 20%;
+    width: 150%;
+    background-size: cover;
+    &.blue{
+      top: 0;
+      right: 0;
+      img{
+        -webkit-transform:rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        transform: rotate(180deg);
+      }
+    }
+    &.orange{
+      bottom: 0;
+      left: -100%;
+    }
+    img{
+      padding: 0 !important;
+      width: 100% !important;
+      height: 100%;
     }
   }
 }

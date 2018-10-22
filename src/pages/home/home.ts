@@ -105,6 +105,8 @@ export class HomePage {
   }
 
   ionViewDidEnter(){
+    const introModal = this.modal.create('IntroSlidesPage', {newUser: true});
+    introModal.present();
     //Call geolocation from app.component
     this.events.publish('view:map', (this.view == 'map')); //Pop help button into correct position
     this.events.publish('get:geolocation', Date.now());
@@ -130,9 +132,9 @@ export class HomePage {
   }
 
   //Open intro slides
-  presentIntroModal(type){
+  presentIntroModal(){
     this.log.sendEvent('Intro Slides', 'Home', 'Default Intro slides for first time users');
-    const introModal = this.modal.create('IntroSlidesPage', {type: type, newUser: true});
+    const introModal = this.modal.create('IntroSlidesPage', {newUser: true});
     introModal.onDidDismiss(() => {
       this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
       this.storage.remove('eatiblShowSlides');
@@ -147,7 +149,7 @@ export class HomePage {
     //Here is where we need to check if we need to show the intro slides or not
     this.storage.get('eatiblShowSlides').then((val) => {
       if(val) //If custom location, show card about custom location
-        this.presentIntroModal('intro');
+        this.presentIntroModal();
     });
 
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {

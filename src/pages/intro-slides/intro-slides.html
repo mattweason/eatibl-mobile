@@ -5,90 +5,58 @@
   Ionic pages and navigation.
 -->
 <ion-content>
-  <button *ngIf="type == 'howTo' || currentIndex > 0 || allowSwiping" class="close-button" (tap)="closeModal('x')"><ion-icon name="close"></ion-icon></button>
+  <button *ngIf="haveEmail" class="close-button" (tap)="closeModal('x')"><ion-icon name="close"></ion-icon></button>
   <ion-slides paginationType="bullets" pager="true" (ionSlideNextStart)="slideChanged()" (ionSlidePrevStart)="slideChanged()">
-    <ion-slide *ngIf="type == 'intro'" class="intro-slide">
-      <div class="logo-area">
-        <img src="assets/imgs/welcome.png">
-      </div>
+    <ion-slide class="intro-slide">
       <div class="intro-slide-liner">
-        <p>Use Eatibl to make discounted bookings for your next meal!</p>
-        <div class="email-submit" *ngIf="!haveEmail">
-          <span class="email-submit-header">Sign Up to Continue</span>
-          <button ion-button block color="primary" icon-start (tap)="signup()">Sign Up with Email</button>
-          <!--<form [formGroup]="emailCapture" (ngSubmit)="submitEmail()">-->
-            <!--<div class="email-submit-liner">-->
-                <!--<ion-input class="ios-input-padding" [formControl]="emailCapture.controls['email']" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>-->
-                <!--<button *ngIf="!emailCaptured" ion-button color="secondary" type="submit">Submit</button>-->
-                <!--<button *ngIf="emailCaptured" ion-button color="tertiary" type="button">Success!</button>-->
-            <!--</div>-->
-            <!--<div class="form-error" *ngIf="((emailCapture.controls.email.hasError('email') || emailCapture.controls.email.hasError('required')) && submitted)">-->
-              <!--<span>Please enter a valid email.</span>-->
-            <!--</div>-->
-          <!--</form>-->
-          <div class="social-login">
-            <div class="separator">
-              <span class="line"></span>
-              <span>OR</span>
-              <span class="line"></span>
-            </div>
-            <button class="facebook-login" ion-button block color="facebook" icon-start (tap)="loginFacebook()"><ion-icon name="logo-facebook"></ion-icon>Login with Facebook</button>
-            <button *ngIf="mobilePlatform == 'ios'" class="google-login" outline ion-button block color="googleplus" icon-start (tap)="loginGoogle()"><img src="assets/imgs/google-icon.svg">Login with Google</button>
-            <button *ngIf="mobilePlatform == 'android'" class="google-login" ion-button block color="white" icon-start (tap)="loginGoogle()"><img src="assets/imgs/google-icon.svg">Login with Google</button>
-          </div>
+        <img src="assets/imgs/intro-logo.png">
+        <div class="special-offer">
+          <h2>Special Offer</h2>
+          <h4>For our early supporters</h4>
+          <p>Make a booking within 72 hours and your Eatibl account will be <span class="emphasis">free forever</span>!</p>
         </div>
-      </div>
-    </ion-slide>
-    <ion-slide class="screenshot-slide">
-      <div class="screenshot-area">
-        <img src="assets/imgs/intro-slide-1.png">
-      </div>
-      <div class="info-area">
-        <h2>Getting Started</h2>
-        <p>Browse through 200+ restaurants and check out their time-based discounts (ranging from 10% - 50% off).</p>
-      </div>
-    </ion-slide>
-    <!--<ion-slide class="screenshot-slide">-->
-      <!--<div class="screenshot-area">-->
-        <!--<img src="assets/imgs/intro-slide-1.png">-->
-      <!--</div>-->
-      <!--<div class="info-area">-->
-        <!--<h2>Weekly Schedule</h2>-->
-        <!--<p>The discounts are on a weekly schedule with limited quantities, so if a discount is sold out check the same time next week!</p>-->
-      <!--</div>-->
-    <!--</ion-slide>-->
-    <ion-slide class="screenshot-slide">
-      <div class="screenshot-area">
-        <img src="assets/imgs/intro-slide-2.png">
-      </div>
-      <div class="info-area">
-        <h2>Make a Booking</h2>
-        <p>Pick an available time at a restaurant and choose your party size then provide your email and phone to confirm your booking.</p>
-      </div>
-    </ion-slide>
-    <ion-slide class="screenshot-slide">
-      <div class="screenshot-area">
-        <img src="assets/imgs/intro-slide-3.png">
-      </div>
-      <div class="info-area">
-        <h2>Show up</h2>
-        <p>Present your booking confirmation when you arrive at the restaurant and the discount will be applied to your bill. It’s that simple!</p>
+        <div></div>
       </div>
     </ion-slide>
     <ion-slide class="final-slide">
+      <div class="graphic orange" [style.background-image]="'url(assets/imgs/orange-backdrop.jpg)'">
+        <img src="assets/imgs/red-triangle.png" alt="">
+      </div>
       <div class="final-slide-liner">
-        <img class="slide-graphic top-left" src="assets/imgs/final-slide-1.png">
-        <img class="slide-graphic top-right" src="assets/imgs/final-slide-2.png">
-        <h2>Make it happen!</h2>
-        <p class="list">No in-app payments</p>
-        <p class="list">No credit card information needed</p>
-        <p>All deals are first come, first serve!</p>
+        <h2>Eatibl in a Nutshell</h2>
+        <p class="list">Our restaurants reward you for dining at certain times</p>
+        <div class="line-separator"></div>
+        <p class="list">Browse and claim a limited offer</p>
+        <div class="line-separator"></div>
+        <p class="list">Our offers are good for both dine-in and takeout</p>
+        <p class="footnote">* Deals are first come, first served and Eatibl cannot make accomodations for sold out deals.</p>
+      </div>
+    </ion-slide>
+    <ion-slide class="signup-slide">
+      <div class="graphic blue" [style.background-image]="'url(assets/imgs/blue-backdrop.jpg)'">
+        <img src="assets/imgs/red-triangle.png" alt="">
+      </div>
+      <div class="email-submit"  *ngIf="!haveEmail">
+        <span class="email-submit-header">Sign Up & Get Started</span>
+        <button class="signup-email" ion-button block color="white" icon-start (tap)="signup()">Sign Up with Email</button>
+        <div class="social-login">
+          <div class="separator">
+            <span class="line"></span>
+            <span>OR</span>
+            <span class="line"></span>
+          </div>
+          <button class="facebook-login" ion-button block color="facebook" icon-start (tap)="loginFacebook()"><ion-icon name="logo-facebook"></ion-icon>Login with Facebook</button>
+          <button *ngIf="mobilePlatform == 'ios'" class="google-login" outline ion-button block color="googleplus" icon-start (tap)="loginGoogle()"><img src="assets/imgs/google-icon.svg">Login with Google</button>
+          <button *ngIf="mobilePlatform == 'android'" class="google-login" ion-button block color="white" icon-start (tap)="loginGoogle()"><img src="assets/imgs/google-icon.svg">Login with Google</button>
+        </div>
+      </div>
+      <p class="footnote">* Eatibl will not post to your social media or share your information with third parties.</p>
+      <div class="email-submit" *ngIf="haveEmail">
+        <p>Thank you for signing up!</p>
         <div class="button-area">
           <button ion-button color="light" (tap)="learnMore()">Learn More</button>
           <button ion-button color="secondary" (tap)="closeModal('end')">Get Started</button>
         </div>
-        <img class="slide-graphic bottom-left" src="assets/imgs/final-slide-3.png">
-        <img class="slide-graphic bottom-right" src="assets/imgs/final-slide-4.png">
       </div>
     </ion-slide>
   </ion-slides>
@@ -98,7 +66,7 @@
         <button [disabled]="currentIndex == 0" ion-button color="secondary" icon-start (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon>Back</button>
       </ion-buttons>
       <ion-buttons right>
-        <button [disabled]="currentIndex == 4 || !allowSwiping" ion-button color="secondary" icon-end (tap)="nextSlide()">Next<ion-icon name="arrow-forward"></ion-icon></button>
+        <button [disabled]="currentIndex == 2" ion-button color="secondary" icon-end (tap)="nextSlide()">Next<ion-icon name="arrow-forward"></ion-icon></button>
       </ion-buttons>
     </ion-toolbar>
   </ion-footer>
