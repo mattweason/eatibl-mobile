@@ -445,6 +445,13 @@ export class MyApp {
     });
   }
 
+  //Open intro slides
+  presentHIWModal(){
+    this.log.sendEvent('How It Works opened', 'Home', '');
+    const HIWModal = this.modal.create('HowItWorksModalPage', {newUser: true});
+    HIWModal.present();
+  }
+
   //Open the support modal
   supportModal(){
     this.menuCtrl.close();
