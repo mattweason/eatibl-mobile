@@ -105,6 +105,16 @@ export class MyApp {
             this.log.sendErrorEvent('Mixpanel Initialization Failed', 'runtime', JSON.stringify(err), '');
           });
 
+          this.storage.get('eatiblUser').then((val) => {
+            if(val) {
+              var post = decode(val);
+              if (!post['created_at'])
+                this.API.makePost('updateJWT', {email: post.email}).subscribe((response) => {
+                  this.storage.set('eatiblUser', response['token']);
+                });
+            }
+          });
+
         // //Do action if we came into app via localNotification
         this.localNotifications.on('click').subscribe(notification => {
           this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification.data));
