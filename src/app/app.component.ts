@@ -107,15 +107,15 @@ export class MyApp {
         this.localNotifications.on('click').subscribe(notification => {
           this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification.data));
 
-          if(notification.data.type == 'incomplete booking')
+          if(notification.data.type == 'incomplete booking' )//Booking initiated notifications
             this.navigateTo('', notification.data);
-          else if (notification.data.type == 'Reminder')
+          else if (notification.data.type == 'Reminder') //Reminder notifications
             this.navCtrl.push('BookingConfirmedPage', {
               booking: notification.data.booking,
               restaurant: notification.data.restaurant,
               inviteModal: true
             });
-          else if (notification.data.type.indexOf('Countdown') > -1 ){
+          else if (notification.data.type.indexOf('Countdown') > -1 ){ //Countdown notifications
             var title,
                 message;
             if(notification.data.type == 'Coundown24'){

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { LocalNotifications } from '@ionic-native/local-notifications';
+import { AlertController } from 'ionic-angular';
 import * as moment from 'moment';
 
 /*
@@ -16,7 +17,8 @@ export class FunctionsProvider {
   constructor(
     public http: HttpClient,
     public storage: Storage,
-    private localNotifications: LocalNotifications
+    private localNotifications: LocalNotifications,
+    private alertCtrl: AlertController
   ) {}
 
   //Add notification to notification storage object
@@ -71,7 +73,7 @@ export class FunctionsProvider {
     this.localNotifications.schedule({
       id: countdown24, //a number from 0 to 10000
       title: "🔥 24 hours left! ⏱",
-      text: "⏱ There is only one day left to secure your free, premium account by making a booking. Don't miss out!",
+      text: "⏱ Our Early Supporter offer expires in one day. Make a booking to secure your free, premium account.",
       trigger: {at: new Date(moment(triggerTime24).format())},
       data: {type: "Countdown24"}, //Send information to navigate to booking confirmed page
       icon: 'res://notification_app_icon',
@@ -82,7 +84,7 @@ export class FunctionsProvider {
     this.localNotifications.schedule({
       id: countdown1, //a number from 0 to 10000
       title: "🔥 One hour left! ⏱",
-      text: "⏱ Make a booking in the next hour and enjoy Eatibl as a free service forever.",
+      text: "⏱ Our Early Supporter offer expires in one hour. Make a booking to secure your free, premium account.",
       trigger: {at: new Date(moment(triggerTime1).format())},
       data: {type: "Countdown1"}, //Send information to navigate to booking confirmed page
       icon: 'res://notification_app_icon',
@@ -160,5 +162,15 @@ export class FunctionsProvider {
   //Convert degrees to radians
   deg2rad(deg) {
     return deg * (Math.PI/180)
+  }
+
+  //Present countdown alert
+  countdownAlert() {
+    let alert = this.alertCtrl.create({
+      title: 'Early Supporter Offer',
+      subTitle: 'To our early users, thank you for your support! If you try out our app and make a booking in your first 3 days, we will upgrade your account to premium, which grants you unlimited lifetime access to all of our deals.',
+      buttons: ['Got It']
+    });
+    alert.present();
   }
 }

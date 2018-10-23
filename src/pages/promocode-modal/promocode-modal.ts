@@ -29,7 +29,8 @@ export class PromocodeModalPage {
     private API: ApiServiceProvider,
     private log: ActivityLoggerProvider
   ) {
-    this.user = decode(navParams.get('user').token);
+    this.user = navParams.get('user');
+    console.log(this.user)
   }
 
   ionViewDidLoad() {

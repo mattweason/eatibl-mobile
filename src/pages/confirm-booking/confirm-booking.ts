@@ -346,6 +346,9 @@ export class ConfirmBookingPage {
       }
       else{ //no response message means successful booking
 
+        if(this.response.token)
+          this.storage.set('eatiblUser', this.response.token);
+
         var currentDate = moment();
         var bookingDate = moment(this.date);
 

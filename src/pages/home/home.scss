@@ -1,33 +1,39 @@
 page-home {
   .how-it-works{
-    margin-top: 20px;
-    margin-bottom: 20px;
-      display: flex;
-      justify-content: center;
-      .body{
-        padding:12px;
-        width: 88%;
-        h4{
-          font-weight: 700;
-          color: color($colors,medium);
-          font-size: 18px;
-        }
-        p{
-          color: lighten(color($colors, primary), 10%);
-          margin-bottom: 0;
-        }
-      }
-      .arrow{
-        background-color: color($colors, primary);
-        width: 12%;
+    padding: 0;
+    .item-inner{
+      padding-right: 0 !important;
+      .label{
+        margin: 0;
+        padding: 0;
         display: flex;
-        align-items: center;
         justify-content: center;
-        ion-icon{
-          font-size: 36px;
-          color: color($colors, white);
-        }
       }
+    }
+    .body{
+      padding:12px;
+      width: 88%;
+      h4{
+        font-weight: 700;
+        color: color($colors,medium);
+        font-size: 18px;
+      }
+      p{
+        color: lighten(color($colors, primary), 10%);
+        margin-bottom: 0;
+      }
+    }
+    .arrow{
+      background-color: color($colors, primary);
+      width: 12%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      ion-icon{
+        font-size: 36px;
+        color: color($colors, white);
+      }
+    }
   }
   .button-wrapper {
     padding: 0 !important;

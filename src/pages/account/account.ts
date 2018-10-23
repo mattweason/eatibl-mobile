@@ -27,6 +27,9 @@ export class AccountPage {
   bookingHistory = [];
   promoCode: string;
   promoRes = '';
+  countdown = {} as any;
+  accountLevel: any;
+  interval: any;
 
   constructor(
     public navCtrl: NavController,
@@ -57,9 +60,20 @@ export class AccountPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
+        this.accountLevel = this.user['earlySupporter'] ? 'premium' : 'starter';
         if(this.user.phone.length) //make sure it is not an email only user
           this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
             this.sortBookings(data);
+
+            //Run countdown checks
+            var start = moment(this.user['created_at']),
+                end = start.add(3, 'days'),
+                isNew = moment().isBefore(end);
+            if(isNew && !this.user['earlySupporter'])
+              this.runCountdown(end);
+            else
+              this.clearCountdown();
+
           });
       }
       else
@@ -70,6 +84,31 @@ export class AccountPage {
           type: ''
         };
     });
+  }
+
+  runCountdown(end){
+    var self = this;
+    this.interval = setInterval(function() {
+      var difference = parseInt(end.format('X')) - parseInt(moment().format('X'));
+
+      self.countdown['hours'] = Math.floor(difference / 3600);
+      self.countdown['minutes'] = Math.floor(difference % 3600 / 60);
+      self.countdown['seconds'] = Math.floor(difference % 60);
+      if(self.countdown['seconds'] < 10)
+        self.countdown['seconds'] = '0' + self.countdown['seconds'];
+      if(self.countdown['minutes'] < 10)
+        self.countdown['minutes'] = '0' + self.countdown['minutes'];
+
+      if(difference <= 0) {
+        clearInterval(this.interval);
+        this.countdown = {};
+      }
+    }, 1000);
+  }
+
+  clearCountdown(){
+    clearInterval(this.interval);
+    this.countdown = {};
   }
 
   promptInvite() {
@@ -147,9 +186,12 @@ export class AccountPage {
             this.log.sendEvent('Logout', 'Account', '');
             this.storage.remove('eatiblUser');
             this.events.publish('user:statuschanged');
+            //Clear info
             this.bookingUpcoming = [];
             this.bookingHistory = [];
             this.user = {};
+            this.countdown = {};
+            this.accountLevel = '';
           }
         }
       ]
@@ -165,6 +207,13 @@ export class AccountPage {
       buttons: ['Ok']
     });
     alert.present();
+  }
+
+  //Present promo code modal
+  addPromoCodes(){
+    console.log(this.user)
+    let promocodeModal = this.modal.create('PromocodeModalPage', { user: this.user }, { cssClass: 'promocode-modal'});
+    promocodeModal.present();
   }
 
   viewPromoCodes(){

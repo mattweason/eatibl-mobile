@@ -118,19 +118,15 @@
     </ion-row>
   </ion-grid>
 </ion-card>
-<ion-card *ngIf="index == emailCaptureIndex && !haveUser" class="email-submit">
-  <span class="email-submit-header">Keep up with the latest deals!</span>
-  <form [formGroup]="emailCapture" (ngSubmit)="submitEmail()">
-    <div class="email-submit-liner">
-      <ion-input class="ios-input-padding" [formControl]="emailCapture.controls['email']" placeholder="Enter your email" (ionChange)="clearError()"></ion-input>
-      <button *ngIf="!emailCaptured" ion-button color="secondary" type="submit">Submit</button>
-      <button *ngIf="emailCaptured" ion-button color="tertiary" type="button">Success!</button>
+  <ion-card *ngIf="index == countdownIndex && countdown.hours">
+    <div class="countdown">
+      <p class="text">Early Supporter Offer expires in</p>
+      <div class="countdown-content">
+        <span class="timer">{{countdown.hours}} : {{countdown.minutes}} : {{countdown.seconds}}</span>
+        <button ion-button color="secondary" small (tap)="functions.countdownAlert()">Details</button>
+      </div>
     </div>
-    <div class="form-error" *ngIf="((emailCapture.controls.email.hasError('email') || emailCapture.controls.email.hasError('required')) && submitted)">
-      <span>Please enter a valid email.</span>
-    </div>
-  </form>
-</ion-card>
+  </ion-card>
 <div class="loading" *ngIf="!isLoaded">
   <ion-spinner></ion-spinner>
 </div>

@@ -41,17 +41,16 @@
               <div class="grey-box big"></div>
               <div class="grey-box"></div>
             </div>
+            <p class="account-level {{accountLevel}}">{{accountLevel}}</p>
           </ion-col>
         </ion-row>
-        <ion-row>
-          <ion-col>
-            <h2>Invites</h2>
-          </ion-col>
-        </ion-row>
-        <ion-row class="booking-metrics border-bottom">
-          <ion-col class="invites">
-            <p>Share these exclusive deals with your friends!</p>
-            <button ion-button color="secondary" (tap)="promptInvite()">Invite Friends</button>
+        <ion-row class="border-bottom" *ngIf="countdown.hours">
+          <ion-col class="countdown">
+            <p class="text">Early Supporter Offer expires in</p>
+            <div class="countdown-content">
+              <span class="timer">{{countdown.hours}} : {{countdown.minutes}} : {{countdown.seconds}}</span>
+              <button ion-button color="secondary" small (tap)="functions.countdownAlert()">Details</button>
+            </div>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -59,7 +58,7 @@
             <h2>Bookings</h2>
           </ion-col>
         </ion-row>
-        <ion-row class="booking-metrics border-bottom">
+        <ion-row class="booking-metrics">
           <ion-col col-6>
             <p class="title">Upcoming</p>
             <div class="metric">
@@ -75,40 +74,33 @@
             </div>
           </ion-col>
         </ion-row>
-        <ion-row>
-          <ion-col>
-            <h2>Promo Codes</h2>
-          </ion-col>
-        </ion-row>
-        <ion-row *ngIf="user.active" class="border-bottom">
-          <ion-col>
-            <div class="promocode-area">
-              <ion-input class="ios-input-padding" [(ngModel)]="promoCode" name="promoCode" placeholder="Enter promo code" (ionChange)="clearError()"></ion-input>
-              <button ion-button color="primary" small (tap)="submitCode()">Submit</button>
-            </div>
-            <span class="form-error" *ngIf="promoRes">{{promoRes}}</span>
-            <div class="logout-button">
-              <button ion-button color="secondary" small (tap)="viewPromoCodes()">View Applied</button>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row *ngIf="!user.active" class="border-bottom">
-          <ion-col class="invites">
-            <p>Create a full account to apply promo codes!</p>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <div *ngIf="user.active" class="logout-button">
-              <button ion-button color="danger" small (tap)="logout()">Log Out</button>
-            </div>
-            <div *ngIf="!user.active" class="button-row">
-              <button ion-button color="primary" block (tap)="signUp()">Sign Up</button>
-              <button ion-button color="secondary" block (tap)="login()">Log In</button>
-            </div>
-          </ion-col>
-        </ion-row>
       </ion-grid>
+      <ion-list>
+        <button ion-item (tap)="promptInvite()">
+          <ion-icon name="people" item-start></ion-icon>
+          Invite friends to Eatibl
+        </button>
+        <button ion-item (tap)="addPromoCodes()">
+          <ion-icon name="pricetag" item-start></ion-icon>
+          Apply promo code
+        </button>
+        <button ion-item (tap)="viewPromoCodes()">
+          <ion-icon name="pricetags" item-start></ion-icon>
+          View applied promo codes
+        </button>
+        <button *ngIf="user.active" ion-item (tap)="logout()">
+          <ion-icon name="log-out" item-start></ion-icon>
+          Logout
+        </button>
+        <button *ngIf="!user.active" ion-item (tap)="signUp()">
+          <ion-icon name="exit" item-start></ion-icon>
+          Sign Up
+        </button>
+        <button *ngIf="!user.active" ion-item (tap)="login()">
+          <ion-icon name="log-in" item-start></ion-icon>
+          Login
+        </button>
+      </ion-list>
     </ion-card-content>
   </ion-card>
 </ion-content>

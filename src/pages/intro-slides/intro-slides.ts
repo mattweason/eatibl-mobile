@@ -7,6 +7,7 @@ import { Storage } from '@ionic/storage';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { FunctionsProvider } from '../../providers/functions/functions';
 import {ApiServiceProvider} from "../../providers/api-service/api-service";
+import * as decode from 'jwt-decode';
 import { GooglePlus } from '@ionic-native/google-plus';
 
 /**
@@ -186,7 +187,7 @@ export class IntroSlidesPage {
         this.events.publish('email:captured');
         this.log.sendEvent('Google Login Successful', 'Intro Slides Modal', JSON.stringify(response));
 
-        let promocodeModal = this.modal.create('PromocodeModalPage', { user: response }, { cssClass: 'promocode-modal'});
+        let promocodeModal = this.modal.create('PromocodeModalPage', { user: decode(response['token']) }, { cssClass: 'promocode-modal'});
         promocodeModal.onDidDismiss(() => {
           this.haveEmail = true;
         });

@@ -12,11 +12,25 @@
     color: #ccc;
   }
   .user-info{
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     p{
       margin:0;
+    }
+    .account-level{
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      &.premium{
+        color: color($colors, primary);
+      }
+      &.starter{
+        color: color($colors, danger);
+      }
     }
   }
   .promocode-area{
@@ -49,7 +63,6 @@
       }
     }
   }
-
   h2{
     color: color($colors, primary);
     font-size: 18px !important;
@@ -101,5 +114,20 @@
   .logout-button{
     display: flex;
     justify-content: center;
+  }
+  ion-list{
+    button{
+      color: color($colors, medium);
+      border-bottom: 1px solid #ccc;
+      &:last-of-type{
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.platform-android{
+  ion-list{
+    border-top: 1px solid #ccc;
   }
 }

@@ -252,6 +252,41 @@ ion-tabs{
   }
 }
 
+//Early Supporter offer card
+.countdown{
+  padding: 6px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  p{
+    width: 100%;
+    text-align: center;
+    color: color($colors, primary);
+    font-size: 16px;
+  }
+  .countdown-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button{
+      border-color: #fff !important;
+    }
+    ion-icon{
+      font-size: 32px;
+      color: color($colors, secondary);
+    }
+  }
+  .countdown-left{
+    padding-left: 10px;
+  }
+  .timer{
+    width: 130px;
+    color: color($colors, secondary);
+    font-size: 28px;
+  }
+
+}
+
 //Map Styling
 .mapRow{
   .map-figure{

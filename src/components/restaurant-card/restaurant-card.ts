@@ -47,6 +47,7 @@ export class RestaurantCardComponent implements OnChanges {
   @Input() time: string;
   @Input() cardType: string;
   @Input() index: number;
+  @Input() user = {} as any;
 
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     if(changes.hasOwnProperty('location'))
@@ -56,6 +57,8 @@ export class RestaurantCardComponent implements OnChanges {
       this.processTimeslots();
       this.setSlide();
     }
+    if(changes.hasOwnProperty('user'))
+      this.checkUser();
   }
 
   timeslots: any;
@@ -73,11 +76,9 @@ export class RestaurantCardComponent implements OnChanges {
   restaurantTapped = false;
   timeslotTapped = '';
   distance: any;
-  emailCaptureIndex = 1; //Index of card we want email capture to appear under
-  emailCaptured = false; //Show the success message after email capture
-  submitted = false; //To show form errors in email capture form
-  haveUser = false; //For displaying email capture form
-  emailCapture: FormGroup;
+  countdownIndex = 1; //Index of card we want email capture to appear under
+  countdown = {} as any;
+  interval: any;
 
   constructor(
     public navCtrl: NavController,
@@ -90,15 +91,6 @@ export class RestaurantCardComponent implements OnChanges {
     private log: ActivityLoggerProvider,
     public events: Events
   ) {
-    //Form controls and validation
-    this.emailCapture = this.formBuilder.group({
-      email: [
-        '', Validators.compose([
-          Validators.required,
-          Validators.email
-        ])
-      ]
-    });
 
     //Sends the users location to a child component when requested
     events.subscribe('loaded:restaurant', () => {
@@ -107,20 +99,47 @@ export class RestaurantCardComponent implements OnChanges {
       this.processBusinessHours(); //Update business hours to latest when this view is entered
       this.processTimeslots(); //Update timeslots to latest when this view is entered
     });
-
-    //If email capture elsewhere, don't show email capture card
-    events.subscribe('email:captured', () => { //onMap is true if the user is on the map view
-      this.haveUser = true;
-    });
   }
 
   ngAfterViewInit(){
-    //If we have user on initial load don't show email capture card
-    if(this.emailCaptureIndex == this.index) //Only check local store on card that has email capture form
-      this.storage.get('eatiblUser').then((val) => {
-        if(val)
-          this.haveUser = true;
-      });
+    this.checkUser();
+  }
+
+  checkUser(){
+    if(this.user){ //Determine if we should show the countdown
+      var start = moment(this.user['created_at']),
+        end = start.add(3, 'days'),
+        isNew = moment().isBefore(end);
+      if(isNew && !this.user['earlySupporter'])
+        this.runCountdown(end);
+      else
+        this.clearCountdown();
+    }
+  }
+
+  runCountdown(end){
+    var self = this;
+    this.interval = setInterval(function() {
+      var difference = parseInt(end.format('X')) - parseInt(moment().format('X'));
+
+      self.countdown['hours'] = Math.floor(difference / 3600);
+      self.countdown['minutes'] = Math.floor(difference % 3600 / 60);
+      self.countdown['seconds'] = Math.floor(difference % 60);
+      if(self.countdown['seconds'] < 10)
+        self.countdown['seconds'] = '0' + self.countdown['seconds'];
+      if(self.countdown['minutes'] < 10)
+        self.countdown['minutes'] = '0' + self.countdown['minutes'];
+
+      if(difference <= 0) {
+        clearInterval(this.interval);
+        this.countdown = {};
+      }
+    }, 1000);
+  }
+
+  clearCountdown(){
+    clearInterval(this.interval);
+    this.countdown = {};
   }
 
   ngOnInit(){
@@ -341,31 +360,5 @@ export class RestaurantCardComponent implements OnChanges {
       var distance = this.functions.getDistanceFromLatLonInKm(this.location[0], this.location[1], this.restaurant.latitude, this.restaurant.longitude);
       this.distance = this.functions.roundDistances(distance);
     }
-  }
-
-  submitEmail(){
-    console.log('submitted')
-    this.submitted = true;
-    if(this.emailCapture.valid) {
-      console.log('valid')
-      //Run the check to see if this user has been verified
-      this.API.makePost('register/emailOnly', this.emailCapture.value).subscribe(res => {
-        if(res['message'] == 'success' || res['message'] == 'existing') {
-          this.log.sendEvent('Email Capture: ' +res['message'], 'Intro Slides Modal', JSON.stringify(this.emailCapture.value));
-          this.emailCaptured = true;
-          var current = this;
-          setTimeout(function () {
-            current.storage.set('eatiblUser', res['token']);
-            current.haveUser = true;
-          }, 2000);
-        } else {
-          this.log.sendEvent('Email Capture: Failed', 'Intro Slides Modal', '');
-        }
-      });
-    }
-  }
-
-  clearError(){
-    this.submitted = false;
   }
 }

@@ -58,7 +58,6 @@ export class HomePage {
   loadingNextBatch = false; //Used for the show more restaurants button loading spinner
   loadingGeneral = false; //For general loading overlay
   user: any;
-  userHasBookings = false;
 
   map: GoogleMap;
 
@@ -111,17 +110,10 @@ export class HomePage {
     this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
 
     this.storage.get('eatiblUser').then((val) => {
-      if(val){
+      if(val)
         this.user = decode(val);
-        if(this.user.phone.length)
-          this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
-            if(data)
-              this.userHasBookings = true;
-          });
-      }
-      else{
+      else
         this.user = {}; //If no user exists in the localstorage, clear the user object
-      }
     });
   }
 
