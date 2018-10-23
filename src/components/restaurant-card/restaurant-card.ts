@@ -106,11 +106,11 @@ export class RestaurantCardComponent implements OnChanges {
   }
 
   checkUser(){
-    if(this.user){ //Determine if we should show the countdown
+    if(this.user.email){ //Determine if we should show the countdown
       var start = moment(this.user['created_at']),
         end = start.add(3, 'days'),
         isNew = moment().isBefore(end);
-      if(isNew && !this.user['earlySupporter'])
+      if(isNew && !this.user['earlySupporter'] && !this.user['hours'])
         this.runCountdown(end);
       else
         this.clearCountdown();
@@ -131,8 +131,8 @@ export class RestaurantCardComponent implements OnChanges {
         self.countdown['minutes'] = '0' + self.countdown['minutes'];
 
       if(difference <= 0) {
-        clearInterval(this.interval);
-        this.countdown = {};
+        clearInterval(self.interval);
+        self.countdown = {};
       }
     }, 1000);
   }

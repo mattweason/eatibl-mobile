@@ -80,11 +80,11 @@
           <ion-icon name="people" item-start></ion-icon>
           Invite friends to Eatibl
         </button>
-        <button ion-item (tap)="addPromoCodes()">
+        <button *ngIf="user.active" ion-item (tap)="addPromoCodes()">
           <ion-icon name="pricetag" item-start></ion-icon>
           Apply promo code
         </button>
-        <button ion-item (tap)="viewPromoCodes()">
+        <button *ngIf="user.active" ion-item (tap)="viewPromoCodes()">
           <ion-icon name="pricetags" item-start></ion-icon>
           View applied promo codes
         </button>

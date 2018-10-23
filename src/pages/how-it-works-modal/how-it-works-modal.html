@@ -66,7 +66,7 @@
         <button [disabled]="currentIndex == 0" ion-button color="secondary" icon-start (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon>Back</button>
       </ion-buttons>
       <ion-buttons right>
-        <button [disabled]="currentIndex == 4" ion-button color="secondary" icon-end (tap)="nextSlide()">Next<ion-icon name="arrow-forward"></ion-icon></button>
+        <button [disabled]="currentIndex >= 4" ion-button color="secondary" icon-end (tap)="nextSlide()">Next<ion-icon name="arrow-forward"></ion-icon></button>
       </ion-buttons>
     </ion-toolbar>
   </ion-footer>
