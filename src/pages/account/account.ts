@@ -61,20 +61,19 @@ export class AccountPage {
       if(val){
         this.user = decode(val);
         this.accountLevel = this.user['earlySupporter'] ? 'premium' : 'starter';
-        if(this.user.phone.length) //make sure it is not an email only user
-          this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
-            this.sortBookings(data);
+        this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+          this.sortBookings(data);
 
-            //Run countdown checks
-            var start = moment(this.user['created_at']),
-                end = start.add(3, 'days'),
-                isNew = moment().isBefore(end);
-            if(isNew && !this.user['earlySupporter'] && !this.user['hours'])
-              this.runCountdown(end);
-            else
-              this.clearCountdown();
+          //Run countdown checks
+          var start = moment(this.user['created_at']),
+              end = start.add(3, 'days'),
+              isNew = moment().isBefore(end);
+          if(isNew && !this.user['earlySupporter'] && !this.user['hours'])
+            this.runCountdown(end);
+          else
+            this.clearCountdown();
 
-          });
+        });
       }
       else
         this.user = {
@@ -192,6 +191,7 @@ export class AccountPage {
             this.user = {};
             this.countdown = {};
             this.accountLevel = '';
+            this.clearCountdown();
           }
         }
       ]
