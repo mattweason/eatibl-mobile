@@ -165,10 +165,16 @@ export class FunctionsProvider {
   }
 
   //Present countdown alert
-  countdownAlert() {
+  countdownAlert(type) {
+    var subTitle = null;
+    if(type == 'Countdown24')
+      subTitle = 'Less than 24 hours remaining';
+    if(type == 'Countdown1')
+      subTitle = 'Less than 1 hour remaining';
     let alert = this.alertCtrl.create({
       title: 'Early Supporter Offer',
-      subTitle: 'To our early users, thank you for your support! If you try out our app and make a booking in your first 3 days, we will upgrade your account to premium, which grants you unlimited lifetime access to all of our deals.',
+      subTitle: subTitle,
+      message: 'To our early users, thank you for your support! If you try out our app and make a booking in your first 3 days, we will upgrade your account to premium, which grants you unlimited lifetime access to all of our deals.',
       buttons: ['Got It']
     });
     alert.present();

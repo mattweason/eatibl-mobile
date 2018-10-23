@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import * as decode from 'jwt-decode';
 import { LocalNotifications } from '../../node_modules/@ionic-native/local-notifications';
 import { Mixpanel } from '@ionic-native/mixpanel';
+import { FunctionsProvider } from '../providers/functions/functions';
 
 
 @Component({
@@ -58,6 +59,7 @@ export class MyApp {
     private device: Device,
     private modal: ModalController,
     private storage: Storage,
+    private functions: FunctionsProvider,
     private firebase: Firebase,
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
@@ -116,21 +118,7 @@ export class MyApp {
               inviteModal: true
             });
           else if (notification.data.type.indexOf('Countdown') > -1 ){ //Countdown notifications
-            var title,
-                message;
-            if(notification.data.type == 'Coundown24'){
-              title = 'Less than 24 hours remaining';
-              message = 'Thanks for being an early supporter! Create a booking in order to gain free, lifetime access to Eatibl.'
-            } else if(notification.data.type == 'Coundown24'){
-              title = 'Less than 1 hour remaining';
-            }
-            let alert = this.alertCtrl.create({
-              title: title,
-              subTitle: message,
-              enableBackdropDismiss: false,
-              buttons: ['Got It']
-            });
-            alert.present();
+              this.functions.countdownAlert(notification.data.type);
           }
         });
         // //
