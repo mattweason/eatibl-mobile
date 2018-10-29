@@ -44,7 +44,7 @@
             <p class="account-level {{accountLevel}}">{{accountLevel}}</p>
           </ion-col>
         </ion-row>
-        <ion-row class="border-bottom" *ngIf="countdown.hours">
+        <ion-row class="border-bottom" *ngIf="countdown.hours && !hideCountdown">
           <ion-col class="countdown">
             <p class="text">Early Supporter Offer expires in</p>
             <div class="countdown-content">

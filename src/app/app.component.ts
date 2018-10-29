@@ -117,7 +117,7 @@ export class MyApp {
 
         // //Do action if we came into app via localNotification
         this.localNotifications.on('click').subscribe(notification => {
-          this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification.data));
+          this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification));
 
           if(notification.data.type == 'incomplete booking' )//Booking initiated notifications
             this.navigateTo('', notification.data);
@@ -131,21 +131,26 @@ export class MyApp {
               this.functions.countdownAlert(notification.data.type);
           }
         });
-        // //
+
+        //Send a log for each local notification that is triggered
+        this.localNotifications.on('trigger').subscribe(notification => {
+          this.log.sendEvent('Local Notification Triggered', 'unknown', JSON.stringify(notification));
+        });
+
         // //Check if we already have a re-engage notification and cancel it if we do
-        // if(this.localNotifications.isPresent(1)){
-        //   this.localNotifications.cancel(1)
-        // }
-        // // Schedule a new notification for first-timers and regular users
-        // this.localNotifications.schedule({
-        //   id: 1,
-        //   trigger: {at: (dateMoment.add(7, 'days').hours(11).minutes(30)).toDate()},
-        //   text: "We're getting new deals everyday, come check out our latest offerings!",
-        //   title: "We've missed you...",
-        //   icon: 'res://notification_app_icon',
-        //   smallIcon: "res://my_notification_icon",
-        //   color: "#d8354d"
-        // });
+        if(this.localNotifications.isPresent(1)){
+          this.localNotifications.cancel(1)
+        }
+        // Schedule a new notification for first-timers and regular users
+        this.localNotifications.schedule({
+          id: 1,
+          trigger: {at: (moment().add(15, 'seconds')).toDate()},
+          text:  "🍔 We're getting new deals everyday, come check out our latest offerings!",
+          title: "We've missed you! 🙂",
+          icon: 'res://notification_app_icon',
+          smallIcon: "res://my_notification_icon",
+          color: "#d8354d"
+        });
 
         this.diagnostic.getLocationAuthorizationStatus().then((status) => {
           if(status == 'not_determined') //track cases where users are required to provide permission
@@ -178,6 +183,21 @@ export class MyApp {
           this.log.sendEvent('App Instance Resumed', 'unknown', 'The user brought the app into the foreground');
           this.events.publish('platform:resumed');
           // this.forceUpdate(); //Resume runs first time app opens as well as resume events
+
+          //Make sure to reset the re engagement notification whenever the app is put in the foreground
+          if(this.localNotifications.isPresent(1)){
+            this.localNotifications.cancel(1)
+          }
+          // Schedule a new notification for first-timers and regular users
+          this.localNotifications.schedule({
+            id: 1,
+            trigger: {at: (moment().add(7, 'days').hours(11).minutes(30)).toDate()},
+            text:  "🍔 We're getting new deals everyday, come check out our latest offerings!",
+            title: "We've missed you! 🙂",
+            icon: 'res://notification_app_icon',
+            smallIcon: "res://my_notification_icon",
+            color: "#d8354d"
+          });
         });
 
         //Reset this.user object when login or logout is performed by other components
