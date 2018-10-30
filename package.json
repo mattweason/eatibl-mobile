@@ -25,6 +25,7 @@
     "@angular/platform-browser-dynamic": "5.0.3",
     "@ionic-native/android-permissions": "4.7.0",
     "@ionic-native/app-version": "4.8.0",
+    "@ionic-native/background-geolocation": "^4.16.0",
     "@ionic-native/contacts": "4.8.0",
     "@ionic-native/core": "^4.11.0",
     "@ionic-native/date-picker": "4.5.3",
@@ -55,6 +56,7 @@
     "cordova-android-support-gradle-release": "^1.4.4",
     "cordova-browser": "5.0.3",
     "cordova-ios": "4.5.4",
+    "cordova-multidex": "git+https://github.com/jwall149/cordova-multidex.git",
     "cordova-plugin-actionsheet": "2.3.3",
     "cordova-plugin-add-swift-support": "1.7.2",
     "cordova-plugin-android-permissions": "1.0.0",
@@ -76,6 +78,7 @@
     "cordova-plugin-ionic-webview": "1.2.1",
     "cordova-plugin-local-notification": "0.9.0-beta.2",
     "cordova-plugin-market": "^1.2.0",
+    "cordova-plugin-mauron85-background-geolocation": "^2.3.6",
     "cordova-plugin-mixpanel": "^4.5.0",
     "cordova-plugin-nativegeocoder": "3.1.1",
     "cordova-plugin-network-information": "^2.0.1",
@@ -165,7 +168,18 @@
       },
       "cordova-plugin-mixpanel": {
         "PLAY_SERVICES_VERSION": "+"
-      }
+      },
+      "cordova-plugin-mauron85-background-geolocation": {
+        "GOOGLE_PLAY_SERVICES_VERSION": "11+",
+        "ANDROID_SUPPORT_LIBRARY_VERSION": "23+",
+        "ICON": "@mipmap/icon",
+        "SMALL_ICON": "@mipmap/icon",
+        "ACCOUNT_NAME": "@string/app_name",
+        "ACCOUNT_LABEL": "@string/app_name",
+        "ACCOUNT_TYPE": "$PACKAGE_NAME.account",
+        "CONTENT_AUTHORITY": "$PACKAGE_NAME"
+      },
+      "me.tonny.cordova.plugins.multidex": {}
     },
     "platforms": [
       "ios",
