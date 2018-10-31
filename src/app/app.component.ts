@@ -17,6 +17,7 @@ import * as decode from 'jwt-decode';
 import { LocalNotifications } from '../../node_modules/@ionic-native/local-notifications';
 import { Mixpanel } from '@ionic-native/mixpanel';
 import { FunctionsProvider } from '../providers/functions/functions';
+import { GeolocationServiceProvider } from '../providers/geolocation-service/geolocation-service';
 
 
 @Component({
@@ -60,6 +61,7 @@ export class MyApp {
     private modal: ModalController,
     private storage: Storage,
     private functions: FunctionsProvider,
+    private geolocationService: GeolocationServiceProvider,
     private firebase: Firebase,
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
@@ -70,7 +72,7 @@ export class MyApp {
   ) {
 
     platform.ready().then(() => {
-      console.log(Date.now() + ' platform ready')
+      console.log('platform ready - '+ moment().format('X'))
       var dateToday = new Date;
       var dateMoment = moment(dateToday);
 
@@ -176,7 +178,9 @@ export class MyApp {
         // this.forceUpdate();
 
         platform.pause.subscribe(() => {
+          console.log('app paused')
           this.log.sendEvent('App Instance Paused', 'unknown', 'The user put the app into the background');
+          this.geolocationService.saveLocation();
         });
 
         platform.resume.subscribe(() => {
@@ -229,9 +233,9 @@ export class MyApp {
 
         //Check for both permissions and if location services are enabled
         if(platform.is('android'))
-          this.locationPermissionAndroid();
+          this.geolocationService.locationPermissionAndroid();
         else if(platform.is('ios')){
-          this.locationPermissionIos();
+          this.geolocationService.locationPermissionIos();
           firebase.grantPermission().then(() => {
             console.log('granted')
           });
@@ -241,9 +245,6 @@ export class MyApp {
         //**********************ONLY FOR IONIC LAB********************************//
         //Hardcode location and send it so we don't have to wait for geolocation
         //while developing. Coordinates are set to Palmerston office.
-        // this.geolocateUser(true);
-        this.location = {coords: [43.655922, - 79.410125]};
-        this.sendGeolocationEvent();
 
         //check if user is logged in
         this.storage.get('eatiblUser').then((val) => {
@@ -255,82 +256,6 @@ export class MyApp {
         this.storage.set('eatiblABValue', 40);
       }
 
-    });
-
-    //Sends the users location to a child component when requested
-    events.subscribe('get:geolocation', (time) => {
-      this.sendGeolocationEvent();
-    });
-
-    //Sends the users location to a child component when requested
-    events.subscribe('get:geolocation:autolocate', () => {
-      if(this.platform.is('android')) {
-        this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(result => {
-          if (result.hasPermission)
-            this.diagnostic.isLocationEnabled().then((state) => {
-              if (state) {
-                if (this.location)
-                  this.sendGeolocationEvent();
-                else
-                  this.geolocateUser(true);
-              } else {
-                let alert = this.alertCtrl.create({
-                  title: 'Location Services Are Off',
-                  subTitle: 'To auto locate you must turn your on your location services.',
-                  enableBackdropDismiss: false,
-                  buttons: [{
-                    text: 'Dismiss',
-                    handler: () => {
-                      this.events.publish('enable:positionmapbuttons');
-                    }
-                  }]
-                });
-                alert.present();
-              }
-            });
-          else {
-            let alert = this.alertCtrl.create({
-              title: 'Lacking Permissions',
-              subTitle: 'To auto locate you must give Eatibl permission to get your location.',
-              enableBackdropDismiss: false,
-              buttons: [{
-                text: 'Dismiss',
-                handler: () => {
-                  this.events.publish('enable:positionmapbuttons');
-                }
-              }]
-            });
-            alert.present();
-          }
-        });
-      }
-      else if(this.platform.is('ios'))
-        this.diagnostic.getLocationAuthorizationStatus().then((status) => {
-          if(status == 'authorized_when_in_use' || status == 'authorized_always') {
-            if (this.location)
-              this.sendGeolocationEvent();
-            else
-              this.geolocateUser(true);
-          } else if(status == 'denied') {
-            let alert = this.alertCtrl.create({
-              title: 'Lacking Permissions',
-              subTitle: 'To auto locate you must give Eatibl permission to get your location.',
-              enableBackdropDismiss: false,
-              buttons: [{
-                  text: 'Dismiss',
-                  handler: () => {
-                    this.events.publish('enable:positionmapbuttons');
-                  }
-                }]
-            });
-            alert.present();
-          }
-        });
-    });
-
-    //Listens to whether the user in on the map view or not to move the help button
-    events.subscribe('view:map', (onMap) => { //onMap is true if the user is on the map view
-      this.mapView = onMap;
     });
   }
 
@@ -475,6 +400,12 @@ export class MyApp {
     });
   }
 
+  //Preset custom location modal
+  presentLocationModal(){
+    this.menuCtrl.close();
+    this.geolocationService.presentLocationModal();
+  }
+
   //Open intro slides
   presentHIWModal(){
     this.log.sendEvent('How It Works opened', 'Home', '');
@@ -490,111 +421,6 @@ export class MyApp {
     supportModal.present();
   }
 
-  //Run geolocation permissions for iOs
-  locationPermissionIos(){
-    this.splashScreen.hide();
-    this.diagnostic.getLocationAuthorizationStatus().then((status) => {
-      if(status == 'not_determined') //Permission has not yet been asked
-        this.diagnostic.requestLocationAuthorization().then((status) => {
-          if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
-          //Do we already have a custom location?
-            this.storage.get('eatiblLocation').then((val) => {
-              if (val)  //Custom location has been set, set userCoords to custom value
-                this.events.publish('user:geolocated', val, Date.now());
-              else
-                this.geolocateUser(false); //If state is true, get the geolocation
-            });
-          else if(status == 'denied') //Permission has been denied
-          //Do we already have a custom location?
-            this.storage.get('eatiblLocation').then((val) => {
-              if (val)  //Custom location has been set, set userCoords to custom value
-                this.events.publish('user:geolocated', val, Date.now());
-              else
-                this.presentLocationModal(); //If location is not enabled, ask them to set a custom one
-            });
-        });
-      else if(status == 'denied') //Permission has been denied
-      //Do we already have a custom location?
-        this.storage.get('eatiblLocation').then((val) => {
-          if (val)  //Custom location has been set, set userCoords to custom value
-            this.events.publish('user:geolocated', val, Date.now());
-          else
-            this.presentLocationModal(); //If location is not enabled, ask them to set a custom one
-        });
-      else if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
-      //Do we already have a custom location?
-        this.storage.get('eatiblLocation').then((val) => {
-          if (val)  //Custom location has been set, set userCoords to custom value
-            this.events.publish('user:geolocated', val, Date.now());
-          else
-            this.geolocateUser(false); //If state is true, get the geolocation
-        });
-    })
-  }
-
-  //Run geolocation permissions and availability checks for android
-  locationPermissionAndroid(){
-    this.splashScreen.hide();
-    this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
-      result => {
-        if(result.hasPermission){ //We have permission
-          this.diagnostic.isLocationEnabled().then((state) => {
-            if (state) {
-              //Do we already have a custom location?
-              this.storage.get('eatiblLocation').then((val) => {
-                if (val)  //Custom location has been set, set userCoords to custom value
-                  this.events.publish('user:geolocated', val, Date.now());
-                else
-                  this.geolocateUser(false); //If state is true, get the geolocation
-              });
-            } else {
-              //Do we already have a custom location?
-              this.storage.get('eatiblLocation').then((val) => {
-                if (val)  //Custom location has been set, set userCoords to custom value
-                  this.events.publish('user:geolocated', val, Date.now());
-                else
-                  this.presentLocationModal(); //If location is not enabled, ask them to set a custom one
-              });
-            }
-          }).catch(err => console.log(err))
-        } else { //We don't have permission
-
-          //Do we already have a custom location?
-          this.storage.get('eatiblLocation').then((val) => {
-            if(val)  //Custom location has been set, set userCoords to custom value
-              this.events.publish('user:geolocated', val, Date.now());
-            else{
-              this.presentLocationModal();
-            }
-          });
-        }
-      },
-      err => {
-        console.log('error getting permission')
-      }
-    );
-  }
-
-  //Preset custom location modal
-  presentLocationModal(){
-    this.menuCtrl.close();
-    this.log.sendEvent('Location Modal', 'Menu', ''); //log each time modal is opened
-    this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
-    const mapModal = this.modal.create('SetPositionModalPage', {location: ['43.656347', '-79.380890']});
-    mapModal.onDidDismiss((locationUpdated) => {
-      this.events.publish('view:positionMap', false); //Get tabs page to set opacity to 1
-
-      if(locationUpdated) //Did user update the location in the modal
-        this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
-          if(val) {  //Custom location has been set, set userCoords to custom value
-            this.events.publish('user:geolocated', val, Date.now());
-          }
-          this.events.publish('user:newLocation'); //Tell nearby page to get restaurants with new location
-        });
-    });
-    mapModal.present();
-  }
-
   //Prompt terms of use / privacy policy modal
   termsModal(){
     this.menuCtrl.close();
@@ -603,80 +429,8 @@ export class MyApp {
     termsModal.present();
   }
 
-  ngOnInit(){
-  }
-
-  //Function to log geolocation every 5 minutes
-  logLocation(data){
-    var postObject = {
-      deviceId: this.device.uuid,
-      lat: data.coords.latitude,
-      lng: data.coords.longitude
-    };
-
-    if(this.user._id.length) //Only add user_fid if a user object exists
-      postObject['user_fid'] = this.user._id;
-
-    if(moment().isAfter(moment(this.locationCachedTime).add(5, 'm')) || !this.locationCachedTime){ //Check if locationCachedTime is not set or is over 5 minutes old
-      this.API.makePost('user/geolocation', postObject).subscribe();
-      this.locationCachedTime = moment();
-    }
-  }
-
-  //Get and watch the users location
-  geolocateUser(autolocate){
-
-    //Request geolocation
-    this.geolocation.getCurrentPosition({timeout: 15000}).then((resp) => {
-      this.logLocation(resp);
-      this.location = resp;
-      this.sendGeolocationEvent();
-
-      //Set up an observable for child components/pages to watch for geolocation data
-      let watch = this.geolocation.watchPosition({maximumAge: 30000});
-      watch.subscribe((data) => {
-        this.logLocation(data);
-        this.location = data;
-        this.sendGeolocationEvent();
-      });
-    }).catch((error) => {
-      console.log(error)
-      let alert = this.alertCtrl.create({
-        title: "Can't Find You",
-        message: "We're having trouble getting your location. Do you want to try again or set your location on a map?",
-        buttons: [
-          {
-            text: 'Set Location',
-            handler: () => {
-              if(autolocate) //If we are in position modal, just dismiss and renable the buttons and get rid of loading screen
-                this.events.publish('enable:positionmapbuttons');
-              else
-                this.presentLocationModal();
-            }
-          },
-          {
-            text: 'Try Again',
-            handler: () => {
-              this.geolocateUser(autolocate);
-            }
-          }
-        ]
-      });
-      alert.present();
-    });
-  }
-
   //Send analytics log when menu is opened or close
   logMenu(cond){
     this.log.sendEvent('Menu '+cond, 'unknown', '');
-  }
-
-  //Push event every time the users geolocation is created or updated
-  sendGeolocationEvent() {
-    this.storage.get('eatiblLocation').then((val) => {
-      if(this.location && !val) //Only send location back if you have it and there is no custom location
-        if (this.location.coords) //Only send location if it has coordinates
-          this.events.publish('user:geolocated', [this.location.coords.latitude, this.location.coords.longitude], Date.now());
-    });
   }
 }

@@ -215,6 +215,18 @@ restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
   }
 }
 
+.platform-ios{
+  .loading-overlay{
+    margin-top: $navbar-ios-height;
+  }
+}
+
+.platform-android{
+  .loading-overlay{
+    margin-top: $navbar-md-height;
+  }
+}
+
 .loading-overlay{
   position: fixed;
   height: 100%;

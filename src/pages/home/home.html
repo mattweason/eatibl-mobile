@@ -12,28 +12,14 @@
       <!--</button>-->
     </ion-buttons>
   </ion-navbar>
-  <ion-toolbar class="dateToolbar" *ngIf="view == 'map'">
-    <ion-grid>
-      <ion-row>
-        <ion-col col-7>
-          <ion-item class="datetime-sm">
-            <ion-label fixed><ion-icon name="calendar" color="primary"></ion-icon></ion-label>
-            <ion-datetime displayFormat="DDD, MMM DD" pickerFormat="MMM DDDD" [min]="today" [max]="maxDate" [(ngModel)]="date" (ionCancel)="logDate('cancelled', date);" (ionChange)="rankRestaurants(restaurantAll); logDate('changed', date);"></ion-datetime>
-          </ion-item>
-        </ion-col>
-        <ion-col col-5>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-toolbar>
 </ion-header>
 
-<ion-content [ngClass]="{'grey-background': view == 'list'}">
-  <div *ngIf="loadingGeneral" class="loading-overlay">
-    <div class="loading-spinner-box">
-      <ion-spinner></ion-spinner>
-    </div>
+<div *ngIf="loadingGeneral" class="loading-overlay">
+  <div class="loading-spinner-box">
+    <ion-spinner></ion-spinner>
   </div>
+</div>
+<ion-content [ngClass]="{'grey-background': view == 'list'}">
   <div *ngIf="loadingRestaurants" class="loading-restaurants">
     <div class="loading-spinner-box">
       <span>Finding Restaurants</span>

@@ -6,6 +6,8 @@ import { FunctionsProvider } from '../../providers/functions/functions';
 import { Device } from '@ionic-native/device';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
+import { GeolocationServiceProvider } from '../../providers/geolocation-service/geolocation-service';
+import { Subscription } from 'rxjs/Subscription';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import * as decode from 'jwt-decode';
@@ -26,6 +28,8 @@ import {
 export class HomePage {
   @ViewChild(Content) content: Content;
 
+  private locationSub: Subscription;
+
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
   restaurantPicks = []; //List of restaraunt of today's top picks (total of 5)
@@ -42,7 +46,7 @@ export class HomePage {
   view = 'list';
   togglingView = false; //Disables toggle view button when true
   showToolbar: boolean = true;
-  userCoords: any;
+  userCoords = [];
   firstCall = true;
   batch = 0; //Represents the batch number
   hideMap = false;
@@ -58,6 +62,7 @@ export class HomePage {
   loadingNextBatch = false; //Used for the show more restaurants button loading spinner
   loadingGeneral = false; //For general loading overlay
   user: any;
+  locationText = 'Toronto';
 
   map: GoogleMap;
 
@@ -72,29 +77,41 @@ export class HomePage {
     private storage: Storage,
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
-    private fb: Facebook
+    private fb: Facebook,
+    private geolocationService: GeolocationServiceProvider
   ) {
 
-    //Update location when user geolocated event is recieved
-    events.subscribe('user:geolocated', (location, time) => {
-      this.userCoords = location;
-
-      //Only request the geolocated restaurant list the first time this event is received
-      if(this.firstCall){
-        this.firstCall = false;
-        this.getRestaurants();
+    this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
+      if(location.lat != 0){
+        var overThreshold = true;
+        if(this.userCoords.length){
+          var distance = this.functions.getDistanceFromLatLonInKm(location.lat, location.lng, this.userCoords[0], this.userCoords[1]) * 1000, //Distance in km converted to m
+            distanceThreshold = 500; //In meters
+          overThreshold = distance > distanceThreshold;
+        }
+        this.userCoords = [location.lat, location.lng];
+        if(this.firstCall){
+          this.firstCall = false;
+          this.getRestaurants();
+        }
       }
     });
 
     //Update location when user geolocated event is recieved
+    // events.subscribe('user:geolocated', () => {
+    //   console.log('recieved geolocation - '+ moment().format('X'))
+    //   this.userCoords = this.geolocationService.location;
+    //   console.log(this.userCoords)
+    //   //Only request the geolocated restaurant list the first time this event is received
+    //   if(this.firstCall){
+    //     this.firstCall = false;
+    //     this.getRestaurants();
+    //   }
+    // });
+
+    //Update location when user geolocated event is recieved
     events.subscribe('user:newLocation', () => {
       this.getRestaurants();
-    });
-
-    //Find out if we have a custom location
-    this.storage.get('eatiblLocation').then((val) => {
-      if(val) //If custom location, show card about custom location
-        this.customLocation = true;
     });
 
     //Move other map out of the way when position map is opened
@@ -105,7 +122,6 @@ export class HomePage {
 
   ionViewDidEnter(){
     //Call geolocation from app.component
-    this.events.publish('view:map', (this.view == 'map')); //Pop help button into correct position
     this.events.publish('get:geolocation', Date.now());
     this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
 
@@ -118,7 +134,6 @@ export class HomePage {
   }
 
   ionViewWillLeave(){
-    this.events.publish('view:map', false); //Pop help button into correct position
   }
 
   //Open intro slides
@@ -141,6 +156,7 @@ export class HomePage {
 
   //Get restaurant list
   getRestaurants(){
+    console.log('lat: '+this.userCoords[0] +', lng: '+this.userCoords[1])
     this.loadingRestaurants = true;
     //This is the final endpoint of the geolocation/custom location process
     //Here is where we need to check if we need to show the intro slides or not
@@ -149,7 +165,7 @@ export class HomePage {
         this.presentIntroModal();
     });
 
-    this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
+    this.API.makePost('restaurant/all/geolocated/', [this.userCoords[0], this.userCoords[1]]).subscribe(data => { //Location needs to be array format for the distance package
       this.events.publish('reveal:restaurants');
       this.loadingRestaurants = false;
       this.dataCache = data;
@@ -435,10 +451,6 @@ export class HomePage {
     }
   }
 
-  topPickSlider(direction){
-    this.log.sendEvent('Browse through Top Picks', 'Home', 'User went: '+direction);
-  }
-
   //Toggles between list and map view
   toggleView(){
     this.loadingGeneral = true;
@@ -448,7 +460,6 @@ export class HomePage {
       if(current.view == 'list'){ //If view is currently list
         current.log.sendEvent('Map View: Loaded', 'Home', 'User switched from list view to map view');
         current.view = 'map';
-        current.events.publish('view:map', true);
         current.selectedResto = {};
         current.loadMap();
         current.loadingGeneral = false;
@@ -457,7 +468,6 @@ export class HomePage {
       else if(current.view == 'map'){ //If view is currently map
         current.log.sendEvent('List View: Loaded', 'Home', 'User switched from map view to list view');
         current.view = 'list';
-        current.events.publish('view:map', false);
         current.togglingView = false;
         const nodeList = document.querySelectorAll('._gmaps_cdv_');
 
@@ -476,6 +486,7 @@ export class HomePage {
 
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
+    console.log(restaurantList)
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
     var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
@@ -521,6 +532,7 @@ export class HomePage {
         rank++;
 
       //bonus and penalty for distance
+      console.log(restaurantList[i].distance)
       if(restaurantList[i].distance <= 2)
         rank = rank + 2/restaurantList[i].distance;
       else if(restaurantList[i].distance > 2 && restaurantList[i].distance <= 6)
