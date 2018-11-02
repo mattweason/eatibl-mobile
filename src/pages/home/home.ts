@@ -104,16 +104,6 @@ export class HomePage {
     //     this.getRestaurants();
     //   }
     // });
-
-    //Update location when user geolocated event is recieved
-    events.subscribe('user:newLocation', () => {
-      this.getRestaurants();
-    });
-
-    //Move other map out of the way when position map is opened
-    events.subscribe('view:positionMap', (mapOpen) => {
-      this.hideMap = mapOpen;
-    });
   }
 
   ionViewDidEnter(){
@@ -152,12 +142,11 @@ export class HomePage {
 
   //Get restaurant list
   getRestaurants(){
-    console.log('lat: '+this.userCoords[0] +', lng: '+this.userCoords[1])
     this.loadingRestaurants = true;
     //This is the final endpoint of the geolocation/custom location process
     //Here is where we need to check if we need to show the intro slides or not
     this.storage.get('eatiblShowSlides').then((val) => {
-      if(val) //If custom location, show card about custom location
+      if(val)
         this.presentIntroModal();
     });
 
@@ -568,7 +557,6 @@ export class HomePage {
   //Pull down to refresh the restaurant list
   doRefresh(refresher){
     this.log.sendEvent('List View: Refreshed', 'Home', 'User refreshed the restaurant list');
-    this.events.publish('get:geolocation', Date.now()); //Tell the app.component we need the latest geolocation
     this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
       this.loadMorePressed = 0;
       this.batch = 0;
