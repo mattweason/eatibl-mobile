@@ -37,7 +37,7 @@ export class GeolocationServiceProvider {
   };
   public locationDefault = {
     text: 'Yonge & Dundas',
-    coords: [43.6564126, -79.3825729],
+    coords: [43.6564127, -79.3825728],
     timestamp: Date.now(),
     device: false
   };
@@ -112,7 +112,6 @@ export class GeolocationServiceProvider {
     };
 
     this.watch = this.geolocation.watchPosition(options).filter((p: any) => p.code === undefined).subscribe((position: Geoposition) => {
-      console.log(position)
 
       // Run update inside of Angular's zone
       this.zone.run(() => {
@@ -147,57 +146,38 @@ export class GeolocationServiceProvider {
   }
 
   //Switch back to device location for the use device location button
-  useDeviceLocation(){
+  useDeviceLocation(callback){
     this.diagnostic.getLocationAuthorizationStatus().then((status) => {
       if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) //Permission has been authorized
         this.setLocation(this.locationCached.coords, 'Your Location');
       else if(status == this.diagnostic.permissionStatus.DENIED) //Permission has been denied
         this.diagnostic.requestLocationAuthorization().then((status) => {
-          if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) //Permission has been authorized
+          if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE){ //Permission has been authorized
+            callback(true);
+            this.location.device = true;
             this.startTracking();
+          } else
+            callback(false);
         });
     });
   }
 
-  //Run geolocation permissions for iOs - RUNTIME
-  locationPermissionIos(){
+  //Run geolocation permissions - RUNTIME
+  locationPermission(){
     this.splashScreen.hide();
     this.diagnostic.getLocationAuthorizationStatus().then((status) => {
-      if(status == 'not_determined') //Permission has not yet been asked
+      if(status == this.diagnostic.permissionStatus.NOT_REQUESTED) //Permission has not yet been asked
         this.diagnostic.requestLocationAuthorization().then((status) => {
-          if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
+          if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) //Permission has been authorized
             this.startTracking();
-          else if(status == 'denied') //Permission has been denied
-            this.setLocation(this.locationDefault, this.locationDefault.text);
+          else if(status == this.diagnostic.permissionStatus.DENIED) //Permission has been denied
+            this.setLocation(this.locationDefault.coords, this.locationDefault.text);
         });
-      else if(status == 'denied') //Permission has been denied
-        this.setLocation(this.locationDefault, this.locationDefault.text);
-      else if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
+      else if(status == this.diagnostic.permissionStatus.DENIED) //Permission has been denied
+        this.setLocation(this.locationDefault.coords, this.locationDefault.text);
+      else if(this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) //Permission has been authorized
         this.startTracking();
     })
-  }
-
-  //Run geolocation permissions and availability checks for android - RUNTIME
-  locationPermissionAndroid(){
-    this.splashScreen.hide();
-    this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
-      result => {
-        if(result.hasPermission){ //We have permission
-          this.diagnostic.isLocationEnabled().then((state) => {
-            if (state) {
-              this.startTracking();
-            } else {
-              this.setLocation(this.locationDefault, this.locationDefault.text);
-            }
-          }).catch(err => console.log(err))
-        } else { //We don't have permission
-          this.setLocation(this.locationDefault, this.locationDefault.text);
-        }
-      },
-      err => {
-        console.log('error getting permission')
-      }
-    );
   }
 
   //Preset custom location modal
@@ -308,9 +288,9 @@ export class GeolocationServiceProvider {
   //Save location to storage on app pause
   saveLocation(){
     if(this.location.coords.length){
-      console.log('saving location')
-      console.log(JSON.parse(JSON.stringify(this.location)))
-      this.storage.set('eatiblLocation', this.location);
+      if(this.location.coords[0] != this.locationDefault.coords[0] && this.location.coords[1] != this.locationDefault.coords[1]){
+        this.storage.set('eatiblLocation', this.location);
+      }
     }
   }
 

@@ -231,10 +231,10 @@ export class MyApp {
         });
 
         //Check for both permissions and if location services are enabled
-        if(platform.is('android'))
-          this.geolocationService.locationPermissionAndroid();
-        else if(platform.is('ios')){
-          this.geolocationService.locationPermissionIos();
+        this.geolocationService.locationPermission();
+
+        //Request permission for push notifications
+        if(platform.is('ios')){
           firebase.grantPermission().then(() => {
             console.log('granted')
           });

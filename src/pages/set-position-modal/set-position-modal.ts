@@ -62,9 +62,12 @@ export class SetPositionModalPage {
   }
 
   useDeviceLocation(){
-    this.viewCtrl.dismiss();
     this.geolocationService.toggleManualReload(true);
-    this.geolocationService.useDeviceLocation();
+    var current = this;
+    this.geolocationService.useDeviceLocation(function(result){
+      if(result)
+        current.viewCtrl.dismiss(true);
+    });
   }
 
   //Close the modal
