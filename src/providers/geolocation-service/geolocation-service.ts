@@ -24,18 +24,23 @@ export class GeolocationServiceProvider {
 
   public watch: any;
   public location = {
-    lat: 0,
-    lng: 0
+    text: '',
+    coords: [],
+    timestamp: 0,
+    device: true
   };
   public locationCached = {
-    lat: 0,
-    lng: 0
+    text: '',
+    coords: [],
+    timestamp: 0,
+    device: true
   };
   public locationDefault = {
-    lat: 43.655922,
-    lng: -79.410125
+    text: 'Yonge & Dundas',
+    coords: [43.6564126, -79.3825729],
+    timestamp: Date.now(),
+    device: false
   };
-  public locationText: string;
   user = {} as any;
   locationCachedTime: any; //Used to send mark the last time geolocation data was sent to the backend
   observableLocation: any;
@@ -95,10 +100,10 @@ export class GeolocationServiceProvider {
 
     this.storage.get('eatiblLocation').then((val) => { //Use the saved location and delete if found
       if(val){
-        this.location.lat = val.lat;
-        this.location.lng = val.lng;
+        this.location = val;
+        console.log('theres a custom location')
+        console.log(JSON.parse(JSON.stringify(val)))
         this.locationChanged();
-        this.storage.remove('eatiblLocation');
       }
     });
 
@@ -111,12 +116,13 @@ export class GeolocationServiceProvider {
 
       // Run update inside of Angular's zone
       this.zone.run(() => {
-        this.location.lat = position.coords.latitude;
-        this.location.lng = position.coords.longitude;
-        this.locationText = 'You';
-        this.locationChanged();
-        this.locationCached.lat = position.coords.latitude;
-        this.locationCached.lng = position.coords.longitude;
+        if(this.location.device){
+          this.location.coords = [position.coords.latitude, position.coords.longitude];
+          this.location.text = 'Your Location';
+          this.location.timestamp = Date.now();
+          this.locationChanged();
+        }
+        this.locationCached.coords = [position.coords.latitude, position.coords.longitude];
       });
 
     });
@@ -124,14 +130,16 @@ export class GeolocationServiceProvider {
 
   //Update the observable location
   locationChanged() {
+    console.log(JSON.parse(JSON.stringify(this.location)))
     this.observableLocation.next(this.location);
   }
 
   //Manually set a location
   setLocation(coords, text){
-    this.location.lat = coords.lat;
-    this.location.lng = coords.lng;
-    this.locationText = text;
+    console.log('location set')
+    this.location.coords = [coords[0], coords[1]];
+    this.location.text = text;
+    this.location.device = false;
     this.locationChanged();
   }
 
@@ -144,10 +152,10 @@ export class GeolocationServiceProvider {
           if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
             this.startTracking();
           else if(status == 'denied') //Permission has been denied
-            this.setLocation(this.locationDefault, 'Toronto');
+            this.setLocation(this.locationDefault, this.locationDefault.text);
         });
       else if(status == 'denied') //Permission has been denied
-        this.setLocation(this.locationDefault, 'Toronto');
+        this.setLocation(this.locationDefault, this.locationDefault.text);
       else if(status == 'authorized_when_in_use' || status == 'authorized_always') //Permission has been authorized
         this.startTracking();
     })
@@ -161,13 +169,15 @@ export class GeolocationServiceProvider {
         if(result.hasPermission){ //We have permission
           this.diagnostic.isLocationEnabled().then((state) => {
             if (state) {
+              console.log('has permission')
               this.startTracking();
             } else {
-              this.setLocation(this.locationDefault, 'Toronto');
+              console.log('no permission')
+              this.setLocation(this.locationDefault, this.locationDefault.text);
             }
           }).catch(err => console.log(err))
         } else { //We don't have permission
-          this.setLocation(this.locationDefault, 'Toronto');
+          this.setLocation(this.locationDefault, this.locationDefault.text);
         }
       },
       err => {
@@ -180,14 +190,7 @@ export class GeolocationServiceProvider {
   presentLocationModal(){
     this.menuCtrl.close();
     this.log.sendEvent('Location Modal', 'Menu', ''); //log each time modal is opened
-    this.events.publish('view:positionMap', true); //Get tabs page to set opacity to 0
-    const mapModal = this.modal.create('SetPositionModalPage', {location: ['43.656347', '-79.380890']});
-    mapModal.onDidDismiss((locationUpdated) => {
-      this.events.publish('view:positionMap', false); //Get tabs page to set opacity to 1
-
-      if(locationUpdated) //Did user update the location in the modal
-        console.log('do something')
-    });
+    const mapModal = this.modal.create('SetPositionModalPage');
     mapModal.present();
   }
 
@@ -290,7 +293,9 @@ export class GeolocationServiceProvider {
 
   //Save location to storage on app pause
   saveLocation(){
-    if(this.location.lat != 0){
+    if(this.location.coords.length){
+      console.log('saving location')
+      console.log(JSON.parse(JSON.stringify(this.location)))
       this.storage.set('eatiblLocation', this.location);
     }
   }

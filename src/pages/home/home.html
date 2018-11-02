@@ -14,7 +14,7 @@
   </ion-navbar>
 </ion-header>
 
-<div *ngIf="loadingGeneral" class="loading-overlay">
+<div *ngIf="loadingGeneral" class="loading-overlay full">
   <div class="loading-spinner-box">
     <ion-spinner></ion-spinner>
   </div>
@@ -48,8 +48,16 @@
         </div>
       </button>
     </ion-card>
+    <div class="nearby-header">
+      <div class="header-left">
+        <span *ngIf="locationText != 'Your Location'" class="title">Restaurants in</span>
+        <span *ngIf="locationText == 'Your Location'" class="title">Restaurants near</span>
+        <span class="location">{{locationText}}</span>
+      </div>
+      <button ion-button color="secondary" small (tap)="presentLocationModal()">Change</button>
+    </div>
     <ion-list>
-      <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [user]="user" [index]="i" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+      <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [locationText]="locationText" [user]="user" [index]="i" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
     <div class="load-more">
       <button class="blue-text" *ngIf="loadMorePressed < 4" ion-button icon-start block color="white" (tap)="loadMore()"><span *ngIf="loadingNextBatch" class="loading"><ion-spinner></ion-spinner></span><ion-icon name="arrow-dropdown-circle"></ion-icon>Show More Restaurants</button>

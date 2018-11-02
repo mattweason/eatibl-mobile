@@ -259,7 +259,7 @@ export class RestaurantPage implements OnInit {
     //Filter timeslots by date and time
     this.timeslots = _.filter(this.timeslotsData, function(timeslot){
       if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour + 0.25); //Add a quarter hour to comparison to prevent bookings within 15 minutes of a booking time
+        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
       else
         return (timeslot.day == moment(date).format('dddd').toString());
     });

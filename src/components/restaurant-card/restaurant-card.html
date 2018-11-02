@@ -1,4 +1,10 @@
 <!-- Generated template for the RestaurantComponent component -->
+<div *ngIf="restaurant.needsHeader" class="nearby-header resto-card">
+  <div class="header-left">
+    <span class="title">Restaurants near</span>
+    <span class="location">{{locationText}}</span>
+  </div>
+</div>
 <ion-card *ngIf="isLoaded && cardType == 'standard'" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
   <div *ngIf="restaurantTapped" class="loading-overlay card">
     <div class="spinner-box">
@@ -97,7 +103,7 @@
         <button class="button-wrapper" (tap)="navigateTo('top-pick', restaurant.maxTimeslot._id)" ion-item detail-none>
           <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
           <div *ngIf="restaurant.vicinity || distance" class="distance">
-            <p>{{restaurant.vicinity}} <span *ngIf="restaurant.vicinity && distance">-</span> {{distance}}</p>
+            <p>{{restaurant.vicinity}} <span *ngIf="restaurant.vicinity && distance && locationText != restaurant.vicinity">-</span> {{distance}}</p>
           </div>
           <div class="title-box">
             <h3>{{restaurant.name}}</h3>

@@ -217,13 +217,17 @@ restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
 
 .platform-ios{
   .loading-overlay{
-    margin-top: $navbar-ios-height;
+    &.full{
+      margin-top: $navbar-ios-height;
+    }
   }
 }
 
 .platform-android{
   .loading-overlay{
-    margin-top: $navbar-md-height;
+    &.full{
+      margin-top: $navbar-md-height;
+    }
   }
 }
 
@@ -248,6 +252,36 @@ restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
       height: 30px;
       stroke: color($colors, primary);
     }
+  }
+}
+
+.nearby-header{
+  display: flex;
+  padding-top: 24px;
+  margin: 12px;
+  align-items: center;
+  justify-content: space-between;
+  .header-left{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    .title{
+      font-weight: 700;
+      font-size: 14px;
+      margin-right: 6px;
+      text-transform: uppercase;
+      color: color($colors, medium);
+    }
+    .location{
+      font-size: 16px;
+    }
+  }
+  button{
+    margin-left: 6px;
+  }
+  &.resto-card{
+    margin-top: 24px;
+    border-top: 1px solid #aaa;
   }
 }
 

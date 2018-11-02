@@ -47,6 +47,7 @@ export class RestaurantCardComponent implements OnChanges {
   @Input() time: string;
   @Input() cardType: string;
   @Input() index: number;
+  @Input() locationText: string;
   @Input() user = {} as any;
 
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
@@ -106,15 +107,16 @@ export class RestaurantCardComponent implements OnChanges {
   }
 
   checkUser(){
-    if(this.user.email){ //Determine if we should show the countdown
-      var start = moment(this.user['created_at']),
-        end = start.add(3, 'days'),
-        isNew = moment().isBefore(end);
-      if(isNew && !this.user['earlySupporter'] && !this.user['hours'])
-        this.runCountdown(end);
-      else
-        this.clearCountdown();
-    }
+    if(this.user)
+      if(this.user.email){ //Determine if we should show the countdown
+        var start = moment(this.user['created_at']),
+          end = start.add(3, 'days'),
+          isNew = moment().isBefore(end);
+        if(isNew && !this.user['earlySupporter'] && !this.user['hours'])
+          this.runCountdown(end);
+        else
+          this.clearCountdown();
+      }
   }
 
   runCountdown(end){
@@ -234,7 +236,7 @@ export class RestaurantCardComponent implements OnChanges {
     //Filter timeslots by date and time
     this.timeslots = _.filter(this.timeslotsData, function(timeslot){
       if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour + 0.25); //Add a quarter hour to comparison to prevent bookings within 15 minutes of a booking time
+        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
       else
         return (timeslot.day == moment(date).format('dddd').toString());
     });

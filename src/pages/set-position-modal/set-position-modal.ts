@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ViewController, ToastController, Events} from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
-
-import {GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker, LatLng} from '@ionic-native/google-maps';
+import * as _ from 'underscore';
+import {ApiServiceProvider} from "../../providers/api-service/api-service";
+import {GeolocationServiceProvider} from "../../providers/geolocation-service/geolocation-service";
 
 /**
  * Generated class for the SetPositionModalPage page.
@@ -19,14 +20,9 @@ import {GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition
 })
 export class SetPositionModalPage {
 
-  map: GoogleMap;
-  center: LatLng;
-  position = [];
-  locationUpdated = false; //If true nearby list will update and rerank
-  disableButtons = true;
-  userCoords: any;
   loading = false;
-  cachedLocation: any;
+  vicinities: any;
+  vicinityIndex: any;
 
   constructor(
     public navCtrl: NavController,
@@ -36,139 +32,38 @@ export class SetPositionModalPage {
     private params: NavParams,
     private events: Events,
     private toastCtrl: ToastController,
-    private log: ActivityLoggerProvider
+    private API: ApiServiceProvider,
+    private log: ActivityLoggerProvider,
+    private geolocationService: GeolocationServiceProvider
   ) {
-    //Get location nav param
-    this.userCoords = params.get('location');
 
-    //Re-enable the set locations buttons
-    events.subscribe('enable:positionmapbuttons', () => { //Specifically for auto locate returning some kind of error
-      this.disableButtons = false;
-      this.loading = false;
-      this.storage.set('eatiblLocation',this.cachedLocation);
-      this.events.subscribe('user:geolocated', this.autolocateHandler);
-    });
+    this.API.makeCall('vicinity/all').subscribe((vicinities) => {
+      this.sortVicinities(vicinities)
+    })
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SetPositionModalPage');
 
-    //Find if a custom location has been set
-    this.storage.get('eatiblLocation').then((val) => {
-      if (val)
-        this.userCoords = val;
-      this.loadMap()
+  }
+
+  sortVicinities(vicinities){
+    var filteredVicinities = _.filter(vicinities, function(vicinity){
+      return vicinity.count > 1;
+    });
+    this.vicinities = _.sortBy(filteredVicinities, function(vicinity){
+      return vicinity.name;
     });
   }
 
-  loadMap() {
-    //Zoom and center to user location
-    let mapOptions: GoogleMapOptions = {
-      camera: {
-        target: {
-          lat: this.userCoords[0],
-          lng: this.userCoords[1]
-        },
-        zoom: 12
-      },
-      gestures: {
-        tilt: false,
-        rotate: false
-      },
-      preferences: {
-        zoom: {
-          minZoom: 8,
-          maxZoom: 16
-        }
-      }
-    };
-
-    // Create a map after the view is ready and the native platform is ready.
-    this.map = GoogleMaps.create('setPositionMap', mapOptions);
-
-    this.map.addMarker({
-      icon: 'https://eatibl.com/assets/images/eatibl-pin-red.png',
-      position: {
-        lat: this.userCoords[0],
-        lng: this.userCoords[1]
-      }
-    }).then(() => {
-      this.disableButtons = false;
-    });
-
-    this.map.on('camera_target_changed').subscribe((params: any[]) => {
-      this.center = params[0];
-    });
-  }
-
-  setPosition(){
-    this.log.sendEvent('Set Position: Manual', 'Set Position Modal', '');
-    this.disableButtons = true;
-    this.map.clear();
-    this.loading = false;
-    this.map.addMarker({
-      icon: 'https://eatibl.com/assets/images/eatibl-pin-red.png',
-      animation: 'DROP',
-      position: this.center
-    }).then(() => {
-      this.position = [this.center.lat, this.center.lng];
-      this.locationUpdated = true;
-      this.storage.set('eatiblLocation',this.position);
-      var current = this; //Cache this
-
-      let toast = this.toastCtrl.create({
-        message: 'Location set!',
-        duration: 2000,
-        position: 'top',
-        cssClass: 'green-background'
-      });
-      toast.present();
-
-      setTimeout(function () {
-        current.viewCtrl.dismiss(current.locationUpdated);
-      }, 1500);
-    });
-  }
-
-  //Autolocate handler
-  autolocateHandler:any = (location, time) => {
-    this.events.unsubscribe('user:geolocated', this.autolocateHandler);
-    this.userCoords = location;
-    this.locationUpdated = true;
-
-    this.log.sendEvent('Set Position: Autolocate Completed', 'Set Position Modal', 'User got autolocated, coords: '+JSON.stringify(location));
-
-    let toast = this.toastCtrl.create({
-      message: 'Location set!',
-      duration: 2000,
-      position: 'top',
-      cssClass: 'green-background'
-    });
-    toast.present();
-
-    var current = this; //Cache this
-    setTimeout(function () {
-      current.viewCtrl.dismiss(current.locationUpdated);
-    }, 500);
-  };
-
-  //Use the devices geolocation to set location
-  autoLocate(){
-    this.log.sendEvent('Set Position: Autolocate Initiated', 'Set Position Modal', 'User pressed the autolocate button');
-    this.loading = true;
-    this.disableButtons = true;
-    this.cachedLocation = this.userCoords; //Cache location in case auto locate fails
-    this.storage.remove('eatiblLocation');
-
-    //Update location when user geolocated event is recieved
-    this.events.subscribe('user:geolocated', this.autolocateHandler);
-    this.events.publish('get:geolocation:autolocate', Date.now());
+  selectVicinity(){
+    this.viewCtrl.dismiss();
+    this.geolocationService.setLocation(this.vicinities[this.vicinityIndex].coords, this.vicinities[this.vicinityIndex].name)
   }
 
   //Close the modal
   dismiss(){
-    this.log.sendEvent('Set Position Modal: Closed', 'Set Position Modal', 'Did they update the info: '+this.locationUpdated);
-    this.viewCtrl.dismiss(this.locationUpdated);
+    this.viewCtrl.dismiss();
+    this.log.sendEvent('Set Position Modal: Closed', 'Set Position Modal', 'Did they update the info: '); //TODO: give this info
   }
 
 }

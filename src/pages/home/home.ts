@@ -62,7 +62,7 @@ export class HomePage {
   loadingNextBatch = false; //Used for the show more restaurants button loading spinner
   loadingGeneral = false; //For general loading overlay
   user: any;
-  locationText = 'Toronto';
+  locationText = 'Yonge & Dundas';
 
   map: GoogleMap;
 
@@ -82,16 +82,14 @@ export class HomePage {
   ) {
 
     this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
-      if(location.lat != 0){
-        var overThreshold = true;
-        if(this.userCoords.length){
-          var distance = this.functions.getDistanceFromLatLonInKm(location.lat, location.lng, this.userCoords[0], this.userCoords[1]) * 1000, //Distance in km converted to m
-            distanceThreshold = 500; //In meters
-          overThreshold = distance > distanceThreshold;
-        }
-        this.userCoords = [location.lat, location.lng];
+      if(location.coords.length){
+        this.userCoords = [location.coords[0], location.coords[1]];
+        this.locationText = location['text'];
         if(this.firstCall){
           this.firstCall = false;
+          this.getRestaurants();
+        }
+        if(!location.device){ //This is called when manually updating location via location modal
           this.getRestaurants();
         }
       }
@@ -486,7 +484,6 @@ export class HomePage {
 
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
-    console.log(restaurantList)
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
     var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
@@ -498,7 +495,7 @@ export class HomePage {
       var timeslots = _.filter(restaurantList[i].timeslots, function(timeslot){
 
         if(today == day) //for today filter out spots that have already passed
-          return timeslot.day == day && timeslot.time >= hour + 0.25; //Add a quarter hour to comparison to prevent bookings within 15 minutes of a booking time;
+          return timeslot.day == day && timeslot.time >= hour;
         else //for other days, show all available timeslots
           return timeslot.day == day;
       });
@@ -524,15 +521,10 @@ export class HomePage {
       if(timeslots.length == 0)
         rank = rank - 50;
 
-      else //add to rank points based on discount (+1 per 10% discount at max available discount);
-        rank = rank + restaurantList[i].maxTimeslot.discount / 10; //add 1pt for each 10% discount
-
-      //if at least 5 timeslots today, add to rank
-      if(timeslots.length > 4)
-        rank++;
+      if(this.locationText != 'Your Location' && this.locationText == restaurantList[i].vicinity)
+        rank += 20;
 
       //bonus and penalty for distance
-      console.log(restaurantList[i].distance)
       if(restaurantList[i].distance <= 2)
         rank = rank + 2/restaurantList[i].distance;
       else if(restaurantList[i].distance > 2 && restaurantList[i].distance <= 6)
@@ -548,18 +540,18 @@ export class HomePage {
       return -resto.rank;
     });
 
+    //If not device location, find first resto outside of selected region (for adding second header)
+    if(this.locationText != 'Your Location'){
+      var current = this;
+      var headerIndex = _.findIndex(restaurantList, function(resto){
+        return resto.vicinity != current.locationText;
+      });
+      restaurantList[headerIndex].needsHeader = 1;
+    }
+
     this.restaurantList = restaurantList.slice(0,this.initLoadCount); //load first 5
     this.restaurantAll = restaurantList; //store all restos
     this.batch++;
-
-    //Get top picks based on current ranking
-    for (var i = 0; i < this.restaurantAll.length; i++){
-      if(this.restaurantAll[i].maxTimeslot) //make sure all our entries have some discount (will never happen but Matt insisted on it)
-       if(this.restaurantPicks.length < 5 && this.restaurantAll[i].maxTimeslot.discount > 15)
-          this.restaurantPicks.push(this.restaurantAll[i]);
-    }
-    //Log the top 5 results for the today's top picks
-    this.restaurantDisplayLog(this.restaurantPicks, 0, true);
 
     //Send first batch of restaurants to backend for logging
     this.restaurantDisplayLog(this.restaurantList, 0, false);
@@ -669,5 +661,9 @@ export class HomePage {
     }
 
     this.API.makePost('log/trackDisplayActivity', {restaurants: formattedList}).subscribe(() => {});
+  }
+
+  presentLocationModal(){
+    this.geolocationService.presentLocationModal();
   }
 }

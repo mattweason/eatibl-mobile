@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild, enableProdMode} from '@angular/core';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -18,7 +18,7 @@ import { LocalNotifications } from '../../node_modules/@ionic-native/local-notif
 import { Mixpanel } from '@ionic-native/mixpanel';
 import { FunctionsProvider } from '../providers/functions/functions';
 import { GeolocationServiceProvider } from '../providers/geolocation-service/geolocation-service';
-
+enableProdMode();
 
 @Component({
   templateUrl: 'app.html'
@@ -230,7 +230,6 @@ export class MyApp {
             }, 1000);
         });
 
-
         //Check for both permissions and if location services are enabled
         if(platform.is('android'))
           this.geolocationService.locationPermissionAndroid();
@@ -245,6 +244,7 @@ export class MyApp {
         //**********************ONLY FOR IONIC LAB********************************//
         //Hardcode location and send it so we don't have to wait for geolocation
         //while developing. Coordinates are set to Palmerston office.
+        this.geolocationService.setLocation([43.6564126, -79.3825729], 'Yonge & Dundas');
 
         //check if user is logged in
         this.storage.get('eatiblUser').then((val) => {

@@ -7,28 +7,34 @@
 <ion-header>
 
   <ion-navbar color="secondary">
-    <ion-title>Set Location</ion-title>
+    <ion-title>Choose Neighborhood</ion-title>
     <ion-buttons right>
       <button ion-button icon-only color="white" (tap)="dismiss()"><ion-icon name="close"></ion-icon></button>
     </ion-buttons>
   </ion-navbar>
 
   <ion-toolbar color="light">
-    <p>Where would you like to search for deals?</p>
+    <ion-buttons right>
+      <button ion-button icon-end solid color="secondary">Use Device Location<ion-icon name="navigate"></ion-icon></button>
+    </ion-buttons>
   </ion-toolbar>
 
 </ion-header>
 
 
 <ion-content>
-  <div id="setPositionMap"></div>
-  <div class="set-position-button">
-    <button class="auto-locate" ion-button block color="tertiary" (tap)="autoLocate()" [disabled]="disableButtons">Auto Locate</button>
-    <button class="set-locate" ion-button block color="secondary" (tap)="setPosition()" [disabled]="disableButtons">Set Location</button>
-  </div>
-  <div *ngIf="loading" class="loading-overlay">
-    <div class="spinner-box">
-      <ion-spinner></ion-spinner>
-    </div>
-  </div>
+  <ion-list radio-group [(ngModel)]="vicinityIndex">
+    <ion-item *ngFor="let vicinity of vicinities; let i = index">
+      <ion-label>{{vicinity.name}} ({{vicinity.count}})</ion-label>
+      <ion-radio value="{{i}}">{{vicinity.name}}</ion-radio>
+    </ion-item>
+  </ion-list>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons right>
+      <button ion-button icon-end block color="secondary" [disabled]="!vicinityIndex" (tap)="selectVicinity()">Confirm</button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
