@@ -44,6 +44,7 @@ export class GeolocationServiceProvider {
   user = {} as any;
   locationCachedTime: any; //Used to send mark the last time geolocation data was sent to the backend
   observableLocation: any;
+  manualReload = true;
 
   constructor(
     private platform: Platform,
@@ -101,8 +102,6 @@ export class GeolocationServiceProvider {
     this.storage.get('eatiblLocation').then((val) => { //Use the saved location and delete if found
       if(val){
         this.location = val;
-        console.log('theres a custom location')
-        console.log(JSON.parse(JSON.stringify(val)))
         this.locationChanged();
       }
     });
@@ -113,6 +112,7 @@ export class GeolocationServiceProvider {
     };
 
     this.watch = this.geolocation.watchPosition(options).filter((p: any) => p.code === undefined).subscribe((position: Geoposition) => {
+      console.log(position)
 
       // Run update inside of Angular's zone
       this.zone.run(() => {
@@ -130,17 +130,33 @@ export class GeolocationServiceProvider {
 
   //Update the observable location
   locationChanged() {
-    console.log(JSON.parse(JSON.stringify(this.location)))
     this.observableLocation.next(this.location);
+  }
+
+  //Toggle manual reload
+  toggleManualReload(cond){
+    this.manualReload = cond;
   }
 
   //Manually set a location
   setLocation(coords, text){
-    console.log('location set')
     this.location.coords = [coords[0], coords[1]];
     this.location.text = text;
-    this.location.device = false;
+    this.location.device = text == 'Your Location' ? true : false;
     this.locationChanged();
+  }
+
+  //Switch back to device location for the use device location button
+  useDeviceLocation(){
+    this.diagnostic.getLocationAuthorizationStatus().then((status) => {
+      if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) //Permission has been authorized
+        this.setLocation(this.locationCached.coords, 'Your Location');
+      else if(status == this.diagnostic.permissionStatus.DENIED) //Permission has been denied
+        this.diagnostic.requestLocationAuthorization().then((status) => {
+          if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) //Permission has been authorized
+            this.startTracking();
+        });
+    });
   }
 
   //Run geolocation permissions for iOs - RUNTIME
@@ -169,10 +185,8 @@ export class GeolocationServiceProvider {
         if(result.hasPermission){ //We have permission
           this.diagnostic.isLocationEnabled().then((state) => {
             if (state) {
-              console.log('has permission')
               this.startTracking();
             } else {
-              console.log('no permission')
               this.setLocation(this.locationDefault, this.locationDefault.text);
             }
           }).catch(err => console.log(err))

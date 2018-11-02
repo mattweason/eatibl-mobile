@@ -50,8 +50,8 @@
     </ion-card>
     <div class="nearby-header">
       <div class="header-left">
-        <span *ngIf="locationText != 'Your Location'" class="title">Restaurants in</span>
-        <span *ngIf="locationText == 'Your Location'" class="title">Restaurants near</span>
+        <span *ngIf="locationText != 'Your Location' && headerIndex > 0" class="title">Restaurants in</span>
+        <span *ngIf="locationText == 'Your Location' || headerIndex == 0" class="title">Restaurants near</span>
         <span class="location">{{locationText}}</span>
       </div>
       <button ion-button color="secondary" small (tap)="presentLocationModal()">Change</button>

@@ -57,7 +57,14 @@ export class SetPositionModalPage {
 
   selectVicinity(){
     this.viewCtrl.dismiss();
+    this.geolocationService.toggleManualReload(true);
     this.geolocationService.setLocation(this.vicinities[this.vicinityIndex].coords, this.vicinities[this.vicinityIndex].name)
+  }
+
+  useDeviceLocation(){
+    this.viewCtrl.dismiss();
+    this.geolocationService.toggleManualReload(true);
+    this.geolocationService.useDeviceLocation();
   }
 
   //Close the modal

@@ -1,9 +1,10 @@
 <!-- Generated template for the RestaurantComponent component -->
-<div *ngIf="restaurant.needsHeader" class="nearby-header resto-card">
+<div *ngIf="restaurant.needsHeader && index > 0" class="nearby-header resto-card">
   <div class="header-left">
     <span class="title">Restaurants near</span>
     <span class="location">{{locationText}}</span>
   </div>
+  <button ion-button color="secondary" small (tap)="presentLocationModal()">Change</button>
 </div>
 <ion-card *ngIf="isLoaded && cardType == 'standard'" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
   <div *ngIf="restaurantTapped" class="loading-overlay card">

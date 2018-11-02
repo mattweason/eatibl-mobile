@@ -63,6 +63,7 @@ export class HomePage {
   loadingGeneral = false; //For general loading overlay
   user: any;
   locationText = 'Yonge & Dundas';
+  headerIndex: any; //Index of the first restaurant outside of the chosen custom vicinity
 
   map: GoogleMap;
 
@@ -85,12 +86,9 @@ export class HomePage {
       if(location.coords.length){
         this.userCoords = [location.coords[0], location.coords[1]];
         this.locationText = location['text'];
-        if(this.firstCall){
-          this.firstCall = false;
+        if(this.geolocationService.manualReload){
           this.getRestaurants();
-        }
-        if(!location.device){ //This is called when manually updating location via location modal
-          this.getRestaurants();
+          this.geolocationService.toggleManualReload(false);
         }
       }
     });
@@ -543,10 +541,10 @@ export class HomePage {
     //If not device location, find first resto outside of selected region (for adding second header)
     if(this.locationText != 'Your Location'){
       var current = this;
-      var headerIndex = _.findIndex(restaurantList, function(resto){
+      this.headerIndex = _.findIndex(restaurantList, function(resto){
         return resto.vicinity != current.locationText;
       });
-      restaurantList[headerIndex].needsHeader = 1;
+      restaurantList[this.headerIndex].needsHeader = 1;
     }
 
     this.restaurantList = restaurantList.slice(0,this.initLoadCount); //load first 5

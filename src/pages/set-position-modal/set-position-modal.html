@@ -15,7 +15,7 @@
 
   <ion-toolbar color="light">
     <ion-buttons right>
-      <button ion-button icon-end solid color="secondary">Use Device Location<ion-icon name="navigate"></ion-icon></button>
+      <button ion-button icon-end solid color="secondary" (tap)="useDeviceLocation()">Use Device Location<ion-icon name="navigate"></ion-icon></button>
     </ion-buttons>
   </ion-toolbar>
 
@@ -34,7 +34,7 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons right>
-      <button ion-button icon-end block color="secondary" [disabled]="!vicinityIndex" (tap)="selectVicinity()">Confirm</button>
+      <button ion-button icon-end solid color="tertiary" [disabled]="!vicinityIndex" (tap)="selectVicinity()">Confirm</button>
     </ion-buttons>
   </ion-toolbar>
 </ion-footer>
