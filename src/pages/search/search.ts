@@ -7,6 +7,8 @@ import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
 import * as _ from 'underscore';
+import {Subscription} from "rxjs";
+import {GeolocationServiceProvider} from "../../providers/geolocation-service/geolocation-service";
 
 /**
  * Generated class for the SearchPage page.
@@ -23,6 +25,8 @@ import * as _ from 'underscore';
 export class SearchPage {
   @ViewChild(Content) content: Content;
   @ViewChild('searchbar') searchbar : any;
+
+  private locationSub: Subscription;
 
   searchInput: string;
   searchCache: string; //Cache the search input for the no results text
@@ -49,6 +53,7 @@ export class SearchPage {
   backButtonPressed: any;
   loadingNextBatch = false;
   loadingPrevBatch = false;
+  locationText = 'Yonge & Dundas';
 
 
   constructor(
@@ -62,7 +67,8 @@ export class SearchPage {
     private renderer: Renderer2,
     private functions: FunctionsProvider,
     private log: ActivityLoggerProvider,
-    private platform: Platform
+    private platform: Platform,
+    private geolocationService: GeolocationServiceProvider
   ) {
 
     //Get list of categories
@@ -88,16 +94,15 @@ export class SearchPage {
       }
     });
 
-    //If there is a custom location, get it
-    this.storage.get('eatiblLocation').then((location) => {
-      if(location){
-        this.userCoords = location;
-        this.setNow(true);
-        this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
-          this.dataCache = data;
-          this.rankRestaurants(this.dataCache);
-          this.cdRef.detectChanges();
-        });
+    this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
+      if(location.coords.length){
+        this.userCoords = [location.coords[0], location.coords[1]];
+        this.locationText = location['text'];
+        if(this.geolocationService.manualReload){
+          this.setNow(true);
+          this.getRestaurants();
+          this.geolocationService.toggleManualReload(false);
+        }
       }
     });
 

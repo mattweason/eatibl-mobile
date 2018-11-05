@@ -226,7 +226,7 @@ export class IntroSlidesPage {
               this.events.publish('email:captured');
               this.log.sendEvent('Facebook Login Successful', 'Intro Slides Modal', JSON.stringify(response));
 
-              let promocodeModal = this.modal.create('PromocodeModalPage', { user: response }, { cssClass: 'promocode-modal'});
+              let promocodeModal = this.modal.create('PromocodeModalPage', { user: decode(response['token']) }, { cssClass: 'promocode-modal'});
               promocodeModal.onDidDismiss(() => {
                 this.haveEmail = true;
               });
