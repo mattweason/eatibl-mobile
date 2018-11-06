@@ -1,5 +1,4 @@
 import { Injectable, NgZone } from '@angular/core';
-import { BackgroundGeolocation } from '@ionic-native/background-geolocation';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation';
 import { Device } from '@ionic-native/device';
 import { Diagnostic } from '@ionic-native/diagnostic';
@@ -49,7 +48,6 @@ export class GeolocationServiceProvider {
   constructor(
     private platform: Platform,
     public zone: NgZone,
-    public backgroundGeolocation: BackgroundGeolocation,
     public geolocation: Geolocation,
     public events: Events,
     public device: Device,

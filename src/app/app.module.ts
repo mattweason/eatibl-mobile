@@ -11,7 +11,6 @@ import { GoogleMaps } from '@ionic-native/google-maps';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { DatePicker } from '@ionic-native/date-picker';
 import { Geolocation } from '@ionic-native/geolocation';
-import { BackgroundGeolocation } from '@ionic-native/background-geolocation';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
@@ -37,6 +36,7 @@ import { FunctionsProvider } from '../providers/functions/functions';
 import { AppErrorHandlerProvider } from '../providers/app-error-handler/app-error-handler';
 import { ActivityLoggerProvider } from '../providers/activity-logger/activity-logger';
 import { GeolocationServiceProvider } from '../providers/geolocation-service/geolocation-service';
+import { RestaurantServiceProvider } from '../providers/restaurant-service/restaurant-service';
 
 @NgModule({
   declarations: [
@@ -60,7 +60,6 @@ import { GeolocationServiceProvider } from '../providers/geolocation-service/geo
     GoogleMaps,
     GooglePlus,
     Geolocation,
-    BackgroundGeolocation,
     LaunchNavigator,
     AndroidPermissions,
     IonicErrorHandler,
@@ -80,7 +79,8 @@ import { GeolocationServiceProvider } from '../providers/geolocation-service/geo
     Diagnostic,
     LocationAccuracy,
     ActivityLoggerProvider,
-    GeolocationServiceProvider
+    GeolocationServiceProvider,
+    RestaurantServiceProvider
   ]
 })
 export class AppModule {}

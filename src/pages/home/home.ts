@@ -19,6 +19,7 @@ import {
   GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker,
   BaseArrayClass, MarkerIcon
 } from '@ionic-native/google-maps';
+import {RestaurantServiceProvider} from "../../providers/restaurant-service/restaurant-service";
 
 @IonicPage()
 @Component({
@@ -79,7 +80,8 @@ export class HomePage {
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
     private fb: Facebook,
-    private geolocationService: GeolocationServiceProvider
+    private geolocationService: GeolocationServiceProvider,
+    private restaurantService: RestaurantServiceProvider
   ) {
 
     this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
@@ -150,12 +152,13 @@ export class HomePage {
         this.presentIntroModal();
     });
 
-    this.API.makePost('restaurant/all/geolocated/', [this.userCoords[0], this.userCoords[1]]).subscribe(data => { //Location needs to be array format for the distance package
-      this.events.publish('reveal:restaurants');
-      this.loadingRestaurants = false;
-      this.dataCache = data;
-      this.setNow(true); //rankRestaurants runs inside here
-      this.cdRef.detectChanges();
+    var current = this;
+    this.restaurantService.getRestos(this.userCoords, function(data){
+      current.events.publish('reveal:restaurants');
+      current.loadingRestaurants = false;
+      current.dataCache = data;
+      current.setNow(true); //rankRestaurants runs inside here
+      current.cdRef.detectChanges();
     });
   }
 
