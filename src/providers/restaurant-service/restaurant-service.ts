@@ -22,11 +22,15 @@ export class RestaurantServiceProvider {
 
   }
 
-  getRestos(userCoords, callback){
-    if(!this.allRestos.length){
+  getRestos(userCoords, reload, callback){ //Reload is a boolean for manually getting restaurants from api
+    var isTime = false; //True if last api call is over an hour ago
+    if(this.timestamp){
+      isTime = moment(this.timestamp).isBefore(moment(this.timestamp).add(1, 'hours'));
+    }
+    if(!this.allRestos.length || isTime || reload){
       this.API.makePost('restaurant/all/geolocated/', [userCoords[0], userCoords[1]]).subscribe(data => { //Location needs to be array format for the distance package
         this.allRestos = data;
-
+        this.timestamp = moment().valueOf();
         callback(data);
       });
     }

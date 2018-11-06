@@ -153,7 +153,7 @@ export class HomePage {
     });
 
     var current = this;
-    this.restaurantService.getRestos(this.userCoords, function(data){
+    this.restaurantService.getRestos(this.userCoords, false, function(data){
       current.events.publish('reveal:restaurants');
       current.loadingRestaurants = false;
       current.dataCache = data;
@@ -560,10 +560,11 @@ export class HomePage {
   //Pull down to refresh the restaurant list
   doRefresh(refresher){
     this.log.sendEvent('List View: Refreshed', 'Home', 'User refreshed the restaurant list');
-    this.API.makePost('restaurant/all/geolocated/', this.userCoords).subscribe(data => {
-      this.loadMorePressed = 0;
-      this.batch = 0;
-      this.rankRestaurants(data);
+    var current = this;
+    this.restaurantService.getRestos(this.userCoords, true, function(data){
+      current.loadMorePressed = 0;
+      current.batch = 0;
+      current.rankRestaurants(data);
       refresher.complete();
     });
   }
