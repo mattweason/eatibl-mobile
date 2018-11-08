@@ -124,7 +124,6 @@ export class HomePage {
   //Get restaurant list
   getRestaurants(){
     this.loadingRestaurants = true;
-    //This is the final endpoint of the geolocation/custom location process
     //Here is where we need to check if we need to show the intro slides or not
     this.storage.get('eatiblShowSlides').then((val) => {
       if(val)
@@ -133,7 +132,6 @@ export class HomePage {
 
     var current = this;
     this.restaurantService.getRestos(this.userCoords, false, function(data){
-      current.events.publish('reveal:restaurants');
       current.loadingRestaurants = false;
       current.dataCache = data;
       current.setNow(true); //rankRestaurants runs inside here

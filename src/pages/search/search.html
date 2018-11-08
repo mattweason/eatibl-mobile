@@ -10,24 +10,12 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-searchbar #searchbar [(ngModel)]="searchInput" [showCancelButton]="true" (ionCancel)="hideCategoryList(false)" (ionInput)="filterCategories(searchInput)" (search)="searchRestaurants(searchInput); hideCategoryList(false)" (ionBlur)="hideCategoryList(true)" (ionFocus)="toggleCategorySelect($event, true)"></ion-searchbar>
-    <ion-buttons end>
-      <button (tap)="searchRestaurants(searchInput); hideCategoryList(false)" icon-only ion-button>
-        <ion-icon name="arrow-round-forward"></ion-icon>
-      </button>
-    </ion-buttons>
+    <ion-searchbar #searchbar [(ngModel)]="searchInput" [showCancelButton]="true" (ionInput)="updateList()"></ion-searchbar>
   </ion-navbar>
-
-  <ion-scroll *ngIf="showCategories" scrollY="true" class="category-list">
-    <ion-list *ngIf="searchCategories.length">
-      <ion-list-header>
-        <ion-icon name="restaurant"></ion-icon>
-        Popular Categories
-      </ion-list-header>
-      <button ion-item *ngFor="let category of searchCategories" (tap)="searchCategory(category[0])"><div [innerHTML]="category[0] | highlightSearch: searchInput"></div></button>
-    </ion-list>
-  </ion-scroll>
-
+  <ion-toolbar>
+    <button ion-button color="{{sortType == 'alpha' ? 'secondary' : 'light'}}" icon-start (tap)="sortBy('alpha')"><ion-icon name="list"></ion-icon> A to Z</button>
+    <button ion-button color="{{sortType == 'distance' ? 'secondary' : 'light'}}" icon-start (tap)="sortBy('distance')"><ion-icon name="navigate"></ion-icon> Distance</button>
+  </ion-toolbar>
 </ion-header>
 
 
@@ -38,45 +26,16 @@
       <ion-spinner color="white"></ion-spinner>
     </div>
   </div>
-  <div *ngIf="!restaurantList && !loadingRestaurants" class="no-results">
-    <ion-grid>
-      <ion-row>
-        <ion-col class="align-center icon">
-          <ion-icon name="search"></ion-icon>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col align-items-center>
-          <p class="align-center">Search by category or keyword.</p>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
-  <ion-refresher *ngIf="restaurantList?.length" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content>
-    </ion-refresher-content>
-  </ion-refresher>
-  <ion-list *ngIf="!loadingRestaurants">
-    <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [index]="i" [cardType]="'standard'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+  <ion-list [virtualScroll]="restoFiltered">
+    <button class="item-button" ion-item (tap)="navigateTo(resto)" *virtualItem="let resto">
+      <div class="item-top">
+        <h2>{{ resto.name }}</h2>
+        <p>{{ resto.distanceFormatted }}</p>
+      </div>
+      <p>{{ resto.vicinity }}</p>
+    </button>
   </ion-list>
-  <ion-grid *ngIf="!loadingRestaurants">
-    <ion-row *ngIf="allResults && restaurantList?.length">
-      <ion-col>
-        <p class="align-center all-results">That's all she's got, Captain.</p>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <div *ngIf="restaurantList?.length" class="load-more">
-          <button class="blue-text" *ngIf="batch == 1" ion-button block color="white" icon-end (tap)="nextBatch()"><span *ngIf="loadingNextBatch" class="loading"><ion-spinner></ion-spinner></span>Next 10 Results<ion-icon name="arrow-dropright-circle"></ion-icon></button>
-          <button class="blue-text" *ngIf="batch > 1 && !allResults" ion-button color="white" icon-start (tap)="prevBatch()"><span *ngIf="loadingPrevBatch" class="loading"><ion-spinner></ion-spinner></span><ion-icon name="arrow-dropleft-circle"></ion-icon>Prev 10 Results</button>
-          <button class="blue-text" *ngIf="batch > 1 && !allResults" ion-button icon-end color="white" (tap)="nextBatch()"><span *ngIf="loadingNextBatch" class="loading"><ion-spinner></ion-spinner></span>Next 10 Results<ion-icon name="arrow-dropright-circle"></ion-icon></button>
-          <button class="blue-text" *ngIf="batch > 0 && allResults" ion-button icon-start block color="white" (tap)="prevBatch()"><span *ngIf="loadingPrevBatch" class="loading"><ion-spinner></ion-spinner></span><ion-icon name="arrow-dropleft-circle"></ion-icon>Prev 10 Results</button>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <div *ngIf="restaurantList?.length == 0" class="no-results">
+  <div *ngIf="restoFiltered?.length == 0" class="no-results">
     <ion-grid>
       <ion-row>
         <ion-col class="align-center icon">
@@ -86,9 +45,10 @@
       <ion-row>
         <ion-col align-items-center>
           <p class="align-center">No results found for</p>
-          <p class="align-center bold">{{searchCache}}</p>
+          <p class="align-center bold">{{searchInput}}</p>
         </ion-col>
       </ion-row>
     </ion-grid>
   </div>
+
 </ion-content>

@@ -1,3 +1,26 @@
+.item-button{
+  border-bottom: 1px solid #ccc;
+  .label{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    .item-top{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      h2{
+        font-weight: 700;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      p{
+        margin-left: 6px;
+        font-size: 13px;
+        color: color($colors, medium);
+      }
+    }
+  }
+}
+
 .no-results{
   .icon{
     font-size: 48px;
@@ -11,19 +34,6 @@
   &.categories{
     margin-top: 12px;
     padding-left: 12px;
-  }
-}
-.category-list{
-  position: absolute;
-  z-index: 99999;
-  width: 100%;
-  background-color: rgba(0,0,0,0.6);
-  ion-list-header{
-    background-color: color($colors, light);
-    font-family: Quicksand;
-    margin-bottom: 0;
-    font-size: 16px;
-    font-weight: 700;
   }
 }
 .all-results{
