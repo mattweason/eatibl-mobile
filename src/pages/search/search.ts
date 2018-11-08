@@ -107,11 +107,20 @@ export class SearchPage {
     //update sortType for all purposes
     this.sortType = sortType;
 
+    if(this.sortType == 'distance'){
+      this.geolocationService.useDeviceLocation((result) => {
+        if(result)
+        //sort restoAll by new sortType
+          this.restoAll = _.sortBy(this.restoAll, (resto) => {
+            if(this.sortType == 'distance'){return resto['distance']}
+          });
+      });
+    }
     //sort restoAll by new sortType
-    this.restoAll = _.sortBy(this.restoAll, (resto) => {
-      if(this.sortType == 'alpha'){return resto['name']}
-      if(this.sortType == 'distance'){return resto['distance']}
-    });
+    else
+      this.restoAll = _.sortBy(this.restoAll, (resto) => {
+        if(this.sortType == 'alpha'){return resto['name']}
+      });
 
     this.updateList()
   }
