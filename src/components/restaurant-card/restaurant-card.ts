@@ -80,6 +80,8 @@ export class RestaurantCardComponent implements OnChanges {
   countdownIndex = 1; //Index of card we want email capture to appear under
   countdown = {} as any;
   interval: any;
+  ratingStars = [] as any;
+  timeslotButtons = [] as any;
 
   constructor(
     public navCtrl: NavController,
@@ -99,6 +101,7 @@ export class RestaurantCardComponent implements OnChanges {
         this.slides.update(); //Run update function on sliders to stop the stretching issue
       this.processBusinessHours(); //Update business hours to latest when this view is entered
       this.processTimeslots(); //Update timeslots to latest when this view is entered
+      this.processRating(); //Update ratings to latest when this view is entered
     });
   }
 
@@ -153,37 +156,48 @@ export class RestaurantCardComponent implements OnChanges {
     this.timeslotsData = this.restaurant.timeslots;
     this.processTimeslots();
 
+    this.processRating();
+
     //If there is a featured image
     if(this.restaurant.featuredImage){
-      var imageUrl = this.url+'files/'+this.restaurant.featuredImage;
+      var imageUrl = 'https://eatibl.com/'+'files/'+this.restaurant.featuredImage; //TODO: Change back to this.url
       this.featuredImageUrl = this.sanitizer.bypassSecurityTrustStyle(`url(${imageUrl})`);
     }
   }
 
   navigateTo(target, timeslotId){
-    if(target != 'top-pick')
-      this.log.sendRestoEvent('Restaurant Card Clicked', 'Restaurant Card', 'User clicked on '+target, this.restaurant._id);
-    else
-      this.log.sendRestoEvent('Top Pick Card Clicked', 'Restaurant Card', 'User clicked on '+target, this.restaurant._id);
-
-
-    if(this.timeslotsData.length){
-      if(timeslotId == '')
-        this.restaurantTapped = true;
-      else
-        this.timeslotTapped = timeslotId;
-      this.navCtrl.push('RestaurantPage', {
-        restaurant: JSON.stringify(this.restaurant),
-        timeslotsData: JSON.stringify(this.timeslotsData),
-        businessHoursData: JSON.stringify(this.businessHoursData),
+    var current = this;
+    setTimeout(function(){
+      current.log.sendRestoEvent('Restaurant Card Clicked', 'Restaurant Card', 'User clicked on '+target, current.restaurant._id);
+      current.restaurantTapped = true;
+      current.timeslotTapped = timeslotId;
+      current.navCtrl.push('RestaurantPage', {
+        restaurant: JSON.stringify(current.restaurant),
+        timeslotsData: JSON.stringify(current.timeslotsData),
+        businessHoursData: JSON.stringify(current.businessHoursData),
         timeslotId: timeslotId,
-        distance: this.distance,
-        date: this.date,
-        time: this.time
+        distance: current.distance,
+        date: current.date,
+        time: current.time
       }).then(() => {
-        this.restaurantTapped = false;
-        this.timeslotTapped = '';
+        current.restaurantTapped = false;
+        current.timeslotTapped = '';
       });
+    }, 0)
+  }
+
+  //Process rating to get rating star layout
+  processRating(){
+    var rating = this.restaurant.rating.ratingNumber;
+    for(var i = 0; i < 5; i++){
+      if(rating - 1 >= 0){
+        this.ratingStars[i] = 'star';
+        rating -= 1;
+      } else if(rating >= 0.25) {
+        this.ratingStars[i] = 'star-half';
+        rating = 0;
+      } else if(rating < 0.25)
+        this.ratingStars[i] = 'star-outline';
     }
   }
 
@@ -238,7 +252,8 @@ export class RestaurantCardComponent implements OnChanges {
       if(moment(date).isSame(moment(), 'day'))
         return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
       else
-        return (timeslot.day == moment(date).format('dddd').toString());
+        return (timeslot.day == moment(date).format('ddd' +
+          'd').toString());
     });
 
     //Filter out timeslots that exist outside of business hours
@@ -264,6 +279,13 @@ export class RestaurantCardComponent implements OnChanges {
     else
       this.fillerslots = [];
 
+    //Build timeslot buttons
+    for(var i = 0; i < 3; i++){
+      if(this.timeslots[i])
+        this.timeslotButtons[i] = this.timeslots[i];
+      else
+        this.timeslotButtons[i] = '';
+    }
   }
 
   //When time changes or date changes, set slide to selected time

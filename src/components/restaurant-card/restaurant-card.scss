@@ -3,6 +3,102 @@
   transition: 0.5s ease all;
   -webkit-transition: 0.5s ease all;
   position: relative;
+  .resto-card-left{
+    .best-deal{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 20px;
+      color: #fff;
+      font-size: 12px;
+      background-color: color($colors, primary);
+    }
+  }
+  .resto-card-right{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .resto-name-distance{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      h2{
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .resto-distance{
+        margin-left: 6px;
+        font-size: 13px;
+        color: color($colors, medium);
+      }
+    }
+  }
+  .resto-card-bottom{
+    .col{
+      padding-top: 0;
+    }
+    .bottom-wrapper{
+      border-top: 1px solid #ccc;
+      display: flex;
+      .timeslot-button{
+        width: 25%;
+        border-right: 1px solid #ccc;
+        .empty-timeslot{
+          margin-top: 21px;
+          height: 49px;
+          border-top: 1px solid #ccc;
+          border-bottom: 1px solid #ccc;
+          background-color: lighten(#ccc, 10%);
+        }
+        .timeslot{
+          height: 70px;
+          p{
+            text-align: center;
+            margin: 0;
+            height: 30%;
+            color: lighten(color($colors, dark), 20%);
+            &.timeslot-time{
+              font-size: 1.4rem;
+            }
+            &.active{
+              color: color($colors, primary);
+              font-weight: 700;
+            }
+          }
+          button{
+            width: 100%;
+            margin: 0;
+            height: 70%;
+            font-size: 2rem;
+            position: relative;
+            &.tapped{
+              background-color: darken(color($colors, primary), 20%);
+              color: lighten(color($colors, primary), 20%);
+            }
+            &.active{
+              background-color: darken(color($colors, primary), 20%);
+            }
+          }
+        }
+      }
+      .more-button{
+        height: 70px;
+        width: 25%;
+        p{
+          height: 30%;
+          margin: 0;
+          text-align: center;
+          color: lighten(color($colors, dark), 20%);
+        }
+        button{
+          width: 100%;
+          height: 70%;
+          margin: 0;
+
+        }
+      }
+    }
+  }
   .no-padding{
     padding-bottom: 0 !important;
   }
@@ -47,64 +143,6 @@
       margin: 0;
     }
   }
-  .coming-soon{
-    position: absolute;
-    top: 45%;
-    left:0;
-    right:0;
-    margin-left:auto;
-    margin-right:auto;
-    width: 50%;
-    padding: 8px;
-    background-color: color($colors, primary);
-    border-radius: 6px;
-    p{
-      color: #fff;
-      margin: 0;
-      text-align: center;
-      font-weight: 700;
-      font-size: 18px;
-    }
-  }
-  .best-deal{
-    overflow: hidden;
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    height: 64px;
-    padding: 0;
-    background-color: darken(color($colors, primary), 10%);
-    -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0px 0px 1px 0px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0px 0px 1px 0px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    .button-inner{
-      flex-direction: column;
-      .deal-header{
-        width: 100%;
-        padding: 3px 0;
-        background-color: #fff;
-      }
-      .deal-details{
-        padding: 0 12px 6px 12px;
-      }
-      p{
-        margin: 0;
-        color: #fff;
-        &.discount{
-          font-size: 24px;
-          line-height: 24px;
-          margin-bottom: 2px;
-        }
-        &.title{
-          font-size: 12px;
-          font-weight: 700;
-          color: darken(color($colors, primary), 10%);
-        }
-        &.time{
-          line-height: 14px;
-        }
-      }
-    }
-  }
   &.navigating{
     .featured-image, ion-card-content{
       opacity: 0.7 !important;
@@ -121,6 +159,9 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-color: #000;
+    &.light{
+      height: 70px;
+    }
     &:after {
       transition: 0.2s ease all;
       -webkit-transition: 0.2s ease all;
@@ -180,168 +221,26 @@
     width: 100%;
     height: 200px;
   }
-}
-.top-pick-card {
-  margin-bottom: 0 !important;
-  ion-row{
-    padding: 0 !important;
-  }
-  .button-wrapper{
-    position: relative;
-    .featured-image {
-      position: relative;
-      height: 140px;
-      background-position: center center;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-color: #000;
-      &:after {
-        transition: 0.2s ease all;
-        -webkit-transition: 0.2s ease all;
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: block;
-        background-color: rgba(0, 0, 0, 0);
-      }
-    }
-    .distance{
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      padding: 3px 6px;
-      border-radius: 3px;
-      background-color: rgba(34,34,34,0.7);
-      p{
-        color: #fff;
-        font-size: 14px;
-        margin: 0;
-      }
-    }
-    .title-box{
-      h3{
-        color: #fff;
-        font-weight: 700;
-      }
-      position: absolute;
-      bottom: 6px;
-      width:95%;
-      left:0;
-      right:0;
-      white-space: normal;
-      margin-left:auto;
-      margin-right:auto;
-      padding: 3px 6px;
-      border-radius: 3px;
-      background-color: rgba(34,34,34,0.7);
-    }
-  }
-  .best-deal{
-    height: 100%;
-    width: 100%;
-    box-shadow: none;
-    margin: 0;
-    border-radius: 0;
-    padding: 0;
-    .button-inner{
-      height: 140px !important;
-    }
-    .deal-header{
-      width: 100%;
-      padding: 3px 0;
-      background-color: #fff;
-    }
-    .deal-details{
-      height: 60%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .cta{
-      border-top: 1px solid color($colors, light);
-      width: 100%;
-      height: 40%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: color($colors, secondary);
-      p{
-        margin: 0;
-        text-align: center;
-        color: #fff;
-        font-weight: 700;
-        font-size: 16px;
-        letter-spacing: 1px;
-      }
-    }
-    .button-inner{
-      flex-direction: column;
-      p{
-        margin: 0;
-        color: #fff;
-        &.discount{
-          font-size: 24px;
-          line-height: 24px;
-          margin-bottom: 2px;
-        }
-        &.title{
-          font-size: 12px;
-          font-weight: 700;
-          color: darken(color($colors, primary), 10%);
-        }
-        &.time{
-          line-height: 14px;
-        }
-      }
-    }
-  }
-  .restaurant-name{
-    text-align: left;
-    padding:3px 6px;
-    h3{
-      font-weight: 700;
-    }
-    p{
-      margin: 0;
-    }
-  }
-}
-.email-submit{
-  margin: 20px auto !important;
-  padding: 12px 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  .email-submit-header{
-    font-weight: 500;
-    font-size: 20px;
-    color: color($colors, secondary);
-  }
-  .email-submit-liner {
+  .rating-price{
     display: flex;
-    ion-input {
-      margin: 0.4rem 0.2rem;
-      height: 40px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      input {
-        height: 100%;
-        margin-top: 0;
-        margin-bottom: 0;
+    align-items: center;
+    .rating{
+      margin-right: 6px;
+      margin-bottom: 0;
+      font-size: 14px;
+      span{
+        font-size: 14px;
       }
     }
-    button{
-      height: 40px;
+    .price{
+      margin-bottom: 0;
+      font-size: 14px;
+      p{
+        margin-bottom: 0;
+        &:first-of-type{
+          margin-right: 3px;
+        }
+      }
     }
-  }
-  .form-error{
-    margin-top: 6px;
-    text-align: center;
-    color: color($colors, danger);
   }
 }

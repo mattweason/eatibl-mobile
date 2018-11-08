@@ -109,16 +109,19 @@ export class HomePage {
   }
 
   ionViewDidEnter(){
+    var current = this;
     //Call geolocation from app.component
-    this.events.publish('get:geolocation', Date.now());
-    this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
+    setTimeout(function(){
+      current.events.publish('get:geolocation', Date.now());
+      current.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
 
-    this.storage.get('eatiblUser').then((val) => {
-      if(val)
-        this.user = decode(val);
-      else
-        this.user = {}; //If no user exists in the localstorage, clear the user object
-    });
+      current.storage.get('eatiblUser').then((val) => {
+        if(val)
+          current.user = decode(val);
+        else
+          current.user = {}; //If no user exists in the localstorage, clear the user object
+      });
+    }, 100)
   }
 
   ionViewWillLeave(){

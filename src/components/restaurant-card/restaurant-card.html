@@ -54,86 +54,121 @@
       </ion-grid>
     </ion-card-content>
   </button>
-  <ion-card-content no-padding>
-    <ion-grid class="no-padding">
-      <ion-row *ngIf="openStatus != 'closedToday' && timeslots.length" class="no-padding-row">
-        <ion-col col-1 class="no-padding-col">
-          <button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon></button>
-        </ion-col>
-        <ion-col col-10 class="no-padding-col">
-          <ion-slides #slides slidesPerView="4" (ionSlideDidChange)="slidePosition()" (ionSlideWillChange)="slidePosition()">
-            <ion-slide *ngFor="let timeslot of timeslots">
-              <div class="timeslot">
-                <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>
-                <button ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id, 'tapped' : timeslotTapped == timeslot?._id}" (tap)="navigateTo('timeslot', timeslot._id)">
-                  -{{timeslot?.discount}}%
-                  <div *ngIf="timeslotTapped == timeslot?._id" class="loading-overlay timeslot">
-                    <ion-spinner></ion-spinner>
-                  </div>
-                </button>
-              </div>
-            </ion-slide>
-            <ion-slide *ngFor="let fillerslot of fillerslots">
-              <div class="fillerslot"></div>
-            </ion-slide>
-          </ion-slides>
-        </ion-col>
-        <ion-col col-1 class="no-padding-col">
-          <button [disabled]="isEnd" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="nextSlide()"><ion-icon name="arrow-forward"></ion-icon></button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="no-padding-row" *ngIf="!timeslots.length && timeslotsData.length">
-        <ion-col class="no-padding-col">
-          <div class="no-timeslots">
-            <p>NO AVAILABLE DEALS</p>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card-content>
+  <!--<ion-card-content no-padding>-->
+    <!--<ion-grid class="no-padding">-->
+      <!--<ion-row *ngIf="openStatus != 'closedToday' && timeslots.length" class="no-padding-row">-->
+        <!--<ion-col col-1 class="no-padding-col">-->
+          <!--<button [disabled]="isBeginning" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="prevSlide()"><ion-icon name="arrow-back"></ion-icon></button>-->
+        <!--</ion-col>-->
+        <!--<ion-col col-10 class="no-padding-col">-->
+          <!--<ion-slides #slides slidesPerView="4" (ionSlideDidChange)="slidePosition()" (ionSlideWillChange)="slidePosition()">-->
+            <!--<ion-slide *ngFor="let timeslot of timeslots">-->
+              <!--<div class="timeslot">-->
+                <!--<p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>-->
+                <!--<button ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id, 'tapped' : timeslotTapped == timeslot?._id}" (tap)="navigateTo('timeslot', timeslot._id)">-->
+                   <!-- -{{timeslot?.discount}}%-->
+                  <!--<div *ngIf="timeslotTapped == timeslot?._id" class="loading-overlay timeslot">-->
+                    <!--<ion-spinner></ion-spinner>-->
+                  <!--</div>-->
+                <!--</button>-->
+              <!--</div>-->
+            <!--</ion-slide>-->
+            <!--<ion-slide *ngFor="let fillerslot of fillerslots">-->
+              <!--<div class="fillerslot"></div>-->
+            <!--</ion-slide>-->
+          <!--</ion-slides>-->
+        <!--</ion-col>-->
+        <!--<ion-col col-1 class="no-padding-col">-->
+          <!--<button [disabled]="isEnd" class="slide-button" *ngIf="timeslots.length" ion-button color="light" (tap)="nextSlide()"><ion-icon name="arrow-forward"></ion-icon></button>-->
+        <!--</ion-col>-->
+      <!--</ion-row>-->
+      <!--<ion-row class="no-padding-row" *ngIf="!timeslots.length && timeslotsData.length">-->
+        <!--<ion-col class="no-padding-col">-->
+          <!--<div class="no-timeslots">-->
+            <!--<p>NO AVAILABLE DEALS</p>-->
+          <!--</div>-->
+        <!--</ion-col>-->
+      <!--</ion-row>-->
+    <!--</ion-grid>-->
+  <!--</ion-card-content>-->
 </ion-card>
-<ion-card *ngIf="isLoaded && cardType == 'top-pick'" class="top-pick-card">
-  <div *ngIf="restaurantTapped" class="loading-overlay card">
-    <div class="spinner-box">
-      <ion-spinner></ion-spinner>
-    </div>
-  </div>
-  <ion-grid no-padding>
-    <ion-row no-padding>
-      <ion-col col-8>
-        <button class="button-wrapper" (tap)="navigateTo('top-pick', restaurant.maxTimeslot._id)" ion-item detail-none>
-          <div *ngIf="restaurant?.featuredImage" class="featured-image" [style.background-image]="featuredImageUrl"></div>
-          <div *ngIf="restaurant.vicinity || distance" class="distance">
-            <p>{{restaurant.vicinity}} <span *ngIf="restaurant.vicinity && distance && locationText != restaurant.vicinity">-</span> {{distance}}</p>
-          </div>
-          <div class="title-box">
-            <h3>{{restaurant.name}}</h3>
-          </div>
-        </button>
+
+<ion-card *ngIf="isLoaded && cardType == 'light'" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
+  <button class="button-wrapper" (tap)="navigateTo('restaurant-image', '')" ion-item detail-none>
+    <ion-row>
+      <ion-col col-4 class="resto-card-left">
+        <div class="best-deal">Up to -{{restaurant.maxTimeslot.discount}}%</div>
+        <div class="featured-image light" [style.background-image]="featuredImageUrl"></div>
       </ion-col>
-      <ion-col col-4>
-        <button ion-button class="best-deal" *ngIf="restaurant?.maxTimeslot" (tap)="navigateTo('best-deal', restaurant.maxTimeslot._id)">
-          <div class="deal-details">
-            <p class="discount">-{{restaurant?.maxTimeslot.discount}}%</p>
-            <p class="time">@{{functions.formatClockTime(restaurant.maxTimeslot.time, true)}}</p>
+      <ion-col col-8 class="resto-card-right">
+        <div>
+          <div class="resto-name-distance">
+            <h2>{{restaurant.name}}</h2>
+            <p class="resto-distance">{{distance}}</p>
           </div>
-          <div class="cta">
-            <p>Claim</p>
+          <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
+          <div class="rating-price">
+            <p class="rating" *ngIf="restaurant.rating">
+              <ion-icon name="{{ratingStars[0]}}"></ion-icon>
+              <ion-icon name="{{ratingStars[1]}}"></ion-icon>
+              <ion-icon name="{{ratingStars[2]}}"></ion-icon>
+              <ion-icon name="{{ratingStars[3]}}"></ion-icon>
+              <ion-icon name="{{ratingStars[4]}}"></ion-icon>
+              <span *ngIf="restaurant.rating">{{restaurant.rating.ratingNumber}}</span>
+            </p>
+            <p class="rating" *ngIf="!restaurant.rating"><ion-icon name="star"></ion-icon>N/A</p>
+            <div class="price" *ngIf="restaurant.price">
+              <p>|</p>
+              <p [ngClass]="restaurant.price >= 1 ? 'active' : ''">$</p>
+              <p [ngClass]="restaurant.price >= 2 ? 'active' : ''">$</p>
+              <p [ngClass]="restaurant.price >= 3 ? 'active' : ''">$</p>
+              <p [ngClass]="restaurant.price == 4 ? 'active' : ''">$</p>
+            </div>
           </div>
-        </button>
+        </div>
+        <div *ngIf="restaurant.vicinity" class="vicinity">
+          <p>{{restaurant.vicinity}}</p>
+        </div>
       </ion-col>
     </ion-row>
-  </ion-grid>
-</ion-card>
-  <ion-card *ngIf="index == countdownIndex && countdown.hours">
-    <div class="countdown">
-      <p class="text">Early Supporter Offer expires in</p>
-      <div class="countdown-content">
-        <span class="timer">{{countdown.hours}} : {{countdown.minutes}} : {{countdown.seconds}}</span>
-        <button ion-button color="secondary" small (tap)="functions.countdownAlert()">Details</button>
+  </button>
+  <ion-row class="resto-card-bottom">
+    <ion-col>
+      <div class="bottom-wrapper">
+        <div class="timeslot-button" *ngFor="let timeslot of timeslotButtons; let i=index">
+          <div *ngIf="i < 3">
+            <div *ngIf="timeslot" class="timeslot">
+              <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>
+              <button *ngIf="timeslot" ion-button color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id, 'tapped' : timeslotTapped == timeslot?._id}" (tap)="navigateTo('timeslot', timeslot._id)">
+
+                -{{timeslot?.discount}}%
+              </button>
+            </div>
+            <div *ngIf="!timeslot" class="empty-timeslot">
+
+            </div>
+          </div>
+        </div>
+        <div class="more-button">
+          <p>All Times</p>
+          <button icon-end ion-button color="secondary" (tap)="navigateTo('timeslot', '')">
+            Go
+            <ion-icon ios="ios-arrow-forward" md="ios-arrow-forward"></ion-icon>
+          </button>
+        </div>
       </div>
+    </ion-col>
+  </ion-row>
+</ion-card>
+<ion-card *ngIf="index == countdownIndex && countdown.hours">
+  <div class="countdown">
+    <p class="text">Early Supporter Offer expires in</p>
+    <div class="countdown-content">
+      <span class="timer">{{countdown.hours}} : {{countdown.minutes}} : {{countdown.seconds}}</span>
+      <button ion-button color="secondary" small (tap)="functions.countdownAlert()">Details</button>
     </div>
-  </ion-card>
+  </div>
+</ion-card>
 <div class="loading" *ngIf="!isLoaded">
   <ion-spinner></ion-spinner>
 </div>

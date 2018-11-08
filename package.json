@@ -168,7 +168,6 @@
       "cordova-plugin-mixpanel": {
         "PLAY_SERVICES_VERSION": "+"
       },
-      "me.tonny.cordova.plugins.multidex": {},
       "cordova-plugin-enable-multidex": {}
     },
     "platforms": [
