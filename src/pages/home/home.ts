@@ -1,11 +1,11 @@
-import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
 import {IonicPage, NavController, Content, ModalController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { Device } from '@ionic-native/device';
 import { Diagnostic } from '@ionic-native/diagnostic';
-import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
+import { Facebook } from '@ionic-native/facebook';
 import { GeolocationServiceProvider } from '../../providers/geolocation-service/geolocation-service';
 import { Subscription } from 'rxjs/Subscription';
 import { Events } from 'ionic-angular';
@@ -33,32 +33,24 @@ export class HomePage {
 
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
-  restaurantPicks = []; //List of restaraunt of today's top picks (total of 5)
   selectedResto = {} as any; //Restaurant data of the selected marker
   timeslotsLength: any; //Used to see if restaurant has discounts for a day
   businessHours = [];
-  openStatus: string;
   dataCache: any; //Cache the api return
-  bookings = [];
   date: string;
   today: string; //sets the minimum of the date picker
   maxDate: string;
   time: any;
   view = 'list';
   togglingView = false; //Disables toggle view button when true
-  showToolbar: boolean = true;
   userCoords = [];
-  firstCall = true;
   batch = 0; //Represents the batch number
   hideMap = false;
-  customLocation = false;
   loadMorePressed: number = 0; //Increments by one each time load more is pressed
   loadMoreCount: number = 10; //Number of additional nearby restaurants loaded when load more is pressed
   initLoadCount: number = 5; //Number of nearby restaurants loaded initially
   lastOpenMarkerIndex: any;
-  showNoDeals = true;
   allMarkers: any;
-  cacheDate: any; //Cache the select date from the map view
   loadingRestaurants = true;
   loadingNextBatch = false; //Used for the show more restaurants button loading spinner
   loadingGeneral = false; //For general loading overlay
@@ -94,37 +86,21 @@ export class HomePage {
         }
       }
     });
-
-    //Update location when user geolocated event is recieved
-    // events.subscribe('user:geolocated', () => {
-    //   console.log('recieved geolocation - '+ moment().format('X'))
-    //   this.userCoords = this.geolocationService.location;
-    //   console.log(this.userCoords)
-    //   //Only request the geolocated restaurant list the first time this event is received
-    //   if(this.firstCall){
-    //     this.firstCall = false;
-    //     this.getRestaurants();
-    //   }
-    // });
   }
 
   ionViewDidEnter(){
-    var current = this;
     //Call geolocation from app.component
-    setTimeout(function(){
-      current.events.publish('get:geolocation', Date.now());
-      current.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
+    setTimeout(() => {
+      this.events.publish('get:geolocation', Date.now());
+      this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
 
-      current.storage.get('eatiblUser').then((val) => {
+      this.storage.get('eatiblUser').then((val) => {
         if(val)
-          current.user = decode(val);
+          this.user = decode(val);
         else
-          current.user = {}; //If no user exists in the localstorage, clear the user object
+          this.user = {}; //If no user exists in the localstorage, clear the user object
       });
     }, 100)
-  }
-
-  ionViewWillLeave(){
   }
 
   //Open intro slides
@@ -248,7 +224,7 @@ export class HomePage {
           },
           test: resto._id,
           disableAutoPan: true,
-          visible: this.showNoDeals ? true : (resto['timeslotsToday'].length ? true : false),
+          visible: resto['timeslotsToday'].length ? true : false,
           metadata: {
             id: resto._id,
             originalIcon: resto['timeslotsToday'].length ? 'https://eatibl.com/assets/images/eatibl-pin-red.png' : 'https://eatibl.com/assets/images/eatibl-pin-grey.png',
@@ -305,7 +281,7 @@ export class HomePage {
     });
 
     //HACK SOLUTION: allow toggle view after 4 seconds
-    setTimeout(function () {
+    setTimeout(() => {
       if(this.togglingView)
         this.togglingView = false;
     }, 4000);
@@ -396,35 +372,6 @@ export class HomePage {
       if(this.selectedResto.businesshours[i]['day'] == moment(this.date).format('dddd').toString()){
         this.businessHours = this.selectedResto.businesshours[i]['hours'];
       }
-    this.checkOpen();
-  }
-
-  //To establish open now or closed in view
-  checkOpen(){
-    //Get current time to compare to open close hours for day
-    var time = this.functions.formatTime(this.date);
-    var hoursLength = this.businessHours.length;
-
-    if(hoursLength == 0)
-      this.openStatus = 'closedToday';
-
-    //Compare current time to open close hours and set to this.open
-    if(hoursLength == 2){
-      if(time >= this.businessHours[0] && time < this.businessHours[1]) //During business hours
-        this.openStatus = 'open';
-      if(time >= this.businessHours[1] ) //After closed
-        this.openStatus = 'closed';
-      if(time < this.businessHours[0]) //Before open
-        this.openStatus = 'willOpen';
-    }
-    if(hoursLength == 4){
-      if((time >= this.businessHours[0] && time < this.businessHours[1]) || (time >= this.businessHours[2] && time < this.businessHours[3])) //During bussines hours
-        this.openStatus = 'open';
-      if(time >= this.businessHours[3]) //After second closed
-        this.openStatus = 'closed';
-      if((time <= this.businessHours[2] && time > this.businessHours[1]) || time < this.businessHours[0]) //Before first or second open, but after first closed
-        this.openStatus = 'willOpen';
-    }
   }
 
   navigateTo(event, timeslotId){
@@ -445,32 +392,30 @@ export class HomePage {
   //Toggles between list and map view
   toggleView(){
     this.loadingGeneral = true;
-    var current = this;
-    setTimeout(function(){
-      current.togglingView = true;
-      if(current.view == 'list'){ //If view is currently list
-        current.log.sendEvent('Map View: Loaded', 'Home', 'User switched from list view to map view');
-        current.view = 'map';
-        current.selectedResto = {};
-        current.loadMap();
-        current.loadingGeneral = false;
-        console.log(current.loadingGeneral)
+    setTimeout(() => {
+      this.togglingView = true;
+      if(this.view == 'list'){ //If view is currently list
+        this.log.sendEvent('Map View: Loaded', 'Home', 'User switched from list view to map view');
+        this.view = 'map';
+        this.selectedResto = {};
+        this.loadMap();
+        this.loadingGeneral = false;
       }
-      else if(current.view == 'map'){ //If view is currently map
-        current.log.sendEvent('List View: Loaded', 'Home', 'User switched from map view to list view');
-        current.view = 'list';
-        current.togglingView = false;
+      else if(this.view == 'map'){ //If view is currently map
+        this.log.sendEvent('List View: Loaded', 'Home', 'User switched from map view to list view');
+        this.view = 'list';
+        this.togglingView = false;
         const nodeList = document.querySelectorAll('._gmaps_cdv_');
 
         if(!moment(this.date).isSame(moment(), 'day')) { //Only cache date and rerank restos if selected date is not today
-          current.date = moment().format(); //Change date back to now for nearby list
-          current.rankRestaurants(current.restaurantAll);
+          this.date = moment().format(); //Change date back to now for nearby list
+          this.rankRestaurants(this.restaurantAll);
         }
 
         for (let k = 0; k < nodeList.length; ++k) {
           nodeList.item(k).classList.remove('_gmaps_cdv_');
         }
-        current.loadingGeneral = false;
+        this.loadingGeneral = false;
       }
     }, 100);
   }
@@ -480,8 +425,6 @@ export class HomePage {
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
     var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
-
-    this.restaurantPicks = []; //reset restaurantPicks each time we start ranking (to update list based on new locations)
 
     for (var i = 0; i < restaurantList.length; i++){
       var rank = 100; //start with default value
@@ -580,21 +523,20 @@ export class HomePage {
   //Load 10 more restaurants, but not more than 25
   loadMore(){
     this.loadingNextBatch = true;
-    var current = this;
-    setTimeout(function() {
-      current.log.sendEvent('Load More: Pressed', 'Home', 'User requested to load more restaurants: ' + (current.loadMorePressed == 0 ? 'first time' : 'second time'));
+    setTimeout(() => {
+      this.log.sendEvent('Load More: Pressed', 'Home', 'User requested to load more restaurants: ' + (this.loadMorePressed == 0 ? 'first time' : 'second time'));
 
-      current.loadMorePressed++;
-      var limit = current.initLoadCount + current.loadMorePressed * current.loadMoreCount;
+      this.loadMorePressed++;
+      var limit = this.initLoadCount + this.loadMorePressed * this.loadMoreCount;
       var currentBatch = []; //for display log
 
-      for(var i = current.restaurantList.length; i < limit; i++) {
-        current.restaurantList.push(current.restaurantAll[i]); //add restaurant to the current display list
-        currentBatch.push(current.restaurantAll[i]);
+      for(var i = this.restaurantList.length; i < limit; i++) {
+        this.restaurantList.push(this.restaurantAll[i]); //add restaurant to the current display list
+        currentBatch.push(this.restaurantAll[i]);
       }
       //capture restaurants displayed in this batch and send to log
-      current.restaurantDisplayLog(currentBatch, limit - current.loadMoreCount, false);
-      current.loadingNextBatch = false;
+      this.restaurantDisplayLog(currentBatch, limit - this.loadMoreCount, false);
+      this.loadingNextBatch = false;
     }, 100);
   }
 
@@ -611,21 +553,6 @@ export class HomePage {
       this.rankRestaurants(this.dataCache);
     }
     this.time = moment().add(30 - moment().minute() % 30, 'm').format();
-  }
-  //Keep track of when people are adjust date values
-  logDate(action, data){
-    if(action == 'changed')
-      this.log.sendEvent('DatePicker: Updated', 'Home', JSON.stringify(data));
-    if(action =='cancelled')
-      this.log.sendEvent('DatePicker: Cancelled', 'Home', JSON.stringify(data));
-  }
-
-  //Keep track of when people are adjust time values
-  logTime(action, data){
-    if(action == 'changed')
-      this.log.sendEvent('TimePicker: Updated', 'Home', JSON.stringify(data));
-    if(action =='cancelled')
-      this.log.sendEvent('TimePicker: Cancelled', 'Home', JSON.stringify(data));
   }
 
   //take a specific chunk of restaurants and log them to backend (revealing what is shown to specific users)

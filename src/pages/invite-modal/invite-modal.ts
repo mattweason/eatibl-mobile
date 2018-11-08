@@ -252,14 +252,13 @@ export class InviteModalPage {
           })
         })(phoneNumber, message);
       }
-      var current = this;
-      setTimeout(function(){
-        current.sendingSMS = false;
-        current.sentSMS = true;
-        current.sendButtonColor = 'tertiary';
+      setTimeout(() => {
+        this.sendingSMS = false;
+        this.sentSMS = true;
+        this.sendButtonColor = 'tertiary';
       }, 1000);
-      setTimeout(function(){
-        current.viewCtrl.dismiss();
+      setTimeout(() => {
+        this.viewCtrl.dismiss();
       }, 2000)
     }
   }

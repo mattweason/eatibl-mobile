@@ -35,9 +35,8 @@ export class RestaurantServiceProvider {
       });
     }
     else{
-      var current = this;
-      setTimeout(function(){
-        callback(current.allRestos);
+      setTimeout(() => {
+        callback(this.allRestos);
       }, 150);
     }
   }

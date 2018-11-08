@@ -224,9 +224,8 @@ export class MyApp {
 
         this.firebase.onTokenRefresh()
           .subscribe((token: string) => {
-            var current = this;
-            setTimeout(function(){
-              current.userInfo(token);
+            setTimeout(() => {
+              this.userInfo(token);
             }, 1000);
         });
 

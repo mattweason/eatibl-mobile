@@ -73,9 +73,8 @@ export class SearchPage {
 
     //Get list of categories
     this.API.makeCall('category/search/all').subscribe(data => {
-      var current = this;
-      setTimeout(function(){ //Push this to end of stack so it doesn't fire too early
-        current.processCategories(data)
+      setTimeout(() => { //Push this to end of stack so it doesn't fire too early
+        this.processCategories(data)
       }, 0)
     })
 
@@ -169,7 +168,6 @@ export class SearchPage {
   searchCategory(category) {
     this.searchInput = category; //Pop the category into the search bar
     this.log.sendEvent('Category List Item Clicked', 'Search', category);
-    var current = this;
     if(this.restaurantAll)
       doFilter();
     else{
@@ -183,9 +181,10 @@ export class SearchPage {
       });
     }
 
+    var current = this;
     function doFilter(){
       current.filterRestaurants(category, true); //Filter the restaurants
-      setTimeout(function () { //Allow the click event animation to occur
+      setTimeout(() => { //Allow the click event animation to occur
         current.hideCategoryList(false);
       }, 500);
     }
@@ -359,41 +358,39 @@ export class SearchPage {
   //Call next batch of 10 restaurants
   nextBatch(){
     this.loadingNextBatch = true;
-    var current = this;
-    setTimeout(function(){
-      current.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User pressed the next 10 results button, batch #: '+current.batch);
-      var limit = Math.min(current.batch*10+10, current.restaurantFiltered.length);
+    setTimeout(() => {
+      this.log.sendEvent('Infinite Scroll: Loaded Next Batch', 'Search', 'User pressed the next 10 results button, batch #: '+this.batch);
+      var limit = Math.min(this.batch*10+10, this.restaurantFiltered.length);
 
-      current.restaurantList = current.restaurantFiltered.slice(current.batch*10, limit); //Replace current list of restos with next 10
+      this.restaurantList = this.restaurantFiltered.slice(this.batch*10, limit); //Replace current list of restos with next 10
 
       //capture restaurants displayed in this batch and send to log
-      current.restaurantDisplayLog(current.restaurantList, current.batch*10);
+      this.restaurantDisplayLog(this.restaurantList, this.batch*10);
 
-      current.batch++;
-      if(current.batch*10 >= current.restaurantFiltered.length)
-        current.allResults = true;
-      current.content.scrollToTop(0);
-      current.loadingNextBatch = false;
+      this.batch++;
+      if(this.batch*10 >= this.restaurantFiltered.length)
+        this.allResults = true;
+      this.content.scrollToTop(0);
+      this.loadingNextBatch = false;
     }, 200);
   }
 
   //Call prev batch of 10 restaurants
   prevBatch(){
     this.loadingPrevBatch = true;
-    var current = this;
-    setTimeout(function(){
-      current.batch--;
-      current.allResults = false;
-      current.log.sendEvent('Infinite Scroll: Loaded Previous Batch', 'Search', 'User pressed the prev 10 results button, batch #: '+current.batch);
-      var limit = Math.min(current.batch*10, current.restaurantFiltered.length);
+    setTimeout(() => {
+      this.batch--;
+      this.allResults = false;
+      this.log.sendEvent('Infinite Scroll: Loaded Previous Batch', 'Search', 'User pressed the prev 10 results button, batch #: '+this.batch);
+      var limit = Math.min(this.batch*10, this.restaurantFiltered.length);
 
-      current.restaurantList = current.restaurantFiltered.slice(current.batch*10 - 10, limit); //Replace current list of restos with prev 10
+      this.restaurantList = this.restaurantFiltered.slice(this.batch*10 - 10, limit); //Replace current list of restos with prev 10
 
       //capture restaurants displayed in this batch and send to log
-      current.restaurantDisplayLog(current.restaurantList, current.batch*10 - 10);
+      this.restaurantDisplayLog(this.restaurantList, this.batch*10 - 10);
 
-      current.content.scrollToTop(0);
-      current.loadingPrevBatch = false;
+      this.content.scrollToTop(0);
+      this.loadingPrevBatch = false;
     }, 200);
   }
 
