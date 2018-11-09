@@ -64,6 +64,9 @@ page-intro-slides {
         height: 100%;
         padding: 0 10% 60px 10%;
         margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         p{
           color: #fff;
         }
