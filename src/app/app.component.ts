@@ -143,16 +143,6 @@ export class MyApp {
         if(this.localNotifications.isPresent(1)){
           this.localNotifications.cancel(1)
         }
-        // Schedule a new notification for first-timers and regular users
-        this.localNotifications.schedule({
-          id: 1,
-          trigger: {at: (moment().add(15, 'seconds')).toDate()},
-          text:  "🍔 We're getting new deals everyday, come check out our latest offerings!",
-          title: "We've missed you! 🙂",
-          icon: 'res://notification_app_icon',
-          smallIcon: "res://my_notification_icon",
-          color: "#d8354d"
-        });
 
         this.diagnostic.getLocationAuthorizationStatus().then((status) => {
           if(status == 'not_determined') //track cases where users are required to provide permission
