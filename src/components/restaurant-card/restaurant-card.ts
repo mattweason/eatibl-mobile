@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChange } from '@angular/core';
+import {Component, Input, OnChanges, SimpleChange} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import {NavController, Events} from 'ionic-angular';
 import * as _ from 'underscore';
@@ -76,10 +76,8 @@ export class RestaurantCardComponent implements OnChanges {
     this.checkUser();
     setTimeout(() => {
       this.isLoaded = true;
-      setTimeout(() => {
-        this.isVisible = true;
-      });
-    });
+      this.isVisible = true;
+    }, 0);
   }
 
   checkUser(){
@@ -158,16 +156,18 @@ export class RestaurantCardComponent implements OnChanges {
 
   //Process rating to get rating star layout
   processRating(){
-    var rating = this.restaurant.rating.ratingNumber;
-    for(var i = 0; i < 5; i++){
-      if(rating - 1 >= 0){
-        this.ratingStars[i] = 'star';
-        rating -= 1;
-      } else if(rating >= 0.25) {
-        this.ratingStars[i] = 'star-half';
-        rating = 0;
-      } else if(rating < 0.25)
-        this.ratingStars[i] = 'star-outline';
+    if(this.restaurant.rating){
+      var rating = this.restaurant.rating.ratingNumber;
+      for(var i = 0; i < 5; i++){
+        if(rating - 1 >= 0){
+          this.ratingStars[i] = 'star';
+          rating -= 1;
+        } else if(rating >= 0.25) {
+          this.ratingStars[i] = 'star-half';
+          rating = 0;
+        } else if(rating < 0.25)
+          this.ratingStars[i] = 'star-outline';
+      }
     }
   }
 

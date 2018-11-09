@@ -62,9 +62,12 @@ export class SetPositionModalPage {
     if(!this.geolocationService.location.device){
       this.geolocationService.toggleManualReload(true);
       this.geolocationService.useDeviceLocation((result) => {
-        if(result){
+        if(result == 1){
           this.log.sendEvent('Use Device Location success', 'Set Position Modal', 'User switched to device location from custom location');
           this.viewCtrl.dismiss();
+        } else if(result == 2){
+          this.log.sendEvent('Use Device Location success', 'Set Position Modal', 'User switched to device location from custom location');
+          this.viewCtrl.dismiss(true);
         }
       });
     }

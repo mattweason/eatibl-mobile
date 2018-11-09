@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {ApiServiceProvider} from "../api-service/api-service";
 import * as moment from 'moment';
+import {FunctionsProvider} from "../functions/functions";
 
 
 /*
@@ -17,6 +17,7 @@ export class RestaurantServiceProvider {
   private timestamp: any; //Time of last api call for restos
 
   constructor(
+    private functions: FunctionsProvider,
     private API: ApiServiceProvider
   ) {
 
@@ -35,6 +36,9 @@ export class RestaurantServiceProvider {
       });
     }
     else{
+      for(var i = 0; i < this.allRestos.length; i++){ //Update resto distances based on the new location
+        this.allRestos[i].distance = this.functions.getDistanceFromLatLonInKm(userCoords[0], userCoords[1], this.allRestos[i].latitude, this.allRestos[i].longitude);
+      }
       setTimeout(() => {
         callback(this.allRestos);
       }, 150);
