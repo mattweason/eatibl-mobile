@@ -8,7 +8,7 @@
 </div>
 
 <ion-card *ngIf="isLoaded && cardType == 'light'" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
-  <button class="button-wrapper" (tap)="navigateTo('restaurant-image', '')" ion-item detail-none>
+  <button class="button-wrapper" (tap)="navigateTo('restaurant-image')" ion-item detail-none>
     <ion-row>
       <ion-col col-4 class="resto-card-left">
         <div class="best-deal">Up to -{{restaurant.maxTimeslot.discount}}%</div>
@@ -52,7 +52,7 @@
             <div *ngIf="i < 3">
               <div *ngIf="timeslot" class="timeslot">
                 <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>
-                <div class="discount-box" *ngIf="timeslot" color="primary" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id, 'tapped' : timeslotTapped == timeslot?._id}" (tap)="navigateTo('timeslot', timeslot._id)">
+                <div class="discount-box" *ngIf="timeslot">
 
                   -{{timeslot?.discount}}%
                 </div>
@@ -62,7 +62,7 @@
           </div>
           <div class="more-button">
             <p>All Times</p>
-            <div class="go-box" color="secondary" (tap)="navigateTo('timeslot', '')">
+            <div class="go-box">
               Go
               <ion-icon ios="ios-arrow-forward" md="ios-arrow-forward"></ion-icon>
             </div>

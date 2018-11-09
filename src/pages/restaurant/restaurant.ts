@@ -94,10 +94,6 @@ export class RestaurantPage implements OnInit {
     this.date = navParams.get('date');
     this.time = navParams.get('time');
 
-    console.log(navParams.data)
-    console.log(this.date)
-    console.log(this.time)
-
   //Since we aren't doing setnow, make sure to initialize
     this.today = moment().format();
     this.maxDate = moment().add(30, 'day').format();

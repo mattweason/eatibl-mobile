@@ -122,7 +122,7 @@ export class RestaurantCardComponent implements OnChanges {
 
   ngOnInit(){
     //Get business hours
-    this.businessHoursData = this.restaurant.businesshours;
+    this.businessHoursData = this.restaurant.businessHours;
     this.processBusinessHours();
 
     //Get timeslots
@@ -138,7 +138,7 @@ export class RestaurantCardComponent implements OnChanges {
     }
   }
 
-  navigateTo(target, timeslotId){
+  navigateTo(target){
     setTimeout(() => {
       this.log.sendRestoEvent('Restaurant Card Clicked', 'Restaurant Card', 'User clicked on '+target, this.restaurant._id);
       this.restaurantTapped = true;
@@ -146,7 +146,7 @@ export class RestaurantCardComponent implements OnChanges {
         restaurant: JSON.stringify(this.restaurant),
         timeslotsData: JSON.stringify(this.timeslotsData),
         businessHoursData: JSON.stringify(this.businessHoursData),
-        timeslotId: timeslotId,
+        timeslotId: '',
         distance: this.distance,
         date: this.date,
         time: this.time

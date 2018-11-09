@@ -135,14 +135,14 @@ export class SearchPage {
 
   }
 
-  navigateTo(restaurant, timeslotId){
+  navigateTo(restaurant){
     setTimeout(() => {
       this.log.sendRestoEvent('Restaurant Item Clicked', 'Search', restaurant.name, restaurant._id);
       this.navCtrl.push('RestaurantPage', {
         restaurant: JSON.stringify(restaurant),
         timeslotsData: JSON.stringify(restaurant.timeslots),
         businessHoursData: JSON.stringify(restaurant.businessHours),
-        timeslotId: timeslotId,
+        timeslotId: '',
         distance: restaurant.distanceFormatted,
         date: moment().format(),
         time: moment().add(30 - moment().minute() % 30, 'm').format()
