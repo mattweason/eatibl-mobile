@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, AlertController, Events, ModalController, NavParams, Platform} from 'ionic-angular';
+import {IonicPage, NavController, AlertController, Events, ModalController, Platform} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
@@ -7,7 +7,6 @@ import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { Storage } from '@ionic/storage';
 import { FunctionsProvider } from '../../providers/functions/functions';
-import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
 
 /**
@@ -46,7 +45,6 @@ export class SignupPage {
     public events: Events,
     private modal: ModalController,
     private log: ActivityLoggerProvider,
-    private navParams: NavParams,
     private platform: Platform,
     private googlePlus: GooglePlus
   ) {
@@ -63,12 +61,6 @@ export class SignupPage {
           Validators.required
         ])
       ],
-      phone: [
-        '', Validators.compose([
-          Validators.required,
-          Validators.pattern('[0-9 ()+-]*')
-        ])
-      ],
       email: [
         '', Validators.compose([
           Validators.required,
@@ -82,19 +74,6 @@ export class SignupPage {
         ])
       ],
       promoCode: ''
-    });
-  }
-
-  ionViewDidEnter(){
-    this.storage.get('eatiblUser').then((val) => {
-      if(val){
-        this.user = decode(val);
-        if(this.user.phone){
-          this.signupForm.controls['name'].setValue(this.user.name);
-          this.signupForm.controls['phone'].setValue(this.user.phone);
-          this.signupForm.controls['email'].setValue(this.user.email);
-        }
-      }
     });
   }
 
@@ -114,94 +93,10 @@ export class SignupPage {
             this.signupForm.controls['promoCode'].setErrors({'incorrect': true});
           } else {
             this.promoCode = res['promoCode'];
-            this.validateUser(res['promoCode']['code']);
           }
         });
-      else
-        this.validateUser(false);
+      this.submitRegistration();
     }
-  }
-
-  //Validate phone number and process registration object
-  validateUser(code){
-    //Cache user object and add device id
-    this.postObject = this.signupForm.value;
-    this.postObject.deviceId = this.device.uuid;
-    if(code)
-      this.postObject.promoCode = [code];
-    // else
-    //   delete this.postObject.promoCode;
-
-    //Clean up phone number
-    this.postObject.phone = this.postObject.phone.replace(/[^\d+]/g, ''); //Strip all non digits
-
-    this.API.makePost('user/verify/check', this.postObject).subscribe(response => {
-      if (response['err']) { //Twilio says invalid phone number
-        let title = 'Invalid Phone Number',
-          message = 'The number you have entered is invalid. If you have an international number, please make sure to add a "+" and your country code.';
-        this.presentAlert(title, message);
-
-      } else { //Phone number is good
-        var newObj = JSON.parse(JSON.stringify(this.postObject));
-        delete newObj.password; //remove password and save data to log
-        this.log.sendEvent('Signup: Verification Sent', 'Sign up', 'System has sent SMS to user for verification. Post Object: ' + JSON.stringify(newObj));
-        if (response['verify']) //Account needs verification, SMS has been sent
-          this.verifyAlert(false);
-
-        else //Account already verified, proceed
-          this.submitRegistration();
-      }
-    });
-  }
-
-  //Verification code alert
-  verifyAlert(reverify){ //If reverify is true, the user entered a bad code and must reverify
-    let title = 'Verify Phone Number',
-      message = "We've texted you a verification code. Please enter the code below to complete your registration.";
-    if(reverify){
-      title = 'Invalid Code';
-      message = "The verification code you entered does not match the one sent to you. Please try again.";
-    }
-    let alert = this.alertCtrl.create({
-      title: title,
-      message: message,
-      inputs: [
-        {
-          name: 'code',
-          placeholder: 'Code',
-          type: 'tel'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Submit',
-          handler: data => {
-            if(data.code){
-              const postObj = {
-                phone: this.signupForm.value.phone,
-                code: data.code
-              };
-              this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
-                if(response['confirmed']) //Code is good :)
-                  this.submitRegistration();
-
-                else { //Code is bad :(
-                  this.verifyAlert(true);
-                }
-              });
-            }
-          }
-        }
-      ]
-    });
-    alert.present();
   }
 
   //Trim the trailing spaces from form input values
@@ -212,6 +107,11 @@ export class SignupPage {
 
   //Make the api call to submit the registration
   submitRegistration(){
+    //Cache user object and add device id
+    this.postObject = this.signupForm.value;
+    this.postObject.deviceId = this.device.uuid;
+    if(this.promoCode)
+      this.postObject.promoCode = [this.promoCode];
 
     //make API call to get token if successful, or status 401 if login failed
     this.API.makePost('register', this.postObject).subscribe(response => {

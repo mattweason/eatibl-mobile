@@ -17,12 +17,6 @@
 
 
 <ion-content class="grey-background">
-  <ion-card class="secure-prompt" *ngIf="user.phone && user.active == 0">
-    <ion-card-content>
-      <p>Bookings made with <span class="bold">{{user.email}}</span> are unsecured. Click below to create your account and secure your bookings.</p>
-      <button ion-button color="secondary" small (tap)="signUp()">Secure</button>
-    </ion-card-content>
-  </ion-card>
   <ion-card id="account-card">
     <ion-card-content no-padding>
       <ion-grid>
@@ -31,12 +25,11 @@
             <ion-icon class="user-icon" name="contact"></ion-icon>
           </ion-col>
           <ion-col col-9 class="user-info">
-            <div *ngIf="user.phone || user.facebook_id || user.google_id">
+            <div *ngIf="user.email">
               <p>{{user.name}}</p>
               <p>{{user.email}}</p>
-              <p *ngIf="user.phone">{{user.phone}}</p>
             </div>
-            <div class="placeholders" *ngIf="!user.phone && !user.facebook_id && !user.google_id">
+            <div class="placeholders" *ngIf="!user.email">
               <div class="grey-box"></div>
               <div class="grey-box big"></div>
               <div class="grey-box"></div>

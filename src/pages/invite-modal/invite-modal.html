@@ -13,22 +13,21 @@
     <ion-row>
       <ion-col class="align-center">
         <h4 *ngIf="type == 'referral'">Choose who to invite</h4>
-        <h4 *ngIf="type == 'reminder'">Booking Successful!</h4>
-        <p *ngIf="type == 'reminder'">Share the booking details with friends:</p>
+        <img *ngIf="type == 'reminder'" class="booking-medal" src="assets/imgs/booking-success.svg">
+        <h4 *ngIf="type == 'reminder'" class="booking-success">Booking Successful!</h4>
+        <p *ngIf="type == 'reminder'">Share the booking details with others:</p>
       </ion-col>
     </ion-row>
     <ion-row class="border-bottom">
-      <ion-col col-1></ion-col>
-      <ion-col col-4 class="align-center">
-        <button class="add-contact-button" ion-button color="secondary" (tap)="browseContacts()"><span>Browse</span><span>Contacts</span></button>
+      <ion-col col-5 class="align-center">
+        <button class="add-contact-button" ion-button icon-start color="secondary" (tap)="browseContacts()"><ion-icon name="people"></ion-icon>Browse</button>
       </ion-col>
       <ion-col col-2 class="or-separator">
         <p>or</p>
       </ion-col>
-      <ion-col col-4 class="align-center">
-          <button class="add-contact-button" ion-button color="secondary" (tap)="addManually()"><span>Add</span><span>Manually</span></button>
+      <ion-col col-5 class="align-center">
+          <button class="add-contact-button" ion-button icon-start color="secondary" (tap)="addManually()"><ion-icon name="person-add"></ion-icon>Add</button>
       </ion-col>
-      <ion-col col-1></ion-col>
     </ion-row>
   </ion-grid>
 </ion-header>
@@ -57,7 +56,6 @@
     <ion-row>
       <ion-col align-items-center>
         <p class="align-center">No contacts selected.</p>
-        <p class="align-center">Share these awesome deals with friends!</p>
       </ion-col>
     </ion-row>
   </ion-grid>

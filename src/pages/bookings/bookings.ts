@@ -46,10 +46,9 @@ export class BookingsPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        if(this.user.phone.length)
-          this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
-            this.filterAndSortBookings(data);
-          });
+        this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+          this.filterAndSortBookings(data);
+        });
       }
       else{
         this.user = {}; //If no user exists in the localstorage, clear the user object

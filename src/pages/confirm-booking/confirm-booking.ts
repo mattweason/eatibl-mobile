@@ -33,7 +33,6 @@ export class ConfirmBookingPage {
     _id: '',
     email: '',
     name: '',
-    phone: '',
     type: '',
     facebook_id: '',
     google_id: '',
@@ -77,12 +76,6 @@ export class ConfirmBookingPage {
       name: [
         '', Validators.compose([
           Validators.required
-        ])
-      ],
-      phone: [
-        '', Validators.compose([
-          Validators.required,
-          Validators.pattern('[0-9 ()+-]*')
         ])
       ],
       email: [
@@ -161,11 +154,8 @@ export class ConfirmBookingPage {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        if(this.user.phone || this.user.active){
-          this.log.sendEvent('User Already Exists', 'Confirm Booking', JSON.stringify(this.user));
+        if(this.user.email){
           this.bookingForm.controls['name'].setValue(this.user.name);
-          if(this.user.phone)
-            this.bookingForm.controls['phone'].setValue(this.user.phone);
           this.bookingForm.controls['email'].setValue(this.user.email);
           this.bookingForm.controls['active'].setValue(this.user.active);
           this.bookingForm.controls['_id'].setValue(this.user._id);
@@ -206,8 +196,6 @@ export class ConfirmBookingPage {
       });
     }
     else{
-      //Clean up phone number
-      this.bookingForm.value.phone = this.bookingForm.value.phone.replace(/[^\d+]/g, ''); //Strip all non digits
       this.postObject = {
         user: this.bookingForm.value,
         people: this.people,
@@ -223,85 +211,12 @@ export class ConfirmBookingPage {
       //Create post object for verify check with deviceid
       let postObj = {
         name: this.bookingForm.value.name,
-        phone: this.bookingForm.value.phone,
         email: this.bookingForm.value.email,
         deviceId: this.device.uuid
       };
 
-      //Run the check to see if this user has been verified
-      if(!this.user.facebook_id || !this.user.google_id)
-        this.API.makePost('user/verify/check', postObj).subscribe(response => {
-          this.log.sendEvent('Confirm Booking: Try Validate', 'Confirm Booking', JSON.stringify(postObj));
-          if(response['err']){ //Twilio says invalid phone number
-            let title = 'Invalid Phone Number',
-              message = 'The number you have entered is invalid. If you have an international number, please make sure to add a "+" and your country code.';
-            this.presentAlert(title, message);
-
-          } else { //Phone number is good
-            if (response['verify']) //Has not been verified
-              this.verifyAlert(false);
-
-            else
-              this.createBooking(); //Good to go
-          }
-
-        });
-      else
-        this.createBooking();
+      this.createBooking();
     }
-  }
-
-  //Verification code alert
-  verifyAlert(reverify){ //If reverify is true, the user entered a bad code and must reverify
-    this.log.sendRestoEvent('Confirm Booking: Verification Requested', 'Confirm Booking', 'Reverify: '+reverify, this.restaurant._id);
-    let title = 'Verify Phone Number',
-      message = "We've texted you a verification code. Please enter the code below to complete the booking.";
-    if(reverify){
-      title = 'Invalid Code';
-      message = "The verification code you entered does not match the one sent to you. Please try again.";
-    }
-    let alert = this.alertCtrl.create({
-      title: title,
-      message: message,
-      inputs: [
-        {
-          name: 'code',
-          placeholder: 'Code',
-          type: 'tel'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Submit',
-          handler: data => {
-            if(data.code){
-              const postObj = {
-                phone: this.bookingForm.value.phone,
-                code: data.code
-              };
-              this.API.makePost('user/verify/confirm', postObj).subscribe(response => {
-
-                this.log.sendRestoEvent('Confirm Booking: Verification Success', 'Confirm Booking', JSON.stringify(postObj), this.restaurant._id);
-                if(response['confirmed']) //Code is good :)
-                  this.createBooking();
-
-                else { //Code is bad :(
-                  this.verifyAlert(true);
-                }
-              });
-            }
-          }
-        }
-      ]
-    });
-    alert.present();
   }
 
   //Create the booking
@@ -362,15 +277,6 @@ export class ConfirmBookingPage {
 
         if(this.platform.is('cordova')) { //Don't run in ionic lab, causes error
 
-          //TEST TEST TEST... 123 TESTING
-          // this.localNotifications.schedule({
-          //   id: 50, //a number from 0 to 10000
-          //   title: "This is a test",
-          //   text: "Your booking for " + this.restaurant.name + " is in an hour!",
-          //   data: {type: "Reminder", details: this.response.booking}, //Send information to navigate to booking confirmed page
-          //   icon: 'file://assets/imgs/notification-icon.png'
-          // });
-
           //REMINDER: When booking is made with less than 2hr lead time
           var triggerTime = moment(this.date).add(30, 'seconds');
           if(timeDiff < 2){
@@ -404,32 +310,9 @@ export class ConfirmBookingPage {
             this.functions.addNotification(this.postObject.localNotifications.reminderId, this.restaurant.name+': Reminder');
           }
 
-          //FEEDBACK: 3hrs after the booking is complete
-          // this.localNotifications.schedule({
-          //   id: this.postObject.localNotifications.feedbackId, //a number from 0 to 10000
-          //   text: "How was your experience using Eatibl at" + this.restaurant.name + "?",
-          //   trigger: {at: (bookingDate.add(180, 'minutes')).toDate()},
-          //   data: {type: "Feedback", details: this.response.booking}, //Send information to navigate to booking confirmed page
-          //   icon: 'https://eatibl.com/assets/images/notification-icon.png'
-          // });
-
           this.functions.cancelNotification(this.restaurant.name+': Booking Abandoned');
 
         }
-
-        this.storage.get('eatiblUser').then((val) => {
-          if(val){
-            this.user = decode(val);
-            this.log.sendRestoEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(this.user) || "none", this.restaurant._id);
-            if(!this.user.phone)
-              this.storage.set('eatiblUser', this.response.token)
-          }
-          else{
-            this.storage.set('eatiblUser', this.response.token)
-            this.events.publish('email:captured');
-            this.log.sendRestoEvent('Create Booking: Success', 'Confirm Booking', 'Previous user data: '+JSON.stringify(decode(this.response.token)) || "none", this.restaurant._id);
-          }
-        });
 
         this.logFacebookEvent('Booking', this.restaurant._id);
 

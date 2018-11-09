@@ -1,15 +1,16 @@
 page-invite-modal {
-  ion-grid{
+  .booking-medal{
+    width: 25%;
   }
-  ion-scroll{
+  .booking-success{
+    color: color($colors, primary);
   }
   .logo-header{
     height:34px;
   }
   .add-contact-button{
-    height: 60px;
+    width: 100%;
     .button-inner{
-      flex-flow: column;
       span{
         margin: 3px 0;
       }
@@ -44,6 +45,11 @@ page-invite-modal {
     }
   }
   .no-results{
-    margin-top: 30px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
   }
 }
