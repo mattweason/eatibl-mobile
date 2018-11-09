@@ -73,7 +73,7 @@ export class FunctionsProvider {
     this.localNotifications.schedule({
       id: countdown24, //a number from 0 to 10000
       title: "🔥 24 hours left! ⏱",
-      text: "⏱ Our Early Supporter offer expires in one day. Make a booking to secure your free, premium account.",
+      text: "⏱ Our Early Supporter offer expires in one day. Make a booking to make sure you have a chance to win a $100 gift card!",
       trigger: {at: new Date(moment(triggerTime24).format())},
       data: {type: "Countdown24"}, //Send information to navigate to booking confirmed page
       icon: 'res://notification_app_icon',
@@ -84,7 +84,7 @@ export class FunctionsProvider {
     this.localNotifications.schedule({
       id: countdown1, //a number from 0 to 10000
       title: "🔥 One hour left! ⏱",
-      text: "⏱ Our Early Supporter offer expires in one hour. Make a booking to secure your free, premium account.",
+      text: "⏱ Our Early Supporter offer expires in one hour. Make a booking to make sure you have a chance to win a $100 gift card!",
       trigger: {at: new Date(moment(triggerTime1).format())},
       data: {type: "Countdown1"}, //Send information to navigate to booking confirmed page
       icon: 'res://notification_app_icon',
@@ -174,7 +174,7 @@ export class FunctionsProvider {
     let alert = this.alertCtrl.create({
       title: 'Early Supporter Offer',
       subTitle: subTitle,
-      message: 'To our early users, thank you for your support! If you try out our app and make a booking in your first 3 days, we will upgrade your account to premium, which grants you unlimited lifetime access to all of our deals.',
+      message: "To our early users, thank you for your support! If you try out our app and make a booking in your first 3 days you will have a chance to win a $100 gift card! The contest expires on Dec. 31, 2018.",
       buttons: ['Got It']
     });
     alert.present();
