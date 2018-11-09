@@ -35,7 +35,7 @@
       <div class="item-top">
         <p>{{ resto.vicinity }}</p>
         <p class="discount" *ngIf="resto.maxTimeslot"><ion-icon name="flash"></ion-icon>-{{resto.maxTimeslot.discount}}%</p>
-        <p class="no-discount" *ngIf="!resto.maxTimeslot">No Deals Today</p>
+        <p class="no-discount" *ngIf="!resto.maxTimeslot">No More Deals Today</p>
       </div>
     </button>
   </ion-list>

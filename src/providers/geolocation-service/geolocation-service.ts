@@ -118,7 +118,12 @@ export class GeolocationServiceProvider {
     this.diagnostic.getLocationAuthorizationStatus().then((status) => {
       if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE){ //Permission has been authorized
         callback(1); //Close position modal but don't invoke loading restaurants
-        this.setLocation(this.locationCached.coords, 'Your Location');
+        if(this.locationCached.coords.length)
+          this.setLocation(this.locationCached.coords, 'Your Location');
+        else{
+          this.location.device = true;
+          this.startTracking(true);
+        }
       }
       else if(status == this.diagnostic.permissionStatus.DENIED){ //Permission has been denied
         if(this.platform.is('ios'))
