@@ -75,7 +75,6 @@ export class SearchPage {
   }
 
   updateList(){
-    console.log('updating list')
 
     //Filter down the list through keyword
     if (this.searchInput.length) {
@@ -110,6 +109,7 @@ export class SearchPage {
     if(sortType == 'distance'){
       this.geolocationService.useDeviceLocation((result) => {
         if(result){
+          this.log.sendEvent('Sorted By Distance', 'Search', '');
 
           //update sortType for all purposes
           this.sortType = sortType;
@@ -124,6 +124,7 @@ export class SearchPage {
     }
     //sort restoAll by new sortType
     else{
+      this.log.sendEvent('Sorted By Alphabetical', 'Search', '');
       //update sortType for all purposes
       this.sortType = sortType;
       this.restoAll = _.sortBy(this.restoAll, (resto) => {

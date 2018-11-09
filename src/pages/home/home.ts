@@ -374,7 +374,7 @@ export class HomePage {
 
   navigateTo(event, timeslotId){
     if(this.selectedResto.timeslots.length){
-      this.log.sendRestoEvent('Navigate to Restaurant', 'Map view', 'User clicked into restaurant: '+this.selectedResto.name, this.selectedResto._id);
+      this.log.sendRestoEvent('Navigate to Restaurant', 'Nearby', 'User clicked into restaurant: '+this.selectedResto.name, this.selectedResto._id);
       this.navCtrl.push('RestaurantPage', {
         restaurant: JSON.stringify(this.selectedResto),
         timeslotsData: JSON.stringify(this.selectedResto.timeslots),

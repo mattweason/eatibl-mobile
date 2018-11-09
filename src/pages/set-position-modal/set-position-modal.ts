@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController, ToastController, Events} from 'ionic-angular';
-import { Storage } from '@ionic/storage';
+import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import * as _ from 'underscore';
 import {ApiServiceProvider} from "../../providers/api-service/api-service";
@@ -28,10 +27,6 @@ export class SetPositionModalPage {
     public navCtrl: NavController,
     public viewCtrl: ViewController,
     public navParams: NavParams,
-    private storage: Storage,
-    private params: NavParams,
-    private events: Events,
-    private toastCtrl: ToastController,
     private API: ApiServiceProvider,
     private log: ActivityLoggerProvider,
     private geolocationService: GeolocationServiceProvider
@@ -56,27 +51,32 @@ export class SetPositionModalPage {
   }
 
   selectVicinity(){
+    this.log.sendEvent('Vicinity Selected', 'Set Position Modal', JSON.stringify(this.vicinities[this.vicinityIndex]));
     this.viewCtrl.dismiss();
     this.geolocationService.toggleManualReload(true);
     this.geolocationService.setLocation(this.vicinities[this.vicinityIndex].coords, this.vicinities[this.vicinityIndex].name)
   }
 
   useDeviceLocation(){
+    this.log.sendEvent('Use Device Location button pressed', 'Set Position Modal', '');
     if(!this.geolocationService.location.device){
       this.geolocationService.toggleManualReload(true);
       this.geolocationService.useDeviceLocation((result) => {
-        if(result)
+        if(result){
+          this.log.sendEvent('Use Device Location success', 'Set Position Modal', 'User switched to device location from custom location');
           this.viewCtrl.dismiss();
+        }
       });
     }
-    else
+    else{
+      this.log.sendEvent('Use Device Location success', 'Set Position Modal', 'User was already using device location');
       this.viewCtrl.dismiss();
+    }
   }
 
   //Close the modal
   dismiss(){
     this.viewCtrl.dismiss();
-    this.log.sendEvent('Set Position Modal: Closed', 'Set Position Modal', 'Did they update the info: '); //TODO: give this info
   }
 
 }
