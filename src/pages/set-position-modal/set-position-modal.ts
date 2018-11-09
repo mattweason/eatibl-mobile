@@ -62,12 +62,15 @@ export class SetPositionModalPage {
   }
 
   useDeviceLocation(){
-    this.geolocationService.toggleManualReload(true);
-    var current = this;
-    this.geolocationService.useDeviceLocation(function(result){
-      if(result)
-        current.viewCtrl.dismiss(true);
-    });
+    if(!this.geolocationService.location.device){
+      this.geolocationService.toggleManualReload(true);
+      this.geolocationService.useDeviceLocation((result) => {
+        if(result)
+          this.viewCtrl.dismiss();
+      });
+    }
+    else
+      this.viewCtrl.dismiss();
   }
 
   //Close the modal

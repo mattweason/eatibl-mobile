@@ -399,12 +399,6 @@ export class MyApp {
     });
   }
 
-  //Preset custom location modal
-  presentLocationModal(){
-    this.menuCtrl.close();
-    this.geolocationService.presentLocationModal();
-  }
-
   //Open intro slides
   presentHIWModal(){
     this.log.sendEvent('How It Works opened', 'Home', '');

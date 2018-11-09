@@ -17,6 +17,17 @@
         font-size: 13px;
         color: color($colors, medium);
       }
+      .discount{
+        display: flex;
+        align-items: center;
+        color: color($colors, tertiary);
+        ion-icon{
+          margin-right: 3px;
+        }
+      }
+      .no-discount{
+        color: color($colors, danger);
+      }
     }
   }
 }

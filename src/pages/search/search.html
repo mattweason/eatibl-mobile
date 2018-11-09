@@ -30,9 +30,13 @@
     <button class="item-button" ion-item (tap)="navigateTo(resto)" *virtualItem="let resto">
       <div class="item-top">
         <h2>{{ resto.name }}</h2>
-        <p>{{ resto.distanceFormatted }}</p>
+        <p *ngIf="deviceLocation">{{ resto.distanceFormatted }}</p>
       </div>
-      <p>{{ resto.vicinity }}</p>
+      <div class="item-top">
+        <p>{{ resto.vicinity }}</p>
+        <p class="discount" *ngIf="resto.maxTimeslot"><ion-icon name="flash"></ion-icon>-{{resto.maxTimeslot.discount}}%</p>
+        <p class="no-discount" *ngIf="!resto.maxTimeslot">No Deals Today</p>
+      </div>
     </button>
   </ion-list>
   <div *ngIf="restoFiltered?.length == 0" class="no-results">

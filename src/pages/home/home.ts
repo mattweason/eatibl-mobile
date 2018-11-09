@@ -584,10 +584,6 @@ export class HomePage {
   presentLocationModal(){
     this.log.sendEvent('Location Modal', 'Nearby', 'From the restaurant header CHANGE button'); //log each time modal is opened
     const mapModal = this.modal.create('SetPositionModalPage');
-    mapModal.onDidDismiss(reload => {
-      if(reload)
-        this.loadingRestaurants = true;
-    });
     mapModal.present();
   }
 }

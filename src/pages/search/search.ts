@@ -30,7 +30,7 @@ export class SearchPage {
   loadingRestaurants = true;
   sortType = 'alpha'; //either sort alphabetically or by distance (if we have device location)
   searchInput = '';
-
+  deviceLocation: boolean;
 
   constructor(
     private functions: FunctionsProvider,
@@ -44,6 +44,7 @@ export class SearchPage {
 
     this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
       if(location.coords.length){
+        this.deviceLocation = location.device; //Only show distance if device location is known
         this.userCoords = [location.coords[0], location.coords[1]];
         this.setDistances();
         if(this.geolocationService.manualReload){
@@ -74,6 +75,7 @@ export class SearchPage {
   }
 
   updateList(){
+    console.log('updating list')
 
     //Filter down the list through keyword
     if (this.searchInput.length) {
@@ -104,25 +106,32 @@ export class SearchPage {
   }
 
   sortBy(sortType){
-    //update sortType for all purposes
-    this.sortType = sortType;
 
-    if(this.sortType == 'distance'){
+    if(sortType == 'distance'){
       this.geolocationService.useDeviceLocation((result) => {
-        if(result)
-        //sort restoAll by new sortType
+        if(result){
+
+          //update sortType for all purposes
+          this.sortType = sortType;
+
+          //sort restoAll by new sortType
           this.restoAll = _.sortBy(this.restoAll, (resto) => {
             if(this.sortType == 'distance'){return resto['distance']}
           });
+          this.updateList()
+        }
       });
     }
     //sort restoAll by new sortType
-    else
+    else{
+      //update sortType for all purposes
+      this.sortType = sortType;
       this.restoAll = _.sortBy(this.restoAll, (resto) => {
         if(this.sortType == 'alpha'){return resto['name']}
       });
+      this.updateList()
+    }
 
-    this.updateList()
   }
 
   navigateTo(restaurant, timeslotId){

@@ -146,8 +146,10 @@ export class GeolocationServiceProvider {
   //Switch back to device location for the use device location button
   useDeviceLocation(callback){
     this.diagnostic.getLocationAuthorizationStatus().then((status) => {
-      if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) //Permission has been authorized
+      if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE){ //Permission has been authorized
+        callback(true);
         this.setLocation(this.locationCached.coords, 'Your Location');
+      }
       else if(status == this.diagnostic.permissionStatus.DENIED) //Permission has been denied
         this.diagnostic.requestLocationAuthorization().then((status) => {
           if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE){ //Permission has been authorized
