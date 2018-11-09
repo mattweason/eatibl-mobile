@@ -11,6 +11,7 @@ import {ApiServiceProvider} from "../api-service/api-service";
 import {AndroidPermissions} from "@ionic-native/android-permissions";
 import {ActivityLoggerProvider} from "../activity-logger/activity-logger";
 import {SplashScreen} from "@ionic-native/splash-screen";
+import {FunctionsProvider} from "../functions/functions";
 
 /*
   Generated class for the GeolocationServiceProvider provider.
@@ -48,6 +49,7 @@ export class GeolocationServiceProvider {
   constructor(
     private platform: Platform,
     public zone: NgZone,
+    private functions: FunctionsProvider,
     public geolocation: Geolocation,
     public events: Events,
     public device: Device,
@@ -150,15 +152,21 @@ export class GeolocationServiceProvider {
         callback(true);
         this.setLocation(this.locationCached.coords, 'Your Location');
       }
-      else if(status == this.diagnostic.permissionStatus.DENIED) //Permission has been denied
-        this.diagnostic.requestLocationAuthorization().then((status) => {
-          if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE){ //Permission has been authorized
-            callback(true);
-            this.location.device = true;
-            this.startTracking();
-          } else
-            callback(false);
-        });
+      else if(status == this.diagnostic.permissionStatus.DENIED){ //Permission has been denied
+        if(this.platform.is('ios'))
+          this.functions.presentAlert('Permission Denied', "You must manually enable Location Services for Eatibl by going into your iPhone's Settings.", 'Got It');
+        else
+          this.diagnostic.requestLocationAuthorization().then((status) => {
+            if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE){ //Permission has been authorized
+              callback(true);
+              this.location.device = true;
+              this.startTracking();
+            } else
+              callback(false);
+          });
+      }
+      else if(status == this.diagnostic.permissionStatus.DENIED_ALWAYS)
+        this.functions.presentAlert('Permission Permanently Denied', 'You must manually give permission to Eatibl to use your devices location by going into Settings on your phone.', 'Got It');
     });
   }
 

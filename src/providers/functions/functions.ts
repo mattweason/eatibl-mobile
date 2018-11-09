@@ -179,4 +179,14 @@ export class FunctionsProvider {
     });
     alert.present();
   }
+
+  //Error alert for booking errors
+  presentAlert(title, message, buttonText){
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      buttons: [buttonText]
+    });
+    alert.present();
+  }
 }
