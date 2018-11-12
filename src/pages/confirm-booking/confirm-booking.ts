@@ -262,7 +262,7 @@ export class ConfirmBookingPage {
           this.presentAlert(title, message);
       }
       else{ //no response message means successful booking
-        this.processingBooking = true;
+        this.processingBooking = false;
 
         if(this.response.token)
           this.storage.set('eatiblUser', this.response.token);
@@ -319,29 +319,15 @@ export class ConfirmBookingPage {
 
         this.logFacebookEvent('Booking', this.restaurant._id);
 
-        if(this.response.booking.people > 1){
-          const inviteModal = this.modal.create('InviteModalPage', { type: 'reminder', booking: this.response.booking, restaurant: this.restaurant });
-          inviteModal.onDidDismiss(() => {
-            this.navCtrl.push('BookingConfirmedPage', {
-              booking: this.response.booking,
-              restaurant: this.restaurant
-            }).then(() => {
-              var index = this.navCtrl.getActive().index;
-              this.navCtrl.remove(index-1);
-            });
+        //Present booking success and invite modal
+        const inviteModal = this.modal.create('InviteModalPage', { type: 'reminder', booking: this.response.booking, restaurant: this.restaurant });
+        inviteModal.onDidDismiss(() => {
+          var index = this.navCtrl.getActive().index;
+          this.navCtrl.remove(index-1).then(() => {
+            this.events.publish('request:changeTab', 3);
           });
-          inviteModal.present();
-        }
-        else{
-          this.navCtrl.push('BookingConfirmedPage', {
-            booking: this.response.booking,
-            restaurant: this.restaurant,
-            inviteModal: true
-          }).then(() => {
-            var index = this.navCtrl.getActive().index;
-            this.navCtrl.remove(index-1);
-          });
-        }
+        });
+        inviteModal.present();
       }
     });
   }

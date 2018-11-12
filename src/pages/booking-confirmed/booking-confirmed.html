@@ -106,7 +106,7 @@
             <p class="field-content">{{booking.name}}</p>
           </ion-col>
         </ion-row>
-        <ion-row class="border-bottom">
+        <ion-row *ngIf="booking.phone" class="border-bottom">
           <ion-col col-4>
             <p class="field-title">Phone</p>
           </ion-col>

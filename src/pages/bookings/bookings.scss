@@ -10,6 +10,13 @@
   }
 }
 
+.present-text{
+  padding: 0 12px;
+  text-align: center;
+  font-weight: 700;
+  color: color($colors, medium);
+}
+
 .no-results{
   margin-top: 40px;
 }

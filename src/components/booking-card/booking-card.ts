@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import * as moment from 'moment';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
 
@@ -18,6 +19,7 @@ export class BookingCardComponent {
   dateObject = {} as any;
 
   @Input() booking = {} as any;
+  newBooking = false;
 
   constructor(public navCtrl: NavController, private functions: FunctionsProvider) {
   }
@@ -36,6 +38,11 @@ export class BookingCardComponent {
     this.dateObject.month = month;
     this.dateObject.date = date;
     this.dateObject.day = day;
+
+    //Check if booking is new
+    var timePlus = moment(this.booking['created_at']).add(5, 'm');
+    if(moment(timePlus).isAfter(moment()))
+      this.newBooking = true;
   }
 
   viewBooking(){

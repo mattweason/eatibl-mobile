@@ -31,12 +31,6 @@
     </ion-refresher-content>
   </ion-refresher>
   <div *ngIf="view == 'list' && !loadingRestaurants">
-    <ion-card *ngIf="customLocation" class="info-card">
-      <ion-card-content>
-        <ion-icon name="information-circle"></ion-icon>
-        <p>Not using your device's location.</p>
-      </ion-card-content>
-    </ion-card>
     <ion-card>
       <button ion-item (tap)="presentHIWModal()" class="how-it-works">
         <div class="body">

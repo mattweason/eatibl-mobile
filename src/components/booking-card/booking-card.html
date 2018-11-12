@@ -1,5 +1,6 @@
 <ion-card *ngIf="booking">
   <button class="button-wrapper" (tap)="viewBooking(booking._id)" ion-item detail-none text-wrap>
+    <div *ngIf="newBooking" class="new-booking"><p>new</p></div>
     <ion-card-content no-padding>
       <ion-grid>
         <ion-row class="no-padding-row">
@@ -17,7 +18,7 @@
                 <p class="restaurant-name">{{booking.restaurant_fid.name}}</p>
               </ion-col>
             </ion-row>
-            <ion-row>
+            <ion-row class="booking-metrics">
               <ion-col class="metric" col-4>
                 <ion-icon name="pricetag"></ion-icon>
                 <p>{{booking.discount}}%</p>
@@ -27,7 +28,7 @@
                 <p>{{booking.people}}</p>
               </ion-col>
               <ion-col class="view-booking" col-4>
-                <button ion-button color="secondary" (click)="viewBooking(booking._id)"><ion-icon name="expand"></ion-icon></button>
+                <ion-icon ios="ios-arrow-forward" md="ios-arrow-forward"></ion-icon>
               </ion-col>
             </ion-row>
           </ion-col>

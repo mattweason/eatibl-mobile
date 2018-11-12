@@ -1,4 +1,21 @@
 booking-card {
+  position: relative;
+  .new-booking{
+    z-index: 10;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 10px;
+    background-color: color($colors, danger);
+    box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
+
+    p{
+      color: #fff;
+      margin: 0;
+    }
+  }
   ion-card{
     margin: 10px 0 10px 0 !important;
     width: 100% !important;
@@ -59,11 +76,19 @@ booking-card {
       color: #ccc;
     }
   }
-  .view-booking{
-    button{
-      height: 100%;
-      width: 100%;
+  .booking-metrics{
+    padding-right: 0 !important;
+    .view-booking{
+      padding: 0 !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: color($colors, secondary);
       margin: 0;
+      ion-icon{
+        color: #fff;
+        font-size: 32px;
+      }
     }
   }
 }

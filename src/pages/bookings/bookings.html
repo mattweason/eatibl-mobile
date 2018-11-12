@@ -45,6 +45,7 @@
           </ion-row>
         </ion-grid>
       </div>
+      <p class="present-text" *ngIf="bookingUpcoming?.length > 0">Present your booking confirmation upon arrival at the restaurant.</p>
       <booking-card *ngFor = "let booking of bookingUpcoming" [booking]="booking"></booking-card>
     </ion-list>
     <ion-list *ngSwitchCase="'history'">
