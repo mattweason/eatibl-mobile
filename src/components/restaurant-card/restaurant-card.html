@@ -8,7 +8,7 @@
 </div>
 
 <ion-card *ngIf="isLoaded && cardType == 'light'" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
-  <button class="button-wrapper" (tap)="navigateTo('restaurant-image')" ion-item detail-none>
+  <button class="button-wrapper" tappable (click)="navigateTo('restaurant-image')" ion-item detail-none>
     <ion-row>
       <ion-col col-4 class="resto-card-left">
         <div class="best-deal">Up to -{{restaurant.maxTimeslot.discount}}%</div>
