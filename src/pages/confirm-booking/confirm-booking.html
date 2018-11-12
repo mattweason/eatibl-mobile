@@ -65,8 +65,13 @@
                 <span>Please enter a valid email.</span>
               </div>
               <div class="button-row">
-                <button ion-button block color="danger" type="button" (click)="cancel()">Cancel</button>
-                <button ion-button block color="secondary" type="submit">Confirm</button>
+                <div>
+                  <button ion-button block color="danger" type="button" (click)="cancel()">Cancel</button>
+                </div>
+                <div class="confirm-button">
+                  <button ion-button block color="secondary" type="submit" [disabled]="processingBooking">Confirm</button>
+                  <ion-spinner *ngIf="processingBooking" color="primary"></ion-spinner>
+                </div>
               </div>
             </form>
             <p class="terms">By clicking confirm you agree to Eatibl's <span (tap)="openTermsModal()">Terms of Use and Privacy Policy.</span></p>

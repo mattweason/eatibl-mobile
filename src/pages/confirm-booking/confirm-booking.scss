@@ -65,4 +65,20 @@ page-confirm-booking {
     color: color($colors, danger);
 
   }
+  .button-row{
+    div{
+      width: 50%;
+    }
+    .confirm-button{
+      position: relative;
+      ion-spinner{
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+      }
+    }
+  }
 }

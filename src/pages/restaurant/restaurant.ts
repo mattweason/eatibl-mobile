@@ -159,7 +159,6 @@ export class RestaurantPage implements OnInit {
   ionViewDidLoad() {
     this.type = "about";
     //Call geolocation from app.component
-    this.events.publish('get:geolocation', Date.now());
   }
 
   ngOnInit(){

@@ -48,6 +48,7 @@ export class ConfirmBookingPage {
   response: any;
   bookingForm: FormGroup;
   postObject = {} as any;
+  processingBooking = false; //Disable confirm booking after being pressed once
 
   constructor(
     private platform: Platform,
@@ -221,6 +222,7 @@ export class ConfirmBookingPage {
 
   //Create the booking
   createBooking(){
+    this.processingBooking = true;
     this.log.sendRestoEvent('Create Booking: Initiated', 'Confirm Booking', JSON.stringify(this.postObject), this.restaurant._id);
     this.API.makePost('booking/' + this.restaurant._id + '/create', this.postObject).subscribe(response => {
       var title; //Used for error alerts
@@ -260,6 +262,7 @@ export class ConfirmBookingPage {
           this.presentAlert(title, message);
       }
       else{ //no response message means successful booking
+        this.processingBooking = true;
 
         if(this.response.token)
           this.storage.set('eatiblUser', this.response.token);
@@ -357,6 +360,7 @@ export class ConfirmBookingPage {
 
   //Error alert for booking errors
   presentAlert(title, message){
+    this.processingBooking = false;
     let alert = this.alertCtrl.create({
       title: title,
       message: message,
@@ -367,6 +371,7 @@ export class ConfirmBookingPage {
 
   //Error alert for booking errors
   presentAlertWithLogin(title, message){
+    this.processingBooking = false;
     let alert = this.alertCtrl.create({
       title: title,
       message: message,

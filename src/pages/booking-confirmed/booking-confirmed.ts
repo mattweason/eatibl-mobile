@@ -73,7 +73,6 @@ export class BookingConfirmedPage {
 
   ionViewDidLoad(){
     //Call geolocation from app.component
-    this.events.publish('get:geolocation', Date.now());
     if(this.booking.redeemed)
       this.redeemed = true;
     // this.showFeedback()

@@ -57,6 +57,7 @@ export class HomePage {
   user: any;
   locationText = 'Yonge & Dundas';
   headerIndex: any; //Index of the first restaurant outside of the chosen custom vicinity
+  lastRankedTime: any; //Timestamp of last time rank restaurants was run (clear out restaurants that dont have any more timeslots)
 
   map: GoogleMap;
 
@@ -89,9 +90,21 @@ export class HomePage {
   }
 
   ionViewDidEnter(){
-    //Call geolocation from app.component
+    if(moment().isSame(this.lastRankedTime, 'day') == false || moment().isSame(this.lastRankedTime, 'hour') == false){ //If new hour or new day definitely refresh list
+      console.log('1 hour mark passed')
+      this.rankRestaurants(this.dataCache);
+    }
+    else {
+      console.log('30 minute mark passed')
+      var originalMinute = moment(this.lastRankedTime).format('m'),
+          currentMinute = moment().format('m');
+
+      if(parseInt(originalMinute) < 30 && parseInt(currentMinute) >= 30)
+        this.rankRestaurants(this.dataCache);
+    }
+
+
     setTimeout(() => {
-      this.events.publish('get:geolocation', Date.now());
       this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
 
       this.storage.get('eatiblUser').then((val) => {
@@ -419,6 +432,7 @@ export class HomePage {
 
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
+    this.lastRankedTime = moment();
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
     var today = moment().format('dddd'); //today's day in same format as above
     var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
