@@ -176,21 +176,8 @@
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
-    background-color: #000;
     &.light{
       height: 70px;
-    }
-    &:after {
-      transition: 0.2s ease all;
-      -webkit-transition: 0.2s ease all;
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: block;
-      background-color: rgba(0, 0, 0, 0);
     }
 
   }

@@ -23,12 +23,8 @@
           <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
           <div class="rating-price">
             <p class="rating" *ngIf="restaurant.rating">
-              <ion-icon name="{{ratingStars[0]}}"></ion-icon>
-              <ion-icon name="{{ratingStars[1]}}"></ion-icon>
-              <ion-icon name="{{ratingStars[2]}}"></ion-icon>
-              <ion-icon name="{{ratingStars[3]}}"></ion-icon>
-              <ion-icon name="{{ratingStars[4]}}"></ion-icon>
-              <span *ngIf="restaurant.rating">{{restaurant.rating.ratingNumber}}</span>
+              <ion-icon name="star"></ion-icon>
+              <span>{{restaurant.rating.ratingNumber}}</span>
             </p>
             <p class="rating" *ngIf="!restaurant.rating"><ion-icon name="star"></ion-icon>N/A</p>
             <div class="price" *ngIf="restaurant.price">
