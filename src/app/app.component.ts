@@ -119,7 +119,7 @@ export class MyApp {
 
         // //Do action if we came into app via localNotification
         this.localNotifications.on('click').subscribe(notification => {
-          this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification));
+          this.log.sendEvent('Entered App by Local Notification', 'runTime', JSON.stringify(notification.title));
 
           if(notification.data.type == 'incomplete booking' )//Booking initiated notifications
             this.navigateTo('', notification.data);
@@ -136,7 +136,7 @@ export class MyApp {
 
         //Send a log for each local notification that is triggered
         this.localNotifications.on('trigger').subscribe(notification => {
-          this.log.sendEvent('Local Notification Triggered', 'unknown', JSON.stringify(notification));
+          this.log.sendEvent('Local Notification Triggered', 'unknown', JSON.stringify(notification.title));
         });
 
         // //Check if we already have a re-engage notification and cancel it if we do

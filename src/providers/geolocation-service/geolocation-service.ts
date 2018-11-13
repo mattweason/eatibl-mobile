@@ -149,10 +149,14 @@ export class GeolocationServiceProvider {
     this.diagnostic.getLocationAuthorizationStatus().then((status) => {
       if(status == this.diagnostic.permissionStatus.NOT_REQUESTED) //Permission has not yet been asked
         this.diagnostic.requestLocationAuthorization().then((status) => {
-          if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) //Permission has been authorized
+          if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) { //Permission has been authorized
+            this.log.sendEvent('Accepted Geolocation', 'runtime', '');
             this.startTracking(false);
-          else if(status == this.diagnostic.permissionStatus.DENIED) //Permission has been denied
+          }
+          else if(status == this.diagnostic.permissionStatus.DENIED){ //Permission has been denied
+            this.log.sendEvent('Denied Geolocation', 'runtime', '');
             this.setLocation(this.locationDefault.coords, this.locationDefault.text);
+            }
         });
       else if(status == this.diagnostic.permissionStatus.DENIED) //Permission has been denied
         this.setLocation(this.locationDefault.coords, this.locationDefault.text);
