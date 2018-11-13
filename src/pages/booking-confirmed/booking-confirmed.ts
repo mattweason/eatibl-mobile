@@ -92,7 +92,11 @@ export class BookingConfirmedPage {
   }
 
   cancelBooking(){
-    this.log.sendEvent('Cancel Booking: Attempted', 'Booking Confirmed', JSON.stringify(this.booking));
+    //Packaged booking information for logging
+    var canceledBooking = JSON.parse(JSON.stringify(this.booking));
+    canceledBooking.restaurant_fid = this.booking.restaurant_fid.name;
+
+    this.log.sendEvent('Cancel Booking: Attempted', 'Booking Confirmed', JSON.stringify(canceledBooking));
     if(!this.tooClose){
       let alert = this.alertCtrl.create({
         title: 'Cancel Booking',
@@ -109,7 +113,7 @@ export class BookingConfirmedPage {
             text: 'Yes',
             handler: () => {
               this.API.makeCall('booking/'+this.booking._id+'/disable').subscribe(response => {
-                this.log.sendEvent('Cancel Booking: Success', 'Booking Confirmed', JSON.stringify(this.booking));
+                this.log.sendEvent('Cancel Booking: Success', 'Booking Confirmed', JSON.stringify(canceledBooking));
                 this.functions.cancelNotification(this.restaurant.name+': Reminder');
 
                 this.response = response;
@@ -139,7 +143,7 @@ export class BookingConfirmedPage {
         ]
       });
 
-      this.log.sendEvent('Cancel Booking: Failed', 'Booking Confirmed', JSON.stringify(this.booking));
+      this.log.sendEvent('Cancel Booking: Failed', 'Booking Confirmed', JSON.stringify(canceledBooking));
       alert.present();
     }
   }
