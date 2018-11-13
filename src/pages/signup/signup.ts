@@ -87,7 +87,7 @@ export class SignupPage {
       this.submitAttempt = true;
     }
     else {
-      if(this.signupForm.value.promoCode.length > 0)
+      if(this.signupForm.value.promoCode.length > 0){
         this.API.makePost('promoCode/validate', {promoCode: this.signupForm.value.promoCode}).subscribe(res => {
           if(res['message'] == 'invalid'){
             this.signupForm.controls['promoCode'].setErrors({'incorrect': true});
@@ -95,6 +95,7 @@ export class SignupPage {
             this.promoCode = res['promoCode'];
           }
         });
+      }
       this.submitRegistration();
     }
   }
@@ -110,8 +111,8 @@ export class SignupPage {
     //Cache user object and add device id
     this.postObject = this.signupForm.value;
     this.postObject.deviceId = this.device.uuid;
-    if(this.promoCode)
-      this.postObject.promoCode = [this.promoCode];
+    if(this.promoCode.length)
+      this.postObject.promoCode = this.promoCode['code'];
 
     //make API call to get token if successful, or status 401 if login failed
     this.API.makePost('register', this.postObject).subscribe(response => {
