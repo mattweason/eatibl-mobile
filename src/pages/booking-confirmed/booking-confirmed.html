@@ -73,6 +73,13 @@
           </ion-col>
         </ion-row>
         <ion-row class="border-bottom">
+          <ion-col>
+            <p class="header">Discount Conditions</p>
+            <p *ngIf="restaurant.discountDetails">{{restaurant.discountDetails}}</p>
+            <p *ngIf="!restaurant.discountDetails">Available on all food items.</p>
+          </ion-col>
+        </ion-row>
+        <ion-row class="border-bottom">
           <ion-col col-12>
             <h2>Details</h2>
           </ion-col>

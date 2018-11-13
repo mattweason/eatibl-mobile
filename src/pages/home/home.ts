@@ -95,12 +95,13 @@ export class HomePage {
       this.rankRestaurants(this.dataCache);
     }
     else {
-      console.log('30 minute mark passed')
       var originalMinute = moment(this.lastRankedTime).format('m'),
           currentMinute = moment().format('m');
 
-      if(parseInt(originalMinute) < 30 && parseInt(currentMinute) >= 30)
+      if(parseInt(originalMinute) < 30 && parseInt(currentMinute) >= 30){
+        console.log('30 minute mark passed')
         this.rankRestaurants(this.dataCache);
+      }
     }
 
 

@@ -90,9 +90,11 @@ export class RestaurantPage implements OnInit {
     this.timeslotsData = JSON.parse(navParams.get('timeslotsData'));
     this.businessHoursData = JSON.parse(navParams.get('businessHoursData'));
     this.timeslotId = navParams.get('timeslotId');
-    this.distance = this.functions.roundDistances(navParams.get('distance'));
+    this.distance = navParams.get('distance');
     this.date = navParams.get('date');
     this.time = navParams.get('time');
+
+    console.log(this.restaurant)
 
   //Since we aren't doing setnow, make sure to initialize
     this.today = moment().format();

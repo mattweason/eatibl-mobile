@@ -31,8 +31,8 @@
 
 <ion-content>
   <ion-card *ngIf="isLoaded">
-    <div *ngIf="distance" class="distance">
-      <p>{{restaurant.vicinity}} - {{distance}}</p>
+    <div *ngIf="restaurant.discountDetails" class="distance">
+      <p>Discount Conditions Apply</p>
     </div>
     <div class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"
          *ngIf="!restaurant?.featuredImage"></div>
@@ -47,8 +47,7 @@
           <ion-col col-9 align-self-stretch class="first-row border-right">
             <h2>{{restaurant?.name}}</h2>
             <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
-            <p *ngIf="open?.open == 'open'" class="open"><span class="prefix">Open Now</span> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></p>
-            <p *ngIf="open?.open == 'willOpen' || open?.open == 'closed'" class="closed"><span class="prefix">Closed Now</span> {{functions.formatClockTime(businessHours[open.index][0], true)}} - {{functions.formatClockTime(businessHours[open.index][1], true)}}<span *ngIf="businessHours[open.index].length == 4">, {{functions.formatClockTime(businessHours[open.index][2], true)}} - {{functions.formatClockTime(businessHours[open.index][3], true)}}</span></p>
+            <p *ngIf="restaurant.vicinity || dustabce"><span *ngIf="restaurant.vicinity">{{restaurant.vicinity}}</span><span *ngIf="distance"> - {{distance}}</span></p>
             <p *ngIf="open?.open == 'closedToday'" class="closed"><span class="prefix">Closed Today</span></p>
           </ion-col>
           <ion-col col-3 nowrap align-self-stretch class="align-center first-row vertical-align-col">
@@ -124,10 +123,11 @@
       </div>
       <div [ngSwitch]="type">
         <ion-grid *ngSwitchCase="'about'">
-          <ion-row *ngIf="restaurant.discountDetails">
+          <ion-row>
             <ion-col>
-              <p class="header">Discount Details</p>
-              <p>{{restaurant?.discountDetails}}</p>
+              <p class="header">Discount Conditions</p>
+              <p *ngIf="restaurant.discountDetails">{{restaurant.discountDetails}}</p>
+              <p *ngIf="!restaurant.discountDetails">Available on all food items.</p>
             </ion-col>
           </ion-row>
           <ion-row *ngIf="restaurant.description">
