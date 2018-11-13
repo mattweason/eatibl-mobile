@@ -26,10 +26,6 @@ export class ReviewModalPage {
 
   review: any;
 
-  ionViewDidLoad() {
-    console.log(this.review)
-  }
-
   dismiss() {
     this.viewCtrl.dismiss();
   }

@@ -137,7 +137,6 @@ export class RestaurantCardComponent implements OnChanges {
   }
 
   navigateTo(target){
-    console.log(this.distance)
     setTimeout(() => {
       this.log.sendRestoEvent('Restaurant Card Clicked', 'Restaurant Card', 'User clicked on '+target, this.restaurant._id);
       this.restaurantTapped = true;

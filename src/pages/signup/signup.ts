@@ -178,10 +178,6 @@ export class SignupPage {
     });
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
-  }
-
   //Prompt terms of use / privacy policy modal
   openTermsModal(){
     const termsModal = this.modal.create('TermsModalPage');
@@ -252,14 +248,12 @@ export class SignupPage {
         // An error occurred while loging-in
         else {
           this.log.sendErrorEvent('Facebook Login', 'Signup', JSON.stringify(res), 'Facebook login connection was not successful');
-          console.log("An error occurred...");
 
         }
 
       })
       .catch((e) => {
         this.log.sendErrorEvent('Facebook Login', 'Signup', JSON.stringify(e), 'Failed to log in to facebook');
-        console.log('Error logging into Facebook', e);
       });
   }
 

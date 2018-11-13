@@ -49,10 +49,6 @@ export class AccountPage {
     });
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad AccountPage');
-  }
-
   ionViewDidEnter() {
     this.checkUser();
   }
@@ -214,7 +210,6 @@ export class AccountPage {
 
   //Present promo code modal
   addPromoCodes(){
-    console.log(this.user)
     let promocodeModal = this.modal.create('PromocodeModalPage', { user: this.user }, { cssClass: 'promocode-modal'});
     promocodeModal.present();
   }

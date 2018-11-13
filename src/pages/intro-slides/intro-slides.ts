@@ -87,7 +87,6 @@ export class IntroSlidesPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad IntroSlidesPage');
     this.storage.get('eatiblUser').then((val) => {
       if(val)
         this.haveEmail = true;
@@ -243,13 +242,11 @@ export class IntroSlidesPage {
         // An error occurred while loging-in
         else {
           this.log.sendErrorEvent('Facebook Login', 'Intro Slides', JSON.stringify(res), 'Facebook login connection was not successful');
-          console.log("An error occurred...");
 
         }
 
       }).catch((e) => {
         this.log.sendErrorEvent('Facebook Login', 'Intro Slides', JSON.stringify(e), 'Failed to log in to facebook');
-        console.log('Error logging into Facebook', e);
       });
   }
 

@@ -94,10 +94,6 @@ export class ConfirmBookingPage {
     this.scheduleNotification();
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ConfirmBookingPage');
-  }
-
   ionViewDidEnter(){
     this.getUserInfo();
   }
@@ -128,8 +124,9 @@ export class ConfirmBookingPage {
     var notificationId = Math.floor(10000 + Math.random() * 90000);
 
     //Schedule notification
+    this.localNotifications.cancel(4);
     this.localNotifications.schedule({
-      id: notificationId,
+      id: 4,
       trigger: {at: new Date(moment(triggerTime).format())},
       text: "🍴 We noticed you were interested in trying out "+this.restaurant.name+". If you book today you can get up to "+recommendedTimeslot.discount+"% off dine in or take out!",
       title: "🔥 Get "+recommendedTimeslot.discount+"% off today at "+this.restaurant.name+"!",
@@ -313,7 +310,7 @@ export class ConfirmBookingPage {
             this.functions.addNotification(this.postObject.localNotifications.reminderId, this.restaurant.name+': Reminder');
           }
 
-          this.functions.cancelNotification(this.restaurant.name+': Booking Abandoned');
+          this.localNotifications.cancel(4);
 
         }
 

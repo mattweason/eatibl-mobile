@@ -205,8 +205,4 @@ export class SupportModalPage {
     this.faqs[i].open = !this.faqs[i].open;
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad SupportModalPage');
-  }
-
 }

@@ -30,11 +30,6 @@ export class PromocodeModalPage {
     private log: ActivityLoggerProvider
   ) {
     this.user = navParams.get('user');
-    console.log(this.user)
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad PromocodeModalPage');
   }
 
   submitCode() {
@@ -47,7 +42,6 @@ export class PromocodeModalPage {
     if(this.promoCode){
       this.promoCode = this.promoCode.trim();
       this.API.makePost('user/addPromoCode', postObj).subscribe(res => {
-        console.log(res)
         if(res['message'] == 'Invalid Code')
           this.promoRes = 'Invalid promo code.';
         else if(res['message'] == 'Redundant Code')

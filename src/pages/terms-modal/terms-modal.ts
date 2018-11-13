@@ -24,10 +24,6 @@ export class TermsModalPage {
   ) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad TermsModalPage');
-  }
-
   dismiss(){
     this.log.sendEvent('Terms Modal: Opened', 'Terms Modal', '');
     this.viewCtrl.dismiss();

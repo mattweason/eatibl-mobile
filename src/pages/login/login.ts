@@ -81,7 +81,6 @@ export class LoginPage {
     else{
       //make API call to get token if successful, or status 401 if login failed
       this.API.makePost('token', this.loginForm.value).subscribe(response => {
-        console.log(response)
         var title;
         var message;
         this.response = response;
@@ -102,7 +101,6 @@ export class LoginPage {
           this.presentAlert(title, message);
         }
         else{
-          console.log('logged in beginning')
           this.log.sendEvent('Login: Successful', 'Login', this.loginForm.value.email || "");
           this.storage.set('eatiblUser',response);
           this.events.publish('user:statuschanged');
@@ -126,10 +124,6 @@ export class LoginPage {
   cleanValue(field){
     if(/\s+$/.test(this.loginForm.value[field]))
       this.loginForm.controls[field].setValue(this.loginForm.value[field].trim());
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
   }
 
   resetPassword(){
@@ -252,13 +246,11 @@ export class LoginPage {
         // An error occurred while loging-in
         else {
           this.log.sendErrorEvent('Facebook Login', 'Login', JSON.stringify(res), 'Facebook login connection was not successful');
-          console.log("An error occurred...");
 
         }
 
       }).catch((e) => {
         this.log.sendErrorEvent('Facebook Login', 'Login', JSON.stringify(e), 'Failed to log in to facebook');
-        console.log('Error logging into Facebook', e);
       });
   }
 }

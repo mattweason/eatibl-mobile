@@ -276,7 +276,6 @@ export class InviteModalPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad InviteModalPage');
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
