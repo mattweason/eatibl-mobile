@@ -147,12 +147,25 @@ export class SearchPage {
       });
     }
     //sort restoAll by new sortType
-    else{
+    else if(sortType == 'alpha'){
       this.log.sendEvent('Sorted By Alphabetical', 'Search', '');
       //update sortType for all purposes
       this.sortType = sortType;
       this.restoAll = _.sortBy(this.restoAll, (resto) => {
         if(this.sortType == 'alpha'){return resto['name']}
+      });
+      this.updateList()
+    }
+    //sort restoAll by discount
+    else if (sortType == 'discount'){
+      this.log.sendEvent('Sorted By Discount', 'Search', '');
+      //update sortType for all purposes
+      this.sortType = sortType;
+      this.restoAll = _.sortBy(this.restoAll, (resto) => {
+        if(this.sortType == 'distance'){return resto['distance']}
+      });
+      this.restoAll = _.sortBy(this.restoAll, (resto) => {
+        if(this.sortType == 'discount' && resto['maxTimeslot']){return -resto['maxTimeslot']['discount']}
       });
       this.updateList()
     }
