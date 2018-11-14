@@ -30,7 +30,6 @@ export class AccountPage {
   countdown = {} as any;
   accountLevel: any;
   interval: any;
-  hideCountdown = false;
 
   constructor(
     public navCtrl: NavController,
@@ -65,11 +64,11 @@ export class AccountPage {
           var start = moment(this.user['created_at']),
               end = start.add(3, 'days'),
               isNew = moment().isBefore(end);
-          if(isNew && !this.user['earlySupporter'] && !this.countdown['hours'])
-            this.runCountdown(end);
+          if(isNew && !this.user['earlySupporter'])
+            if(!this.countdown['hours'])
+              this.runCountdown(end);
           else
             this.clearCountdown();
-
         });
       }
       else
@@ -83,7 +82,6 @@ export class AccountPage {
   }
 
   runCountdown(end){
-    this.hideCountdown = false;
     var self = this;
     this.interval = setInterval(function() {
       var difference = parseInt(end.format('X')) - parseInt(moment().format('X'));
@@ -106,7 +104,6 @@ export class AccountPage {
   clearCountdown(){
     clearInterval(this.interval);
     this.countdown = {};
-    this.hideCountdown = true;
   }
 
   promptInvite() {
