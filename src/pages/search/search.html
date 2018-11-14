@@ -10,7 +10,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-searchbar #searchbar [(ngModel)]="searchInput" [showCancelButton]="true" (ionInput)="updateList()"></ion-searchbar>
+    <ion-searchbar #searchbar [(ngModel)]="searchInput" [showCancelButton]="true" (ionInput)="updateList(); packageSearch(searchInput)"></ion-searchbar>
   </ion-navbar>
   <ion-toolbar>
     <button ion-button color="{{sortType == 'alpha' ? 'secondary' : 'light'}}" icon-start (tap)="sortBy('alpha')"><ion-icon name="list"></ion-icon> A to Z</button>

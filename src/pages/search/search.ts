@@ -31,6 +31,7 @@ export class SearchPage {
   sortType = 'alpha'; //either sort alphabetically or by distance (if we have device location)
   searchInput = '';
   deviceLocation: boolean;
+  searchLog = [] as any;
 
   constructor(
     private functions: FunctionsProvider,
@@ -53,6 +54,29 @@ export class SearchPage {
         }
       }
     });
+  }
+
+  ionViewDidLeave(){
+    if(this.searchLog.length)
+      this.log.sendEvent('User Search Input', 'Search', this.searchLog.join());
+  }
+
+  //Package search inputs for logging
+  packageSearch(input){
+
+    if(input.length){ //All subsequent inputs
+      this.searchLog.push(input);
+
+      var prevIndex = this.searchLog.length - 2,
+          currentIndex = this.searchLog.length - 1;
+
+      if(prevIndex >= 0) { //make sure prevIndex exists
+        if (input.indexOf(this.searchLog[prevIndex]) > -1) //latest input is continuation of previous input
+          this.searchLog.splice(prevIndex, 1); //remove previous entry
+        else if(this.searchLog[prevIndex].indexOf(input) > -1) //latest input is a deletion of previous input
+          this.searchLog.splice(currentIndex, 1); //remove current entry
+      }
+    }
   }
 
   //Get restaurant list
