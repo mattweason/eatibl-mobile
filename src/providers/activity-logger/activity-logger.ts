@@ -59,21 +59,20 @@ export class ActivityLoggerProvider {
     });
   }
 
-  sendErrorEvent(task, page, error, notes){
+  sendErrorEvent(event, page, notes){
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         var user = decode(val);
         this.userId = user._id;
       }
-      this.API.makePost('log/trackUserActivity', {
-        task: task,
+      this.API.makePost('log/trackUserError', {
+        event: event,
         page: page,
         deviceId: this.device.uuid,
         userId: this.userId,
-        notes: notes,
-        error: error
+        notes: notes
       }).subscribe(() => {});
-      this.mixpanel.track(task, {page: page, error: error, notes: notes})
+      this.mixpanel.track(event, {page: page, notes: notes})
     });
   }
 

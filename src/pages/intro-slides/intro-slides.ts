@@ -193,7 +193,7 @@ export class IntroSlidesPage {
         promocodeModal.present();
       });
     }).catch(err => {
-      this.log.sendErrorEvent('Google Login', 'Intro Slides', JSON.stringify(err), 'Google login was unsuccessful');
+      this.log.sendErrorEvent('Google Login', 'Intro Slides', JSON.stringify(err)); //Google login was unsuccessful
     })
   }
 
@@ -235,18 +235,18 @@ export class IntroSlidesPage {
             // => Open user session and redirect to the next page
 
           }).catch((e) => {
-            this.log.sendErrorEvent('Facebook API call', 'Intro Slides', JSON.stringify(e), 'Failed to get info from facebook');
+            this.log.sendErrorEvent('Facebook API call', 'Intro Slides', JSON.stringify(e)); //Failed to get info from facebook
           });
 
         }
         // An error occurred while loging-in
         else {
-          this.log.sendErrorEvent('Facebook Login', 'Intro Slides', JSON.stringify(res), 'Facebook login connection was not successful');
+          this.log.sendErrorEvent('Facebook Login', 'Intro Slides', JSON.stringify(res)); //Facebook login connection was not successful
 
         }
 
       }).catch((e) => {
-        this.log.sendErrorEvent('Facebook Login', 'Intro Slides', JSON.stringify(e), 'Failed to log in to facebook');
+        this.log.sendErrorEvent('Facebook Login', 'Intro Slides', JSON.stringify(e)); //Failed to log in to facebook
       });
   }
 

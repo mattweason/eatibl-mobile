@@ -104,7 +104,7 @@ export class MyApp {
             this.log.sendEvent('Mixpanel Initialized', 'runTime', JSON.stringify(res));
           })
           .catch((err) => {
-            this.log.sendErrorEvent('Mixpanel Initialization Failed', 'runtime', JSON.stringify(err), '');
+            this.log.sendErrorEvent('Mixpanel Initialization Failed', 'runtime', JSON.stringify(err));
           });
 
           this.storage.get('eatiblUser').then((val) => {

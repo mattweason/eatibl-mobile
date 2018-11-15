@@ -12,6 +12,7 @@ import {AndroidPermissions} from "@ionic-native/android-permissions";
 import {ActivityLoggerProvider} from "../activity-logger/activity-logger";
 import {SplashScreen} from "@ionic-native/splash-screen";
 import {FunctionsProvider} from "../functions/functions";
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
 
 /*
   Generated class for the GeolocationServiceProvider provider.
@@ -61,12 +62,14 @@ export class GeolocationServiceProvider {
     private modal: ModalController,
     private storage: Storage,
     public splashScreen: SplashScreen,
+    private locationAccuracy: LocationAccuracy,
     private alertCtrl: AlertController
   ) {
     this.observableLocation = new BehaviorSubject<any>(this.location);
   }
 
   startTracking(forceDevice){
+    console.log('start tracking');
 
     // Foreground Tracking
 
@@ -78,19 +81,27 @@ export class GeolocationServiceProvider {
     });
 
     let options = {
-      frequency: 3000,
-      enableHighAccuracy: true
+      maximumAge: 3000,
+      enableHighAccuracy: true,
+      timeout: 20000
     };
 
-    this.watch = this.geolocation.watchPosition(options).filter((p: any) => p.code === undefined).subscribe((position: Geoposition) => {
+    this.watch = this.geolocation.watchPosition(options).subscribe((position: Geoposition) => {
+
+      //PositionError handling
+      if(!position.coords){
+        this.log.sendErrorEvent('Geolocation Error', 'Geolocation Service', JSON.stringify(position));
+        this.locationErrorAlert();
+      }
 
       // Run update inside of Angular's zone
-      this.zone.run(() => {
-        if(this.location.device){
-          this.setLocation([position.coords.latitude, position.coords.longitude], 'Your Location')
-        }
-        this.locationCached.coords = [position.coords.latitude, position.coords.longitude];
-      });
+      if(position.coords)
+        this.zone.run(() => {
+          if(this.location.device){
+            this.setLocation([position.coords.latitude, position.coords.longitude], 'Your Location')
+          }
+          this.locationCached.coords = [position.coords.latitude, position.coords.longitude];
+        });
 
     });
   }
@@ -113,19 +124,60 @@ export class GeolocationServiceProvider {
     this.locationChanged();
   }
 
+  //Handle location mode for android
+  handleLocationMode(){
+    this.diagnostic.getLocationMode().then((status) => {
+      if(status == this.diagnostic.locationMode.DEVICE_ONLY || status == this.diagnostic.locationMode.LOCATION_OFF){
+        this.locationAccuracy.canRequest().then((canRequest: boolean) => {
+
+          if(canRequest) {
+            // the accuracy option will be ignored by iOS
+            this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
+              () => { //User said ok!
+                this.log.sendEvent('Accepted Location Mode Change', 'Geolocation Service', '');
+                this.startTracking(true)
+              },
+              error => { //User either said no thanks or there was an error
+                this.log.sendEvent('Location Mode Change Error', 'Geolocation Service', JSON.stringify(error));
+                this.setLocation(this.locationDefault.coords, this.locationDefault.text)
+              }
+            );
+          }
+          else { //For whatever reason we can't request location accuracy change so just use default coords
+            this.setLocation(this.locationDefault.coords, this.locationDefault.text);
+            this.log.sendEvent('Location Mode Change Couldnt Ask', 'Geolocation Service', '');
+          }
+        });
+      }
+    })
+  }
+
   //Switch back to device location for the use device location button
   useDeviceLocation(callback){
     this.diagnostic.getLocationAuthorizationStatus().then((status) => {
       if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE){ //Permission has been authorized
         callback(1); //Close position modal but don't invoke loading restaurants
-        if(this.locationCached.coords.length)
+        if(this.locationCached.coords.length){
           this.setLocation(this.locationCached.coords, 'Your Location');
+
+          //Android handles location service enabling different than iOS so we need to check if they are on here
+          if(this.platform.is('android'))
+            this.handleLocationMode();
+          else
+            this.startTracking(true);
+        }
         else{
           this.location.device = true;
-          this.startTracking(true);
+
+          //Android handles location service enabling different than iOS so we need to check if they are on here
+          if(this.platform.is('android'))
+            this.handleLocationMode();
+          else
+            this.startTracking(true);
         }
       }
       else if(status == this.diagnostic.permissionStatus.DENIED){ //Permission has been denied
+        this.log.sendEvent('Denied Geolocation', 'Geolocation Service', 'Denied in the use device location function');
         if(this.platform.is('ios'))
           this.functions.presentAlert('Permission Denied', "You must manually enable Location Services for Eatibl by going into your iPhone's Settings.", 'Got It');
         else
@@ -133,13 +185,22 @@ export class GeolocationServiceProvider {
             if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE){ //Permission has been authorized
               callback(2); //Close position modal and also invoke loading restaurants
               this.location.device = true;
-              this.startTracking(true);
-            } else
+
+              //Android handles location service enabling different than iOS so we need to check if they are on here
+              if(this.platform.is('android'))
+                this.handleLocationMode();
+              else
+                this.startTracking(true);
+            }
+
+            else
               callback(0); //Don't close set position modal
           });
       }
-      else if(status == this.diagnostic.permissionStatus.DENIED_ALWAYS)
+      else if(status == this.diagnostic.permissionStatus.DENIED_ALWAYS){
+        this.log.sendEvent('Denied Geolocation Always', 'Geolocation Service', 'Denied geolocation always in the use device location function for iOS');
         this.functions.presentAlert('Permission Denied', "You must manually give permission to Eatibl to use your devices' location by going into Settings on your phone.", 'Got It');
+      }
     });
   }
 
@@ -151,17 +212,29 @@ export class GeolocationServiceProvider {
         this.diagnostic.requestLocationAuthorization().then((status) => {
           if(status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) { //Permission has been authorized
             this.log.sendEvent('Accepted Geolocation', 'runtime', '');
-            this.startTracking(false);
+
+            //Android handles location service enabling different than iOS so we need to check if they are on here
+            if(this.platform.is('android'))
+              this.handleLocationMode();
+            else
+              this.startTracking(false);
           }
+
           else if(status == this.diagnostic.permissionStatus.DENIED){ //Permission has been denied
             this.log.sendEvent('Denied Geolocation', 'runtime', '');
             this.setLocation(this.locationDefault.coords, this.locationDefault.text);
-            }
+          }
         });
       else if(status == this.diagnostic.permissionStatus.DENIED) //Permission has been denied
         this.setLocation(this.locationDefault.coords, this.locationDefault.text);
-      else if(this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) //Permission has been authorized
-        this.startTracking(false);
+      else if(this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) { //Permission has been authorized
+
+        //Android handles location service enabling different than iOS so we need to check if they are on here
+        if (this.platform.is('android'))
+          this.handleLocationMode();
+        else
+          this.startTracking(false);
+      }
     })
   }
 
@@ -171,6 +244,28 @@ export class GeolocationServiceProvider {
     this.log.sendEvent('Location Modal', 'Menu', ''); //log each time modal is opened
     const mapModal = this.modal.create('SetPositionModalPage');
     mapModal.present();
+  }
+
+  //Present location error alert
+  locationErrorAlert(){
+    let alert = this.alertCtrl.create({
+      title: 'Location Error',
+      subTitle: 'We are having an issue getting your location. Do you want to try again or continue without using your location?',
+      enableBackdropDismiss: false,
+      buttons: [{
+        text: 'Try Again',
+        handler: () => {
+          this.startTracking(true);
+        }
+      },
+      {
+        text: 'Continue',
+        handler: () => {
+          this.setLocation(this.locationDefault.coords, this.locationDefault.text);
+        }
+      }]
+    });
+    alert.present();
   }
 
   //Function to log geolocation every 5 minutes

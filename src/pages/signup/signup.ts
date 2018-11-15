@@ -205,7 +205,7 @@ export class SignupPage {
         this.navCtrl.pop();
       });
     }).catch(err => {
-      this.log.sendErrorEvent('Google Login', 'Intro Slides', JSON.stringify(err), 'Google login was unsuccessful');
+      this.log.sendErrorEvent('Google Login', 'Intro Slides', JSON.stringify(err)); //Google login was unsuccessful
     })
   }
 
@@ -242,19 +242,19 @@ export class SignupPage {
             // => Open user session and redirect to the next page
 
           }).catch((e) => {
-            this.log.sendErrorEvent('Facebook API call', 'Signup', JSON.stringify(e), 'Failed to get info from facebook');
+            this.log.sendErrorEvent('Facebook API call', 'Signup', JSON.stringify(e)); //Failed to get info from facebook
           });
 
         }
         // An error occurred while loging-in
         else {
-          this.log.sendErrorEvent('Facebook Login', 'Signup', JSON.stringify(res), 'Facebook login connection was not successful');
+          this.log.sendErrorEvent('Facebook Login', 'Signup', JSON.stringify(res)); //Facebook login connection was not successful
 
         }
 
       })
       .catch((e) => {
-        this.log.sendErrorEvent('Facebook Login', 'Signup', JSON.stringify(e), 'Failed to log in to facebook');
+        this.log.sendErrorEvent('Facebook Login', 'Signup', JSON.stringify(e)); //Failed to log in to facebook
       });
   }
 
