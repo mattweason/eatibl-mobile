@@ -148,6 +148,8 @@ export class GeolocationServiceProvider {
             this.log.sendEvent('Location Mode Change Couldnt Ask', 'Geolocation Service', '');
           }
         });
+      } else {
+        this.startTracking(true)
       }
     })
   }
