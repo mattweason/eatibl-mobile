@@ -1,0 +1,72 @@
+page-all-deals {
+  ion-list{
+    margin-bottom: 0 !important;
+    ion-item{
+      border-top: 1px solid #ccc !important;
+    }
+  }
+  .weekday{
+    padding: 0 !important;
+    button{
+      padding-left: 0;
+    }
+    .weekday-header{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 24px;
+      .header-text{
+        h2, p{
+          text-align: center;
+        }
+        h2{
+          text-transform: uppercase;
+        }
+      }
+      ion-icon{
+        font-size: 18px;
+      }
+    }
+    .item-inner{
+      padding-right: 0 !important;
+      ion-label{
+        margin: 0 !important;
+      }
+    }
+  }
+  .day-timeslots{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 6px;
+    height: 0;
+    background-color: #ccc;
+    transition: background-color 1s;
+    &.expanded{
+      height: auto;
+      padding-bottom: 12px;
+      background-color: #fff;
+      transition: background-color 1s;
+    }
+    .timeslot{
+      width: 20%;
+      height: 70px;
+      border: none;
+      .timeslot-time{
+        padding-top: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 35% !important;
+      }
+      button{
+        height: 65% !important;
+        .button-inner{
+          font-size: 16px;
+          .sold-out{
+            line-height: 28px;
+          }
+        }
+      }
+    }
+  }
+}

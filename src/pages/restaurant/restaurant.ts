@@ -27,7 +27,7 @@ import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking'
   selector: 'page-restaurant',
   templateUrl: 'restaurant.html',
 })
-export class RestaurantPage implements OnInit {
+export class RestaurantPage {
   private slides: Slides;
   private url: string = ENV.API;
 
@@ -40,10 +40,12 @@ export class RestaurantPage implements OnInit {
   @ViewChild('peopleSelect') peopleSelect: Select;
 
   timeslots: any;
+  bookings: any;
+  allTimeslots = [] as any;
   timeslotsData = {} as any;
   fillerslots = [];
   businessHours = [[],[],[],[],[],[],[]];
-  businessDays = [['Monday','Mon'],['Tuesday','Tue'],['Wednesday','Wed','',''],['Thursday','Thu','',''],['Friday','Fri','',''],['Saturday','Sat','',''],['Sunday','Sun','','']];
+  businessDays = [['Sunday','Sun','',''],['Monday','Mon'],['Tuesday','Tue'],['Wednesday','Wed','',''],['Thursday','Thu','',''],['Friday','Fri','',''],['Saturday','Sat','','']];
   businessHoursData = {} as any;
   restaurant: any;
   activeTimeslot: any;
@@ -97,18 +99,6 @@ export class RestaurantPage implements OnInit {
   //Since we aren't doing setnow, make sure to initialize
     this.today = moment().format();
     this.maxDate = moment().add(30, 'day').format();
-    //Subscribe to geolocation event
-    events.subscribe('user:geolocated', (location, time) => {
-        this.location = location;
-        this.setDistance();
-    });
-
-    this.storage.get('eatiblLocation').then((val) => { //If so get the new location and get new ranked list of restaurants
-      if (val){
-        this.location = val;
-        this.setDistance();
-      }
-    });
 
     this.storage.get('eatiblABValue').then((val) => {
       if(val)
@@ -116,25 +106,13 @@ export class RestaurantPage implements OnInit {
     })
 
     this.processBusinessHours();
-    this.processTimeslots();
     this.processReviews();
     this.isOpen();
     this.buildMap();
 
-    this.API.makePost('booking/specific', {restaurantId: this.restaurant._id, date: this.date}).subscribe(response => {
-      var bookings: any = response;
+    this.API.makePost('booking/7day', {restaurantId: this.restaurant._id, date: this.date}).subscribe(response => {
+      this.bookings = response;
 
-      //Loop through all of our booking for this day, at this restaurant
-      for(var i = 0; i < bookings.length; i++){
-        //find the index of the timeslot that needs to be reduced becaused of current booking
-        var index = _.findIndex(this.timeslots, function(timeslot){
-          return timeslot._id == bookings[i].timeslot_fid;
-        });
-
-        //reduce capacity by the number already taken in booking
-        if(index >= 0)
-          this.timeslots[index].quantity -= bookings[i].people;
-      }
       this.processTimeslots();
     });
 
@@ -158,10 +136,6 @@ export class RestaurantPage implements OnInit {
 
   ionViewDidLoad() {
     this.type = "about";
-    //Call geolocation from app.component
-  }
-
-  ngOnInit(){
   }
 
   //Remove all but one 1 star review
@@ -248,37 +222,58 @@ export class RestaurantPage implements OnInit {
 
   //Filter timeslots for the currently selected date
   processTimeslots(){
-    var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60));
-    var date = this.date;
+    var hour = (parseInt(moment().format('k')) + (parseInt(moment().format('m')) / 60)), //Current hour to filter timeslots for today
+        days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+        today = moment().day(); //Returns a number from 0 - 6
 
-    //Filter timeslots by date and time
-    this.timeslots = _.filter(this.timeslotsData, function(timeslot){
-      if(moment(date).isSame(moment(), 'day'))
-        return (timeslot.day == moment(date).format('dddd').toString() && timeslot.time > hour);
-      else
-        return (timeslot.day == moment(date).format('dddd').toString());
-    });
+    for(var i = 0; i < 8; i++){
+      var currentDay = moment().add(i, 'days').day(),
+          currentDate = moment().add(i, 'days').format('MMM Do'), //Date of that day ie 'Nov 30th'
+          timeslots = {};
 
-    //For finding index of businessHours today
-    var dateNow = new Date(this.date);
-    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var day = moment().day();
-    var index = _.findIndex(this.businessDays, function(businessDay){
-      return businessDay[0] == days[day];
-    });
+      //Filter timeslots by date and time
+      timeslots = _.filter(this.timeslotsData, function(timeslot){
+        if(currentDay == today && i == 0)
+          return (timeslot.day == days[currentDay] && timeslot.time > hour); //Filter out past timeslots for today
+        else if(currentDay == today)
+          return (timeslot.day == days[currentDay] && timeslot.time < hour); //Filter out timeslots past this hour 1 week from now
+        else
+          return (timeslot.day == days[currentDay]); //Don't filter by time for any other days
+      });
 
-    //Filter out timeslots that exist outside of business hours
-    var current = this; //Cache this for use in filter
-    this.timeslots = _.filter(this.timeslots, function(timeslot){
-      if(current.businessHours[index].length == 2){
-        return timeslot.time >= current.businessHours[index][0] && timeslot.time < current.businessHours[index][1];
+      //For finding index of businessHours today
+      var index = _.findIndex(this.businessDays, function(businessDay){
+        return businessDay[0] == days[currentDay];
+      });
+
+      //Filter out timeslots that exist outside of business hours
+      timeslots = _.filter(timeslots, (timeslot) => {
+        if(this.businessHours[index].length == 2){
+          return timeslot.time >= this.businessHours[index][0] && timeslot.time < this.businessHours[index][1];
+        }
+        if(this.businessHours[index].length == 4){
+          return (timeslot.time >= this.businessHours[index][0] && timeslot.time < this.businessHours[index][1]) || (timeslot.time >= this.businessHours[index][2] && timeslot.time < this.businessHours[index][3]);
+        }
+      });
+
+      timeslots = _.sortBy(timeslots, 'time'); //Make sure timeslots are in chronological order\
+
+      //Loop through all of our booking for this day, at this restaurant
+      for(var a = 0; a < this.bookings.length; a++){
+        //find the index of the timeslot that needs to be reduced because of current booking
+        var timeslotIndex = _.findIndex(timeslots, (timeslot) => {
+          return timeslot._id == this.bookings[a].timeslot_fid;
+        });
+
+        //reduce capacity by the number already taken in booking
+        if(timeslotIndex >= 0)
+          timeslots[timeslotIndex].quantity -= this.bookings[a].people;
       }
-      if(current.businessHours[index].length == 4){
-        return (timeslot.time >= current.businessHours[index][0] && timeslot.time < current.businessHours[index][1]) || (timeslot.time >= current.businessHours[index][2] && timeslot.time < current.businessHours[index][3]);
-      }
-    });
 
-    this.timeslots = _.sortBy(this.timeslots, 'time');
+      this.allTimeslots.push({day: days[currentDay], date: currentDate, timeslots: timeslots});
+    }
+
+    this.timeslots = this.allTimeslots[0].timeslots; //Set default timeslots to todays
 
     this.isLoaded = true;
 
@@ -502,6 +497,16 @@ export class RestaurantPage implements OnInit {
       cssClass: 'hours-alert'
     });
     alert.present();
+  }
+
+  openAllDeals(){
+    setTimeout(() => {
+      this.log.sendEvent('All Deals Clicked', 'Restaurant', this.restaurant.name);
+      this.navCtrl.push('AllDealsPage', {
+        restaurant: JSON.stringify(this.restaurant),
+        allTimeslots: JSON.stringify(this.allTimeslots)
+      });
+    }, 0)
   }
 
   expandReview(review){

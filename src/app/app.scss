@@ -29,7 +29,7 @@ restaurant-card, page-restaurant, .map-resto-card {
     border-radius: 0 !important;
   }
 }
-restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
+restaurant-card, page-restaurant, top-pick-card, .map-resto-card, page-all-deals {
   ion-card{
     margin: 0 0 20px 0 !important;
     width: 100% !important;
@@ -97,70 +97,68 @@ restaurant-card, page-restaurant, top-pick-card, .map-resto-card {
       text-align: center;
     }
   }
+  .timeslot{
+    height: 80px;
+    border-right: 1px solid lighten(#ccc, 10%);
+    p{
+      margin: 0;
+      height: 25%;
+      color: lighten(color($colors, dark), 20%);
+      &.timeslot-time{
+        font-size: 1.4rem;
+      }
+      &.active{
+        color: color($colors, primary);
+        font-weight: 700;
+      }
+    }
+    button{
+      width: 100%;
+      margin: 0;
+      height: 75%;
+      font-size: 2rem;
+      position: relative;
+      &.tapped{
+        background-color: darken(color($colors, primary), 20%);
+        color: lighten(color($colors, primary), 20%);
+      }
+      &.active{
+        background-color: darken(color($colors, primary), 20%);
+      }
+      &:disabled{
+        background-color: darken(color($colors, light), 10%);
+        color: lighten(color($colors, primary), 0%);
+        opacity: 1;
+      }
+      .sold-out{
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        z-index: -2;
+        font-size: 14px;
+        line-height: 36px;
+        justify-content: center;
+        align-items: center;
+        color: lighten(color($colors, medium), 40%);
+        text-shadow: 0px 1px 0px rgba(255,255,255,.5);
+        ion-icon{
+          font-size: 52px;
+          color: darken(color($colors, primary), 8%);
+          text-shadow: 0px 1px 0px rgba(255,255,255,.2);
+        }
+      }
+    }
+  }
+  .fillerslot{
+    background-color: color($colors, light);
+    height: 80px;
+    border-right: 1px solid lighten(#ccc, 10%);
+  }
   ion-slides{
     border-right: 1px solid lighten(#ccc, 10%);
     border-left: 1px solid lighten(#ccc, 10%);
-    ion-slide{
-      .timeslot{
-        height: 80px;
-        border-right: 1px solid lighten(#ccc, 10%);
-        p{
-          margin: 0;
-          height: 25%;
-          color: lighten(color($colors, dark), 20%);
-          &.timeslot-time{
-            font-size: 1.4rem;
-          }
-          &.active{
-            color: color($colors, primary);
-            font-weight: 700;
-          }
-        }
-        button{
-          width: 100%;
-          margin: 0;
-          height: 75%;
-          font-size: 2rem;
-          position: relative;
-          &.tapped{
-            background-color: darken(color($colors, primary), 20%);
-            color: lighten(color($colors, primary), 20%);
-          }
-          &.active{
-            background-color: darken(color($colors, primary), 20%);
-          }
-          &:disabled{
-            background-color: darken(color($colors, light), 10%);
-            color: lighten(color($colors, primary), 0%);
-            opacity: 1;
-          }
-          .sold-out{
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            z-index: -2;
-            font-size: 14px;
-            line-height: 36px;
-            justify-content: center;
-            align-items: center;
-            color: lighten(color($colors, medium), 40%);
-            text-shadow: 0px 1px 0px rgba(255,255,255,.5);
-            ion-icon{
-              font-size: 52px;
-              color: darken(color($colors, primary), 8%);
-              text-shadow: 0px 1px 0px rgba(255,255,255,.2);
-            }
-          }
-        }
-      }
-      .fillerslot{
-        background-color: color($colors, light);
-        height: 80px;
-        border-right: 1px solid lighten(#ccc, 10%);
-      }
-    }
   }
   ion-grid{
     padding: 0 0 5px 0;
