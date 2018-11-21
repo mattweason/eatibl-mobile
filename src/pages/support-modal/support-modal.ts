@@ -3,9 +3,8 @@ import {IonicPage, NavController, NavParams, ViewController, AlertController, Mo
 import {Validators, FormGroup, FormBuilder} from "@angular/forms";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
-import { Storage } from '@ionic/storage';
-import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
+import {UserServiceProvider} from "../../providers/user-service/user-service";
 
 /**
  * Generated class for the SupportModalPage page.
@@ -33,7 +32,7 @@ export class SupportModalPage {
     public viewCtrl: ViewController,
     private formBuilder: FormBuilder,
     private device: Device,
-    private storage: Storage,
+    private userService: UserServiceProvider,
     private modal: ModalController,
     private API: ApiServiceProvider,
     private alertCtrl: AlertController,
@@ -138,13 +137,11 @@ export class SupportModalPage {
   }
 
   ionViewDidEnter(){
-    this.storage.get('eatiblUser').then((val) => {
-      if(val){
-        this.user = decode(val);
-        this.supportForm.controls['name'].setValue(this.user.name);
-        this.supportForm.controls['email'].setValue(this.user.email);
-      }
-    });
+    this.user = this.userService.user;
+    if(this.user.email){
+      this.supportForm.controls['name'].setValue(this.user.name);
+      this.supportForm.controls['email'].setValue(this.user.email);
+    }
   }
 
   //Close the modal

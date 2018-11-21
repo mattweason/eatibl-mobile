@@ -37,6 +37,7 @@ import { AppErrorHandlerProvider } from '../providers/app-error-handler/app-erro
 import { ActivityLoggerProvider } from '../providers/activity-logger/activity-logger';
 import { GeolocationServiceProvider } from '../providers/geolocation-service/geolocation-service';
 import { RestaurantServiceProvider } from '../providers/restaurant-service/restaurant-service';
+import { UserServiceProvider } from '../providers/user-service/user-service';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,8 @@ import { RestaurantServiceProvider } from '../providers/restaurant-service/resta
     LocationAccuracy,
     ActivityLoggerProvider,
     GeolocationServiceProvider,
-    RestaurantServiceProvider
+    RestaurantServiceProvider,
+    UserServiceProvider
   ]
 })
 export class AppModule {}

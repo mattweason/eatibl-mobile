@@ -1,16 +1,15 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, AlertController, ViewController} from 'ionic-angular';
-import { Contacts, Contact, ContactField, ContactName } from '@ionic-native/contacts';
+import { Contacts } from '@ionic-native/contacts';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { SMS } from '@ionic-native/sms';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
-import { Storage } from '@ionic/storage';
 import * as _ from 'underscore';
-import * as decode from 'jwt-decode';
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { Device } from '@ionic-native/device';
+import {UserServiceProvider} from "../../providers/user-service/user-service";
 
 /**
  * Generated class for the InviteFriendsPage page.
@@ -48,11 +47,11 @@ export class InviteModalPage {
     private sms: SMS,
     private alertCtrl: AlertController,
     public viewCtrl: ViewController,
-    private storage: Storage,
     private functions: FunctionsProvider,
     private device: Device,
     private API: ApiServiceProvider,
-    private log: ActivityLoggerProvider
+    private log: ActivityLoggerProvider,
+    private userService: UserServiceProvider
   ) {
     //Form controls and validation
     this.addContactForm = this.formBuilder.group({
@@ -276,18 +275,7 @@ export class InviteModalPage {
   }
 
   ionViewDidLoad() {
-    this.storage.get('eatiblUser').then((val) => {
-      if(val){
-        this.user = decode(val);
-      }
-      else
-        this.user = {
-          email: '',
-          name: '',
-          phone: '',
-          type: ''
-        };
-    });
+    this.user = this.userService.user;
   }
 
 }

@@ -1,13 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, Content } from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
-import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
-import { Storage } from '@ionic/storage';
-import * as decode from 'jwt-decode';
 import * as _ from 'underscore';
 import moment from 'moment';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
+import {UserServiceProvider} from "../../providers/user-service/user-service";
 
 /**
  * Generated class for the BookingsPage page.
@@ -33,9 +31,8 @@ export class BookingsPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private API: ApiServiceProvider,
-    private storage: Storage,
     private functions: FunctionsProvider,
-    private log: ActivityLoggerProvider
+    private userService: UserServiceProvider
   ) {
   }
 
@@ -43,20 +40,17 @@ export class BookingsPage {
   }
 
   ionViewDidEnter() {
-    this.storage.get('eatiblUser').then((val) => {
-      if(val){
-        this.user = decode(val);
-        this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
-          this.filterAndSortBookings(data);
-        });
-      }
-      else{
-        this.user = {}; //If no user exists in the localstorage, clear the user object
-        this.bookingUpcoming = [];
-        this.bookingHistory = [];
-        this.content.resize(); //Handle the show/hide behavior of the tabs toolbar
-      }
-    });
+    this.user = this.userService.user;
+    if(this.user.email){
+      this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+        this.filterAndSortBookings(data);
+      });
+    } else {
+      this.user = {}; //If no user exists in the localstorage, clear the user object
+      this.bookingUpcoming = [];
+      this.bookingHistory = [];
+      this.content.resize(); //Handle the show/hide behavior of the tabs toolbar
+    }
   }
 
   filterAndSortBookings(data){

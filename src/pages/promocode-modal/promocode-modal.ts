@@ -3,6 +3,7 @@ import {IonicPage, NavController, NavParams, AlertController, ViewController} fr
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import * as decode from 'jwt-decode';
+import {UserServiceProvider} from "../../providers/user-service/user-service";
 
 /**
  * Generated class for the PromocodeModalPage page.
@@ -27,9 +28,10 @@ export class PromocodeModalPage {
     public alertCtrl: AlertController,
     public viewCtrl: ViewController,
     private API: ApiServiceProvider,
+    private userService: UserServiceProvider,
     private log: ActivityLoggerProvider
   ) {
-    this.user = navParams.get('user');
+    this.user = this.userService.user;
   }
 
   submitCode() {

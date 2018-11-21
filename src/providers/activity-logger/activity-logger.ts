@@ -25,7 +25,7 @@ export class ActivityLoggerProvider {
   ) {}
 
   sendEvent(event, page, notes){
-    this.storage.get('eatiblUser').then((val) => {
+    this.storage.get('eatiblUser').then((val) => { //Cannot use user service due to circular dependency
       if(val){
         var user = decode(val);
         this.userId = user._id;
@@ -42,7 +42,7 @@ export class ActivityLoggerProvider {
   }
 
   sendRestoEvent(event, page, notes, restoId){
-    this.storage.get('eatiblUser').then((val) => {
+    this.storage.get('eatiblUser').then((val) => { //Cannot use user service due to circular dependency
       if(val){
         var user = decode(val);
         this.userId = user._id;
@@ -60,7 +60,7 @@ export class ActivityLoggerProvider {
   }
 
   sendErrorEvent(event, page, notes){
-    this.storage.get('eatiblUser').then((val) => {
+    this.storage.get('eatiblUser').then((val) => { //Cannot use user service due to circular dependency
       if(val){
         var user = decode(val);
         this.userId = user._id;

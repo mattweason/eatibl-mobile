@@ -1,6 +1,7 @@
 import {Component, Input, ViewChild} from '@angular/core';
 import {IonicPage, NavController, NavParams, Select} from 'ionic-angular';
 import {FunctionsProvider} from "../../providers/functions/functions";
+import {ActivityLoggerProvider} from "../../providers/activity-logger/activity-logger";
 
 /**
  * Generated class for the AllDealsPage page.
@@ -24,6 +25,7 @@ export class AllDealsPage {
   constructor(
     public navCtrl: NavController,
     private functions: FunctionsProvider,
+    private log: ActivityLoggerProvider,
     public navParams: NavParams
   ) {
     this.allTimeslots = JSON.parse(this.navParams.get('allTimeslots'));
@@ -47,7 +49,7 @@ export class AllDealsPage {
   //Activate a booking
   selectBooking(timeslot){
     this.log.sendEvent('Timeslot: Selected', 'Restaurant', 'User chose timeslot: '+ JSON.stringify(timeslot));
-    this.activeTimeslot = timeslot;
+    // this.activeTimeslot = timeslot;
   }
 
 }

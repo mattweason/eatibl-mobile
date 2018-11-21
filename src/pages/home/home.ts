@@ -2,7 +2,6 @@ import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
 import {IonicPage, NavController, Content, ModalController} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
-import { FunctionsProvider } from '../../providers/functions/functions';
 import { Device } from '@ionic-native/device';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { Facebook } from '@ionic-native/facebook';
@@ -10,13 +9,13 @@ import { GeolocationServiceProvider } from '../../providers/geolocation-service/
 import { Subscription } from 'rxjs/Subscription';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import * as decode from 'jwt-decode';
+import {UserServiceProvider} from "../../providers/user-service/user-service";
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
 
 import {
-  GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, CameraPosition, MarkerOptions, Marker,
+  GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, Marker,
   BaseArrayClass, MarkerIcon
 } from '@ionic-native/google-maps';
 import {RestaurantServiceProvider} from "../../providers/restaurant-service/restaurant-service";
@@ -64,7 +63,6 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     private API: ApiServiceProvider,
-    private functions: FunctionsProvider,
     private cdRef:ChangeDetectorRef,
     private modal: ModalController,
     private device: Device,
@@ -73,6 +71,7 @@ export class HomePage {
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
     private fb: Facebook,
+    private userService: UserServiceProvider,
     private geolocationService: GeolocationServiceProvider,
     private restaurantService: RestaurantServiceProvider
   ) {
@@ -108,12 +107,7 @@ export class HomePage {
     setTimeout(() => {
       this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
 
-      this.storage.get('eatiblUser').then((val) => {
-        if(val)
-          this.user = decode(val);
-        else
-          this.user = {}; //If no user exists in the localstorage, clear the user object
-      });
+      this.user = this.userService.user;
     }, 100)
   }
 

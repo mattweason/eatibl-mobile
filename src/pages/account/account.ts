@@ -2,12 +2,11 @@ import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ModalController, AlertController, Events} from 'ionic-angular';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
-import { Storage } from '@ionic/storage';
-import * as decode from 'jwt-decode';
 import * as _ from 'underscore';
 import moment from 'moment';
 
 import { FunctionsProvider } from '../../providers/functions/functions';
+import {UserServiceProvider} from "../../providers/user-service/user-service";
 
 /**
  * Generated class for the AccountPage page.
@@ -34,11 +33,11 @@ export class AccountPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    private storage: Storage,
     private API: ApiServiceProvider,
     public alertCtrl: AlertController,
     private functions: FunctionsProvider,
     private modal: ModalController,
+    private userService: UserServiceProvider,
     public events: Events,
     private log: ActivityLoggerProvider
   ) {
@@ -53,31 +52,20 @@ export class AccountPage {
   }
 
   checkUser(){
-    this.storage.get('eatiblUser').then((val) => {
-      if(val){
-        this.user = decode(val);
-        this.accountLevel = this.user['earlySupporter'] ? 'premium' : 'starter';
-        this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
-          this.sortBookings(data);
+    this.user = this.userService.user;
+    this.accountLevel = this.user['earlySupporter'] ? 'premium' : 'starter';
+    this.API.makePost('booking/user', {email: this.user.email}).subscribe(data => {
+      this.sortBookings(data);
 
-          //Run countdown checks
-          var start = moment(this.user['created_at']),
-              end = start.add(3, 'days'),
-              isNew = moment().isBefore(end);
-          if(isNew && !this.user['earlySupporter'])
-            if(!this.countdown['hours'])
-              this.runCountdown(end);
-          else
-            this.clearCountdown();
-        });
-      }
+      //Run countdown checks
+      var start = moment(this.user['created_at']),
+          end = start.add(3, 'days'),
+          isNew = moment().isBefore(end);
+      if(isNew && !this.user['earlySupporter'])
+        if(!this.countdown['hours'])
+          this.runCountdown(end);
       else
-        this.user = {
-          email: '',
-          name: '',
-          phone: '',
-          type: ''
-        };
+        this.clearCountdown();
     });
   }
 
@@ -168,31 +156,7 @@ export class AccountPage {
   }
 
   logout(){
-    let alert = this.alertCtrl.create({
-      message: 'Are you sure you want to logout?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Logout',
-          handler: data => {
-            this.log.sendEvent('Logout', 'Account', '');
-            this.storage.remove('eatiblUser');
-            this.events.publish('user:statuschanged');
-            //Clear info
-            this.bookingUpcoming = [];
-            this.bookingHistory = [];
-            this.user = {};
-            this.countdown = {};
-            this.accountLevel = '';
-            this.clearCountdown();
-          }
-        }
-      ]
-    });
-    alert.present();
+    this.userService.logout();
   }
 
   //Generic alert box
@@ -207,7 +171,7 @@ export class AccountPage {
 
   //Present promo code modal
   addPromoCodes(){
-    let promocodeModal = this.modal.create('PromocodeModalPage', { user: this.user }, { cssClass: 'promocode-modal'});
+    let promocodeModal = this.modal.create('PromocodeModalPage', { cssClass: 'promocode-modal'});
     promocodeModal.present();
   }
 

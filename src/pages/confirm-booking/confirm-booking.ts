@@ -1,18 +1,17 @@
-import { Component, OnInit, trigger } from '@angular/core';
+import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, AlertController, ModalController, Platform, Events} from 'ionic-angular';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
-import { ApiServiceProvider } from "../../providers/api-service/api-service";
-import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
-import { FunctionsProvider } from '../../providers/functions/functions';
 import { Storage } from '@ionic/storage';
-import * as decode from 'jwt-decode';
 import { Device } from '@ionic-native/device';
 import { LocalNotifications } from '@ionic-native/local-notifications';
 import moment from 'moment';
 
-import { BookingConfirmedPage } from '../../pages/booking-confirmed/booking-confirmed';
-
 import {Facebook} from "@ionic-native/facebook";
+
+import {UserServiceProvider} from "../../providers/user-service/user-service";
+import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
+import { FunctionsProvider } from '../../providers/functions/functions';
 
 /**
  * Generated class for the ConfirmBookingPage page.
@@ -42,7 +41,6 @@ export class ConfirmBookingPage {
   timeslot: any;
   notificationData: any;
   people: any;
-  timeOfBooking: any;
   dateObject = {} as any;
   date: any;
   response: any;
@@ -64,6 +62,7 @@ export class ConfirmBookingPage {
     private log: ActivityLoggerProvider,
     public localNotifications: LocalNotifications,
     private fb: Facebook,
+    private userService: UserServiceProvider,
     public events: Events
   ) {
     this.restaurant = navParams.get('restaurant');
@@ -149,21 +148,17 @@ export class ConfirmBookingPage {
 
   //Gather user information from local storage
   getUserInfo(){
-    this.storage.get('eatiblUser').then((val) => {
-      if(val){
-        this.user = decode(val);
-        if(this.user.email){
-          this.bookingForm.controls['name'].setValue(this.user.name);
-          this.bookingForm.controls['email'].setValue(this.user.email);
-          this.bookingForm.controls['active'].setValue(this.user.active);
-          this.bookingForm.controls['_id'].setValue(this.user._id);
-          if(this.user.facebook_id)
-            this.bookingForm.controls['facebook_id'].setValue(this.user.facebook_id);
-          if(this.user.google_id)
-            this.bookingForm.controls['google_id'].setValue(this.user.google_id);
-        }
-      }
-    });
+    this.user = this.userService.user;
+    if(this.user.email){
+      this.bookingForm.controls['name'].setValue(this.user.name);
+      this.bookingForm.controls['email'].setValue(this.user.email);
+      this.bookingForm.controls['active'].setValue(this.user.active);
+      this.bookingForm.controls['_id'].setValue(this.user._id);
+      if(this.user.facebook_id)
+        this.bookingForm.controls['facebook_id'].setValue(this.user.facebook_id);
+      if(this.user.google_id)
+        this.bookingForm.controls['google_id'].setValue(this.user.google_id);
+    }
   }
 
   buildDateObject(){

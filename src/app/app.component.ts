@@ -1,8 +1,6 @@
 import {Component, ViewChild, enableProdMode} from '@angular/core';
 import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
-import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
 import { ApiServiceProvider } from "../providers/api-service/api-service";
 import { ActivityLoggerProvider } from "../providers/activity-logger/activity-logger";
@@ -11,13 +9,13 @@ import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 import { Firebase } from '@ionic-native/firebase';
 import { Diagnostic } from '@ionic-native/diagnostic';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import * as moment from 'moment';
 import * as decode from 'jwt-decode';
 import { LocalNotifications } from '../../node_modules/@ionic-native/local-notifications';
 import { Mixpanel } from '@ionic-native/mixpanel';
 import { FunctionsProvider } from '../providers/functions/functions';
 import { GeolocationServiceProvider } from '../providers/geolocation-service/geolocation-service';
+import {UserServiceProvider} from "../providers/user-service/user-service";
 enableProdMode();
 
 @Component({
@@ -30,9 +28,7 @@ export class MyApp {
   location: any;
   mapView = false;
   watch: any; //Holds watch position subscription
-  _autoLocateSub: (location:any, time:any) => void;
   blacklisted = false;
-  locationCachedTime: any; //Used to send mark the last time geolocation data was sent to the backend
   user = {
     _id: '',
     email: '',
@@ -50,9 +46,7 @@ export class MyApp {
   constructor(
     private platform: Platform,
     statusBar: StatusBar,
-    public splashScreen: SplashScreen,
     private geolocation: Geolocation,
-    private androidPermissions: AndroidPermissions,
     private appVersion: AppVersion,
     private alertCtrl: AlertController,
     private API: ApiServiceProvider,
@@ -65,14 +59,14 @@ export class MyApp {
     private firebase: Firebase,
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
-    private locationAccuracy: LocationAccuracy,
     public localNotifications: LocalNotifications,
     public menuCtrl: MenuController,
+    private userService: UserServiceProvider,
     private mixpanel: Mixpanel
   ) {
 
     platform.ready().then(() => {
-      console.log('platform ready - '+ moment().format('X'))
+      console.log('platform ready - '+ moment().format('X'));
       var dateToday = new Date;
       var dateMoment = moment(dateToday);
 
@@ -112,7 +106,7 @@ export class MyApp {
               var post = decode(val);
               if (!post['created_at'])
                 this.API.makePost('updateJWT', {email: post.email}).subscribe((response) => {
-                  this.storage.set('eatiblUser', response['token']);
+                  this.userService.updateUser(response['token']);
                 });
             }
           });
@@ -155,14 +149,7 @@ export class MyApp {
         });
 
         //check if user is logged in
-        this.storage.get('eatiblUser').then((val) => {
-          if(val){
-            this.user = decode(val);
-            this.log.sendEvent('Loaded: User Data', 'runTime', JSON.stringify(this.user));
-          }
-          else
-            this.log.sendEvent('Loaded: Unregistered User', 'runTime', "User isn't logged in");
-        });
+        this.checkUser();
 
         //Run force update
         // this.forceUpdate();
@@ -236,10 +223,7 @@ export class MyApp {
         this.geolocationService.setLocation([43.6564126, -79.3825729], 'Yonge & Dundas');
 
         //check if user is logged in
-        this.storage.get('eatiblUser').then((val) => {
-          if (val)
-            this.user = decode(val);
-        });
+        this.checkUser();
 
         //Set AB test value for Ionic Lab
         this.storage.set('eatiblABValue', 40);
@@ -270,47 +254,11 @@ export class MyApp {
 
   //Check whether a user is logged in
   checkUser(){
-    this.storage.get('eatiblUser').then((val) => {
-      if (val){
-        this.user = decode(val);
-      }
-      else{
-        this.user = {
-          _id: '',
-          email: '',
-          name: '',
-          phone: '',
-          type: ''
-        }
-      }
-    });
+    this.user = this.userService.user;
   }
 
   logout(){
-    let alert = this.alertCtrl.create({
-      message: 'Are you sure you want to logout?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Logout',
-          handler: data => {
-            this.log.sendEvent('Logout', 'Menu', '');
-            this.storage.remove('eatiblUser');
-            this.user = {
-              _id: '',
-              email: '',
-              name: '',
-              phone: '',
-              type: ''
-            };
-          }
-        }
-      ]
-    });
-    alert.present();
+    this.userService.logout();
   }
 
   signUp(){
