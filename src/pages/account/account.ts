@@ -61,7 +61,7 @@ export class AccountPage {
       var start = moment(this.user['created_at']),
           end = start.add(3, 'days'),
           isNew = moment().isBefore(end);
-      if(isNew && !this.user['earlySupporter'])
+      if(isNew && !this.user['earlySupporter'] && this.user.email)
         if(!this.countdown['hours'])
           this.runCountdown(end);
       else

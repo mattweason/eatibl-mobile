@@ -6,7 +6,7 @@
           <ion-grid>
             <ion-row class="account-header">
               <ion-col col-3 class="align-center icon">
-                <ion-icon class="user-icon" [ngClass]="{'logged-in' : user.active}" name="contact"></ion-icon>
+                <ion-icon class="user-icon" [ngClass]="{'logged-in' : user.email}" name="contact"></ion-icon>
               </ion-col>
               <ion-col col-9>
                 <div *ngIf="user.email">

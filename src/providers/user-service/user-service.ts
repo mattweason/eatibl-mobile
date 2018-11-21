@@ -51,6 +51,7 @@ export class UserServiceProvider {
     else{
       this.user = {};
       this.storage.remove('eatiblUser');
+      this.events.publish('user:statuschanged');
     }
   }
 
@@ -89,6 +90,7 @@ export class UserServiceProvider {
 
   //Vanilla login process
   login(userObject, callback){
+    console.log(userObject)
     var title;
     var message;
 
