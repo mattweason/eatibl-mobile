@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
+import { Component, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams, Slides, Events, Select, AlertController, ModalController } from 'ionic-angular';
-import { DatePicker } from '@ionic-native/date-picker';
-import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator';
+import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
 import { FunctionsProvider } from '../../providers/functions/functions';
@@ -51,7 +50,6 @@ export class RestaurantPage {
   activeTimeslot: any;
   people: Number = 2;
   open: any;
-  restaurantId: String;
   timeslotId: String;
   type: String;
   date: any;
@@ -66,7 +64,6 @@ export class RestaurantPage {
   orderedImgArray = []; //for displaying the image slides in the right order
   location: any;
   distance: any;
-  bookText: string;
   reviews = [] as any;
 
   mapUrl: string;
@@ -76,7 +73,6 @@ export class RestaurantPage {
 
     public navParams: NavParams,
     private API: ApiServiceProvider,
-    private datePicker: DatePicker,
     private functions: FunctionsProvider,
     private sanitizer: DomSanitizer,
     private launchNavigator: LaunchNavigator,
@@ -99,11 +95,6 @@ export class RestaurantPage {
   //Since we aren't doing setnow, make sure to initialize
     this.today = moment().format();
     this.maxDate = moment().add(30, 'day').format();
-
-    this.storage.get('eatiblABValue').then((val) => {
-      if(val)
-        this.bookText = val > 50 ? 'Claim Deal' : 'Book Now';
-    })
 
     this.processBusinessHours();
     this.processReviews();
@@ -228,6 +219,7 @@ export class RestaurantPage {
 
     for(var i = 0; i < 8; i++){
       var currentDay = moment().add(i, 'days').day(),
+          currentDateRaw = moment().add(i, 'days'), //Date of that day ie 'Nov 30th'
           currentDate = moment().add(i, 'days').format('MMM Do'), //Date of that day ie 'Nov 30th'
           timeslots = {};
 
@@ -256,7 +248,7 @@ export class RestaurantPage {
         }
       });
 
-      timeslots = _.sortBy(timeslots, 'time'); //Make sure timeslots are in chronological order\
+      timeslots = _.sortBy(timeslots, 'time'); //Make sure timeslots are in chronological order
 
       //Loop through all of our booking for this day, at this restaurant
       for(var a = 0; a < this.bookings.length; a++){
@@ -266,7 +258,7 @@ export class RestaurantPage {
         });
 
         //reduce capacity by the number already taken in booking
-        if(timeslotIndex >= 0)
+        if(timeslotIndex >= 0 && moment(currentDateRaw).isSame(moment(this.bookings[a].date), 'day'))
           timeslots[timeslotIndex].quantity -= this.bookings[a].people;
       }
 
@@ -413,7 +405,7 @@ export class RestaurantPage {
   }
 
   //Navigate to confirm booking page
-  bookNow(event, restaurant, timeslot, people, date){
+  bookNow(restaurant, timeslot, people, date){
     this.log.sendRestoEvent('Booking: Initiated', 'Restaurant', 'At time: '+timeslot.time+' At discount: '+timeslot.discount+ ' For party size: '+people+ ' At date: '+date+ ' At restaurant: '+restaurant.name, this.restaurant._id);
     this.navCtrl.push('ConfirmBookingPage', {
       restaurant: restaurant,
@@ -504,7 +496,11 @@ export class RestaurantPage {
       this.log.sendEvent('All Deals Clicked', 'Restaurant', this.restaurant.name);
       this.navCtrl.push('AllDealsPage', {
         restaurant: JSON.stringify(this.restaurant),
-        allTimeslots: JSON.stringify(this.allTimeslots)
+        allTimeslots: JSON.stringify(this.allTimeslots),
+        businessHours: JSON.stringify(this.businessHoursData),
+        time: this.time,
+        date: this.date,
+        distance: this.distance
       });
     }, 0)
   }

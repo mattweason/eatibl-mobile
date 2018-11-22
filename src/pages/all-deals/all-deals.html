@@ -16,11 +16,11 @@
 <ion-content>
   <ion-list>
     <ion-item class="weekday" *ngFor="let day of allTimeslots; let i = index">
-      <button ion-item (click)="expandWeekday(i)">
+      <button ion-item (click)="expandWeekday(i)" [disabled]="!day.timeslots.length">
         <div class="weekday-header">
           <div></div>
           <div class="header-text">
-            <h2>{{i == 0 ? 'Today' : day.day}}</h2>
+            <h2 [ngClass]="{'active' : selectedDate == day.date}">{{i == 0 ? 'Today' : day.day}}</h2>
             <p>{{day.date}}</p>
           </div>
           <ion-icon *ngIf="rowIndex == i" ios="ios-arrow-up" md="ios-arrow-up"></ion-icon>
@@ -30,7 +30,7 @@
       <div class="day-timeslots {{rowIndex == i ? 'expanded' : ''}}">
         <div class="timeslot" *ngFor="let timeslot of day.timeslots">
           <p class="timeslot-time" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id && activeTimeslot?.quantity >= people}">{{functions.formatClockTime(timeslot.time, true)}}</p>
-          <button ion-button color="primary" [disabled]="timeslot?.quantity <= 0" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot)">-{{timeslot?.discount}}%<span class="sold-out" *ngIf="timeslot.quantity <= 0"><span>SOLD</span><span>OUT</span></span><span class="sold-out" *ngIf="timeslot.quantity < people && timeslot.quantity > 0"><ion-icon name="people"></ion-icon></span></button>
+          <button ion-button color="primary" [disabled]="timeslot?.quantity <= 0" [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}" (click)="selectBooking(timeslot, i)">-{{timeslot?.discount}}%<span class="sold-out" *ngIf="timeslot.quantity <= 0"><span>SOLD</span><span>OUT</span></span><span class="sold-out" *ngIf="timeslot.quantity < people && timeslot.quantity > 0"><ion-icon name="people"></ion-icon></span></button>
         </div>
       </div>
     </ion-item>
@@ -39,7 +39,9 @@
 
 <ion-footer>
   <ion-toolbar>
-    <button ion-button color="secondary" icon-end (click)="openPeopleSelect()">For {{people}}<ion-icon name="people"></ion-icon></button>
-    <button ion-button color="secondary" class="book-button" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, people, date)"><span *ngIf="activeTimeslot?.quantity >= people || !activeTimeslot">{{bookText}}</span><span *ngIf="activeTimeslot?.quantity < people && activeTimeslot">Only {{activeTimeslot?.quantity}} seat<span *ngIf="activeTimeslot?.quantity != 1">s</span> at {{functions.formatClockTime(activeTimeslot?.time, true)}}</span></button>
+    <ion-row>
+      <button ion-button color="secondary" icon-end (click)="openPeopleSelect()">For {{people}}<ion-icon name="people"></ion-icon></button>
+      <button ion-button color="secondary" class="book-button" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow(restaurant, activeTimeslot, people, date)"><span *ngIf="activeTimeslot?.quantity >= people || !activeTimeslot">Book Now</span><span *ngIf="activeTimeslot?.quantity < people && activeTimeslot">Only {{activeTimeslot?.quantity}} seat<span *ngIf="activeTimeslot?.quantity != 1">s</span> at {{functions.formatClockTime(activeTimeslot?.time, true)}}</span></button>
+    </ion-row>
   </ion-toolbar>
 </ion-footer>

@@ -5,6 +5,9 @@ page-all-deals {
       border-top: 1px solid #ccc !important;
     }
   }
+  .book-button{
+    flex-grow: 1;
+  }
   .weekday{
     padding: 0 !important;
     button{
@@ -21,6 +24,9 @@ page-all-deals {
         }
         h2{
           text-transform: uppercase;
+          &.active{
+            color: color($colors, primary);
+          }
         }
       }
       ion-icon{

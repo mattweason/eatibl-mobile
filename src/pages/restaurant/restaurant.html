@@ -90,7 +90,7 @@
         </ion-row>
         <ion-row *ngIf="open?.open != 'closedToday'" class="border-bottom">
           <button ion-button color="secondary" class="set-people" (click)="openPeopleSelect()">For {{people}}<ion-icon name="people"></ion-icon></button>
-          <button ion-button color="secondary" class="book-button" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow($event, restaurant, activeTimeslot, people, date)"><span *ngIf="activeTimeslot?.quantity >= people || !activeTimeslot">{{bookText}}</span><span *ngIf="activeTimeslot?.quantity < people && activeTimeslot">Only {{activeTimeslot?.quantity}} seat<span *ngIf="activeTimeslot?.quantity != 1">s</span> at {{functions.formatClockTime(activeTimeslot?.time, true)}}</span></button>
+          <button ion-button color="secondary" class="book-button" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow(restaurant, activeTimeslot, people, date)"><span *ngIf="activeTimeslot?.quantity >= people || !activeTimeslot">Book Now</span><span *ngIf="activeTimeslot?.quantity < people && activeTimeslot">Only {{activeTimeslot?.quantity}} seat<span *ngIf="activeTimeslot?.quantity != 1">s</span> at {{functions.formatClockTime(activeTimeslot?.time, true)}}</span></button>
         </ion-row>
       </ion-grid>
       <div class="details">
