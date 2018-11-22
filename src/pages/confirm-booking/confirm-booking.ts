@@ -315,7 +315,7 @@ export class ConfirmBookingPage {
         const inviteModal = this.modal.create('InviteModalPage', { type: 'reminder', booking: this.response.booking, restaurant: this.restaurant });
         inviteModal.onDidDismiss(() => {
           var index = this.navCtrl.getActive().index;
-          this.navCtrl.remove(index-1).then(() => {
+          this.navCtrl.remove(index).then(() => {
             this.events.publish('request:changeTab', 3);
           });
         });
