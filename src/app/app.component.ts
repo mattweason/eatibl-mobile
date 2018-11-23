@@ -42,6 +42,7 @@ export class MyApp {
   //Used for android permissions
   hasPermission = false;
   interval: any;
+  showSlides = true;
 
   constructor(
     private platform: Platform,
@@ -311,30 +312,43 @@ export class MyApp {
 
   //Gather initial user information
   userInfo(token){
-    var current = this; //Cache this
-    this.appVersion.getVersionNumber().then(function(version_code) {
-      current.API.makePost('user/device/check', {
-        deviceId: current.device.uuid,
-        platform: current.device.platform,
-        model: current.device.model,
-        version: current.device.version,
+    if(this.showSlides)
+      this.presentIntroModal();
+    this.appVersion.getVersionNumber().then((version_code) => {
+      this.API.makePost('user/device/check', {
+        deviceId: this.device.uuid,
+        platform: this.device.platform,
+        model: this.device.model,
+        version: this.device.version,
         eatiblVersion: version_code,
         firebaseToken: token
       }).subscribe(result => {
         if(result['newUser'])
-          current.log.sendEvent('Device: New', 'runTime', "This is the first time we're tracking this device");
+          this.log.sendEvent('Device: New', 'runTime', "This is the first time we're tracking this device");
         else
-          current.log.sendEvent('Device: Existing', 'runTime', "This device has accessed the app before");
+          this.log.sendEvent('Device: Existing', 'runTime', "This device has accessed the app before");
 
         //Save ab test value to local storage
-        current.storage.set('eatiblABValue', result['test']);
+        this.storage.set('eatiblABValue', result['test']);
 
         if (result['blacklisted'])
-          current.blacklisted = true;
-        if (!result['hideSlides'])
-          current.storage.set('eatiblShowSlides', 1);
+          this.blacklisted = true;
+        if (!result['hideSlides'] && this.showSlides)
+          this.presentIntroModal();
       });
     });
+  }
+
+  //Open intro slides
+  presentIntroModal(){
+    this.showSlides = false;
+    this.log.sendEvent('Intro Slides', 'runtime', 'Default Intro slides for first time users');
+    const introModal = this.modal.create('IntroSlidesPage', {newUser: true});
+    introModal.onDidDismiss(() => {
+      this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
+      this.storage.remove('eatiblShowSlides');
+    });
+    introModal.present();
   }
 
   //Open intro slides

@@ -79,7 +79,6 @@ export class HomePage {
   ) {
 
     events.subscribe('location:error', () => {
-      console.log('recieved error')
       if(this.loadingRestaurants)
         this.locationError = true;
     });
@@ -140,17 +139,6 @@ export class HomePage {
   }
 
   //Open intro slides
-  presentIntroModal(){
-    this.log.sendEvent('Intro Slides', 'Home', 'Default Intro slides for first time users');
-    const introModal = this.modal.create('IntroSlidesPage', {newUser: true});
-    introModal.onDidDismiss(() => {
-      this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
-      this.storage.remove('eatiblShowSlides');
-    });
-    introModal.present();
-  }
-
-  //Open intro slides
   presentHIWModal(){
     this.log.sendEvent('How It Works opened', 'Home', '');
     const HIWModal = this.modal.create('HowItWorksModalPage', {newUser: true});
@@ -160,11 +148,6 @@ export class HomePage {
   //Get restaurant list
   getRestaurants(){
     this.loadingRestaurants = true;
-    //Here is where we need to check if we need to show the intro slides or not
-    this.storage.get('eatiblShowSlides').then((val) => {
-      if(val)
-        this.presentIntroModal();
-    });
 
     this.restaurantService.getRestos(this.userCoords, false, (data) => {
       this.loadingRestaurants = false;

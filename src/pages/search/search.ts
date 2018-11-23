@@ -51,16 +51,17 @@ export class SearchPage {
     });
 
     this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
-      if(location.coords.length){
-        this.deviceLocation = location.device; //Only show distance if device location is known
-        this.userCoords = [location.coords[0], location.coords[1]];
-        this.setDistances();
-        if(this.geolocationService.manualReload || this.firstLoad){
-          this.getRestaurants();
-          this.geolocationService.toggleManualReload(false);
-          this.firstLoad = false;
+      if(location) //Sometimes on iOS location is undefined
+        if(location.coords.length){
+          this.deviceLocation = location.device; //Only show distance if device location is known
+          this.userCoords = [location.coords[0], location.coords[1]];
+          this.setDistances();
+          if(this.geolocationService.manualReload || this.firstLoad){
+            this.getRestaurants();
+            this.geolocationService.toggleManualReload(false);
+            this.firstLoad = false;
+          }
         }
-      }
     });
   }
 

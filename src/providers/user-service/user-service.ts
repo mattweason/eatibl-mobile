@@ -90,16 +90,15 @@ export class UserServiceProvider {
 
   //Vanilla login process
   login(userObject, callback){
-    console.log(userObject)
     var title;
     var message;
 
     //make API call to get token if successful, or status 401 if login failed
-    this.API.makePost('token', userObject.value).subscribe(response => {
+    this.API.makePost('token', userObject).subscribe(response => {
 
       //Handle logging and error alerts
       if(response['message'] == 'not found'){
-        this.log.sendEvent('Login: Unsuccessful', 'User Service', userObject.value.email + ", email not found");
+        this.log.sendEvent('Login: Unsuccessful', 'User Service', userObject.email + ", email not found");
 
         title = 'Incorrect Credentials';
         message = 'Email and password combination not found.';
@@ -107,7 +106,7 @@ export class UserServiceProvider {
       }
 
       else if (response['message'] == 'facebook user'){
-        this.log.sendEvent('Login: Unsuccessful', 'User Service', userObject.value.email + ", email is attached to facebook account");
+        this.log.sendEvent('Login: Unsuccessful', 'User Service', userObject.email + ", email is attached to facebook account");
 
         title = 'Incorrect Credentials';
         message = 'This email is associated with a Facebook account. Please use the Facebook login to continue.';
@@ -115,7 +114,7 @@ export class UserServiceProvider {
       }
 
       else if (response['message'] == 'google user'){
-        this.log.sendEvent('Login: Unsuccessful', 'User Service', userObject.value.email + ", email is attached to google account");
+        this.log.sendEvent('Login: Unsuccessful', 'User Service', userObject.email + ", email is attached to google account");
 
         title = 'Incorrect Credentials';
         message = 'This email is associated with a Google account. Please use the Google login to continue.';
@@ -123,7 +122,7 @@ export class UserServiceProvider {
       }
 
       else{
-        this.log.sendEvent('Login: Successful', 'User Service', userObject.value.email);
+        this.log.sendEvent('Login: Successful', 'User Service', userObject.email);
 
         this.updateUser(response['token']); //Update local and stored user objects
 
