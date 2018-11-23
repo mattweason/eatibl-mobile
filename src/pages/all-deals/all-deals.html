@@ -43,5 +43,20 @@
       <button ion-button color="secondary" icon-end (click)="openPeopleSelect()">For {{people}}<ion-icon name="people"></ion-icon></button>
       <button ion-button color="secondary" class="book-button" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow(restaurant, activeTimeslot, people, date)"><span *ngIf="activeTimeslot?.quantity >= people || !activeTimeslot">Book Now</span><span *ngIf="activeTimeslot?.quantity < people && activeTimeslot">Only {{activeTimeslot?.quantity}} seat<span *ngIf="activeTimeslot?.quantity != 1">s</span> at {{functions.formatClockTime(activeTimeslot?.time, true)}}</span></button>
     </ion-row>
+    <ion-row class="border-bottom" style="display: none;">
+      <ion-col>
+        <ion-item>
+          <ion-label fixed><ion-icon name="people"></ion-icon></ion-label>
+          <ion-select #peopleSelect [(ngModel)]="people">
+            <ion-option value="1">1 person</ion-option>
+            <ion-option value="2">2 people</ion-option>
+            <ion-option value="3">3 people</ion-option>
+            <ion-option value="4">4 people</ion-option>
+            <ion-option value="5">5 people</ion-option>
+            <ion-option value="6">6 people</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
   </ion-toolbar>
 </ion-footer>

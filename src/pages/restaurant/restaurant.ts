@@ -13,6 +13,7 @@ import moment from 'moment';
 import { ENV } from '@app/env';
 
 import { ConfirmBookingPage } from '../../pages/confirm-booking/confirm-booking';
+import {UserServiceProvider} from "../../providers/user-service/user-service";
 
 /**
  * Generated class for the RestaurantPage page.
@@ -81,6 +82,7 @@ export class RestaurantPage {
     private storage: Storage,
     private iab: InAppBrowser,
     private alertCtrl: AlertController,
+    private userService: UserServiceProvider,
     public modalCtrl: ModalController
   ) {
 
@@ -406,20 +408,26 @@ export class RestaurantPage {
 
   //Navigate to confirm booking page
   bookNow(restaurant, timeslot, people, date){
-    this.log.sendRestoEvent('Booking: Initiated', 'Restaurant', 'At time: '+timeslot.time+' At discount: '+timeslot.discount+ ' For party size: '+people+ ' At date: '+date+ ' At restaurant: '+restaurant.name, this.restaurant._id);
-    this.navCtrl.push('ConfirmBookingPage', {
-      restaurant: restaurant,
-      timeslot: timeslot,
-      people: people,
-      date: date,
-      notificationData: {
-        allTimeslots: this.timeslotsData,
-        businessHours: this.businessHoursData,
-        distance: this.distance,
-        time: this.time,
-        date: this.date
-      }
-    });
+    if(!this.userService.user.email){
+      this.log.sendRestoEvent('Booking: Initiated (Not Logged In)', 'Restaurant', 'At time: '+timeslot.time+' At discount: '+timeslot.discount+ ' For party size: '+people+ ' At date: '+date+ ' At restaurant: '+restaurant.name,    this.restaurant._id);
+      this.functions.presentAlert('Not Logged In', 'You must be logged in to make a booking.', 'Got It');
+    }
+    else {
+      this.log.sendRestoEvent('Booking: Initiated', 'Restaurant', 'At time: ' + timeslot.time + ' At discount: ' + timeslot.discount + ' For party size: ' + people + ' At date: ' + date + ' At restaurant: ' + restaurant.name, this.restaurant._id);
+      this.navCtrl.push('ConfirmBookingPage', {
+        restaurant: restaurant,
+        timeslot: timeslot,
+        people: people,
+        date: date,
+        notificationData: {
+          allTimeslots: this.timeslotsData,
+          businessHours: this.businessHoursData,
+          distance: this.distance,
+          time: this.time,
+          date: this.date
+        }
+      });
+    }
   }
 
   setNow(initialCall){
@@ -500,7 +508,8 @@ export class RestaurantPage {
         businessHours: JSON.stringify(this.businessHoursData),
         time: this.time,
         date: this.date,
-        distance: this.distance
+        distance: this.distance,
+        people: this.people
       });
     }, 0)
   }

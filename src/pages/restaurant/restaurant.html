@@ -9,9 +9,6 @@
   <ion-navbar color="primary">
     <ion-title>{{restaurant?.name}}</ion-title>
   </ion-navbar>
-  <ion-toolbar class="dateToolbar">
-    <button ion-button icon-start color="secondary" (click)="openAllDeals()"><ion-icon name="pricetags"></ion-icon>All Deals</button>
-  </ion-toolbar>
 </ion-header>
 
 <ion-content>
@@ -28,8 +25,11 @@
     </ion-slides>
     <ion-card-content no-padding>
       <ion-grid>
+        <ion-row>
+          <button ion-button icon-start color="secondary" block (click)="openAllDeals()"><ion-icon name="pricetags"></ion-icon>View All Deals</button>
+        </ion-row>
         <ion-row class="border-bottom">
-          <ion-col col-9 align-self-stretch class="first-row border-right">
+          <ion-col col-9 align-self-stretch class="first-row">
             <h2>{{restaurant?.name}}</h2>
             <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
             <p *ngIf="restaurant.vicinity || dustabce"><span *ngIf="restaurant.vicinity">{{restaurant.vicinity}}</span><span *ngIf="distance"> - {{distance}}</span></p>
@@ -59,6 +59,10 @@
                 </ion-select>
               </ion-item>
           </ion-col>
+        </ion-row>
+        <ion-row class="today-deals border-bottom">
+          <ion-icon name="pricetag"></ion-icon>
+          <h2>Today's Deals</h2>
         </ion-row>
         <ion-row *ngIf="open?.open != 'closedToday' && timeslots.length" class="border-bottom no-padding-row">
           <ion-col col-1 class="no-padding-col">

@@ -24,6 +24,18 @@ page-restaurant{
       height: 19px;
     }
   }
+  .today-deals{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 0 !important;
+    h2{
+      margin: 0;
+    }
+    ion-icon{
+      margin-right: 6px;
+    }
+  }
   .featured-image{
     height: 200px;
     background-position: center center;
