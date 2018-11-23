@@ -312,8 +312,6 @@ export class MyApp {
 
   //Gather initial user information
   userInfo(token){
-    if(this.showSlides)
-      this.presentIntroModal();
     this.appVersion.getVersionNumber().then((version_code) => {
       this.API.makePost('user/device/check', {
         deviceId: this.device.uuid,
