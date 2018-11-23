@@ -8,7 +8,6 @@ import * as moment from 'moment';
 import { Storage } from '@ionic/storage';
 import {Events, AlertController, Platform, MenuController, ModalController} from "ionic-angular";
 import {ApiServiceProvider} from "../api-service/api-service";
-import {AndroidPermissions} from "@ionic-native/android-permissions";
 import {ActivityLoggerProvider} from "../activity-logger/activity-logger";
 import {SplashScreen} from "@ionic-native/splash-screen";
 import {FunctionsProvider} from "../functions/functions";
@@ -54,7 +53,6 @@ export class GeolocationServiceProvider {
     public geolocation: Geolocation,
     public events: Events,
     public device: Device,
-    private androidPermissions: AndroidPermissions,
     private diagnostic: Diagnostic,
     private API: ApiServiceProvider,
     public menuCtrl: MenuController,
@@ -69,7 +67,6 @@ export class GeolocationServiceProvider {
   }
 
   startTracking(forceDevice){
-    console.log('start tracking');
 
     // Foreground Tracking
 
@@ -83,7 +80,7 @@ export class GeolocationServiceProvider {
     let options = {
       maximumAge: 3000,
       enableHighAccuracy: true,
-      timeout: 20000
+      timeout: 100
     };
 
     this.watch = this.geolocation.watchPosition(options).subscribe((position: Geoposition) => {
@@ -91,7 +88,7 @@ export class GeolocationServiceProvider {
       //PositionError handling
       if(!position.coords){
         this.log.sendErrorEvent('Geolocation Error', 'Geolocation Service', JSON.stringify(position));
-        this.locationErrorAlert();
+        this.events.publish('location:error');
       }
 
       // Run update inside of Angular's zone
@@ -104,6 +101,16 @@ export class GeolocationServiceProvider {
         });
 
     });
+  }
+
+  //Unsubscribe the watch position
+  stopTracking(){
+    this.watch.unsubscribe();
+  }
+
+  //Pass the error to the observable
+  locationError() {
+    this.observableLocation.next('error')
   }
 
   //Update the observable location

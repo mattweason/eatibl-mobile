@@ -57,6 +57,7 @@ export class HomePage {
   locationText = 'Yonge & Dundas';
   headerIndex: any; //Index of the first restaurant outside of the chosen custom vicinity
   lastRankedTime: any; //Timestamp of last time rank restaurants was run (clear out restaurants that dont have any more timeslots)
+  locationError = false;
 
   map: GoogleMap;
 
@@ -76,16 +77,39 @@ export class HomePage {
     private restaurantService: RestaurantServiceProvider
   ) {
 
+    events.subscribe('location:error', () => {
+      if(this.loadingRestaurants)
+        this.locationError = true;
+    });
+
     this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
-      if(location.coords.length){
-        this.userCoords = [location.coords[0], location.coords[1]];
-        this.locationText = location['text'];
-        if(this.geolocationService.manualReload){
-          this.getRestaurants();
-          this.geolocationService.toggleManualReload(false);
+      if(location){ //Sometimes on iOS location is undefined
+        if(location.coords.length){
+          this.userCoords = [location.coords[0], location.coords[1]];
+          this.locationText = location['text'];
+          if(this.geolocationService.manualReload){
+            this.getRestaurants();
+            this.geolocationService.toggleManualReload(false);
+          }
         }
       }
     });
+  }
+
+  //Handle location error
+  handleLocationError(cond){ //True will try getting device location again, false will use default location
+    if(cond){
+      if(!this.geolocationService.location.coords.length)
+        this.geolocationService.startTracking(true);
+    }
+    else
+      this.geolocationService.setLocation(this.geolocationService.locationDefault.coords, this.geolocationService.locationDefault.text);
+    this.locationError = false;
+    if(!this.loadingRestaurants)
+      this.loadingRestaurants = true;
+      setTimeout(() => {
+        this.loadingRestaurants = false;
+      }, 500)
   }
 
   ionViewDidEnter(){
@@ -521,7 +545,7 @@ export class HomePage {
     });
   }
 
-  //Toggle shore more loading animation
+  //Toggle show more loading animation
   toggleLoadingNextBatch(cond){
     this.loadingNextBatch = cond;
   }

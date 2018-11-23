@@ -20,10 +20,15 @@
   </div>
 </div>
 <ion-content [ngClass]="{'grey-background': view == 'list'}">
-  <div *ngIf="loadingRestaurants" class="loading-restaurants">
-    <div class="loading-spinner-box">
+  <div *ngIf="loadingRestaurants || locationError" class="loading-restaurants">
+    <div *ngIf="loadingRestaurants && !locationError" class="loading-spinner-box">
       <span>Finding Restaurants</span>
       <ion-spinner color="white"></ion-spinner>
+    </div>
+    <div class="location-error" *ngIf="locationError">
+      <p>We are having an issue getting your location. Do you want to try again or continue without using your location?</p>
+      <button ion-button color="secondary" (tap)="handleLocationError(true)">Try Again</button>
+      <button ion-button color="secondary" (tap)="handleLocationError(false)">Continue</button>
     </div>
   </div>
   <ion-refresher *ngIf="view == 'list' && restaurantList?.length" (ionRefresh)="doRefresh($event)">
