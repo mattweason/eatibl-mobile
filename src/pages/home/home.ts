@@ -58,6 +58,7 @@ export class HomePage {
   headerIndex: any; //Index of the first restaurant outside of the chosen custom vicinity
   lastRankedTime: any; //Timestamp of last time rank restaurants was run (clear out restaurants that dont have any more timeslots)
   locationError = false;
+  firstLoad = true; //Get restaurants on initial load of home page
 
   map: GoogleMap;
 
@@ -78,6 +79,7 @@ export class HomePage {
   ) {
 
     events.subscribe('location:error', () => {
+      console.log('recieved error')
       if(this.loadingRestaurants)
         this.locationError = true;
     });
@@ -87,9 +89,10 @@ export class HomePage {
         if(location.coords.length){
           this.userCoords = [location.coords[0], location.coords[1]];
           this.locationText = location['text'];
-          if(this.geolocationService.manualReload){
+          if(this.geolocationService.manualReload || this.firstLoad){
             this.getRestaurants();
             this.geolocationService.toggleManualReload(false);
+            this.firstLoad = false;
           }
         }
       }
@@ -105,11 +108,12 @@ export class HomePage {
     else
       this.geolocationService.setLocation(this.geolocationService.locationDefault.coords, this.geolocationService.locationDefault.text);
     this.locationError = false;
-    if(!this.loadingRestaurants)
+    if(!this.loadingRestaurants){
       this.loadingRestaurants = true;
       setTimeout(() => {
         this.loadingRestaurants = false;
       }, 500)
+    }
   }
 
   ionViewDidEnter(){

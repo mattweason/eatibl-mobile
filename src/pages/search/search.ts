@@ -1,5 +1,5 @@
 import {Component, ChangeDetectorRef} from '@angular/core';
-import {IonicPage, NavController} from 'ionic-angular';
+import {IonicPage, NavController, Events} from 'ionic-angular';
 import {Subscription} from "rxjs";
 import {GeolocationServiceProvider} from "../../providers/geolocation-service/geolocation-service";
 import {RestaurantServiceProvider} from "../../providers/restaurant-service/restaurant-service";
@@ -32,28 +32,52 @@ export class SearchPage {
   searchInput = '';
   deviceLocation: boolean;
   searchLog = [] as any;
+  locationError = false;
+  firstLoad = true; //Get restaurants on initial load of search page
 
   constructor(
     private functions: FunctionsProvider,
     public navCtrl: NavController,
     private log: ActivityLoggerProvider,
     private cdRef:ChangeDetectorRef,
+    public events: Events,
     private geolocationService: GeolocationServiceProvider,
     private restaurantService: RestaurantServiceProvider
   ) {
-    this.geolocationService.toggleManualReload(true);
+
+    events.subscribe('location:error', () => {
+      if(this.loadingRestaurants)
+        this.locationError = true;
+    });
 
     this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
       if(location.coords.length){
         this.deviceLocation = location.device; //Only show distance if device location is known
         this.userCoords = [location.coords[0], location.coords[1]];
         this.setDistances();
-        if(this.geolocationService.manualReload){
+        if(this.geolocationService.manualReload || this.firstLoad){
           this.getRestaurants();
           this.geolocationService.toggleManualReload(false);
+          this.firstLoad = false;
         }
       }
     });
+  }
+
+  //Handle location error
+  handleLocationError(cond){ //True will try getting device location again, false will use default location
+    if(cond){
+      if(!this.geolocationService.location.coords.length)
+        this.geolocationService.startTracking(true);
+    }
+    else
+      this.geolocationService.setLocation(this.geolocationService.locationDefault.coords, this.geolocationService.locationDefault.text);
+    this.locationError = false;
+    if(!this.loadingRestaurants)
+      this.loadingRestaurants = true;
+    setTimeout(() => {
+      this.loadingRestaurants = false;
+    }, 500)
   }
 
   ionViewDidLeave(){

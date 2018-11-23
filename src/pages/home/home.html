@@ -26,9 +26,13 @@
       <ion-spinner color="white"></ion-spinner>
     </div>
     <div class="location-error" *ngIf="locationError">
-      <p>We are having an issue getting your location. Do you want to try again or continue without using your location?</p>
-      <button ion-button color="secondary" (tap)="handleLocationError(true)">Try Again</button>
-      <button ion-button color="secondary" (tap)="handleLocationError(false)">Continue</button>
+      <ion-icon name="pin"></ion-icon>
+      <p>We are having an issue getting your location.</p>
+      <p>Do you want to try again or continue without using your location?</p>
+      <div class="location-error-buttons">
+        <button ion-button color="secondary" (tap)="handleLocationError(true)">Try Again</button>
+        <button ion-button color="secondary" (tap)="handleLocationError(false)">Continue</button>
+      </div>
     </div>
   </div>
   <ion-refresher *ngIf="view == 'list' && restaurantList?.length" (ionRefresh)="doRefresh($event)">

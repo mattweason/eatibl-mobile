@@ -211,6 +211,23 @@ restaurant-card, page-restaurant, top-pick-card, .map-resto-card, page-all-deals
       height: 30px;
     }
   }
+  .location-error{
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    p{
+      text-align: center;
+    }
+    ion-icon{
+      color: color($colors, medium);
+      font-size: 80px;
+    }
+    .location-error-buttons{
+      display: flex;
+    }
+  }
 }
 
 .platform-ios{

@@ -119,7 +119,7 @@ export class IntroSlidesPage {
   //Google Plus login
   loginGoogle(){
     this.userService.loginGoogle(() => {
-      let promocodeModal = this.modal.create('PromocodeModalPage', { cssClass: 'promocode-modal'});
+      let promocodeModal = this.modal.create('PromocodeModalPage', {}, { cssClass: 'promocode-modal'});
       promocodeModal.onDidDismiss(() => {
         this.haveEmail = true;
       });
@@ -130,7 +130,7 @@ export class IntroSlidesPage {
   //Facebook login
   loginFacebook(){
     this.userService.loginFacebook(() => {
-      let promocodeModal = this.modal.create('PromocodeModalPage', { cssClass: 'promocode-modal'});
+      let promocodeModal = this.modal.create('PromocodeModalPage', {}, { cssClass: 'promocode-modal'});
       promocodeModal.onDidDismiss(() => {
         this.haveEmail = true;
       });

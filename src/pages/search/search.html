@@ -26,6 +26,15 @@
       <span>Finding Restaurants</span>
       <ion-spinner color="white"></ion-spinner>
     </div>
+    <div class="location-error" *ngIf="locationError">
+      <ion-icon name="pin"></ion-icon>
+      <p>We are having an issue getting your location.</p>
+      <p>Do you want to try again or continue without using your location?</p>
+      <div class="location-error-buttons">
+        <button ion-button color="secondary" (tap)="handleLocationError(true)">Try Again</button>
+        <button ion-button color="secondary" (tap)="handleLocationError(false)">Continue</button>
+      </div>
+    </div>
   </div>
   <ion-list [virtualScroll]="restoFiltered">
     <button class="item-button" ion-item (tap)="navigateTo(resto)" *virtualItem="let resto">

@@ -80,7 +80,7 @@ export class GeolocationServiceProvider {
     let options = {
       maximumAge: 3000,
       enableHighAccuracy: true,
-      timeout: 100
+      timeout: 20000
     };
 
     this.watch = this.geolocation.watchPosition(options).subscribe((position: Geoposition) => {
@@ -101,16 +101,6 @@ export class GeolocationServiceProvider {
         });
 
     });
-  }
-
-  //Unsubscribe the watch position
-  stopTracking(){
-    this.watch.unsubscribe();
-  }
-
-  //Pass the error to the observable
-  locationError() {
-    this.observableLocation.next('error')
   }
 
   //Update the observable location
