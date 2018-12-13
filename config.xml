@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.eatibl" version="0.1.31" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.eatibl" version="0.1.33" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Eatibl</name>
     <description>Save when you crave at off-peak hours.</description>
     <author email="matt@eatibl.com" href="https://eatibl.com/">Eatibl Inc.</author>
@@ -160,8 +160,8 @@
         <variable name="PLAY_SERVICES_VERSION" value="15.0.1" />
     </plugin>
     <plugin name="cordova-plugin-enable-multidex" spec="^0.1.3" />
+    <allow-navigation href="http://192.168.1.104:8100" />
     <engine name="ios" spec="4.5.4" />
     <engine name="browser" spec="5.0.3" />
     <engine name="android" spec="7.0.0" />
-    <allow-navigation href="http://192.168.1.104:8100" />
 </widget>

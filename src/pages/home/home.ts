@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import {UserServiceProvider} from "../../providers/user-service/user-service";
+import { FunctionsProvider } from '../../providers/functions/functions';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
@@ -69,6 +70,7 @@ export class HomePage {
     private modal: ModalController,
     private device: Device,
     public events: Events,
+    private functions: FunctionsProvider,
     private storage: Storage,
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
@@ -280,6 +282,7 @@ export class HomePage {
           this.lastOpenMarkerIndex = index; //Cache current marker index
 
           //Display restaurant box
+          console.log(marker.get('metadata'))
           this.selectResto(marker.get('metadata').id);
         });
       });

@@ -80,7 +80,7 @@ export class GeolocationServiceProvider {
     let options = {
       maximumAge: 3000,
       enableHighAccuracy: true,
-      timeout: 100
+      timeout: 20000
     };
 
     this.watch = this.geolocation.watchPosition(options).subscribe((position: Geoposition) => {
