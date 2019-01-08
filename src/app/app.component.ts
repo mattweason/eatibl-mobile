@@ -124,9 +124,9 @@ export class MyApp {
               restaurant: notification.data.restaurant,
               inviteModal: true
             });
-          else if (notification.data.type.indexOf('Countdown') > -1 ){ //Countdown notifications
-              this.functions.countdownAlert(notification.data.type);
-          }
+          // else if (notification.data.type.indexOf('Countdown') > -1 ){ //Countdown notifications
+          //     this.functions.countdownAlert(notification.data.type);
+          // }
         });
 
         //Send a log for each local notification that is triggered

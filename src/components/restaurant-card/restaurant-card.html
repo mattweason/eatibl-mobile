@@ -68,15 +68,15 @@
     </ion-row>
   </button>
 </ion-card>
-<ion-card *ngIf="index == countdownIndex && countdown.hours">
-  <div class="countdown">
-    <p class="text">Early Supporter Offer expires in</p>
-    <div class="countdown-content">
-      <span class="timer">{{countdown.hours}} : {{countdown.minutes}} : {{countdown.seconds}}</span>
-      <button ion-button color="secondary" small (tap)="functions.countdownAlert()">Details</button>
-    </div>
-  </div>
-</ion-card>
+<!--<ion-card *ngIf="index == countdownIndex && countdown.hours">-->
+  <!--<div class="countdown">-->
+    <!--<p class="text">Early Supporter Offer expires in</p>-->
+    <!--<div class="countdown-content">-->
+      <!--<span class="timer">{{countdown.hours}} : {{countdown.minutes}} : {{countdown.seconds}}</span>-->
+      <!--<button ion-button color="secondary" small (tap)="functions.countdownAlert()">Details</button>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</ion-card>-->
 <div class="loading" *ngIf="!isLoaded">
   <ion-spinner></ion-spinner>
 </div>
