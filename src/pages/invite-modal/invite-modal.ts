@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, AlertController, ViewController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, AlertController, ViewController, ToastController} from 'ionic-angular';
 import { Contacts } from '@ionic-native/contacts';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
-import { SMS } from '@ionic-native/sms';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import * as _ from 'underscore';
@@ -44,14 +43,14 @@ export class InviteModalPage {
     private contacts: Contacts,
     private androidPermissions: AndroidPermissions,
     private formBuilder: FormBuilder,
-    private sms: SMS,
     private alertCtrl: AlertController,
     public viewCtrl: ViewController,
     private functions: FunctionsProvider,
     private device: Device,
     private API: ApiServiceProvider,
     private log: ActivityLoggerProvider,
-    private userService: UserServiceProvider
+    private userService: UserServiceProvider,
+    private toastCtrl: ToastController
   ) {
     //Form controls and validation
     this.addContactForm = this.formBuilder.group({
@@ -128,10 +127,11 @@ export class InviteModalPage {
 
   //Browse the phone's contacts to add to the invitee list
   browseContacts(){
+    console.log(this.user);
     this.log.sendEvent('Invite Modal: Contact Initiated', 'Invite Modal', 'User clicked to get contacts from phone');
     var current = this;
 
-    this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.READ_CONTACTS, this.androidPermissions.PERMISSION.SEND_SMS]).then(
+    this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.READ_CONTACTS]).then(
       result => {
         this.log.sendEvent('Invite Modal: Contact Launched', 'Invite Modal', 'User went into their contacts (feature needs debug)');
         current.contacts.find(['displayName', 'name', 'phoneNumbers', 'emails'], {filter: "", multiple: true})
@@ -213,11 +213,11 @@ export class InviteModalPage {
         var phoneNumber = this.inviteList[i].phoneNumbers[this.inviteList[i].phoneNumbers.length - 1];
         var message;
         if(this.type == 'reminder'){
-          message = 'This is a reminder for our booking at '+this.restaurant.name+
+          message = this.user.name + ' has sent you a reminder for their booking at '+this.restaurant.name+
               '\n\nDate: '+this.dateObject.day+', '+this.dateObject.month+' '+this.dateObject.date+
               '\nTime: '+this.functions.formatClockTime(this.booking.time, true)+
               '\nDiscount: '+this.booking.discount+'%'+
-              '\n\nDownload Eatibl to make your own bookings.'+
+              '\n\nDownload Eatibl to make your own bookings!'+
               '\nAndroid:' +
               '\nhttp://play.google.com/store/apps/details?id=com.eatibl' +
               '\n\niOS:' +
@@ -225,40 +225,52 @@ export class InviteModalPage {
 
         }
         else if(this.type == 'referral'){
-          message = 'Check out this great app called Eatibl! You can get up to 50% off when you dine-in at your favourite restaurants.' +
+          message = this.user.name + ' wants you to check out this great app called Eatibl! You can get up to 50% off when you dine-in at your favourite restaurants.' +
             '\n\nDownload Eatibl for Android:' +
             '\nhttp://bit.ly/eatibl_droid' +
             '\n\nDownload Eatibl for iOS:' +
             '\nhttp://bit.ly/eatibl_ios';
         }
-        var current = this;
-        (function(phoneNumber, message){
-          current.sms.send(phoneNumber, message, {replaceLineBreaks: true}).then((result) => {
-            current.log.sendEvent('Invite Modal: SMS Sent', 'Invite Modal', phoneNumber);
+
+        this.API.makePost('user/sendInvite', {phoneNumber: phoneNumber, message: message}).subscribe(response => {
+
+          if(response['message']){ //invite successfully sent
+            this.log.sendEvent('Invite Modal: SMS Sent', 'Invite Modal', phoneNumber);
             var postValues = {
               ref_phone: phoneNumber,
               message: message,
-              deviceId: current.device.uuid
+              deviceId: this.device.uuid
             };
             //if we have user data, pop it in
-            if(current.user._id)
-              postValues['user_fid'] = current.user._id;
+            if(this.user._id)
+              postValues['user_fid'] = this.user._id;
 
-            if(current.type == 'reminder') //for reminder referrals, track which booking prompted the reminder
-              postValues['booking'] = current.booking._id;
+            if(this.type == 'reminder') //for reminder referrals, track which booking prompted the reminder
+              postValues['booking'] = this.booking._id;
 
-            current.API.makePost('referral/save', postValues).subscribe();
-          })
-        })(phoneNumber, message);
+            this.API.makePost('referral/save', postValues).subscribe();
+          } else {//Invite failed to send
+            let toast = this.toastCtrl.create({
+              message: 'There was an error sending your message.',
+              duration: 1500,
+              position: 'bottom'
+            });
+
+            toast.present();
+          }
+
+
+          setTimeout(() => {
+            this.sendingSMS = false;
+            this.sentSMS = true;
+            this.sendButtonColor = 'tertiary';
+          }, 1000);
+          setTimeout(() => {
+            this.viewCtrl.dismiss();
+          }, 2000)
+
+        });
       }
-      setTimeout(() => {
-        this.sendingSMS = false;
-        this.sentSMS = true;
-        this.sendButtonColor = 'tertiary';
-      }, 1000);
-      setTimeout(() => {
-        this.viewCtrl.dismiss();
-      }, 2000)
     }
   }
 
@@ -275,6 +287,8 @@ export class InviteModalPage {
   }
 
   ionViewDidLoad() {
+    console.log('hello')
+    console.log(this.userService.user);
     this.user = this.userService.user;
   }
 

@@ -69,7 +69,7 @@
         </ion-row>
       </ion-grid>
       <ion-list>
-        <button ion-item (tap)="promptInvite()">
+        <button *ngIf="user.active" ion-item (tap)="promptInvite()">
           <ion-icon name="people" item-start></ion-icon>
           Invite friends to Eatibl
         </button>

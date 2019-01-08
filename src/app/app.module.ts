@@ -19,7 +19,6 @@ import { AppVersion } from '@ionic-native/app-version';
 import { Firebase } from '@ionic-native/firebase';
 import { Device } from '@ionic-native/device';
 import { Contacts } from '@ionic-native/contacts';
-import { SMS } from '@ionic-native/sms';
 import { LocalNotifications } from '@ionic-native/local-notifications';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
@@ -73,7 +72,6 @@ import { UserServiceProvider } from '../providers/user-service/user-service';
     Facebook,
     Device,
     Contacts,
-    SMS,
     InAppBrowser,
     Mixpanel,
     LocalNotifications,
