@@ -171,7 +171,7 @@ export class AccountPage {
 
   //Present promo code modal
   addPromoCodes(){
-    let promocodeModal = this.modal.create('PromocodeModalPage', { cssClass: 'promocode-modal'});
+    let promocodeModal = this.modal.create('PromocodeModalPage', {}, { cssClass: 'promocode-modal'});
     promocodeModal.present();
   }
 
