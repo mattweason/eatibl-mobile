@@ -48,6 +48,10 @@
           <ion-icon name="restaurant" item-start></ion-icon>
           Bookings
         </button>
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Favourites'}" ion-item (tap)="openFavourites()">
+          <ion-icon name="star" item-start></ion-icon>
+          Favorites
+        </button>
       </ion-item-group>
       <ion-item-group>
         <button class="menu-item" ion-item (click)="supportModal()">

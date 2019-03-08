@@ -66,6 +66,7 @@ export class RestaurantPage {
   location: any;
   distance: any;
   reviews = [] as any;
+  starred = false;
 
   mapUrl: string;
 
@@ -129,6 +130,23 @@ export class RestaurantPage {
 
   ionViewDidLoad() {
     this.type = "about";
+  }
+
+  ionViewDidEnter() {
+    this.processStarred();
+  }
+
+  //Is the restaurant starred by the user
+  processStarred(){
+    if(this.userService.userData.starredRestoIds)
+      this.starred = this.userService.userData.starredRestoIds.indexOf(this.restaurant._id) > -1;
+  }
+
+  //star a restaurant
+  starResto(){
+    this.userService.starResto(this.userService.user._id, this.restaurant._id, (response) => {
+      this.starred = response;
+    });
   }
 
   //Remove all but one 1 star review

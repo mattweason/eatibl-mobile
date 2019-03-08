@@ -16,6 +16,10 @@
     <div *ngIf="restaurant.discountDetails" class="distance">
       <p>Discount Conditions Apply</p>
     </div>
+    <button ion-button class="favorite" (click)="starResto($event)" clear [disabled]="!userService.user.email">
+      <ion-icon *ngIf="!starred" name="star-outline"></ion-icon>
+      <ion-icon *ngIf="starred" name="star"></ion-icon>
+    </button>
     <div class="featured-image" [style.background-image]="'url(assets/imgs/placeholder-food.jpg)'"
          *ngIf="!restaurant?.featuredImage"></div>
     <ion-slides *ngIf="restaurant?.featuredImage" paginationType="bullets" pager="true">

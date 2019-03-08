@@ -19,6 +19,7 @@ import {FunctionsProvider} from "../functions/functions";
 export class UserServiceProvider {
 
   public user = {} as any;
+  public userData = {} as any;
 
   constructor(
     private device: Device,
@@ -34,22 +35,40 @@ export class UserServiceProvider {
     this.storage.get('eatiblUser').then((val) => {
       if(val){
         this.user = decode(val);
-        this.log.sendEvent('Loaded: User Data', 'runTime', JSON.stringify(this.user));
+        this.getUserData();
       }
       else
         this.log.sendEvent('Loaded: Unregistered User', 'runTime', "User isn't logged in");
     });
   }
 
+  //Grab all extra information for a user
+  getUserData(){
+    this.API.makePost('user/getUserData', {userId: this.user._id}).subscribe(response => {
+      var starredRestoIds = [];
+
+      //Create simple array of resto ids
+      for(var i = 0; i < response['user']['starred_restaurants'].length; i++){
+        starredRestoIds.push(response['user']['starred_restaurants'][i]['_id'])
+      }
+
+      this.userData.starredRestoIds = starredRestoIds;
+      this.userData.starredRestos = response['user']['starred_restaurants'];
+      this.log.sendEvent('Loaded: User Data', 'runTime', JSON.stringify(this.user));
+    })
+  }
+
   //Update user object in app and in storage
   updateUser(token){
     if(token){ //Logouts pass empty string as token
       this.user = decode(token);
+      this.getUserData();
       this.storage.set('eatiblUser', token);
       this.events.publish('user:statuschanged');
     }
     else{
-      this.user = {};
+      this.user = {}; //Clear basic user data
+      this.userData = {}; //Clear all extra user data
       this.storage.remove('eatiblUser');
       this.events.publish('user:statuschanged');
     }
@@ -276,6 +295,19 @@ export class UserServiceProvider {
       ]
     });
     alert.present();
+  }
+
+  //User favorites a restaurant
+  starResto(userId, restoId, callback){
+    var submitObj = {
+      userId: userId,
+      restoId: restoId
+    }
+    this.API.makePost('user/starResto', submitObj).subscribe(response => {
+      this.log.sendEvent('User starred restaurant ', 'User Service', JSON.stringify(response));
+      this.getUserData();
+      callback(response['message']);
+    });
   }
 
 }

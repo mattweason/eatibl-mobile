@@ -100,6 +100,11 @@ export class HomePage {
     });
   }
 
+  //open favorites
+  openFavorites(){
+    this.navCtrl.push('FavoritesPage');
+  }
+
   //Handle location error
   handleLocationError(cond){ //True will try getting device location again, false will use default location
     if(cond){
@@ -118,6 +123,9 @@ export class HomePage {
   }
 
   ionViewDidEnter(){
+    //Let restaurant cards know ion view has been entered
+    this.events.publish('nearby:viewDidEnter');
+
     if(moment().isSame(this.lastRankedTime, 'day') == false || moment().isSame(this.lastRankedTime, 'hour') == false){ //If new hour or new day definitely refresh list
       console.log('1 hour mark passed')
       this.rankRestaurants(this.dataCache);
@@ -521,18 +529,6 @@ export class HomePage {
       this.updateMarkers();
     }
     this.cdRef.detectChanges();
-  }
-
-  //Pull down to refresh the restaurant list
-  doRefresh(refresher){
-    this.log.sendEvent('List View: Refreshed', 'Home', 'User refreshed the restaurant list');
-    var current = this;
-    this.restaurantService.getRestos(this.userCoords, true, function(data){
-      current.loadMorePressed = 0;
-      current.batch = 0;
-      current.rankRestaurants(data);
-      refresher.complete();
-    });
   }
 
   //Toggle show more loading animation

@@ -16,6 +16,7 @@ import { Mixpanel } from '@ionic-native/mixpanel';
 import { FunctionsProvider } from '../providers/functions/functions';
 import { GeolocationServiceProvider } from '../providers/geolocation-service/geolocation-service';
 import {UserServiceProvider} from "../providers/user-service/user-service";
+import {App} from "ionic-angular";
 enableProdMode();
 
 @Component({
@@ -55,6 +56,7 @@ export class MyApp {
     private device: Device,
     private modal: ModalController,
     private storage: Storage,
+    private app: App,
     private functions: FunctionsProvider,
     private geolocationService: GeolocationServiceProvider,
     private firebase: Firebase,
@@ -370,6 +372,13 @@ export class MyApp {
     const termsModal = this.modal.create('TermsModalPage');
 
     termsModal.present();
+  }
+
+  //Open favourites
+  openFavourites(){
+    this.menuCtrl.close();
+    // this.events.publish('open_page:favorites');
+    this.app.getActiveNav().push('FavoritesPage');
   }
 
   //Send analytics log when menu is opened or close

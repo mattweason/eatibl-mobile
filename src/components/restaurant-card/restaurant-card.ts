@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import { FunctionsProvider } from '../../providers/functions/functions';
 import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 import { ENV } from '@app/env';
+import {UserServiceProvider} from "../../providers/user-service/user-service";
 
 
 /**
@@ -55,12 +56,14 @@ export class RestaurantCardComponent implements OnChanges {
   interval: any;
   ratingStars = [] as any;
   timeslotButtons = [] as any;
+  starred: boolean = false;
 
   constructor(
     public navCtrl: NavController,
     private functions: FunctionsProvider,
     private sanitizer: DomSanitizer,
     private log: ActivityLoggerProvider,
+    private userService: UserServiceProvider,
     public events: Events
   ) {
 
@@ -70,9 +73,18 @@ export class RestaurantCardComponent implements OnChanges {
       this.processTimeslots(); //Update timeslots to latest when this view is entered
       this.processRating(); //Update ratings to latest when this view is entered
     });
+
+    events.subscribe('nearby:viewDidEnter', () => {
+      //Is this restaurant starred
+      this.processStarred();
+    })
+
   }
 
   ngAfterViewInit(){
+    //Is this restaurant starred
+    this.processStarred();
+
     this.checkUser();
     setTimeout(() => {
       this.isLoaded = true;
@@ -82,7 +94,7 @@ export class RestaurantCardComponent implements OnChanges {
 
   checkUser(){
     if(this.user)
-      if(this.user.email){ //Determine if we should show the countdown
+      if(this.user.email){ //Determine if user is logged in
         var start = moment(this.user['created_at']),
           end = start.add(3, 'days'),
           isNew = moment().isBefore(end);
@@ -154,6 +166,12 @@ export class RestaurantCardComponent implements OnChanges {
     }, 0)
   }
 
+  //Is the restaurant starred by the user
+  processStarred(){
+    if(this.userService.userData.starredRestoIds)
+      this.starred = this.userService.userData.starredRestoIds.indexOf(this.restaurant._id) > -1;
+  }
+
   //Process rating to get rating star layout
   processRating(){
     if(this.restaurant.rating){
@@ -221,5 +239,12 @@ export class RestaurantCardComponent implements OnChanges {
       var distance = this.functions.getDistanceFromLatLonInKm(this.location[0], this.location[1], this.restaurant.latitude, this.restaurant.longitude);
       this.distance = this.functions.roundDistances(distance);
     }
+  }
+
+  //star a restaurant
+  starResto(){
+    this.userService.starResto(this.user._id, this.restaurant._id, (response) => {
+      this.starred = response;
+    });
   }
 }

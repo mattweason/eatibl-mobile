@@ -3,6 +3,22 @@
   transition: 0.5s ease all;
   -webkit-transition: 0.5s ease all;
   position: relative;
+  &.favorite-card{
+    margin: 0 auto 32px auto !important;
+    width: 90% !important;
+  }
+  .favorite{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30px;
+    margin: 0;
+    padding: 0;
+    ion-icon{
+      font-size: 30px;
+      color: color($colors, danger);
+    }
+  }
   .resto-card-left{
     .best-deal{
       display: flex;
@@ -18,22 +34,32 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    .resto-name-distance{
+    .resto-title{
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      h2{
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .resto-distance{
-        margin-left: 6px;
-        font-size: 13px;
-        color: color($colors, medium);
+      align-items: stretch;
+      .main{
+        width: calc(100% - 30px);
+        h2, .tags{
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
   }
   .resto-card-bottom{
+    margin-bottom: -5px;
+    margin-right: -5px;
+    margin-left: -5px;
+    .bottom-banner{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 30px;
+      color: #fff;
+      font-size: 16px;
+      background-color: color($colors, primary);
+    }
     .col{
       padding-top: 0;
     }
@@ -177,7 +203,7 @@
     background-size: cover;
     background-repeat: no-repeat;
     &.light{
-      height: 70px;
+      height: 80px;
     }
 
   }
@@ -246,6 +272,15 @@
           margin-right: 3px;
         }
       }
+    }
+  }
+  .vicinity{
+    display: flex;
+    justify-content: space-between;
+    .resto-distance{
+      margin-left: 6px;
+      font-size: 13px;
+      color: color($colors, medium);
     }
   }
 }

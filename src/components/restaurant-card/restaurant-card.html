@@ -7,20 +7,21 @@
   <button ion-button color="secondary" small (tap)="presentLocationModal()">Change</button>
 </div>
 
-<ion-card *ngIf="isLoaded && cardType == 'light'" class="restaurant-card" [ngClass]="{'display': isVisible == true}">
+<ion-card *ngIf="isLoaded" class="restaurant-card" [ngClass]="{'display': isVisible == true, 'favorite-card': cardType == 'favorite'}">
   <button class="button-wrapper" tappable (click)="navigateTo('restaurant-image')" ion-item detail-none>
     <ion-row>
       <ion-col col-4 class="resto-card-left">
-        <div class="best-deal">Up to -{{restaurant.maxTimeslot.discount}}%</div>
+        <!--<div class="best-deal">Up to -{{restaurant.maxTimeslot.discount}}%</div>-->
         <div class="featured-image light" [style.background-image]="featuredImageUrl"></div>
       </ion-col>
       <ion-col col-8 class="resto-card-right">
         <div>
-          <div class="resto-name-distance">
-            <h2>{{restaurant.name}}</h2>
-            <p class="resto-distance">{{distance}}</p>
+          <div class="resto-title">
+            <div class="main">
+              <h2>{{restaurant.name}}</h2>
+              <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
+            </div>
           </div>
-          <p class="tags"><span *ngFor="let category of restaurant?.categories; let i = index">{{category}}<span *ngIf="i < restaurant.categories.length - 1">, </span></span></p>
           <div class="rating-price">
             <p class="rating" *ngIf="restaurant.rating">
               <ion-icon name="star"></ion-icon>
@@ -38,34 +39,42 @@
         </div>
         <div *ngIf="restaurant.vicinity" class="vicinity">
           <p>{{restaurant.vicinity}}</p>
+          <p class="resto-distance">{{distance}}</p>
         </div>
       </ion-col>
     </ion-row>
-    <ion-row class="resto-card-bottom">
+    <ion-row *ngIf="restaurant.maxTimeslot && cardType != 'favorite'" class="resto-card-bottom">
       <ion-col>
-        <div class="bottom-wrapper">
-          <div class="timeslot-button" *ngFor="let timeslot of timeslotButtons; let i=index">
-            <div *ngIf="i < 3">
-              <div *ngIf="timeslot" class="timeslot">
-                <p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>
-                <div class="discount-box" *ngIf="timeslot">
-
-                  -{{timeslot?.discount}}%
-                </div>
-              </div>
-              <div *ngIf="!timeslot" class="empty-timeslot"></div>
-            </div>
-          </div>
-          <div class="more-button">
-            <p>All Times</p>
-            <div class="go-box">
-              Go
-              <ion-icon ios="ios-arrow-forward" md="ios-arrow-forward"></ion-icon>
-            </div>
-          </div>
-        </div>
+        <div class="bottom-banner">Up to {{restaurant.maxTimeslot.discount}}% off Today</div>
       </ion-col>
+      <!--<ion-col>-->
+        <!--<div class="bottom-wrapper">-->
+          <!--<div class="timeslot-button" *ngFor="let timeslot of timeslotButtons; let i=index">-->
+            <!--<div *ngIf="i < 3">-->
+              <!--<div *ngIf="timeslot" class="timeslot">-->
+                <!--<p [ngClass]="{'active' : activeTimeslot?._id == timeslot?._id}">{{functions.formatClockTime(timeslot.time, true)}}</p>-->
+                <!--<div class="discount-box" *ngIf="timeslot">-->
+
+                  <!-- -{{timeslot?.discount}}%-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<div *ngIf="!timeslot" class="empty-timeslot"></div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="more-button">-->
+            <!--<p>All Times</p>-->
+            <!--<div class="go-box">-->
+              <!--Go-->
+              <!--<ion-icon ios="ios-arrow-forward" md="ios-arrow-forward"></ion-icon>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</ion-col>-->
     </ion-row>
+  </button>
+  <button ion-button class="favorite" (click)="starResto($event)" clear [disabled]="!userService.user.email">
+    <ion-icon *ngIf="!starred" name="star-outline"></ion-icon>
+    <ion-icon *ngIf="starred" name="star"></ion-icon>
   </button>
 </ion-card>
 <!--<ion-card *ngIf="index == countdownIndex && countdown.hours">-->
