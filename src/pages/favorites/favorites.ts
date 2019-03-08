@@ -29,7 +29,7 @@ export class FavoritesPage {
   locationText = 'Yonge & Dundas';
   user: any;
   userData: any;
-  allRestos: any;
+  allRestos = [] as any;
   loadingRestaurants = true;
 
   constructor(
@@ -46,11 +46,10 @@ export class FavoritesPage {
     this.user = this.userService.user;
     this.userData = this.userService.userData;
 
-    console.log(this.userData.starredRestos)
-    console.log(this.userData.starredRestos.length)
-
-    if(this.userData.starredRestos.length > 0)
+    if(this.userData.starredRestos)
       this.rankRestaurants(this.userData.starredRestos);
+    else
+      this.loadingRestaurants = false;
 
     //Set userCoords
     this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
@@ -62,6 +61,14 @@ export class FavoritesPage {
       }
     });
   }
+
+  ionViewDidEnter(){
+    if(this.userData.starredRestos)
+      this.rankRestaurants(this.userData.starredRestos);
+    else
+      this.loadingRestaurants = false;
+  }
+
   //Ranking system to dictate order of display
   rankRestaurants(restaurantList){
     var day = moment(this.date).format('dddd'); //eg "Monday", "Tuesday"
@@ -98,6 +105,12 @@ export class FavoritesPage {
     });
 
     this.loadingRestaurants = false;
+  }
+
+  //Open login page
+  login(){
+    this.log.sendEvent('Login: Initiated', 'Favourites', 'User pressed login button');
+    this.navCtrl.push('LoginPage');
   }
 
   //Pull down to refresh the restaurant list

@@ -79,6 +79,11 @@ export class RestaurantCardComponent implements OnChanges {
       this.processStarred();
     })
 
+    events.subscribe('restaurant:starcheck', () => {
+      //Is this restaurant starred
+      this.processStarred();
+    })
+
   }
 
   ngAfterViewInit(){

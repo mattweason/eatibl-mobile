@@ -31,6 +31,8 @@ export class HomePage {
 
   private locationSub: Subscription;
 
+  starredRestos = [];
+  needStarCheck = true;
   restaurantList: any; //just the ones loaded
   restaurantAll: any; //entire list
   selectedResto = {} as any; //Restaurant data of the selected marker
@@ -139,7 +141,6 @@ export class HomePage {
         this.rankRestaurants(this.dataCache);
       }
     }
-
 
     setTimeout(() => {
       this.events.publish('loaded:restaurant'); //Tell restaurant cards to rerun timeslots and businesshours processes
@@ -529,6 +530,18 @@ export class HomePage {
       this.updateMarkers();
     }
     this.cdRef.detectChanges();
+  }
+
+  //Pull down to refresh the restaurant list
+  doRefresh(refresher){
+    this.log.sendEvent('List View: Refreshed', 'Home', 'User refreshed the restaurant list');
+    var current = this;
+    this.restaurantService.getRestos(this.userCoords, true, function(data){
+      current.loadMorePressed = 0;
+      current.batch = 0;
+      current.rankRestaurants(data);
+      refresher.complete();
+    });
   }
 
   //Toggle show more loading animation

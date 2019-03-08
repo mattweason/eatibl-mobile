@@ -119,22 +119,24 @@ export class IntroSlidesPage {
   //Google Plus login
   loginGoogle(){
     this.userService.loginGoogle(() => {
-      let promocodeModal = this.modal.create('PromocodeModalPage', {}, { cssClass: 'promocode-modal'});
-      promocodeModal.onDidDismiss(() => {
         this.haveEmail = true;
-      });
-      promocodeModal.present();
+      // let promocodeModal = this.modal.create('PromocodeModalPage', {}, { cssClass: 'promocode-modal'});
+      // promocodeModal.onDidDismiss(() => {
+      //   this.haveEmail = true;
+      // });
+      // promocodeModal.present();
     });
   }
 
   //Facebook login
   loginFacebook(){
     this.userService.loginFacebook(() => {
-      let promocodeModal = this.modal.create('PromocodeModalPage', {}, { cssClass: 'promocode-modal'});
-      promocodeModal.onDidDismiss(() => {
-        this.haveEmail = true;
-      });
-      promocodeModal.present();
+      this.haveEmail = true;
+      // let promocodeModal = this.modal.create('PromocodeModalPage', {}, { cssClass: 'promocode-modal'});
+      // promocodeModal.onDidDismiss(() => {
+      //   this.haveEmail = true;
+      // });
+      // promocodeModal.present();
     });
   }
 

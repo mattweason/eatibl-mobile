@@ -35,7 +35,9 @@
           </ion-row>
         </ion-grid>
       </div>
-      <restaurant-card *ngFor = "let restaurant of allRestos; let i = index" [locationText]="locationText" [user]="user" [index]="i" [cardType]="'light'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+      <div *ngIf="userService.user.email && userService.userData.starredRestos">
+        <restaurant-card *ngFor = "let restaurant of allRestos; let i = index" [locationText]="locationText" [user]="user" [index]="i" [cardType]="'light'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+      </div>
     </ion-list>
   </div>
 </ion-content>

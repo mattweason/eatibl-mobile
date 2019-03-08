@@ -8,6 +8,10 @@
 </div>
 
 <ion-card *ngIf="isLoaded" class="restaurant-card" [ngClass]="{'display': isVisible == true, 'favorite-card': cardType == 'favorite'}">
+  <button *ngIf="cardType != 'favorite'" ion-button class="favorite" (click)="starResto($event)" clear [disabled]="!userService.user.email">
+    <ion-icon *ngIf="!starred" name="star-outline"></ion-icon>
+    <ion-icon *ngIf="starred" name="star"></ion-icon>
+  </button>
   <button class="button-wrapper" tappable (click)="navigateTo('restaurant-image')" ion-item detail-none>
     <ion-row>
       <ion-col col-4 class="resto-card-left">
@@ -71,10 +75,6 @@
         <!--</div>-->
       <!--</ion-col>-->
     </ion-row>
-  </button>
-  <button ion-button class="favorite" (click)="starResto($event)" clear [disabled]="!userService.user.email">
-    <ion-icon *ngIf="!starred" name="star-outline"></ion-icon>
-    <ion-icon *ngIf="starred" name="star"></ion-icon>
   </button>
 </ion-card>
 <!--<ion-card *ngIf="index == countdownIndex && countdown.hours">-->
