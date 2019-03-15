@@ -157,7 +157,6 @@ export class UserServiceProvider {
     var newObj = userObject,
         title,
         message;
-    delete newObj.password; //remove password and save data to log
 
     //make API call to get token if successful, or status 401 if login failed
     this.API.makePost('register', userObject).subscribe(response => {
@@ -165,6 +164,7 @@ export class UserServiceProvider {
 
       //Handle logging and alerts
       if(response['message'] == 'success'){
+        delete newObj.password; //remove password and save data to log
         this.log.sendEvent('Signup: Success', 'User Service', JSON.stringify(newObj));
 
         this.updateUser(response['token']); //Update local and stored user objects
@@ -184,6 +184,7 @@ export class UserServiceProvider {
       }
 
       if(response['message'] == 'email taken'){
+        delete newObj.password; //remove password and save data to log
         this.log.sendEvent('Signup: Email Taken', 'User Service', JSON.stringify(newObj));
 
         //Build alert content
@@ -193,6 +194,7 @@ export class UserServiceProvider {
       }
 
       if(response['message'] == 'error'){
+        delete newObj.password; //remove password and save data to log
         this.log.sendEvent('Signup: Error', 'User Service', JSON.stringify(newObj));
 
         //Build alert content
