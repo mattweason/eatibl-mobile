@@ -143,7 +143,7 @@ export class UserServiceProvider {
       else{
         this.log.sendEvent('Login: Successful', 'User Service', userObject.email);
 
-        this.updateUser(response['token']); //Update local and stored user objects
+        this.updateUser(response); //Response is the token in this case, not like register
 
         callback();
       }
