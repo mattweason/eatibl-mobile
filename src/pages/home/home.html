@@ -58,12 +58,14 @@
         </div>
         <button ion-button color="secondary" small (tap)="openFavorites()">View All</button>
       </div>
-      <ion-slides class="favorite-slides" *ngIf="userService.userData.starredRestos.length > 0" [pager]="true" >
-        <ion-slide *ngFor="let restaurant of userService.userData.starredRestos|slice:0:5; let i = index">
-          <restaurant-card [locationText]="locationText" [user]="user" [index]="i" [cardType]="'favorite'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
-        </ion-slide>
-      </ion-slides>
-      <p class="center-align" *ngIf="userService.userData.starredRestos.length == 0">You have no favorites.</p>
+      <div *ngIf="userService.userData.starredRestos">
+        <ion-slides class="favorite-slides" *ngIf="userService.userData.starredRestos.length > 0" [pager]="true" >
+          <ion-slide *ngFor="let restaurant of userService.userData.starredRestos|slice:0:5; let i = index">
+            <restaurant-card [locationText]="locationText" [user]="user" [index]="i" [cardType]="'favorite'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+          </ion-slide>
+        </ion-slides>
+        <p class="center-align" *ngIf="userService.userData.starredRestos.length == 0">You have no favorites.</p>
+      </div>
     </div>
     <div class="nearby-header">
       <div class="header-left">
