@@ -146,6 +146,17 @@ export class RestaurantPage {
   starResto(){
     this.userService.starResto(this.userService.user._id, this.restaurant._id, (response) => {
       this.starred = response;
+
+      //logging object
+      var logObject = {
+        userId: this.userService.user._id,
+        userName: this.userService.user.name,
+        restoId: this.restaurant._id,
+        restoName: this.restaurant.name,
+        favorited: response
+      }
+
+      this.log.sendEvent('Restaurant Favourite Button Clicked', 'Restaurant Page', JSON.stringify(logObject));
     });
   }
 

@@ -115,7 +115,7 @@ export class FavoritesPage {
 
   //Pull down to refresh the restaurant list
   doRefresh(refresher){
-    this.log.sendEvent('Favorite View: Refreshed', 'Home', 'User refreshed their favorites list');
+    this.log.sendEvent('Favorite View: Refreshed', 'Favorite Page', 'User refreshed their favorites list');
     this.rankRestaurants(this.userData.starredRestos);
     refresher.complete();
   }

@@ -379,6 +379,7 @@ export class MyApp {
     this.menuCtrl.close();
     // this.events.publish('open_page:favorites');
     this.app.getActiveNav().push('FavoritesPage');
+    this.log.sendEvent('Favorites Page', 'unknown', 'Opened from sidebar.');
   }
 
   //Send analytics log when menu is opened or close

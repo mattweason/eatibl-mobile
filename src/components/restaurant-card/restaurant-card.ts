@@ -23,6 +23,7 @@ export class RestaurantCardComponent implements OnChanges {
   private isVisible = false;
   private url: string = ENV.API;
 
+  @Input() page: string; //Used for logging purposes. Notes the page the restaurant card has been loaded onto
   @Input() location = {} as any;
   @Input() restaurant = {} as any;
   @Input() date: string;
@@ -155,7 +156,7 @@ export class RestaurantCardComponent implements OnChanges {
 
   navigateTo(target){
     setTimeout(() => {
-      this.log.sendRestoEvent('Restaurant Card Clicked', 'Restaurant Card', 'User clicked on '+target, this.restaurant._id);
+      this.log.sendRestoEvent('Restaurant Card Clicked', this.page, 'User clicked on '+target, this.restaurant._id);
       this.restaurantTapped = true;
       this.navCtrl.push('RestaurantPage', {
         restaurant: JSON.stringify(this.restaurant),
@@ -248,8 +249,19 @@ export class RestaurantCardComponent implements OnChanges {
 
   //star a restaurant
   starResto(){
-    this.userService.starResto(this.user._id, this.restaurant._id, (response) => {
+    this.userService.starResto(this.userService.user._id, this.restaurant._id, (response) => {
       this.starred = response;
+
+      //logging object
+      var logObject = {
+        userId: this.userService.user._id,
+        userName: this.userService.user.name,
+        restoId: this.restaurant._id,
+        restoName: this.restaurant.name,
+        favorited: response
+      }
+
+      this.log.sendEvent('Restaurant Favourite Button Clicked', this.page, JSON.stringify(logObject));
     });
   }
 }
