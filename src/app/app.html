@@ -1,6 +1,6 @@
 <ion-menu [content]="mycontent" (ionOpen)="logMenu('Opened')" (ionClose)="logMenu('Closed')">
   <ion-content>
-    <ion-list>
+    <ion-list class="navigation-items">
       <ion-item-group>
         <ion-item>
           <ion-grid>
@@ -32,29 +32,29 @@
         </ion-item>
       </ion-item-group>
       <ion-item-group>
-        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Nearby'}" ion-item (tap)="setTab(0)">
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Nearby'}" ion-item (tap)="setTab(0)" small>
           <ion-icon name="navigate" item-start></ion-icon>
           Nearby
         </button>
-        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Search'}" ion-item (tap)="setTab(1)">
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Search'}" ion-item (tap)="setTab(1)" small>
           <ion-icon name="search" item-start></ion-icon>
           Search
         </button>
-        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Account'}" ion-item (tap)="setTab(2)">
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Account'}" ion-item (tap)="setTab(2)" small>
           <ion-icon name="contact" item-start></ion-icon>
           Account
         </button>
-        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Bookings'}" ion-item (tap)="setTab(3)">
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Bookings'}" ion-item (tap)="setTab(3)" small>
           <ion-icon name="restaurant" item-start></ion-icon>
           Bookings
         </button>
-        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Favourites'}" ion-item (tap)="openFavourites()">
+        <button class="menu-item" [ngClass]="{'active' : currentTab == 'Favourites'}" ion-item (tap)="openFavourites()" small>
           <ion-icon name="star" item-start></ion-icon>
           Favorites
         </button>
       </ion-item-group>
       <ion-item-group>
-        <button class="menu-item" ion-item (click)="supportModal()">
+        <button class="menu-item" ion-item (click)="supportModal('faq')">
           <ion-icon name="book" item-start></ion-icon>
           FAQs
         </button>
@@ -65,6 +65,12 @@
         <button class="menu-item" ion-item (tap)="termsModal()">
           <ion-icon  name="paper" item-start></ion-icon>
           Terms of Use
+        </button>
+      </ion-item-group>
+      <ion-item-group>
+        <button class="menu-item blue" ion-item (click)="supportModal('contact')">
+          <ion-icon name="chatbubbles" item-start></ion-icon>
+          Give Us Feedback
         </button>
       </ion-item-group>
     </ion-list>

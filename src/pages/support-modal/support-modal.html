@@ -61,7 +61,7 @@
               <ion-input placeholder="Email" [formControl]="supportForm.controls['email']"></ion-input>
             </ion-item>
             <ion-item class="border-bottom">
-              <ion-textarea placeholder="Message" [formControl]="supportForm.controls['message']"></ion-textarea>
+              <ion-textarea placeholder="Message" [formControl]="supportForm.controls['message']" rows="6"></ion-textarea>
             </ion-item>
             <div class="form-error" *ngIf="(supportForm.controls.name.hasError('required') && supportForm.controls.name.touched) || (supportForm.controls.email.hasError('required') && supportForm.controls.email.touched) && submitAttempt">
               <span>Please fill in all the fields.</span>

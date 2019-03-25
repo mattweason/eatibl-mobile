@@ -359,10 +359,10 @@ export class MyApp {
   }
 
   //Open the support modal
-  supportModal(){
+  supportModal(segment){
     this.menuCtrl.close();
-    const supportModal = this.modal.create('SupportModalPage');
-    this.log.sendEvent('Support Modal', 'unknown', 'Modal can be called from anywhere in the app');
+    const supportModal = this.modal.create('SupportModalPage', { segment: segment });
+    this.log.sendEvent('Support Modal', 'unknown', 'Accessing: '+segment+'. Opened from sidebar.');
     supportModal.present();
   }
 

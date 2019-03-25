@@ -806,6 +806,12 @@ h1, h2, h3, h4, p, button, span, ion-select, ion-datetime, ion-input, ion-title,
 }
 
 ion-menu{
+  .navigation-items{
+    min-height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
   .menu-item{
     color: #4d4d4d;
     &.active{
@@ -816,6 +822,12 @@ ion-menu{
     }
     ion-icon{
       color: #ccc;
+    }
+    &.blue{
+      color: color($colors, secondary);
+      ion-icon{
+        color: color($colors, secondary);
+      }
     }
   }
   .account-header{
@@ -847,6 +859,10 @@ ion-menu{
   }
   ion-item-group{
     border-bottom: 1px solid #ccc;
+    &:last-of-type{
+      margin-top: auto;
+      border-bottom: none;
+    }
   }
 }
 

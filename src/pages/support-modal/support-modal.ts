@@ -39,6 +39,9 @@ export class SupportModalPage {
     public navParams: NavParams,
     private log: ActivityLoggerProvider
   ) {
+    //Select the correct segment based on sidebar entry point
+    this.type = navParams.get('segment');
+
     //Form content and validation for support form
     this.supportForm = this.formBuilder.group({
       name: [
