@@ -51,7 +51,7 @@
         </div>
       </button>
     </ion-card>
-    <div *ngIf="userService.user.email">
+    <div *ngIf="userService.user.email && userService.userData.starredRestos">
       <div class="nearby-header">
         <div class="header-left">
           <span class="title">Favourites ({{userService.userData.starredRestos.length}})</span>
@@ -61,7 +61,7 @@
       <div *ngIf="userService.userData.starredRestos">
         <ion-slides class="favorite-slides" *ngIf="userService.userData.starredRestos.length > 0" (ionSlideWillChange)="logSlideEvent()" [pager]="true" >
           <ion-slide *ngFor="let restaurant of userService.userData.starredRestos|slice:0:5; let i = index">
-            <restaurant-card [page]="home" [locationText]="locationText" [user]="user" [index]="i" [cardType]="'favorite'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+            <restaurant-card [page]="'Home'" [locationText]="locationText" [user]="user" [index]="i" [cardType]="'favorite'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
           </ion-slide>
         </ion-slides>
         <p class="center-align" *ngIf="userService.userData.starredRestos.length == 0">You have no favorites.</p>
@@ -76,7 +76,7 @@
       <button ion-button color="secondary" small (tap)="presentLocationModal()">Change</button>
     </div>
     <ion-list>
-      <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [locationText]="locationText" [user]="user" [index]="i" [cardType]="'light'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
+      <restaurant-card *ngFor = "let restaurant of restaurantList; let i = index" [page]="'Home'" [locationText]="locationText" [user]="user" [index]="i" [cardType]="'light'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
     </ion-list>
     <div class="load-more">
       <button class="blue-text" *ngIf="loadMorePressed < 4" ion-button icon-start block color="white" (tap)="loadMore()"><span *ngIf="loadingNextBatch" class="loading"><ion-spinner></ion-spinner></span><ion-icon name="arrow-dropdown-circle"></ion-icon>Show More Restaurants</button>
