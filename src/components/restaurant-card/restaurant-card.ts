@@ -156,7 +156,7 @@ export class RestaurantCardComponent implements OnChanges {
 
   navigateTo(target){
     setTimeout(() => {
-      this.log.sendRestoEvent('Restaurant Card Clicked', this.page, 'User clicked on '+target, this.restaurant._id);
+      this.log.sendRestoEvent('Restaurant Card Clicked: ' +this.cardType, this.page, 'User clicked on '+target, this.restaurant._id);
       this.restaurantTapped = true;
       this.navCtrl.push('RestaurantPage', {
         restaurant: JSON.stringify(this.restaurant),

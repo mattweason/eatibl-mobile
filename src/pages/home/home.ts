@@ -102,9 +102,15 @@ export class HomePage {
     });
   }
 
+  //Log the user perusing the favorites list
+  logSlideEvent(){
+    this.log.sendEvent('Favorite Slide Dragged', 'Home', 'User swiped to another slide');
+  }
+
   //open favorites
   openFavorites(){
     this.navCtrl.push('FavoritesPage');
+    this.log.sendEvent('Favorites Page Opened', 'Home', 'User navigated to favorites page');
   }
 
   //Handle location error

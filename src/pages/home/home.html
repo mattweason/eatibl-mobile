@@ -59,7 +59,7 @@
         <button ion-button color="secondary" small (tap)="openFavorites()">View All</button>
       </div>
       <div *ngIf="userService.userData.starredRestos">
-        <ion-slides class="favorite-slides" *ngIf="userService.userData.starredRestos.length > 0" [pager]="true" >
+        <ion-slides class="favorite-slides" *ngIf="userService.userData.starredRestos.length > 0" (ionSlideWillChange)="logSlideEvent()" [pager]="true" >
           <ion-slide *ngFor="let restaurant of userService.userData.starredRestos|slice:0:5; let i = index">
             <restaurant-card [page]="home" [locationText]="locationText" [user]="user" [index]="i" [cardType]="'favorite'" [location]="userCoords" [restaurant]="restaurant" [date]="date" [time]="time"></restaurant-card>
           </ion-slide>

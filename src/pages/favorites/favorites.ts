@@ -109,7 +109,7 @@ export class FavoritesPage {
 
   //Open login page
   login(){
-    this.log.sendEvent('Login: Initiated', 'Favourites', 'User pressed login button');
+    this.log.sendEvent('Login: Initiated', 'Favorite Page', 'User pressed login button');
     this.navCtrl.push('LoginPage');
   }
 
