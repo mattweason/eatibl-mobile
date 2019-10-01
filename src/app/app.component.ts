@@ -7,7 +7,7 @@ import { ActivityLoggerProvider } from "../providers/activity-logger/activity-lo
 import {AlertController, ModalController, Platform, Events, Nav, MenuController} from 'ionic-angular';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
-import { Firebase } from '@ionic-native/firebase';
+// import { Firebase } from '@ionic-native/firebase';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import * as moment from 'moment';
 import * as decode from 'jwt-decode';
@@ -59,7 +59,7 @@ export class MyApp {
     private app: App,
     private functions: FunctionsProvider,
     private geolocationService: GeolocationServiceProvider,
-    private firebase: Firebase,
+    // private firebase: Firebase,
     private diagnostic: Diagnostic,
     private log: ActivityLoggerProvider,
     public localNotifications: LocalNotifications,
@@ -194,27 +194,26 @@ export class MyApp {
           this.currentTab = data;
         });
 
-        this.firebase.getToken()
-          .then(token => {
+        (<any>window).FirebasePlugin.getToken(token => {
+              this.userInfo(token);
+            }, // save the token server-side and use it to push notifications to this device
+            error => {
+              this.userInfo('err');
+            });
+
+        (<any>window).FirebasePlugin.onTokenRefresh(token => {
             this.userInfo(token);
-          }) // save the token server-side and use it to push notifications to this device
-          .catch(() => {
+          }, // save the token server-side and use it to push notifications to this device
+          error => {
             this.userInfo('err');
           });
 
-        this.firebase.onTokenRefresh()
-          .subscribe((token: string) => {
-            setTimeout(() => {
-              this.userInfo(token);
-            }, 1000);
-        });
-
         //Check for both permissions and if location services are enabled
         this.geolocationService.locationPermission();
-
-        //Request permission for push notifications
+        //
+        // //Request permission for push notifications
         if(platform.is('ios')){
-          firebase.grantPermission().then(() => {
+          (<any>window).FirebasePlugin.grantPermission().then(() => {
             console.log('granted')
           });
         }

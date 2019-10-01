@@ -16,7 +16,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
-import { Firebase } from '@ionic-native/firebase';
+import { Firebase } from '@ionic-native/firebase/ngx';
 import { Device } from '@ionic-native/device';
 import { Contacts } from '@ionic-native/contacts';
 import { LocalNotifications } from '@ionic-native/local-notifications';

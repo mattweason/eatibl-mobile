@@ -88,6 +88,7 @@ export class HomePage {
     });
 
     this.locationSub = this.geolocationService.observableLocation.subscribe(location => {
+      console.log('geolocate')
       if(location){ //Sometimes on iOS location is undefined
         if(location.coords.length){
           this.userCoords = [location.coords[0], location.coords[1]];
