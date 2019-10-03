@@ -77,6 +77,11 @@ page-restaurant{
       margin-left: 3px;
     }
   }
+  .restaurant-details-header{
+    margin-top: 12px;
+    color: color($colors, primary);
+    text-align: center;
+  }
   .resto-details{
     border-bottom: none !important;
     button:not(:last-child){

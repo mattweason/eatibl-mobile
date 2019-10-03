@@ -101,21 +101,26 @@
           <button ion-button color="secondary" class="book-button" [disabled]="!activeTimeslot || activeTimeslot?.quantity < people" (click)="bookNow(restaurant, activeTimeslot, people, date)"><span *ngIf="activeTimeslot?.quantity >= people || !activeTimeslot">Book Now</span><span *ngIf="activeTimeslot?.quantity < people && activeTimeslot">Only {{activeTimeslot?.quantity}} seat<span *ngIf="activeTimeslot?.quantity != 1">s</span> at {{functions.formatClockTime(activeTimeslot?.time, true)}}</span></button>
         </ion-row>
       </ion-grid>
-      <div class="details">
-        <ion-segment [(ngModel)]="type">
-          <ion-segment-button value="about">
-            About
-          </ion-segment-button>
-          <ion-segment-button value="reviews">
-            Reviews
-          </ion-segment-button>
-          <ion-segment-button *ngIf="restaurant.recommendedItems.length" value="menu">
-            Recommended
-          </ion-segment-button>
-        </ion-segment>
-      </div>
-      <div [ngSwitch]="type">
-        <ion-grid *ngSwitchCase="'about'">
+      <!--<div class="details">-->
+        <!--<ion-segment [(ngModel)]="type">-->
+          <!--<ion-segment-button value="about">-->
+            <!--About-->
+          <!--</ion-segment-button>-->
+          <!--<ion-segment-button value="reviews">-->
+            <!--Reviews-->
+          <!--</ion-segment-button>-->
+          <!--<ion-segment-button *ngIf="restaurant.recommendedItems.length" value="menu">-->
+            <!--Recommended-->
+          <!--</ion-segment-button>-->
+        <!--</ion-segment>-->
+      <!--</div>-->
+      <div>
+        <ion-grid class="border-bottom">
+          <ion-row>
+            <ion-col>
+              <h1 class="restaurant-details-header">About</h1>
+            </ion-col>
+          </ion-row>
           <ion-row>
             <ion-col>
               <p class="header">Discount Conditions</p>
@@ -171,7 +176,31 @@
           </ion-row>
         </ion-grid>
 
-        <ion-grid class="border-bottom reviews" *ngSwitchCase="'reviews'">
+        <ion-grid class="border-bottom" *ngIf="restaurant.recommendedItems.length">
+          <ion-row>
+            <ion-col>
+              <h1 class="restaurant-details-header">Recommended Items</h1>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let item of restaurant.recommendedItems">
+            <ion-col col-8>
+              <p>{{item.item}}</p>
+            </ion-col>
+            <ion-col col-2>
+              <p class="strikethrough">{{item.price | currency}}</p>
+            </ion-col>
+            <ion-col col-2>
+              <p>{{(item.price * (1 - activeTimeslot?.discount / 100)) | currency}}</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <ion-grid class="reviews">
+          <ion-row>
+            <ion-col>
+              <h1 class="restaurant-details-header">Reviews</h1>
+            </ion-col>
+          </ion-row>
           <div class="review" *ngFor="let review of reviews">
             <button ion-item text-wrap (tap)="expandReview(review)">
               <ion-row>
@@ -193,20 +222,6 @@
               </ion-row>
             </button>
           </div>
-        </ion-grid>
-
-        <ion-grid class="border-bottom" *ngSwitchCase="'menu'">
-          <ion-row *ngFor="let item of restaurant.recommendedItems">
-            <ion-col col-8>
-              <p>{{item.item}}</p>
-            </ion-col>
-            <ion-col col-2>
-              <p class="strikethrough">{{item.price | currency}}</p>
-            </ion-col>
-            <ion-col col-2>
-              <p>{{(item.price * (1 - activeTimeslot?.discount / 100)) | currency}}</p>
-            </ion-col>
-          </ion-row>
         </ion-grid>
       </div>
     </ion-card-content>
