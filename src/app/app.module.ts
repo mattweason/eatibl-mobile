@@ -25,6 +25,7 @@ import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Facebook } from '@ionic-native/facebook';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Mixpanel } from '@ionic-native/mixpanel';
+import { CameraPreview } from '@ionic-native/camera-preview';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -71,6 +72,7 @@ import { UserServiceProvider } from '../providers/user-service/user-service';
     Firebase,
     Facebook,
     Device,
+    CameraPreview,
     Contacts,
     InAppBrowser,
     Mixpanel,

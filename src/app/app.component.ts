@@ -45,6 +45,9 @@ export class MyApp {
   interval: any;
   showSlides = true;
 
+  //used for secret page
+  secret: any = 0;
+
   constructor(
     private platform: Platform,
     statusBar: StatusBar,
@@ -339,15 +342,15 @@ export class MyApp {
   }
 
   //Open intro slides
-  presentIntroModal(){
-    this.showSlides = false;
-    this.log.sendEvent('Intro Slides', 'runtime', 'Default Intro slides for first time users');
-    const introModal = this.modal.create('IntroSlidesPage', {newUser: true});
-    introModal.onDidDismiss(() => {
-      this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
-      this.storage.remove('eatiblShowSlides');
-    });
-    introModal.present();
+  presentIntroModal(){ //TODO: uncomment this before pusing
+    // this.showSlides = false;
+    // this.log.sendEvent('Intro Slides', 'runtime', 'Default Intro slides for first time users');
+    // const introModal = this.modal.create('IntroSlidesPage', {newUser: true});
+    // introModal.onDidDismiss(() => {
+    //   this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
+    //   this.storage.remove('eatiblShowSlides');
+    // });
+    // introModal.present();
   }
 
   //Open intro slides
@@ -384,5 +387,18 @@ export class MyApp {
   //Send analytics log when menu is opened or close
   logMenu(cond){
     this.log.sendEvent('Menu '+cond, 'unknown', '');
+  }
+
+  //Open secret receipt scanning page
+  openSecret(){
+    this.secret++;
+    if(this.secret == 3){
+      this.menuCtrl.close();
+      this.navCtrl.push('CameraPreviewPage');
+      this.secret = 0;
+    }
+    setTimeout(() => {
+      this.secret = 0;
+    }, 500)
   }
 }
