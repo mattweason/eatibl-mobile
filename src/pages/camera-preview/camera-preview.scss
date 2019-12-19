@@ -1,6 +1,9 @@
 page-camera-preview {
+  ion-content{
+    background-color: transparent !important;
+  }
   .preview-ui{
-    height:100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -8,15 +11,12 @@ page-camera-preview {
     position: relative;
     .preview-boundary{
       width: 100%;
-      height: 5vh;
       background: rgba(40,40,40,0.4);
       display: flex;
       flex-direction: column;
       align-items: center;
-      &.bottom{
-        justify-content: flex-start;
-      }
       &.top{
+        padding-top: 10px;
         justify-content: flex-end;
       }
       .horizontal-line{
@@ -25,7 +25,29 @@ page-camera-preview {
       }
     }
   }
-  .camera-preview{
-    background-color: transparent;
+  .preview-buttons{
+    margin-top: 10px;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: color($colors, primary);
+  }
+  .loading-overlay{
+    top: 0;
+    position: absolute;
+    z-index: 1000;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    ion-spinner *{
+      width: 30px;
+      height: 30px;
+      stroke: color($colors, primary);
+    }
   }
 }

@@ -144,4 +144,5 @@
         <variable name="WEB_APPLICATION_CLIENT_ID" value="518520693304-56p482udd2th2cqsgtfvd69a3d5ojni1.apps.googleusercontent.com" />
     </plugin>
     <plugin name="cordova-plugin-add-swift-support" spec="2.0.2" />
+    <allow-navigation href="http://192.168.0.11:8100" />
 </widget>

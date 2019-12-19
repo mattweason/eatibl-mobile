@@ -26,6 +26,8 @@ import { Facebook } from '@ionic-native/facebook';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Mixpanel } from '@ionic-native/mixpanel';
 import { CameraPreview } from '@ionic-native/camera-preview';
+import { File } from '@ionic-native/file';
+import { FileTransfer } from '@ionic-native/file-transfer';
 
 //Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -76,6 +78,8 @@ import { UserServiceProvider } from '../providers/user-service/user-service';
     Contacts,
     InAppBrowser,
     Mixpanel,
+    File,
+    FileTransfer,
     LocalNotifications,
     Diagnostic,
     LocationAccuracy,

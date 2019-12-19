@@ -641,6 +641,9 @@ ion-tabs{
 }
 
 //General Use Classes
+._camera_preview_{
+  background-color: transparent !important;
+}
 .green-background{ //For toasts
   .toast-wrapper{
     .toast-container{

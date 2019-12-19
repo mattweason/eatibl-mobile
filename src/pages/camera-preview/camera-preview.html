@@ -1,14 +1,24 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>Capture Bill</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <div class="preview-ui">
+    <div class="preview-boundary top">
+      <span style="color: #fff">Top</span>
+      <div class="horizontal-line"></div>
+    </div>
+    <div class="preview-boundary">
+      <div class="horizontal-line"></div>
+      <span style="color: #fff">Bottom</span>
+      <div class="preview-buttons">
+        <button ion-fab color="dark-primary" (click)="takePhoto()"><ion-icon name="camera"></ion-icon></button>
+      </div>
+    </div>
+  </div>
 
-<div class="preview-ui">
-  <div class="preview-boundary top">
-    <span style="color: #fff">Top</span>
-    <div class="horizontal-line"></div>
+  <div *ngIf="capturingPhoto" class="loading-overlay">
+    <ion-spinner color="light"></ion-spinner>
   </div>
-  <div class="preview-boundary">
-    <div class="horizontal-line"></div>
-    <span style="color: #fff">Bottom</span>
-  </div>
-  <div class="preview-buttons">
-    <button ion-fab color="danger" (click)="takePhoto()"><ion-icon name="camera"></ion-icon></button>
-  </div>
-</div>
+</ion-content>
