@@ -3,6 +3,7 @@ import {IonicPage, NavController, NavParams, AlertController} from 'ionic-angula
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
 import { Device } from '@ionic-native/device';
+import { ApiServiceProvider } from "../../providers/api-service/api-service";
 
 import * as io from 'socket.io-client';
 
@@ -41,25 +42,25 @@ export class ConfirmPricePage {
     imageUploaded: {
       completedText: 'Uploaded Image',
       completed: false,
-      percent: '15%',
+      percent: '20%',
       newProcessState: 'Processing Image'
     },
     imageProcessed: {
       completedText: 'Processed Image',
       completed: false,
-      percent: '25%',
+      percent: '35%',
       newProcessState: 'Finding Bill'
     },
     billFound: {
       completedText: 'Found Bill',
       completed: false,
-      percent: '45%',
+      percent: '65%',
       newProcessState: 'Resolving Prices'
     },
     pricesResolved: {
       completedText: 'Resolved Prices',
       completed: false,
-      percent: '70%',
+      percent: '85%',
       newProcessState: 'Resolving Menu Items'
     },
     itemsResolved: {
@@ -77,7 +78,8 @@ export class ConfirmPricePage {
       private transfer: FileTransfer,
       private file: File,
       private device: Device,
-      private alertCtrl: AlertController
+      private alertCtrl: AlertController,
+      private API: ApiServiceProvider
   ) {
     this.image = this.navParams.get('image');
     this.screenSize = this.navParams.get('screenSize');
@@ -88,16 +90,6 @@ export class ConfirmPricePage {
 
     //Socket io will try to connect multiple times, ensure it does not
     if(!this.socketId){
-
-      //Socket io workflows
-      this.socket = io('https://test.eatibl.com', { 'transports': ['websocket'] });
-
-      this.socket.on('connect', ()=> {
-
-        //Sometimes socket.io fires another connection. We dont mind if this happens,
-        //    but we don't want to upload and process another image if this happens
-        if(!this.socketId){
-          this.socketId = this.socket.id;
 
           let imgElement = document.getElementById('imageSrc');
           let imageFile = new Image();
@@ -110,41 +102,64 @@ export class ConfirmPricePage {
             fileName: this.deviceString + '-' + Date.now(),
             chunkedMode: false,
             mimeType: "image/jpeg",
-            params : { 'socketId': this.socketId},
             headers: {}
           }
 
-          fileTransfer.upload(imageFile.src, 'https://test.eatibl.com/api/uploadImage/'+this.socketId, options)
+          fileTransfer.upload(imageFile.src, 'https://test.eatibl.com/api/uploadImage', options)
             .then((data) => {
-              if(!this.cancelApi){
-                this.processState = "Done!";
-                this.processPercent = '100%';
-                setTimeout(() => {
-                  this.priceData = JSON.parse(JSON.parse(data.response).priceData);
-                  this.totalPrice = this.priceData.total;
-                  this.processingReceipt = false;
-                  this.socket.disconnect();
-                }, 1000);
-              }
+              let response = JSON.parse(data.response);
+              if(response['message'] == 'error') {this.errorAlert('error uploading file')}
+
+              this.scanProgress.imageUploaded.completed = true;
+              this.processState = this.scanProgress.imageUploaded.newProcessState;
+              this.processPercent = this.scanProgress.imageUploaded.percent;
+
+              const filename = response['filename'];
+
+              //Socket io workflows
+              this.socket = io('https://test.eatibl.com', { 'transports': ['websocket'] });
+
+              this.socket.on('connect', ()=> {
+
+                //Sometimes socket.io fires another connection. We dont mind if this happens,
+                //    but we don't want to upload and process another image if this happens
+                if (!this.socketId) {
+                  this.socketId = this.socket.id;
+
+                  this.API.makePost('billscan', {socketId: this.socketId, filename: filename}).subscribe(response => {
+                    if(!this.cancelApi){
+                      this.processState = "Done!";
+                      this.processPercent = '100%';
+                      setTimeout(() => {
+                        this.priceData = JSON.parse(response['priceData']);
+                        this.totalPrice = this.priceData.total;
+                        this.processingReceipt = false;
+                        this.socket.disconnect();
+                      }, 1000);
+                    }
+                  },
+                    error => {
+                      this.errorAlert(error);
+                    });
+                }
+
+                this.socket.on('scanProgress', (message) => {
+                  console.log('received message - ' + message);
+                  if(message == 'error') {}
+                  else{
+                    if(this.scanProgress[message]){
+                      this.scanProgress[message].completed = true;
+                      this.processState = this.scanProgress[message].newProcessState;
+                      this.processPercent = this.scanProgress[message].percent;
+                    }
+                  }
+                });
+              });
             }, (err) => {
               console.log(err)
               if(!this.cancelApi)
-                this.errorAlert();
+                this.errorAlert(err);
             });
-        }
-      });
-
-      this.socket.on('scanProgress', (message) => {
-        console.log('received message - ' + message);
-        if(message == 'error') {this.errorAlert()}
-        else{
-          if(this.scanProgress[message]){
-            this.scanProgress[message].completed = true;
-            this.processState = this.scanProgress[message].newProcessState;
-            this.processPercent = this.scanProgress[message].percent;
-          }
-        }
-      });
     }
   }
 
@@ -164,11 +179,11 @@ export class ConfirmPricePage {
     this.socket.disconnect();
   }
 
-  errorAlert() {
+  errorAlert(err) {
     this.socket.disconnect();
     let alert = this.alertCtrl.create({
       title: 'No Results',
-      subTitle: 'We\'re having troubling reading your receipt, please take another photo.',
+      subTitle: 'We\'re having troubling reading your receipt, please take another photo. Error status: ' + err.http_status,
       buttons: [
         {
           text: 'Ok',
