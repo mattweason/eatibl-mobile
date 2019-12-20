@@ -4,6 +4,7 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-nati
 import { File } from '@ionic-native/file';
 import { Device } from '@ionic-native/device';
 import { ApiServiceProvider } from "../../providers/api-service/api-service";
+import { ENV } from '@app/env';
 
 import * as io from 'socket.io-client';
 
@@ -21,6 +22,8 @@ import * as io from 'socket.io-client';
 })
 export class ConfirmPricePage {
 
+  private apiUrl: string = ENV.API;
+  private url: string = ENV.mode == 'development' ? 'https://test.eatibl.com' : 'https://eatibl.com';
   image: any;
   screenSize: any;
   deviceString: any;
@@ -105,7 +108,7 @@ export class ConfirmPricePage {
             headers: {}
           }
 
-          fileTransfer.upload(imageFile.src, 'https://test.eatibl.com/api/uploadImage', options)
+          fileTransfer.upload(imageFile.src, this.apiUrl + 'uploadImage', options)
             .then((data) => {
               let response = JSON.parse(data.response);
               if(response['message'] == 'error') {this.errorAlert('error uploading file')}
@@ -117,7 +120,7 @@ export class ConfirmPricePage {
               const filename = response['filename'];
 
               //Socket io workflows
-              this.socket = io('https://test.eatibl.com', { 'transports': ['websocket'] });
+              this.socket = io(this.url, { 'transports': ['websocket'] });
 
               this.socket.on('connect', ()=> {
 
