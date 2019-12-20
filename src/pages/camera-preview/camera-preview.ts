@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { CameraPreview, CameraPreviewPictureOptions, CameraPreviewOptions, CameraPreviewDimensions } from '@ionic-native/camera-preview';
+import { ActivityLoggerProvider } from "../../providers/activity-logger/activity-logger";
 
 /**
  * Generated class for the CameraPreviewPage page.
@@ -24,7 +25,13 @@ export class CameraPreviewPage {
   };
   capturingPhoto = false;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private cameraPreview: CameraPreview, platform: Platform) {
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private cameraPreview: CameraPreview,
+    private log: ActivityLoggerProvider,
+    private platform: Platform
+  ) {
     this.screenSize.width = platform.width();
     this.screenSize.height = platform.height();
 
@@ -61,6 +68,7 @@ export class CameraPreviewPage {
 
   takePhoto(){
     this.capturingPhoto = true;
+    this.log.sendEvent('Capturing Bill Image', 'Camera Preview', '');
     this.cameraPreview.takePicture({height: this.screenSize.height, width: this.screenSize.width,quality: 85}).then(
       (res) => {
         this.image = 'data:image/jpeg;base64,' + res;

@@ -144,7 +144,6 @@ export class ConfirmPricePage {
                 }
 
                 this.socket.on('scanProgress', (message) => {
-                  console.log('received message - ' + message);
                   if(message == 'error') {}
                   else{
                     if(this.scanProgress[message]){
@@ -156,7 +155,6 @@ export class ConfirmPricePage {
                 });
               });
             }, (err) => {
-              console.log(err)
               if(!this.cancelApi)
                 this.errorAlert(err);
             });
