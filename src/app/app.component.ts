@@ -7,11 +7,10 @@ import { ActivityLoggerProvider } from "../providers/activity-logger/activity-lo
 import {AlertController, ModalController, Platform, Events, Nav, MenuController} from 'ionic-angular';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
-// import { Firebase } from '@ionic-native/firebase';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import * as moment from 'moment';
 import * as decode from 'jwt-decode';
-import { LocalNotifications } from '../../node_modules/@ionic-native/local-notifications';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 import { Mixpanel } from '@ionic-native/mixpanel';
 import { FunctionsProvider } from '../providers/functions/functions';
 import { GeolocationServiceProvider } from '../providers/geolocation-service/geolocation-service';
@@ -80,19 +79,6 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
-
-      // firebase.onNotificationOpen()
-      //   .subscribe(res => {
-      //     if(res.tap) {
-      //       // background mode
-      //       console.log("background");
-      //       console.log(res);
-      //     } else if (!res.tap) {
-      //       // foreground mode
-      //       console.log("foreground");
-      //       console.log(res);
-      //     }
-      //   });
 
       //Only do native stuff in android or ios
       if (platform.is('cordova')){
@@ -342,15 +328,15 @@ export class MyApp {
   }
 
   //Open intro slides
-  presentIntroModal(){ //TODO: uncomment this before pusing
-    // this.showSlides = false;
-    // this.log.sendEvent('Intro Slides', 'runtime', 'Default Intro slides for first time users');
-    // const introModal = this.modal.create('IntroSlidesPage', {newUser: true});
-    // introModal.onDidDismiss(() => {
-    //   this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
-    //   this.storage.remove('eatiblShowSlides');
-    // });
-    // introModal.present();
+  presentIntroModal(){
+    this.showSlides = false;
+    this.log.sendEvent('Intro Slides', 'runtime', 'Default Intro slides for first time users');
+    const introModal = this.modal.create('IntroSlidesPage', {newUser: true});
+    introModal.onDidDismiss(() => {
+      this.API.makePost('user/device/hideSlides', {deviceId: this.device.uuid}).subscribe(result => {}); //Update device id listing to not show slides on this device
+      this.storage.remove('eatiblShowSlides');
+    });
+    introModal.present();
   }
 
   //Open intro slides
